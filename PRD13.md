@@ -292,13 +292,13 @@ Enhance SyncScript's file storage system to production-ready status with Cloudfl
 **Description:** As a user, I want to upload files directly from the sources list view.
 
 **Acceptance Criteria:**
-- [ ] Add FileUploadZone to top of SourcesList component
-- [ ] Use useFileUpload hook to manage uploads
-- [ ] Show UploadProgressBar for each active upload
-- [ ] Show UploadErrorState for failed uploads
-- [ ] Refresh sources list when upload completes
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Add FileUploadZone to top of SourcesList component
+- [x] Use useFileUpload hook to manage uploads
+- [x] Show UploadProgressBar for each active upload
+- [x] Show UploadErrorState for failed uploads
+- [x] Refresh sources list when upload completes
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 

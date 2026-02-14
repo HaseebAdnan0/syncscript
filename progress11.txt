@@ -502,3 +502,29 @@
   - Auto-commit happens for completed work
 ---
 
+## Iteration 19 - US-019: Add password reset API calls to frontend
+- Added requestPasswordReset(email: string) function to frontend/src/lib/api.ts
+  - POSTs to /api/v1/auth/password-reset/ with email in body
+  - Returns typed RequestPasswordResetResponse interface
+  - Handles 429 rate limit errors with descriptive message
+  - Uses try/catch with axios.isAxiosError() pattern
+- Added confirmPasswordReset(uid, token, newPassword) function
+  - POSTs to /api/v1/auth/password-reset-confirm/ with uid, token, new_password
+  - Returns typed ConfirmPasswordResetResponse interface
+  - No special error handling (uses default axios behavior)
+- Fixed pre-existing TypeScript errors in SourcesList.tsx:
+  - Removed unused useCallback import (then added back when found it was used)
+  - Fixed upload.uploadId type errors with null-check guards
+- TypeScript typecheck passes with no errors
+- Files changed:
+  - frontend/src/lib/api.ts (added 2 functions + 2 interfaces)
+  - frontend/src/components/features/sources/SourcesList.tsx (fixed TS errors)
+  - PRD11.md (marked US-019 complete)
+- Learnings for future iterations:
+  - Password reset follows same pattern as verification email (typed responses, rate limit handling)
+  - confirmPasswordReset doesn't need special rate limit handling (only request endpoint is rate-limited)
+  - Always fix pre-existing TypeScript errors to get clean typecheck pass
+  - Linter can auto-fix some issues (like Map key iteration) during commit
+  - Function signatures match Django backend endpoints exactly (uid, token, new_password)
+---
+
