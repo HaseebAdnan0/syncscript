@@ -305,3 +305,18 @@
   - serializer.save() accepts multiple keyword arguments: vault=vault, added_by=request.user
   - This ensures memberships are properly linked to parent vault and track who added them
 ---
+
+## Iteration 24 - US-023: Create AuditLogViewSet (read-only)
+- Implemented AuditLogViewSet as ReadOnlyModelViewSet for immutable audit trail
+- Files changed:
+  - backend/apps/vaults/views.py (added AuditLogViewSet class, imported AuditLog and AuditLogSerializer)
+  - PRD2.md (marked US-023 as complete)
+- Django check passed with no issues
+- Learnings for future iterations:
+  - ReadOnlyModelViewSet provides list() and retrieve() actions only (no create/update/delete)
+  - Perfect for immutable audit logs where only read access is allowed
+  - Uses same nested pattern as VaultMembershipViewSet: vault_pk from URL kwargs
+  - order_by('-created_at') in get_queryset() ensures newest logs appear first
+  - Permission: IsVaultMember allows any vault member to view audit history
+  - Pyright warnings about "not accessed" on imports are false positives when class uses them
+---
