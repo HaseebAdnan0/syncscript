@@ -268,4 +268,21 @@
   - All components follow Bitcoin DeFi design system (dark bg, orange-gold gradient)
   - Typecheck passes with no errors (unrelated errors in GuidedVaultWizard)
 ---
+## Iteration 13 - US-013: Create top collaborators section
+- Created TopCollaborators component showing top 5 collaborators by contributions
+- Files changed:
+  - frontend/src/components/features/dashboard/TopCollaborators.tsx (new component)
+  - PRD17.md (marked US-013 acceptance criteria complete)
+- Learnings for future iterations:
+  - Component follows same pattern as other dashboard components (loading, error, empty states)
+  - getInitials() helper function: splits name, takes first letter of first and last word
+  - Avatar fallback: gradient circle with white initials if no avatar_url
+  - Contribution badge: gradient background (orange/20 to gold/20) with orange border and text
+  - Hover effect on collaborator items: bg-white/5 on parent div
+  - Contribution count pluralization: "1 contribution" vs "X contributions"
+  - Space-y-4 creates consistent vertical spacing between collaborator items
+  - Fetches from /api/v1/dashboard/analytics/top-collaborators/ with Bearer token
+  - All components follow Bitcoin DeFi design system (dark bg, orange-gold gradient)
+  - Typecheck passes with no errors
+---
 
