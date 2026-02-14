@@ -63,13 +63,13 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a developer, I need Django configured to use the custom User model and SimpleJWT.
 
 **Acceptance Criteria:**
-- [ ] Add 'apps.users' to INSTALLED_APPS in `config/settings.py`
-- [ ] Add 'rest_framework_simplejwt' to INSTALLED_APPS
-- [ ] Add 'rest_framework_simplejwt.token_blacklist' to INSTALLED_APPS
-- [ ] Set AUTH_USER_MODEL = 'users.User'
-- [ ] Add SIMPLE_JWT config: ACCESS_TOKEN_LIFETIME=15min, REFRESH_TOKEN_LIFETIME=7days
-- [ ] Enable ROTATE_REFRESH_TOKENS = True and BLACKLIST_AFTER_ROTATION = True
-- [ ] Typecheck passes
+- [x] Add 'apps.users' to INSTALLED_APPS in `config/settings.py`
+- [x] Add 'rest_framework_simplejwt' to INSTALLED_APPS
+- [x] Add 'rest_framework_simplejwt.token_blacklist' to INSTALLED_APPS
+- [x] Set AUTH_USER_MODEL = 'users.User'
+- [x] Add SIMPLE_JWT config: ACCESS_TOKEN_LIFETIME=15min, REFRESH_TOKEN_LIFETIME=7days
+- [x] Enable ROTATE_REFRESH_TOKENS = True and BLACKLIST_AFTER_ROTATION = True
+- [x] Typecheck passes
 
 ---
 

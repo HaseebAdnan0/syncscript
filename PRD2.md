@@ -52,16 +52,16 @@ Create a secure, collaborative Knowledge Vault system where researchers can crea
 **Description:** As a developer, I need the through model for vault members with roles.
 
 **Acceptance Criteria:**
-- [ ] UUID primary key
-- [ ] `vault` ForeignKey to Vault with CASCADE
-- [ ] `user` ForeignKey to User with CASCADE
-- [ ] `role` CharField with RoleChoices, default CONTRIBUTOR
-- [ ] `added_at` DateTimeField auto_now_add=True
-- [ ] `added_by` ForeignKey to User, SET_NULL, null=True, related_name='memberships_created'
-- [ ] `get_role_weight()` method returns weight from ROLE_WEIGHTS
-- [ ] unique_together constraint on ['vault', 'user']
-- [ ] Index on ['vault', 'role'] and ['user']
-- [ ] Typecheck passes
+- [x] UUID primary key
+- [x] `vault` ForeignKey to Vault with CASCADE
+- [x] `user` ForeignKey to User with CASCADE
+- [x] `role` CharField with RoleChoices, default CONTRIBUTOR
+- [x] `added_at` DateTimeField auto_now_add=True
+- [x] `added_by` ForeignKey to User, SET_NULL, null=True, related_name='memberships_created'
+- [x] `get_role_weight()` method returns weight from ROLE_WEIGHTS
+- [x] unique_together constraint on ['vault', 'user']
+- [x] Index on ['vault', 'role'] and ['user']
+- [x] Typecheck passes
 
 ### US-005: Add members ManyToMany to Vault
 **Description:** As a developer, I need the members relationship on Vault using VaultMembership as through model.

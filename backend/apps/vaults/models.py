@@ -44,3 +44,49 @@ class Vault(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class VaultMembership(models.Model):
+    """
+    Through model for vault members with role-based access.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    vault = models.ForeignKey(
+        Vault,
+        on_delete=models.CASCADE,
+        related_name='memberships'
+    )
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='vault_memberships'
+    )
+    role = models.CharField(
+        max_length=20,
+        choices=RoleChoices.choices,
+        default=RoleChoices.CONTRIBUTOR
+    )
+    added_at = models.DateTimeField(auto_now_add=True)
+    added_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='memberships_created'
+    )
+
+    class Meta:
+        db_table = 'vault_memberships'
+        unique_together = [['vault', 'user']]
+        indexes = [
+            models.Index(fields=['vault', 'role']),
+            models.Index(fields=['user']),
+        ]
+
+    def get_role_weight(self):
+        """
+        Returns the numeric weight for this membership's role.
+        """
+        return ROLE_WEIGHTS.get(self.role, 0)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.vault.name} ({self.role})"
