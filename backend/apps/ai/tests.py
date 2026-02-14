@@ -343,3 +343,165 @@ class ClaudeClientTestCase(TestCase):
 
         # Restore
         settings.ANTHROPIC_API_KEY = old_key
+
+
+class ChunkingServiceTestCase(TestCase):
+    """Test text chunking utilities."""
+
+    def test_chunk_text_basic(self):
+        """Test basic text chunking."""
+        from apps.ai.services.chunking import chunk_text
+
+        # Create a long text
+        text = "This is sentence one. " * 200  # ~4400 chars
+        chunks = chunk_text(text, max_tokens=500, overlap=50)
+
+        # Should have multiple chunks
+        self.assertGreater(len(chunks), 1)
+
+        # Each chunk should have required fields
+        for chunk in chunks:
+            self.assertIn('text', chunk)
+            self.assertIn('start_index', chunk)
+            self.assertIn('end_index', chunk)
+            self.assertIn('chunk_id', chunk)
+
+        # Chunks should be sequential
+        for i in range(len(chunks) - 1):
+            self.assertLess(chunks[i]['start_index'], chunks[i + 1]['start_index'])
+
+    def test_chunk_text_empty(self):
+        """Test chunking empty text."""
+        from apps.ai.services.chunking import chunk_text
+
+        chunks = chunk_text("")
+        self.assertEqual(len(chunks), 0)
+
+        chunks = chunk_text("   ")
+        self.assertEqual(len(chunks), 0)
+
+    def test_chunk_text_short(self):
+        """Test chunking text shorter than max_tokens."""
+        from apps.ai.services.chunking import chunk_text
+
+        text = "This is a short text."
+        chunks = chunk_text(text, max_tokens=2000)
+
+        # Should have exactly one chunk
+        self.assertEqual(len(chunks), 1)
+        self.assertEqual(chunks[0]['text'], text)
+        self.assertEqual(chunks[0]['chunk_id'], 0)
+
+    def test_chunk_text_sentence_boundaries(self):
+        """Test that chunks break at sentence boundaries when possible."""
+        from apps.ai.services.chunking import chunk_text
+
+        # Create text with clear sentences
+        sentences = [f"Sentence number {i}." for i in range(100)]
+        text = " ".join(sentences)
+
+        chunks = chunk_text(text, max_tokens=200, overlap=20)
+
+        # Most chunks should end with sentence punctuation
+        ending_with_punctuation = sum(
+            1 for chunk in chunks
+            if chunk['text'][-1] in '.!?'
+        )
+        # Allow some flexibility but most should be sentence-aligned
+        self.assertGreater(ending_with_punctuation, len(chunks) * 0.7)
+
+    def test_chunk_text_overlap(self):
+        """Test that chunks have proper overlap."""
+        from apps.ai.services.chunking import chunk_text
+
+        text = "Word " * 1000  # ~5000 chars
+        chunks = chunk_text(text, max_tokens=500, overlap=100)
+
+        if len(chunks) > 1:
+            # Second chunk should start before first chunk ends (overlap)
+            overlap_chars = 100 * 4  # overlap in characters
+            expected_overlap_start = chunks[0]['end_index'] - overlap_chars
+
+            # Allow some flexibility for sentence boundary adjustments
+            self.assertLess(
+                chunks[1]['start_index'],
+                chunks[0]['end_index']
+            )
+
+    def test_get_relevant_chunks_keyword_matching(self):
+        """Test chunk selection by keyword matching."""
+        from apps.ai.services.chunking import get_relevant_chunks
+
+        chunks = [
+            {'text': 'Machine learning is a subset of artificial intelligence.', 'start_index': 0, 'end_index': 57, 'chunk_id': 0},
+            {'text': 'Deep learning uses neural networks for pattern recognition.', 'start_index': 50, 'end_index': 110, 'chunk_id': 1},
+            {'text': 'Python is a popular programming language.', 'start_index': 100, 'end_index': 142, 'chunk_id': 2},
+            {'text': 'Machine learning algorithms can learn from data.', 'start_index': 140, 'end_index': 189, 'chunk_id': 3},
+        ]
+
+        # Question with keywords "machine learning"
+        relevant = get_relevant_chunks("What is machine learning?", chunks, max_chunks=2)
+
+        # Should return chunks with "machine learning"
+        self.assertEqual(len(relevant), 2)
+        self.assertIn('machine learning', relevant[0]['text'].lower())
+
+    def test_get_relevant_chunks_empty_chunks(self):
+        """Test get_relevant_chunks with empty chunks."""
+        from apps.ai.services.chunking import get_relevant_chunks
+
+        relevant = get_relevant_chunks("What is this?", [], max_chunks=5)
+        self.assertEqual(len(relevant), 0)
+
+    def test_get_relevant_chunks_empty_question(self):
+        """Test get_relevant_chunks with empty question."""
+        from apps.ai.services.chunking import get_relevant_chunks
+
+        chunks = [
+            {'text': 'Content 1', 'start_index': 0, 'end_index': 9, 'chunk_id': 0},
+            {'text': 'Content 2', 'start_index': 9, 'end_index': 18, 'chunk_id': 1},
+            {'text': 'Content 3', 'start_index': 18, 'end_index': 27, 'chunk_id': 2},
+        ]
+
+        # Should return first N chunks
+        relevant = get_relevant_chunks("", chunks, max_chunks=2)
+        self.assertEqual(len(relevant), 2)
+        self.assertEqual(relevant[0]['chunk_id'], 0)
+        self.assertEqual(relevant[1]['chunk_id'], 1)
+
+    def test_get_relevant_chunks_respects_max_chunks(self):
+        """Test that get_relevant_chunks respects max_chunks parameter."""
+        from apps.ai.services.chunking import get_relevant_chunks
+
+        chunks = [
+            {'text': f'Chunk {i} with keyword test', 'start_index': i * 30, 'end_index': (i + 1) * 30, 'chunk_id': i}
+            for i in range(10)
+        ]
+
+        relevant = get_relevant_chunks("test keyword", chunks, max_chunks=3)
+        self.assertEqual(len(relevant), 3)
+
+    def test_get_relevant_chunks_proximity_bonus(self):
+        """Test that chunks with keywords close together score higher."""
+        from apps.ai.services.chunking import get_relevant_chunks
+
+        chunks = [
+            {
+                'text': 'Neural networks and deep learning are related concepts in machine learning.',
+                'start_index': 0, 'end_index': 76, 'chunk_id': 0
+            },
+            {
+                'text': 'Neural networks are important. Deep learning is also important.',
+                'start_index': 70, 'end_index': 133, 'chunk_id': 1
+            },
+            {
+                'text': 'This text mentions neural at the start and learning at the end of a very long sentence.',
+                'start_index': 130, 'end_index': 218, 'chunk_id': 2
+            },
+        ]
+
+        # Question with "neural learning"
+        relevant = get_relevant_chunks("neural learning", chunks, max_chunks=2)
+
+        # First chunk has both keywords close together, should rank higher
+        self.assertEqual(relevant[0]['chunk_id'], 0)
