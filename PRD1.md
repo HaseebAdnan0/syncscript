@@ -77,11 +77,11 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a developer, I need Redis configured as the cache backend for rate limiting.
 
 **Acceptance Criteria:**
-- [ ] Add django-redis to requirements.txt if not present
-- [ ] Configure CACHES in settings.py with Redis backend
-- [ ] Use REDIS_URL from environment variable with fallback
-- [ ] Add RATELIMIT_USE_CACHE = 'default' setting
-- [ ] Typecheck passes
+- [x] Add django-redis to requirements.txt if not present
+- [x] Configure CACHES in settings.py with Redis backend
+- [x] Use REDIS_URL from environment variable with fallback
+- [x] Add RATELIMIT_USE_CACHE = 'default' setting
+- [x] Typecheck passes
 
 ---
 

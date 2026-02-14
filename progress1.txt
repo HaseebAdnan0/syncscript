@@ -16,3 +16,20 @@ Learnings for future iterations:
 - Django's system check (`python manage.py check`) is the typecheck for Django projects
 - No database connection required for makemigrations or check commands
 ---
+
+## Iteration 2 - Configure Django settings for custom User model (US-004)
+- Added 'rest_framework_simplejwt.token_blacklist' to INSTALLED_APPS
+- Fixed daphne ordering issue (must come before django.contrib.staticfiles)
+- Verified all other settings were already configured from previous work
+- Django system check passes
+
+Files changed:
+- backend/config/settings.py (added token_blacklist, reordered daphne)
+- PRD1.md (marked US-004 complete)
+
+Learnings for future iterations:
+- Most JWT/auth settings were already configured in settings.py
+- Daphne has strict ordering requirement: must be first in INSTALLED_APPS before staticfiles
+- Always run `python manage.py check` after modifying settings
+- Settings already included: AUTH_USER_MODEL, JWT config, ROTATE/BLACKLIST flags
+---

@@ -12,3 +12,19 @@
   - Pre-existing typecheck error exists with missing Vault model in vaults app - unrelated to WebSocket dependencies
   - Imports test confirms packages are functional
 ---
+
+## Iteration 2 - US-002: Configure CHANNEL_LAYERS in Django settings
+- Added 'channels' and 'daphne' to INSTALLED_APPS in settings.py
+- Configured CHANNEL_LAYERS with RedisChannelLayer backend
+  - Backend: 'channels_redis.core.RedisChannelLayer'
+  - Hosts from REDIS_URL environment variable (defaults to redis://localhost:6379/0)
+  - Capacity: 1500, Expiry: 10 seconds
+- Added ASGI_APPLICATION = 'config.asgi.application'
+- Files changed: backend/config/settings.py
+- Verified configuration loads correctly with Django startup check
+- Typecheck passed successfully
+- Learnings for future iterations:
+  - Settings.py auto-commits may happen via hooks - check git status after edits
+  - Django settings can be tested with python -c import to verify configuration
+  - REDIS_URL should follow format: redis://host:port/db
+---

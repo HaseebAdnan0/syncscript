@@ -33,6 +33,11 @@ class Vault(models.Model):
     is_archived = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    members = models.ManyToManyField(
+        User,
+        through='VaultMembership',
+        related_name='vaults'
+    )
 
     class Meta:
         db_table = 'vaults'

@@ -35,3 +35,15 @@
   - Django check vaults (not apps.vaults) is the correct app label for system checks
   - User model is already imported via get_user_model() from previous code
 ---
+
+## Iteration 4 - US-004: Create VaultMembership model
+- Added VaultMembership through model with role-based access
+- Files changed:
+  - backend/apps/vaults/models.py (added VaultMembership class)
+  - PRD2.md (marked US-004 as complete)
+- Learnings for future iterations:
+  - unique_together uses list of lists syntax: [['field1', 'field2']]
+  - get_role_weight() method uses dict.get() to safely return weight or 0
+  - related_name on added_by must be unique: 'memberships_created' not 'memberships'
+  - Sometimes Django check shows transient errors (re-run if suspicious)
+---
