@@ -1,9 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useOnboarding } from '@/providers/OnboardingProvider';
 import { useAuthStore } from '@/stores/authStore';
 import { useRouter } from 'next/navigation';
+import { toast } from '@/hooks/useToast';
 import WelcomeModal from './WelcomeModal';
 import PathSelection from './PathSelection';
 import GuidedVaultWizard from './GuidedVaultWizard';
@@ -15,9 +16,50 @@ import CompletionCelebration from './CompletionCelebration';
  * Manages the onboarding flow state machine and renders appropriate component based on current step
  */
 export default function OnboardingFlow() {
-  const { step, completed, updateOnboarding, completeOnboarding } = useOnboarding();
+  const { step, completed, updateOnboarding, completeOnboarding, isLoading } = useOnboarding();
   const { user } = useAuthStore();
   const router = useRouter();
+  const hasShownResumeToast = useRef(false);
+
+  // Show "resuming" toast when user returns to incomplete onboarding
+  useEffect(() => {
+    // Only show toast if:
+    // 1. Onboarding is not completed
+    // 2. There is a step set (user was in progress)
+    // 3. Step is not 'welcome' (not starting fresh)
+    // 4. Toast hasn't been shown yet (ref prevents multiple triggers)
+    // 5. Not loading (data is ready)
+    if (
+      !completed &&
+      step &&
+      step !== 'welcome' &&
+      !hasShownResumeToast.current &&
+      !isLoading &&
+      user
+    ) {
+      hasShownResumeToast.current = true;
+
+      // Show resume toast with appropriate message based on step
+      let resumeMessage = 'Continuing where you left off...';
+
+      if (step === 'path') {
+        resumeMessage = 'Choose your onboarding path to continue';
+      } else if (step.startsWith('guided-')) {
+        resumeMessage = 'Continue creating your vault';
+      } else if (step === 'demo') {
+        resumeMessage = 'Loading demo vault...';
+      } else if (step === 'tutorial') {
+        resumeMessage = 'Resume your interactive tutorial';
+      } else if (step === 'complete') {
+        resumeMessage = 'Almost done! Complete your onboarding';
+      }
+
+      toast({
+        title: 'Welcome back!',
+        description: resumeMessage,
+      });
+    }
+  }, [completed, step, isLoading, user]);
 
   // Don't render if onboarding is already completed or user not loaded
   if (completed || !user) {

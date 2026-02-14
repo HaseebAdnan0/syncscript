@@ -275,13 +275,13 @@ Create a comprehensive new user onboarding experience for SyncScript that guides
 **Description:** As a user who abandoned onboarding, I want to resume from my last step when I return.
 
 **Acceptance Criteria:**
-- [ ] On app load, fetch onboarding state from API
-- [ ] If `onboarding_completed === false` and `step` exists, resume from that step
-- [ ] If step is 'guided-2', open wizard at step 2
-- [ ] If step is 'tutorial', start tutorial from beginning (simpler than tracking sub-step)
-- [ ] Show brief "Continuing where you left off..." toast
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] On app load, fetch onboarding state from API
+- [x] If `onboarding_completed === false` and `step` exists, resume from that step
+- [x] If step is 'guided-2', open wizard at step 2
+- [x] If step is 'tutorial', start tutorial from beginning (simpler than tracking sub-step)
+- [x] Show brief "Continuing where you left off..." toast
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-021: Add restart tutorial to settings
 **Description:** As a user, I want to restart the tutorial from settings so I can refresh my memory.

@@ -447,3 +447,34 @@
   - Verification covers: provider integration, conditional rendering, authenticated-only display
 ---
 
+
+## Iteration 21 - Resume onboarding on return (US-020)
+- Enhanced OnboardingFlow component to show "Welcome back!" toast when resuming incomplete onboarding
+- Added useEffect hook to detect resume scenario: !completed && step && step !== 'welcome'
+- Implemented context-aware toast messages based on current step:
+  - 'path': "Choose your onboarding path to continue"
+  - 'guided-1/2/3': "Continue creating your vault"
+  - 'demo': "Loading demo vault..."
+  - 'tutorial': "Resume your interactive tutorial"
+  - 'complete': "Almost done! Complete your onboarding"
+- Used useRef to prevent toast from showing multiple times in same session
+- Toast only shows when: !completed && step exists && step !== 'welcome' && !isLoading && user loaded
+- OnboardingProvider already fetches state on mount (feature already working from US-007)
+- OnboardingFlow already resumes at correct step via switch statement (feature already working from US-018)
+- GuidedVaultWizard already loads saved data from onboarding.data (feature already working from US-010-013)
+- Tutorial starts from beginning as designed (no sub-step tracking needed)
+- Added comprehensive manual verification checklist to .planning/MANUAL_VERIFICATION.md
+- Files changed: OnboardingFlow.tsx, .planning/MANUAL_VERIFICATION.md, PRD20.md, progress20.txt
+- Typecheck passes (no new onboarding errors, pre-existing SourcesList errors unrelated)
+- Learnings for future iterations:
+  - OnboardingProvider already handles state fetching on app load via useEffect + fetchOnboardingState
+  - OnboardingFlow switch statement already handles step-based rendering (resume built-in)
+  - GuidedVaultWizard reads step from context and renders appropriate wizard step
+  - Toast pattern: import { toast } from '@/hooks/useToast', call toast({ title, description })
+  - useRef pattern to prevent duplicate toasts: hasShownToast.current guards useEffect
+  - Context-aware messaging improves UX by telling user what to expect next
+  - Check isLoading before showing toast to ensure data is ready
+  - Resume detection: step exists && step !== 'welcome' (welcome = fresh start, not resume)
+  - Manual verification checklist should cover: resume scenarios, fresh start, completed state, toast behavior
+---
+

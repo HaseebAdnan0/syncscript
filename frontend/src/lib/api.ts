@@ -360,4 +360,52 @@ export const resendVerificationEmail = async (
   }
 };
 
+/**
+ * Request password reset email response
+ */
+export interface RequestPasswordResetResponse {
+  message: string;
+}
+
+/**
+ * Request password reset email for user
+ * Rate limited to 3 requests per hour per IP
+ */
+export const requestPasswordReset = async (
+  email: string
+): Promise<RequestPasswordResetResponse> => {
+  try {
+    const response = await api.post('/auth/password-reset/', { email });
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response?.status === 429) {
+      throw new Error('Too many requests. Please wait a moment before trying again.');
+    }
+    throw error;
+  }
+};
+
+/**
+ * Confirm password reset response
+ */
+export interface ConfirmPasswordResetResponse {
+  message: string;
+}
+
+/**
+ * Confirm password reset with uid, token, and new password
+ */
+export const confirmPasswordReset = async (
+  uid: string,
+  token: string,
+  newPassword: string
+): Promise<ConfirmPasswordResetResponse> => {
+  const response = await api.post('/auth/password-reset-confirm/', {
+    uid,
+    token,
+    new_password: newPassword,
+  });
+  return response.data;
+};
+
 export default api;

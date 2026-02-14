@@ -5,6 +5,11 @@ import { SourceCard } from './SourceCard';
 import { SourceTableRow } from './SourceTableRow';
 import { FileQuestion } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { FileUploadZone } from '@/components/features/uploads/FileUploadZone';
+import { UploadProgressBar } from '@/components/features/uploads/UploadProgressBar';
+import { UploadErrorState } from '@/components/features/uploads/UploadErrorState';
+import { useFileUpload } from '@/hooks/useFileUpload';
+import { useState, useEffect, useCallback } from 'react';
 
 interface SourcesListProps {
   sources: Source[];
@@ -14,6 +19,7 @@ interface SourcesListProps {
   onAddSource?: () => void;
   onEdit?: (source: Source) => void;
   onDelete?: (source: Source) => void;
+  onRefresh?: () => void;
 }
 
 // Loading skeleton for grid view
@@ -88,7 +94,87 @@ export function SourcesList({
   onAddSource,
   onEdit,
   onDelete,
+  onRefresh,
 }: SourcesListProps) {
+  // File upload management
+  const { uploads, uploadFile, retryUpload, cancelUpload } = useFileUpload();
+  const [uploadingFiles, setUploadingFiles] = useState<boolean>(false);
+
+  // Handle upload completion - refresh sources list
+  const handleUploadComplete = useCallback(() => {
+    if (onRefresh) {
+      onRefresh();
+    }
+  }, [onRefresh]);
+
+  // Handle file selection from upload zone
+  const handleFilesSelected = async (files: File[]) => {
+    setUploadingFiles(true);
+
+    for (const file of files) {
+      try {
+        await uploadFile(file, vaultId);
+      } catch (error) {
+        console.error('Upload failed:', error);
+      }
+    }
+  };
+
+  // Monitor uploads for completion
+  useEffect(() => {
+    const allUploads = Array.from(uploads.values());
+    const hasCompletedUploads = allUploads.some(u => u.status === 'complete');
+
+    if (hasCompletedUploads && uploadingFiles) {
+      handleUploadComplete();
+      setUploadingFiles(false);
+    }
+  }, [uploads, uploadingFiles, handleUploadComplete]);
+  // Get active uploads as array
+  const activeUploads = Array.from(uploads.values());
+
+  // Upload zone and progress rendering
+  const renderUploadSection = () => (
+    <div className="space-y-4 mb-6">
+      {/* File upload zone */}
+      <FileUploadZone
+        onFilesSelected={handleFilesSelected}
+        accept="application/pdf,image/png,image/jpeg"
+        maxFiles={10}
+      />
+
+      {/* Active uploads progress */}
+      {activeUploads.length > 0 && (
+        <div className="space-y-3">
+          {Array.from(uploads.entries()).map(([uploadId, upload]) => {
+            // Show error state for failed uploads
+            if (upload.status === 'error') {
+              return (
+                <UploadErrorState
+                  key={uploadId}
+                  filename={upload.file.name}
+                  error={upload.error || 'Unknown error'}
+                  onRetry={() => retryUpload(uploadId)}
+                  onDismiss={() => cancelUpload(uploadId)}
+                />
+              );
+            }
+
+            // Show progress bar for uploading/processing/complete uploads
+            return (
+              <UploadProgressBar
+                key={uploadId}
+                filename={upload.file.name}
+                progress={upload.progress}
+                status={upload.status}
+              />
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+
   // Show loading state
   if (isLoading) {
     if (viewMode === 'grid') {
@@ -131,40 +217,46 @@ export function SourcesList({
   // Grid view
   if (viewMode === 'grid') {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {sources.map((source) => (
-          <SourceCard key={source.id} source={source} vaultId={vaultId} />
-        ))}
+      <div>
+        {renderUploadSection()}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {sources.map((source) => (
+            <SourceCard key={source.id} source={source} vaultId={vaultId} />
+          ))}
+        </div>
       </div>
     );
   }
 
   // Table view
   return (
-    <div className="bg-[#0F1115] border border-white/10 rounded-2xl overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-black/50 border-b border-white/10 sticky top-0">
-            <tr>
-              <th className="px-4 py-3 text-left text-sm font-semibold text-[#94A3B8]">Type</th>
-              <th className="px-4 py-3 text-left text-sm font-semibold text-[#94A3B8]">Title</th>
-              <th className="px-4 py-3 text-left text-sm font-semibold text-[#94A3B8]">Contributor</th>
-              <th className="px-4 py-3 text-left text-sm font-semibold text-[#94A3B8]">Date Added</th>
-              <th className="px-4 py-3 text-left text-sm font-semibold text-[#94A3B8]">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {sources.map((source) => (
-              <SourceTableRow
-                key={source.id}
-                source={source}
-                vaultId={vaultId}
-                onEdit={onEdit}
-                onDelete={onDelete}
-              />
-            ))}
-          </tbody>
-        </table>
+    <div>
+      {renderUploadSection()}
+      <div className="bg-[#0F1115] border border-white/10 rounded-2xl overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-black/50 border-b border-white/10 sticky top-0">
+              <tr>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-[#94A3B8]">Type</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-[#94A3B8]">Title</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-[#94A3B8]">Contributor</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-[#94A3B8]">Date Added</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-[#94A3B8]">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sources.map((source) => (
+                <SourceTableRow
+                  key={source.id}
+                  source={source}
+                  vaultId={vaultId}
+                  onEdit={onEdit}
+                  onDelete={onDelete}
+                />
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

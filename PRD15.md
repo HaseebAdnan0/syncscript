@@ -191,13 +191,13 @@ This feature uses Claude as the AI backbone with a simple chunking strategy (no 
 **Description:** As a user, I want a panel showing AI insights about my vault's research themes.
 
 **Acceptance Criteria:**
-- [ ] Create `components/features/ai/ResearchInsightsPanel.tsx`
-- [ ] Props: `vaultId`, `insights` (nullable), `onRefresh`
-- [ ] Sections: Themes (tag cloud), Research Gaps (list), Cross-References (list), Suggested Searches
-- [ ] "Generate Insights" button if none exist
-- [ ] "Refresh" button with last-updated timestamp
-- [ ] Empty state for vaults with < 2 sources
-- [ ] Typecheck passes
+- [x] Create `components/features/ai/ResearchInsightsPanel.tsx`
+- [x] Props: `vaultId`, `insights` (nullable), `onRefresh`
+- [x] Sections: Themes (tag cloud), Research Gaps (list), Cross-References (list), Suggested Searches
+- [x] "Generate Insights" button if none exist
+- [x] "Refresh" button with last-updated timestamp
+- [x] Empty state for vaults with < 2 sources
+- [x] Typecheck passes
 
 ### US-016: Create ThemeCloud component
 **Description:** As a user, I want to visualize research themes as a tag cloud.

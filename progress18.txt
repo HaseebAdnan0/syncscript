@@ -507,3 +507,22 @@
   - selectedIndex >= 0 check prevents executing action when nothing selected
   - Note: Pre-existing build error in src/app/auth/forgot-password/page.tsx (duplicate auth folders issue) prevents full typecheck - this is unrelated to search feature
 ---
+## Iteration 25 - US-028: Create useGlobalSearchShortcut hook
+- Created useGlobalSearchShortcut.ts hook to handle Cmd+K (Mac) / Ctrl+K (Windows) global shortcut
+- Detects platform using navigator.platform to determine correct modifier key (Meta for Mac, Ctrl for Windows/Linux)
+- Prevents default browser behavior (e.g., Chrome's address bar focus) with e.preventDefault()
+- Only triggers when not in input/textarea/contentEditable to avoid interfering with user typing
+- Returns { isOpen, open, close, toggle } for external control
+- Uses useState for modal state and useEffect for global keydown listener with cleanup
+- Files changed:
+  - frontend/src/hooks/useGlobalSearchShortcut.ts (created)
+  - PRD18.md (marked US-028 complete)
+- Learnings for future iterations:
+  - Platform detection: navigator.platform.toUpperCase().indexOf('MAC') >= 0 for Mac vs Windows/Linux
+  - Modifier key detection: e.metaKey for Mac Cmd key, e.ctrlKey for Ctrl key
+  - Input element check: target.tagName === 'INPUT' || 'TEXTAREA' || isContentEditable
+  - Global shortcut pattern: window.addEventListener('keydown') in useEffect with cleanup
+  - Pre-existing TypeScript errors in SourcesList.tsx unrelated to search feature
+  - Hook itself passes typecheck when tested in isolation
+  - toggle() function uses setIsOpen((prev) => !prev) for state toggling
+---

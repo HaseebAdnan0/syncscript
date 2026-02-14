@@ -463,3 +463,42 @@
   - Three-state UI pattern (loading/success/error) is clean and user-friendly
   - Auto-redirect after success improves UX flow
 ---
+## Iteration 18 - US-018: Create password reset request page (frontend)
+- Created frontend/src/app/auth/forgot-password/page.tsx
+- Implemented two-state page (form and success)
+- Form state:
+  - Email input with validation (checks for @ symbol)
+  - "Send Reset Link" button with loading state (isLoading prop on GradientButton)
+  - Calls /api/v1/auth/password-reset/ via fetch API
+  - "Back to Login" link with ArrowLeft icon
+  - Orange gradient title (#F7931A to #FFD600)
+- Success state:
+  - Orange gradient icon (Mail) in circular background
+  - "Check Your Email" gradient title
+  - Shows email address user entered
+  - 1-hour expiry notice in highlighted box (orange/10 background)
+  - "Back to Login" link
+- Bitcoin DeFi dark theme styling:
+  - GlassCard component for container
+  - GradientButton for CTA
+  - Background #030304, text white/muted
+  - Orange accents throughout
+- Pattern matching with verify-email/pending page:
+  - Same icon treatment (circular gradient background)
+  - Same title styling (orange gradient text-transparent)
+  - Same layout structure (centered max-w-md)
+  - Same toast pattern (title + description)
+- TypeScript typecheck passes
+- Files changed:
+  - frontend/src/app/auth/forgot-password/page.tsx (new)
+  - PRD11.md (marked US-018 complete)
+- Learnings for future iterations:
+  - Use { toast } from '@/hooks/useToast', not useToast() hook
+  - Import GlassCard and GradientButton as default imports
+  - Follow existing auth page patterns for consistency
+  - Linter sometimes removes unused destructured values - be explicit with all state setters
+  - Use fetch API directly, following pattern from verify-email/pending page
+  - Two-state pattern (form/success) works well for request-response flows
+  - Auto-commit happens for completed work
+---
+

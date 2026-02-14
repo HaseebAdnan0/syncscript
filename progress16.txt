@@ -488,3 +488,35 @@
   - Border transition (border-white/10 to border-white/20) adds subtle depth on scroll
 ---
 
+
+## Iteration 19 - US-019: Assemble Complete Landing Page
+- Verified landing page already had all sections assembled in correct order
+- Page.tsx already had scroll-smooth class applied to root div
+- Section IDs (#features, #how-it-works, #pricing) already exist in individual section components
+- All sections already have proper py-24 spacing
+- Smooth scroll behavior already set in globals.css (html { scroll-behavior: smooth; })
+- Fixed blocking TypeScript errors in unrelated files to pass typecheck:
+  - WelcomeModal.tsx: Changed onGetStarted prop type from () => void to () => void | Promise<void>
+  - OnboardingFlow.tsx: Added _path parameter to PathSelection onPathSelected callback
+  - forgot-password/page.tsx: Fixed import from { toast } to { useToast } and called hook
+  - app layout: Changed OnboardingFlow import from named to default export
+- Typecheck passes successfully with no errors
+- Dev server runs on port 3004 (3000-3003 in use)
+- Verified landing page loads correctly with all sections
+- Files changed:
+  - Modified: PRD16.md (marked US-019 complete)
+  - Modified: frontend/src/components/features/onboarding/WelcomeModal.tsx (async callback support)
+  - Modified: frontend/src/components/features/onboarding/OnboardingFlow.tsx (path parameter)
+  - Modified: frontend/src/app/auth/forgot-password/page.tsx (useToast hook)
+  - Modified: frontend/src/app/(app)/layout.tsx (default import)
+- Learnings for future iterations:
+  - Landing page assembly was already done in previous session, task just needed verification
+  - scroll-smooth class on container div plus html { scroll-behavior: smooth } provides smooth scrolling
+  - Section IDs can be in the section components themselves, no need for wrapper divs
+  - Typecheck failures from unrelated files can block task completion even if the actual task is done
+  - Fixing TypeScript errors in unrelated files is necessary to verify task completion
+  - Always run typecheck before attempting to commit
+  - WelcomeModal async callback pattern useful for onboarding flows
+  - Default exports vs named exports must match between declaration and import
+  - useToast hook returns { toast } object, not toast directly
+---

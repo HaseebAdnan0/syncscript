@@ -889,3 +889,94 @@
 ### Issues Found
 (Append any bugs, edge cases, or unexpected behavior discovered during testing)
 
+
+
+---
+
+## PRD20: Onboarding & Interactive Tutorial - US-020 Resume Onboarding - 2026-02-14
+
+### Resume Onboarding Flow
+- [ ] Prerequisites:
+  - Backend running: `cd backend && python manage.py runserver`
+  - Frontend running: `cd frontend && npm run dev`
+  - Test user with `onboarding_completed=false` and a saved step
+- [ ] Update test user's onboarding state via Django admin or shell:
+  ```python
+  from apps.users.models import User
+  user = User.objects.get(username='testuser')
+  user.onboarding_step = 'guided-2'  # Or 'path', 'tutorial', etc.
+  user.onboarding_completed = False
+  user.onboarding_data = {'vaultName': 'Test Vault'}
+  user.save()
+  ```
+
+### Resume Toast Verification
+- [ ] Login to app (or reload page while logged in)
+- [ ] Verify "Welcome back!" toast appears in bottom-right corner
+- [ ] Verify toast description shows context-aware message:
+  - `step='path'`: "Choose your onboarding path to continue"
+  - `step='guided-1/2/3'`: "Continue creating your vault"
+  - `step='demo'`: "Loading demo vault..."
+  - `step='tutorial'`: "Resume your interactive tutorial"
+  - `step='complete'`: "Almost done! Complete your onboarding"
+- [ ] Verify toast uses Bitcoin DeFi styling (orange border, dark background)
+- [ ] Verify toast auto-dismisses after 5-10 seconds
+
+### Resume State Verification
+- [ ] Verify onboarding flow resumes at correct step:
+  - `step='path'` → PathSelection component visible
+  - `step='guided-1'` → GuidedVaultWizard at Step 1 (vault name)
+  - `step='guided-2'` → GuidedVaultWizard at Step 2 (add source)
+  - `step='guided-3'` → GuidedVaultWizard at Step 3 (invite collaborator)
+  - `step='tutorial'` → InteractiveTutorial starts from beginning
+  - `step='complete'` → CompletionCelebration with confetti
+- [ ] For `step='guided-2'`: Verify saved vaultName from onboarding_data pre-fills input
+- [ ] For `step='tutorial'`: Verify tutorial starts from first step (not mid-tutorial)
+
+### Fresh Start (No Resume Toast)
+- [ ] Set user's onboarding_step to `null` or `'welcome'` in database
+- [ ] Login or reload page
+- [ ] Verify NO toast appears (user is starting fresh)
+- [ ] Verify WelcomeModal appears as first step
+
+### Completed Onboarding (No Toast)
+- [ ] Set user's onboarding_completed to `True` in database
+- [ ] Login or reload page
+- [ ] Verify NO toast appears
+- [ ] Verify NO onboarding flow renders (user bypasses onboarding)
+
+### Toast Only Shows Once
+- [ ] Set user's onboarding_step to 'guided-2'
+- [ ] Login to app → verify toast appears
+- [ ] Without reloading, navigate to different page within app
+- [ ] Verify toast does NOT appear again during same session
+- [ ] Reload page → verify toast appears again (new session)
+
+### Mobile Responsiveness
+- [ ] Test on mobile viewport (< 768px width)
+- [ ] Verify toast appears in bottom-right corner
+- [ ] Verify toast text is readable (not truncated)
+- [ ] Verify toast auto-dismisses correctly on mobile
+
+### Expected Behavior
+- OnboardingProvider fetches onboarding state on app load
+- OnboardingFlow reads step from provider context
+- If `completed=false` and `step` exists and `step != 'welcome'`:
+  - Show "Welcome back!" toast with context-specific message
+  - Resume onboarding flow at saved step
+  - Toast only shows once per session (useRef prevents duplicates)
+- If step is 'welcome' or null: No toast (fresh start)
+- If completed=true: No toast, no onboarding flow
+- GuidedVaultWizard loads saved data from onboarding.data field
+- Tutorial starts from beginning (simpler than tracking sub-steps)
+
+### Prerequisites
+1. Backend server running
+2. Frontend dev server running
+3. Test user account with adjustable onboarding state
+4. Django admin or shell access to modify user onboarding fields
+5. Browser DevTools for inspecting state and network requests
+
+### Issues Found
+(Append any bugs, edge cases, or unexpected behavior discovered during testing)
+

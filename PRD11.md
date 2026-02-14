@@ -287,11 +287,11 @@ Replace stub email implementation with production-ready email system using Hosti
 **Description:** As a developer, I need frontend API functions for password reset flow.
 
 **Acceptance Criteria:**
-- [ ] Add `requestPasswordReset(email: string)` to `frontend/src/lib/api.ts`
-- [ ] Add `confirmPasswordReset(uid: string, token: string, newPassword: string)` to API
-- [ ] Both return typed responses
-- [ ] Handle error responses appropriately
-- [ ] Typecheck passes
+- [x] Add `requestPasswordReset(email: string)` to `frontend/src/lib/api.ts`
+- [x] Add `confirmPasswordReset(uid: string, token: string, newPassword: string)` to API
+- [x] Both return typed responses
+- [x] Handle error responses appropriately
+- [x] Typecheck passes
 
 ---
 
