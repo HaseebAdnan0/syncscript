@@ -10,8 +10,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
-from .models import Notification, NotificationPreferences
-from .serializers import NotificationSerializer, NotificationPreferencesSerializer
+from .models import Notification, NotificationPreferences, MutedVault
+from .serializers import NotificationSerializer, NotificationPreferencesSerializer, MutedVaultSerializer
 
 
 class NotificationPagination(PageNumberPagination):
@@ -136,3 +136,88 @@ class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
             {'detail': 'Method not allowed'},
             status=status.HTTP_405_METHOD_NOT_ALLOWED
         )
+
+    @action(detail=False, methods=['get', 'post'], url_path='muted-vaults')
+    def muted_vaults(self, request) -> Response:  # type: ignore[no-untyped-def]
+        """
+        List or mute vaults for current user.
+
+        GET /api/v1/notifications/muted-vaults/
+        Returns list of muted vaults with vault details.
+
+        POST /api/v1/notifications/muted-vaults/
+        Mute a vault by providing { "vault_id": X }
+        Validates user is member of vault before muting.
+        """
+        if request.method == 'GET':
+            muted = MutedVault.objects.filter(user=request.user).select_related('vault')
+            serializer = MutedVaultSerializer(muted, many=True)
+            return Response(serializer.data)
+
+        elif request.method == 'POST':
+            vault_id = request.data.get('vault_id')
+            if not vault_id:
+                return Response(
+                    {'detail': 'vault_id is required'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Import here to avoid circular imports
+            from apps.vaults.models import Vault, VaultMembership
+
+            # Validate vault exists
+            try:
+                vault = Vault.objects.get(id=vault_id)
+            except Vault.DoesNotExist:
+                return Response(
+                    {'detail': 'Vault not found'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+            # Validate user is a member of this vault
+            is_member = VaultMembership.objects.filter(
+                vault=vault,
+                user=request.user
+            ).exists()
+
+            if not is_member:
+                return Response(
+                    {'detail': 'You must be a member of this vault to mute it'},
+                    status=status.HTTP_403_FORBIDDEN
+                )
+
+            # Create or get muted vault (idempotent)
+            muted, created = MutedVault.objects.get_or_create(
+                user=request.user,
+                vault=vault
+            )
+
+            serializer = MutedVaultSerializer(muted)
+            response_status = status.HTTP_201_CREATED if created else status.HTTP_200_OK
+            return Response(serializer.data, status=response_status)
+
+        return Response(
+            {'detail': 'Method not allowed'},
+            status=status.HTTP_405_METHOD_NOT_ALLOWED
+        )
+
+    @action(detail=False, methods=['delete'], url_path='muted-vaults/(?P<vault_id>[^/.]+)')
+    def unmute_vault(self, request, vault_id=None) -> Response:  # type: ignore[no-untyped-def]
+        """
+        Unmute a vault for current user.
+
+        DELETE /api/v1/notifications/muted-vaults/{vault_id}/
+
+        Idempotent: returns 204 even if vault wasn't muted.
+        """
+        try:
+            muted = MutedVault.objects.get(
+                user=request.user,
+                vault_id=vault_id
+            )
+            muted.delete()
+        except MutedVault.DoesNotExist:
+            # Idempotent - no error if already unmuted
+            pass
+
+        return Response(status=status.HTTP_204_NO_CONTENT)

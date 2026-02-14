@@ -99,15 +99,15 @@ Create a comprehensive user dashboard as the primary logged-in landing page for 
 **Description:** As a user, I want to see a personalized greeting with my quick stats so I feel welcomed and informed at a glance.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/dashboard/WelcomeHeader.tsx`
-- [ ] Time-based greeting: "Good morning/afternoon/evening, {firstName}"
-- [ ] Morning: 5am-12pm, Afternoon: 12pm-5pm, Evening: 5pm-5am
-- [ ] Quick stats row showing: Vaults count, Sources count, Annotations this week
-- [ ] Stats displayed as cards with icons and values
-- [ ] Uses gradient text for greeting (orange to gold)
-- [ ] Fetches data from `/api/v1/dashboard/stats/`
-- [ ] Shows skeleton loader while fetching
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/dashboard/WelcomeHeader.tsx`
+- [x] Time-based greeting: "Good morning/afternoon/evening, {firstName}"
+- [x] Morning: 5am-12pm, Afternoon: 12pm-5pm, Evening: 5pm-5am
+- [x] Quick stats row showing: Vaults count, Sources count, Annotations this week
+- [x] Stats displayed as cards with icons and values
+- [x] Uses gradient text for greeting (orange to gold)
+- [x] Fetches data from `/api/v1/dashboard/stats/`
+- [x] Shows skeleton loader while fetching
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-008: Create continue research section

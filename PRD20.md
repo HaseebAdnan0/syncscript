@@ -102,17 +102,17 @@ Create a comprehensive new user onboarding experience for SyncScript that guides
 **Description:** As a new user, I want to see a welcome modal after first login so I understand what SyncScript offers.
 
 **Acceptance Criteria:**
-- [ ] Create `components/features/onboarding/WelcomeModal.tsx`
-- [ ] Shows "Welcome to SyncScript, {name}!" heading with gradient text
-- [ ] Displays 3 feature highlights with illustrations/icons:
+- [x] Create `components/features/onboarding/WelcomeModal.tsx`
+- [x] Shows "Welcome to SyncScript, {name}!" heading with gradient text
+- [x] Displays 3 feature highlights with illustrations/icons:
   - Knowledge Vaults for organized research
   - Real-time collaboration with team
   - Annotations and citations management
-- [ ] "Let's get started" CTA button styled per design system
-- [ ] Modal uses glass morphism aesthetic
-- [ ] Responsive: works on mobile screens
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] "Let's get started" CTA button styled per design system
+- [x] Modal uses glass morphism aesthetic
+- [x] Responsive: works on mobile screens
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-009: Create PathSelection component
 **Description:** As a new user, I want to choose my onboarding path so I can learn in my preferred way.

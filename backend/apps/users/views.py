@@ -1025,6 +1025,45 @@ class CompleteOAuthEmailView(APIView):
         return response
 
 
+class ConnectedAccountsListView(APIView):
+    """
+    List connected OAuth providers for authenticated user (US-011).
+
+    GET /api/v1/auth/oauth/connected/
+    Returns list of OAuth providers linked to user's account with metadata.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        """Retrieve list of connected OAuth providers."""
+        from allauth.socialaccount.models import SocialAccount
+
+        user = request.user
+
+        # Get all SocialAccounts for this user
+        social_accounts = SocialAccount.objects.filter(user=user).select_related('user')
+
+        # Build response list with provider-specific data
+        connected_accounts = []
+        for account in social_accounts:
+            provider_data = {
+                'provider': account.provider,
+                'connected_at': account.date_joined,
+                'email': account.extra_data.get('email', ''),
+            }
+
+            # Add provider-specific data
+            if account.provider == 'google':
+                provider_data['profile_picture'] = account.extra_data.get('picture', '')
+            elif account.provider == 'github':
+                provider_data['username'] = account.extra_data.get('login', '')
+                provider_data['avatar_url'] = account.extra_data.get('avatar_url', '')
+
+            connected_accounts.append(provider_data)
+
+        return Response(connected_accounts, status=status.HTTP_200_OK)
+
+
 class UnsubscribeView(APIView):
     """
     Unsubscribe from email notifications via token link (US-011).

@@ -196,15 +196,15 @@ Create SyncScript's production landing page following the Bitcoin DeFi aesthetic
 **Description:** As a developer, I need a pricing card component for the pricing section.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/marketing/PricingCard.tsx`
-- [ ] Props: tier name, price, features list, isPopular, ctaLink
-- [ ] Card style matches design system
-- [ ] Popular tier: `scale-105`, orange border, "Popular" badge
-- [ ] Feature list with check icons for included, x icons for excluded
-- [ ] CTA button links to `/register?plan={tier}`
-- [ ] Primary gradient button for popular, outline for others
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/marketing/PricingCard.tsx`
+- [x] Props: tier name, price, features list, isPopular, ctaLink
+- [x] Card style matches design system
+- [x] Popular tier: `scale-105`, orange border, "Popular" badge
+- [x] Feature list with check icons for included, x icons for excluded
+- [x] CTA button links to `/register?plan={tier}`
+- [x] Primary gradient button for popular, outline for others
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-015: Create Pricing Section
 **Description:** As a user, I want to see pricing options so I can choose the right plan.

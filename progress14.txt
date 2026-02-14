@@ -232,3 +232,36 @@ Learnings for future iterations:
 
 ---
 
+
+## Iteration 7 - US-007: Implement citation caching
+- Created apps/citations/utils.py with invalidate_citation_cache() utility function
+- Created apps/citations/signals.py with pre_save signal for automatic cache invalidation
+- Signal detects when source metadata changes and removes cached citations
+- Signal intelligently ignores changes that only update the citations cache itself
+- Registered signal in CitationsConfig.ready() method
+- Added 6 comprehensive tests:
+  - test_invalidate_citation_cache_utility: verifies utility function works
+  - test_invalidate_citation_cache_empty_metadata: handles empty metadata dict
+  - test_invalidate_citation_cache_no_citations: handles missing citations key
+  - test_signal_invalidates_cache_on_metadata_change: signal fires on metadata change
+  - test_signal_does_not_invalidate_cache_on_other_field_change: signal ignores title/description changes
+  - test_signal_does_not_trigger_on_new_source: signal doesn't run on create
+- Tests: All 78 tests pass (6 new + 72 existing)
+- Typecheck: 0 errors on new files (utils.py, signals.py, apps.py)
+- Files changed: backend/apps/citations/utils.py (new), backend/apps/citations/signals.py (new), backend/apps/citations/apps.py, backend/apps/citations/tests.py, PRD14.md
+- Committed: acf15cc
+
+Learnings for future iterations:
+- Django signals: use pre_save to intercept before database write
+- DirtyFieldsMixin: provides is_dirty() and get_dirty_fields() to detect changes
+- Signal sender can use string format 'app.Model' to avoid import issues
+- Cache invalidation strategy: only invalidate when non-citation metadata changes
+- Compare old vs new metadata without 'citations' key to avoid infinite loops
+- JSONField with default=dict never returns None, but check anyway for safety
+- Test signal behavior: create source first, then modify to trigger signal
+- When testing cache persistence, must call refresh_from_db() to see DB state
+- Signal kwargs: raw, using, update_fields - check raw=True to skip fixture loads
+- Django signal best practice: register in AppConfig.ready() method
+
+---
+

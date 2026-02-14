@@ -223,3 +223,26 @@ In Progress - US-004 complete
   - Always verify if endpoint already exists before implementing
   - Comprehensive tests should cover edge cases: empty, partial, full, user isolation, auth
 ---
+## Iteration 9 - US-009: Notification Preferences Endpoints
+- Implemented GET and PATCH /api/v1/notifications/preferences/ endpoints
+- GET auto-creates preferences using get_or_create if missing
+- PATCH supports partial updates with partial=True
+- Added comprehensive test suite with 6 test cases:
+  - Get preferences returns all fields with default values
+  - Auto-creates preferences if missing on GET
+  - PATCH updates specified fields in database
+  - Validates email_digest_frequency choices (400 on invalid)
+  - Partial updates preserve unchanged fields
+  - Requires authentication
+- All tests pass (6/6), mypy typecheck passes
+- Files changed:
+  - backend/apps/notifications/views.py (added preferences action)
+  - backend/apps/notifications/tests.py (added NotificationPreferencesTestCase)
+  - PRD19.md (marked US-009 complete)
+- Learnings for future iterations:
+  - Use get_or_create() for auto-creating related models on first access
+  - @action(detail=False) with methods=['get', 'patch'] for single resource update
+  - partial=True in serializer enables PATCH-style partial updates
+  - Validation in serializer (validate_field_name) runs automatically
+  - PATCH should handle both GET and PATCH in same action method
+---

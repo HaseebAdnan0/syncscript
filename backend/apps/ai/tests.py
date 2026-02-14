@@ -857,7 +857,7 @@ class VaultInsightsTestCase(APITestCase):
 
             # Debug output
             if response.status_code != 200:
-                print(f'\nDEBUG: Status={response.status_code}, Data={response.data}')
+                print(f'\nDEBUG: Status={response.status_code}, Content={response.content}')
 
             self.assertEqual(response.status_code, 200)
             self.assertEqual(len(response.data['themes']), 2)

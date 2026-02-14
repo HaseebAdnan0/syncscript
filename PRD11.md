@@ -179,13 +179,13 @@ Replace stub email implementation with production-ready email system using Hosti
 **Description:** As a user, I want to click unsubscribe links in emails to stop receiving notifications.
 
 **Acceptance Criteria:**
-- [ ] Add `GET /api/v1/auth/unsubscribe/{token}/` endpoint
-- [ ] Validates unsubscribe token against EmailPreference
-- [ ] Sets `collaboration_notifications = False`
-- [ ] Returns success page redirect or JSON response
-- [ ] Add `POST /api/v1/users/email-preferences/` to update preferences (authenticated)
-- [ ] Add to `apps/users/urls.py`
-- [ ] Typecheck passes
+- [x] Add `GET /api/v1/auth/unsubscribe/{token}/` endpoint
+- [x] Validates unsubscribe token against EmailPreference
+- [x] Sets `collaboration_notifications = False`
+- [x] Returns success page redirect or JSON response
+- [x] Add `POST /api/v1/users/email-preferences/` to update preferences (authenticated)
+- [x] Add to `apps/users/urls.py`
+- [x] Typecheck passes
 
 ---
 
