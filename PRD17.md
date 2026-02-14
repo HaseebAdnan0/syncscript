@@ -71,13 +71,13 @@ Create a comprehensive user dashboard as the primary logged-in landing page for 
 **Description:** As a developer, I need notification endpoints that support unread counts and mark-as-read so the dashboard can display notification panel.
 
 **Acceptance Criteria:**
-- [ ] Verify/create Notification model in `apps/notifications/` with: `user`, `title`, `message`, `type`, `is_read`, `link`, `created_at`
-- [ ] Create `GET /api/v1/notifications/` - list notifications for current user
-- [ ] Create `GET /api/v1/notifications/unread-count/` - returns `{ count: N }`
-- [ ] Create `POST /api/v1/notifications/{id}/mark-read/` - mark single as read
-- [ ] Create `POST /api/v1/notifications/mark-all-read/` - mark all as read
-- [ ] Endpoints require authentication
-- [ ] Typecheck passes
+- [x] Verify/create Notification model in `apps/notifications/` with: `user`, `title`, `message`, `type`, `is_read`, `link`, `created_at`
+- [x] Create `GET /api/v1/notifications/` - list notifications for current user
+- [x] Create `GET /api/v1/notifications/unread-count/` - returns `{ count: N }`
+- [x] Create `POST /api/v1/notifications/{id}/mark-read/` - mark single as read
+- [x] Create `POST /api/v1/notifications/mark-all-read/` - mark all as read
+- [x] Endpoints require authentication
+- [x] Typecheck passes
 
 ### US-006: Create dashboard page layout and sidebar
 **Description:** As a user, I want a dashboard layout with collapsible sidebar navigation so I can easily navigate between sections of the app.
