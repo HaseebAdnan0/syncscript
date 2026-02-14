@@ -58,7 +58,7 @@ export function useCreateAnnotation() {
 
       return { previousAnnotations };
     },
-    onError: (error, variables, context) => {
+    onError: (error, variables, context: MutationContext | undefined) => {
       // Rollback on error
       if (context?.previousAnnotations) {
         queryClient.setQueryData(
@@ -103,7 +103,7 @@ export function useCreateReply() {
 
       return { previousAnnotations };
     },
-    onError: (error, variables, context) => {
+    onError: (error, variables, context: MutationContext | undefined) => {
       // Rollback on error
       if (context?.previousAnnotations) {
         queryClient.setQueryData(
@@ -151,7 +151,7 @@ export function useDeleteAnnotation() {
 
       return { previousAnnotations };
     },
-    onError: (error, variables, context) => {
+    onError: (error, variables, context: MutationContext | undefined) => {
       // Rollback on error
       if (context?.previousAnnotations) {
         queryClient.setQueryData(

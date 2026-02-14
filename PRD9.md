@@ -370,12 +370,12 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 **Description:** As a developer, I need mutation hooks for creating annotations and replies with optimistic updates.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/hooks/useAnnotationMutations.ts`
-- [ ] Exports `useCreateAnnotation`, `useCreateReply`, `useDeleteAnnotation`
-- [ ] Each mutation invalidates annotations query on success
-- [ ] Optimistic update shows new annotation immediately
-- [ ] Rollback on error with toast notification
-- [ ] Typecheck passes
+- [x] Create `frontend/src/hooks/useAnnotationMutations.ts`
+- [x] Exports `useCreateAnnotation`, `useCreateReply`, `useDeleteAnnotation`
+- [x] Each mutation invalidates annotations query on success
+- [x] Optimistic update shows new annotation immediately
+- [x] Rollback on error with toast notification
+- [x] Typecheck passes
 
 ---
 
