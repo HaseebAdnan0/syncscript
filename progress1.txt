@@ -33,3 +33,20 @@ Learnings for future iterations:
 - Always run `python manage.py check` after modifying settings
 - Settings already included: AUTH_USER_MODEL, JWT config, ROTATE/BLACKLIST flags
 ---
+
+## Iteration 3 - Configure Redis cache backend (US-005)
+- Verified django-redis>=5.4 already in requirements.txt
+- Verified CACHES already configured with RedisCache backend in settings.py
+- Verified REDIS_URL environment variable usage with fallback to 'redis://localhost:6379/0'
+- Verified RATELIMIT_USE_CACHE = 'default' already set
+- Django system check passes
+
+Files changed:
+- PRD1.md (marked US-005 complete)
+
+Learnings for future iterations:
+- Redis cache configuration was already complete from previous work
+- Settings include both CACHES (for rate limiting) and CHANNEL_LAYERS (for WebSockets) using same Redis instance
+- RATELIMIT_ENABLE = True and RATELIMIT_USE_CACHE = 'default' both required for django-ratelimit
+- All infrastructure settings (DB, Redis, Email) already configured - focus on application logic next
+---

@@ -67,8 +67,8 @@ Create a secure, collaborative Knowledge Vault system where researchers can crea
 **Description:** As a developer, I need the members relationship on Vault using VaultMembership as through model.
 
 **Acceptance Criteria:**
-- [ ] Add `members` ManyToManyField to User through='VaultMembership', related_name='vaults'
-- [ ] Typecheck passes
+- [x] Add `members` ManyToManyField to User through='VaultMembership', related_name='vaults'
+- [x] Typecheck passes
 
 ### US-006: Create AuditLog model
 **Description:** As a developer, I need audit logging for research integrity tracking.

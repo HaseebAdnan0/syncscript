@@ -123,6 +123,33 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# File Storage (Cloudflare R2 / S3-compatible)
+# Use S3-compatible storage if credentials are configured, otherwise use local filesystem
+USE_S3 = bool(os.getenv('AWS_ACCESS_KEY_ID') and os.getenv('AWS_SECRET_ACCESS_KEY'))
+
+if USE_S3:
+    # S3-compatible storage configuration (Cloudflare R2, AWS S3, etc.)
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+    # AWS/S3 settings
+    AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
+    AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME', 'auto')
+    AWS_S3_ENDPOINT_URL = os.getenv('AWS_S3_ENDPOINT_URL')  # Required for Cloudflare R2
+
+    # Security and access settings
+    AWS_S3_FILE_OVERWRITE = False  # Don't overwrite files with the same name
+    AWS_QUERYSTRING_AUTH = True    # Use presigned URLs for private files
+    AWS_QUERYSTRING_EXPIRE = 900   # Presigned URLs expire after 15 minutes (900s)
+    AWS_DEFAULT_ACL = None         # Don't set ACLs (use bucket policy)
+    AWS_S3_OBJECT_PARAMETERS = {
+        'CacheControl': 'max-age=86400',  # Cache for 24 hours
+    }
+
+    # Use SigV4 signature version (required for some S3-compatible services)
+    AWS_S3_SIGNATURE_VERSION = 's3v4'
+
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 

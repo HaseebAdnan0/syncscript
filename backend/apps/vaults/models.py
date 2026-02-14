@@ -36,6 +36,7 @@ class Vault(models.Model):
     members = models.ManyToManyField(
         User,
         through='VaultMembership',
+        through_fields=('vault', 'user'),
         related_name='vaults'
     )
 
