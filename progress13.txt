@@ -318,3 +318,33 @@ vaults/{vault_id}/thumbnails/{uuid}.jpg
   - Both upload_url and multipart_upload_initiate need the check
 
 ---
+## Iteration 12 - Add storage quota to vault API response (US-012)
+- Added `storage_usage` field to VaultSerializer in backend/apps/vaults/serializers.py
+- Implemented get_storage_usage() method that:
+  - Gets or creates VaultStorageUsage record for the vault
+  - Retrieves used_bytes, file_count from storage record
+  - Retrieves limit_bytes and warning_threshold from settings
+  - Calculates percentage (used / limit)
+  - Determines warning state (percentage >= 0.8)
+  - Returns dict with: used_bytes, limit_bytes, percentage, warning, file_count
+- Added django.conf.settings import to serializers.py
+- Updated Meta.fields to include 'storage_usage'
+- Verified serialization works correctly:
+  - Tested in Django shell with existing vault
+  - All required keys present: used_bytes, limit_bytes, percentage, warning, file_count
+  - Storage record gets created if it doesn't exist
+- Files changed:
+  - backend/apps/vaults/serializers.py
+  - PRD13.md
+  - progress13.txt
+- Learnings for future iterations:
+  - VaultStorageUsage has OneToOne relationship with Vault via vault field
+  - get_or_create works well for ensuring storage record exists on read
+  - SerializerMethodField allows computed fields in API responses
+  - settings.VAULT_STORAGE_LIMIT = 1073741824 (1GB)
+  - settings.VAULT_STORAGE_WARNING_THRESHOLD = 0.8 (80%)
+  - Percentage is float 0.0-1.0+ (can exceed 1.0 if over quota)
+  - Django shell verification is faster than full test suite for simple checks
+
+---
+
