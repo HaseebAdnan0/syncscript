@@ -210,3 +210,29 @@
   - Skip link is alternative navigation that proceeds without required input
   - Always merge existing data when updating: `{ vaultName: data?.vaultName || vaultName, sourceUrl }`
 ---
+
+## Iteration 12 - GuidedVaultWizard Step 3 (Invite Collaborator) (US-012)
+- Added Step 3 to GuidedVaultWizard component for inviting collaborator
+- Implemented email validation using regex: `/^[^\s@]+@[^\s@]+\.[^\s@]+$/`
+- Created handleCreateVault() function to complete wizard and transition to 'tutorial' step
+- Added handleStep3Back() to navigate back to Step 2 with data preservation
+- Added handleStep3Skip() to proceed without collaborator invitation
+- Extended currentStep calculation to include 'guided-3' → 3
+- Step 3 UI includes:
+  - Email input with validation and error display
+  - Back button to return to Step 2
+  - Skip link to create vault without invite
+  - "Create Vault" GradientButton to complete wizard
+  - Helpful tip about collaborator benefits
+- Files changed: GuidedVaultWizard.tsx, PRD20.md, progress20.txt
+- Commit: 21e7df4
+- Typecheck passes
+- Learnings for future iterations:
+  - Email validation pattern: `/^[^\s@]+@[^\s@]+\.[^\s@]+$/` for basic validation
+  - Final wizard step transitions to 'tutorial' step (not 'complete')
+  - handleCreateVault() accepts optional email parameter for Skip vs Create scenarios
+  - Skip calls handleCreateVault('') to create without collaborator
+  - All wizard data (vaultName, sourceUrl, collaboratorEmail) stored in onboarding.data
+  - Wizard completion sets step='tutorial' for next phase of onboarding
+  - Enter key support updated to include Step 3 submission
+---

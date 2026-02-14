@@ -125,3 +125,128 @@ class TrackSearchAnalyticsTest(TestCase):
         analytics = SearchAnalytics.objects.first()
 
         self.assertEqual(analytics.query_hash, expected_hash)
+
+
+class RecordSearchHistoryTest(TestCase):
+    """Tests for record_search_history function"""
+
+    def setUp(self):
+        """Create test user"""
+        self.user = User.objects.create_user(
+            username='testuser',
+            email='test@example.com',
+            password='testpass123'
+        )
+
+    def test_creates_new_history_record(self):
+        """Should create new SearchHistory record for new query"""
+        query = "machine learning"
+        result_count = 5
+
+        record_search_history(self.user, query, result_count)
+
+        # Verify record was created
+        history = SearchHistory.objects.get(user=self.user, query=query)
+        self.assertEqual(history.query, query)
+        self.assertEqual(history.result_count, result_count)
+        self.assertIsNotNone(history.created_at)
+
+    def test_updates_timestamp_for_duplicate_query(self):
+        """Should update timestamp instead of creating duplicate"""
+        query = "python programming"
+
+        # First search
+        record_search_history(self.user, query, 3)
+        first_history = SearchHistory.objects.get(user=self.user, query=query)
+        first_timestamp = first_history.created_at
+
+        # Wait a moment
+        import time
+        time.sleep(0.1)
+
+        # Second search with same query
+        record_search_history(self.user, query, 5)
+
+        # Should still only have one record
+        self.assertEqual(SearchHistory.objects.filter(user=self.user, query=query).count(), 1)
+
+        # But timestamp should be updated
+        updated_history = SearchHistory.objects.get(user=self.user, query=query)
+        self.assertGreater(updated_history.created_at, first_timestamp)
+        self.assertEqual(updated_history.result_count, 5)  # Result count also updated
+
+    def test_limits_to_10_most_recent(self):
+        """Should keep only 10 most recent searches per user"""
+        # Create 15 search history entries
+        for i in range(15):
+            record_search_history(self.user, f"query {i}", i)
+
+        # Should only have 10 records
+        self.assertEqual(SearchHistory.objects.filter(user=self.user).count(), 10)
+
+        # Verify we kept the most recent ones (5-14)
+        queries = list(
+            SearchHistory.objects.filter(user=self.user)
+            .order_by('-created_at')
+            .values_list('query', flat=True)
+        )
+
+        # Most recent should be "query 14" through "query 5"
+        for i in range(5, 15):
+            self.assertIn(f"query {i}", queries)
+
+        # Oldest (query 0-4) should be deleted
+        for i in range(5):
+            self.assertNotIn(f"query {i}", queries)
+
+    def test_strips_whitespace_from_query(self):
+        """Should strip whitespace from query before storing"""
+        query = "  django rest framework  "
+
+        record_search_history(self.user, query, 10)
+
+        history = SearchHistory.objects.get(user=self.user)
+        self.assertEqual(history.query, "django rest framework")
+
+    def test_ignores_empty_queries(self):
+        """Should not create records for empty or whitespace-only queries"""
+        queries = ["", "   ", "\t", "\n"]
+
+        for query in queries:
+            record_search_history(self.user, query, 0)
+
+        # No records should be created
+        self.assertEqual(SearchHistory.objects.filter(user=self.user).count(), 0)
+
+    def test_separate_history_per_user(self):
+        """Should maintain separate search history for different users"""
+        user2 = User.objects.create_user(
+            username='testuser2',
+            email='test2@example.com',
+            password='testpass123'
+        )
+
+        # Both users search for same query
+        record_search_history(self.user, "shared query", 5)
+        record_search_history(user2, "shared query", 3)
+
+        # Each user should have their own record
+        self.assertEqual(SearchHistory.objects.filter(user=self.user).count(), 1)
+        self.assertEqual(SearchHistory.objects.filter(user=user2).count(), 1)
+
+        # Total should be 2
+        self.assertEqual(SearchHistory.objects.count(), 2)
+
+    def test_deduplication_updates_result_count(self):
+        """When deduplicating, should update result_count to latest value"""
+        query = "test query"
+
+        # First search with 10 results
+        record_search_history(self.user, query, 10)
+
+        # Second search with 20 results
+        record_search_history(self.user, query, 20)
+
+        # Should only have one record with updated count
+        history = SearchHistory.objects.get(user=self.user, query=query)
+        self.assertEqual(history.result_count, 20)

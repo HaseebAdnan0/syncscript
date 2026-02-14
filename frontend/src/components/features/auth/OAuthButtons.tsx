@@ -25,7 +25,23 @@ export default function OAuthButtons({ disabled = false, loading = false }: OAut
   const isDisabled = disabled || loading || redirecting !== null;
 
   return (
-    <div className="flex flex-col gap-3 w-full">
+    <>
+      {/* Full-page loading overlay */}
+      {redirecting && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="bg-[#0F1115] border border-white/10 rounded-2xl p-8 flex flex-col items-center gap-4 max-w-sm mx-4">
+            <div className="w-12 h-12 border-4 border-[#F7931A]/20 border-t-[#F7931A] rounded-full animate-spin" />
+            <p className="text-white text-lg font-medium">
+              Redirecting to {redirecting === 'google' ? 'Google' : 'GitHub'}...
+            </p>
+            <p className="text-muted text-sm text-center">
+              You'll be redirected to sign in securely
+            </p>
+          </div>
+        </div>
+      )}
+
+      <div className="flex flex-col gap-3 w-full">
       {/* Google Button */}
       <button
         type="button"
@@ -67,5 +83,6 @@ export default function OAuthButtons({ disabled = false, loading = false }: OAut
         </span>
       </button>
     </div>
+    </>
   );
 }

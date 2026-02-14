@@ -224,3 +224,27 @@
   - Recharts installs with 37 additional packages
   - Typecheck passes with no errors
 ---
+## Iteration 11 - US-011: Create sources timeline chart
+- Created SourcesTimelineChart component with Recharts line chart
+- Files changed:
+  - frontend/src/components/features/dashboard/charts/SourcesTimelineChart.tsx (new component)
+  - PRD17.md (marked US-011 acceptance criteria complete)
+- Learnings for future iterations:
+  - ChartWrapper is a default export, must use `import ChartWrapper, { ... }` syntax
+  - Recharts Tooltip requires separate props for contentStyle, labelStyle, itemStyle (not a single object)
+  - Recharts formatter function receives `value: number | undefined`, must handle undefined case
+  - Line chart configuration: type="monotone" for smooth curves, strokeWidth for line thickness
+  - Custom dot styling with `dot` and `activeDot` props for hover effects
+  - ResponsiveContainer wrapper makes chart fluid and responsive
+  - X-axis date formatting: use tickFormatter for custom labels (MM/DD format)
+  - Y-axis: allowDecimals={false} prevents fractional source counts
+  - CartesianGrid with strokeDasharray creates subtle grid background
+  - Empty state pattern: centered icon in gradient circle + onboarding message
+  - Loading state: simple pulse animation with centered text
+  - Error state: red text displaying error message
+  - Data fetching uses localStorage token with Bearer auth
+  - Chart colors from design system: primary (#F7931A), accent (#FFD600) for hover
+  - Tooltip shows formatted date label and "Sources" as value label
+  - All components follow Bitcoin DeFi aesthetic (dark backgrounds, orange accents)
+  - Typecheck passes with no errors
+---
