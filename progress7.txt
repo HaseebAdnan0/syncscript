@@ -262,3 +262,25 @@
   - Link back to /login included in both form and success states
   - Build passes successfully with no TypeScript errors
 ---
+
+## Iteration 15 - US-014: Build reset password page
+- Created reset password page at frontend/src/app/(auth)/reset-password/page.tsx
+- Reads token from URL query params using useSearchParams
+- Implements password validation (min 8 chars) and password match validation
+- Shows PasswordStrength indicator for new password
+- Posts to /auth/password-reset/confirm/ with token and new password
+- On success, shows toast and redirects to /login after 2 second delay
+- On invalid/expired token, displays error state with link to forgot-password page
+- Files changed:
+  - frontend/src/app/(auth)/reset-password/page.tsx (new file)
+  - PRD7.md (marked US-014 complete)
+- Learnings for future iterations:
+  - useSearchParams from next/navigation reads URL query parameters
+  - tokenError state switches between form and error message UI
+  - Error detection checks if API error message contains "token", "expired", or "invalid"
+  - setTimeout used to delay redirect after successful password reset
+  - Error state shows red-themed message box with link to request new reset link
+  - PasswordStrength component reused from registration page
+  - Same validation patterns as registration (min 8 chars, passwords must match)
+  - Build passes successfully with no TypeScript errors
+---
