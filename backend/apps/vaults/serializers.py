@@ -38,3 +38,19 @@ class VaultSerializer(serializers.ModelSerializer):
 
         membership = obj.memberships.filter(user=request.user).first()
         return membership.role if membership else None
+
+
+class VaultMembershipSerializer(serializers.ModelSerializer):
+    """
+    Serializer for VaultMembership API responses (US-010).
+    Includes user details (username, email) for member listings.
+    """
+    username = serializers.CharField(source='user.username', read_only=True)
+    email = serializers.EmailField(source='user.email', read_only=True)
+
+    class Meta:
+        model = VaultMembership
+        fields = [
+            'id', 'user', 'username', 'email', 'role', 'added_at', 'added_by'
+        ]
+        read_only_fields = ['id', 'added_at', 'added_by']

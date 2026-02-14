@@ -119,12 +119,12 @@ Create a secure, collaborative Knowledge Vault system where researchers can crea
 **Description:** As a developer, I need serialization for membership API responses.
 
 **Acceptance Criteria:**
-- [ ] ModelSerializer for VaultMembership
-- [ ] Fields: id, user, username, email, role, added_at, added_by
-- [ ] read_only_fields: id, added_at, added_by
-- [ ] `username` from source='user.username'
-- [ ] `email` from source='user.email'
-- [ ] Typecheck passes
+- [x] ModelSerializer for VaultMembership
+- [x] Fields: id, user, username, email, role, added_at, added_by
+- [x] read_only_fields: id, added_at, added_by
+- [x] `username` from source='user.username'
+- [x] `email` from source='user.email'
+- [x] Typecheck passes
 
 ### US-011: Create AuditLogSerializer
 **Description:** As a developer, I need serialization for audit log API responses.
