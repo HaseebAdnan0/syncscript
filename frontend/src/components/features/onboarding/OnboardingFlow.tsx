@@ -44,7 +44,7 @@ export default function OnboardingFlow() {
       case 'path':
         return (
           <PathSelection
-            onPathSelected={() => {
+            onPathSelected={(_path) => {
               // Path selection already handles state updates
               // This callback is just for any additional orchestration if needed
             }}

@@ -262,14 +262,14 @@ Enhance SyncScript's file storage system to production-ready status with Cloudfl
 **Description:** As a vault owner, I want to see storage usage in vault settings.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/vaults/StorageUsageIndicator.tsx`
-- [ ] Props: `usedBytes: number`, `limitBytes: number`, `warning?: boolean`
-- [ ] Display progress bar showing percentage used
-- [ ] Show text: "X.XX GB / 1 GB used"
-- [ ] Yellow/orange color when warning=true (>80%)
-- [ ] Red color when >95%
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/features/vaults/StorageUsageIndicator.tsx`
+- [x] Props: `usedBytes: number`, `limitBytes: number`, `warning?: boolean`
+- [x] Display progress bar showing percentage used
+- [x] Show text: "X.XX GB / 1 GB used"
+- [x] Yellow/orange color when warning=true (>80%)
+- [x] Red color when >95%
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 

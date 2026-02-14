@@ -1,12 +1,17 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { useVault } from '@/hooks/useVaults';
 import { useSourcesQuery } from '@/hooks/useSourcesQuery';
 import { useAnnotationsWebSocket } from '@/hooks/useAnnotationsWebSocket';
 import { SourceTypeBadge } from '@/components/features/sources/SourceTypeBadge';
+import AISummaryCard from '@/components/features/ai/AISummaryCard';
+import { AILoadingSkeleton } from '@/components/features/ai/AILoadingSkeleton';
+import { summarizeSource } from '@/lib/api/sources';
+import { toast } from '@/hooks/useToast';
+import type { AISummary } from '@/lib/types/sources';
 
 export default function SourceDetailPage() {
   const params = useParams();
@@ -15,10 +20,14 @@ export default function SourceDetailPage() {
   const sourceId = parseInt(params.sourceId as string, 10);
 
   const { data: vault, isLoading: vaultLoading } = useVault(vaultId);
-  const { data: sourcesResponse, isLoading: sourcesLoading } = useSourcesQuery({ vaultId });
+  const { data: sourcesResponse, isLoading: sourcesLoading, refetch: refetchSources } = useSourcesQuery({ vaultId });
 
   // Find the specific source from the sources list
   const source = sourcesResponse?.find((s) => s.id === sourceId);
+
+  // AI Summary state
+  const [aiSummary, setAiSummary] = useState<AISummary | null>(source?.ai_summary ?? null);
+  const [isSummarizing, setIsSummarizing] = useState(false);
 
   // Real-time annotation updates via WebSocket
   // Toast notifications are handled automatically by the hook
@@ -28,11 +37,52 @@ export default function SourceDetailPage() {
   const citation = source?.metadata?.citation;
   const citationText = typeof citation === 'string' ? citation : null;
 
+  // Update AI summary when source data changes
+  useEffect(() => {
+    if (source?.ai_summary) {
+      setAiSummary(source.ai_summary);
+    }
+  }, [source?.ai_summary]);
+
   useEffect(() => {
     if (vault && source) {
       document.title = `${source.title} - Sources | SyncScript`;
     }
   }, [vault, source]);
+
+  const handleGenerateSummary = async (regenerate = false) => {
+    if (!source) return;
+
+    setIsSummarizing(true);
+    try {
+      const updatedSource = await summarizeSource(sourceId, regenerate);
+      setAiSummary(updatedSource.ai_summary ?? null);
+
+      // Refetch sources to update cache
+      await refetchSources();
+
+      toast({
+        title: regenerate ? 'Summary Regenerated' : 'Summary Generated',
+        description: 'AI analysis completed successfully.',
+      });
+    } catch (error: unknown) {
+      const err = error as { response?: { status?: number; data?: { error?: string } } };
+
+      if (err.response?.status === 429) {
+        toast({
+          title: 'AI Request Limit Reached',
+          description: err.response.data?.error || 'You have reached your daily AI request limit. Cached summaries are still available.',
+        });
+      } else {
+        toast({
+          title: 'Summary Generation Failed',
+          description: 'Unable to generate AI summary. Please try again later.',
+        });
+      }
+    } finally {
+      setIsSummarizing(false);
+    }
+  };
 
   if (vaultLoading || sourcesLoading) {
     return (
@@ -133,7 +183,18 @@ export default function SourceDetailPage() {
       <div className="max-w-[1800px] mx-auto px-6 py-8">
         <div className="flex gap-8">
           {/* PDF Viewer (70%) */}
-          <div className="flex-[7]">
+          <div className="flex-[7] space-y-8">
+            {/* AI Summary Card */}
+            {isSummarizing ? (
+              <AILoadingSkeleton variant="summary" />
+            ) : (
+              <AISummaryCard
+                summary={aiSummary}
+                onRegenerate={() => handleGenerateSummary(aiSummary !== null)}
+              />
+            )}
+
+            {/* PDF Viewer */}
             <div className="bg-[#0F1115] border border-white/10 rounded-2xl p-8 min-h-[600px]">
               <div className="flex items-center justify-center h-full text-[#94A3B8]">
                 <div className="text-center">

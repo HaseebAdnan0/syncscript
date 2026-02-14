@@ -178,13 +178,13 @@ This feature uses Claude as the AI backbone with a simple chunking strategy (no 
 **Description:** As a user, I want to see AI summaries on the source detail page.
 
 **Acceptance Criteria:**
-- [ ] Add AISummaryCard to source detail page layout
-- [ ] Fetch summary from source data (already in API response)
-- [ ] Wire "Generate" button to `POST /sources/{id}/summarize/`
-- [ ] Wire "Regenerate" button with `regenerate=true`
-- [ ] Show AILoadingSkeleton while request pending
-- [ ] Handle rate limit error: show toast with "Limit reached" message
-- [ ] Typecheck passes
+- [x] Add AISummaryCard to source detail page layout
+- [x] Fetch summary from source data (already in API response)
+- [x] Wire "Generate" button to `POST /sources/{id}/summarize/`
+- [x] Wire "Regenerate" button with `regenerate=true`
+- [x] Show AILoadingSkeleton while request pending
+- [x] Handle rate limit error: show toast with "Limit reached" message
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-015: Create ResearchInsightsPanel component

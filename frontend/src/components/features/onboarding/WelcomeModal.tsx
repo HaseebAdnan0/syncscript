@@ -8,7 +8,7 @@ import { Database, Users, FileText } from 'lucide-react';
 interface WelcomeModalProps {
   isOpen: boolean;
   userName: string;
-  onGetStarted: () => void;
+  onGetStarted: () => void | Promise<void>;
 }
 
 const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, userName, onGetStarted }) => {

@@ -96,3 +96,25 @@ export const deleteSource = async (sourceId: number): Promise<void> => {
     throw handleApiError(error);
   }
 };
+
+/**
+ * Generate AI summary for a source
+ */
+export const summarizeSource = async (
+  sourceId: number,
+  regenerate = false
+): Promise<Source> => {
+  try {
+    const params = new URLSearchParams();
+    if (regenerate) {
+      params.append('regenerate', 'true');
+    }
+    const queryString = params.toString();
+    const url = `/sources/${sourceId}/summarize/${queryString ? `?${queryString}` : ''}`;
+
+    const response = await api.post<Source>(url);
+    return response.data;
+  } catch (error) {
+    throw handleApiError(error);
+  }
+};

@@ -3,6 +3,7 @@ import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { QueryProvider } from "@/lib/providers/query-provider";
 import { AuthProvider } from "@/providers/AuthProvider";
+import { OnboardingProvider } from "@/providers/OnboardingProvider";
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 

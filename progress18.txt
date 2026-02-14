@@ -465,3 +465,23 @@
   - Typecheck passes when SearchHistory type matches backend serializer fields
 ---
 
+
+## Iteration 23 - US-026: Create NoResultsState component
+- Created NoResultsState.tsx to display helpful feedback when no search results found
+- Shows centered layout with search icon in circular background (bg-white/5)
+- Main message: "No results for [query]" with quoted query text
+- Suggestions: "Try different keywords or search in all types" + "Check your spelling or use more general terms"
+- Optional popular searches section with clickable suggestion pills
+- Suggestion pills use rounded-full with hover effect (border changes to orange)
+- All text uses muted styling (text-white/40 to text-white/80 range)
+- Files changed:
+  - frontend/src/components/features/search/NoResultsState.tsx (created)
+  - PRD18.md (marked US-026 complete)
+- Learnings for future iterations:
+  - Empty state pattern: large centered icon + main message + suggestions + optional actions
+  - Icon wrapper: circular background (w-16 h-16 rounded-full bg-white/5) with centered icon
+  - Muted text hierarchy: white/60 for main suggestions, white/40 for section labels
+  - Popular searches as clickable pills: px-4 py-2 rounded-full with flex-wrap gap-2
+  - Optional props pattern: popularSearches = [] default, onSuggestionClick with optional chaining ?.()
+  - Typecheck passes with proper TypeScript interface and optional prop handling
+---
