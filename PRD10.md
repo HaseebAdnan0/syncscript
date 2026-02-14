@@ -57,12 +57,12 @@ Integrate SyncScript's frontend with the existing backend WebSocket system and n
 **Description:** As a user, I want to see new sources appear instantly when collaborators add them so I stay in sync with my team.
 
 **Acceptance Criteria:**
-- [ ] Connect useVaultSocket in vault detail page component
-- [ ] Listen for `source.created`, `source.updated`, `source.deleted` events
-- [ ] Update sources list in real-time without full page refresh
-- [ ] Show subtle animation when new source appears (fade-in)
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Connect useVaultSocket in vault detail page component
+- [x] Listen for `source.created`, `source.updated`, `source.deleted` events
+- [x] Update sources list in real-time without full page refresh
+- [x] Show subtle animation when new source appears (fade-in)
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-005: Integrate real-time annotation updates
 **Description:** As a user, I want to see new annotations appear instantly when collaborators add them.

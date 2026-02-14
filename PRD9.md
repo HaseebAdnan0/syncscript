@@ -57,11 +57,11 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 **Description:** As a user, I want visual badges indicating source type so I can distinguish between URLs, PDFs, and citations at a glance.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/sources/SourceTypeBadge.tsx`
-- [ ] Badge variants: `url` (globe icon), `pdf` (file icon), `citation` (quote icon), `article` (newspaper icon)
-- [ ] Each type has distinct color: URL=blue, PDF=red, Citation=purple, Article=green
-- [ ] Uses pill shape with icon + text label
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/sources/SourceTypeBadge.tsx`
+- [x] Badge variants: `url` (globe icon), `pdf` (file icon), `citation` (quote icon), `article` (newspaper icon)
+- [x] Each type has distinct color: URL=blue, PDF=red, Citation=purple, Article=green
+- [x] Uses pill shape with icon + text label
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---
