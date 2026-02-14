@@ -116,13 +116,13 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need a ViewSet for Source list, retrieve, create, update operations.
 
 **Acceptance Criteria:**
-- [ ] Create `SourceViewSet` extending `ModelViewSet` in `views.py`
-- [ ] Set `queryset = Source.objects.filter(is_deleted=False)`
-- [ ] Set `serializer_class = SourceSerializer`
-- [ ] Override `perform_create()` to set `created_by` from request.user
-- [ ] Override `get_queryset()` to filter by vaults user has access to
-- [ ] Add URL route in `urls.py`: `router.register(r'sources', SourceViewSet)`
-- [ ] Typecheck passes
+- [x] Create `SourceViewSet` extending `ModelViewSet` in `views.py`
+- [x] Set `queryset = Source.objects.filter(is_deleted=False)`
+- [x] Set `serializer_class = SourceSerializer`
+- [x] Override `perform_create()` to set `created_by` from request.user
+- [x] Override `get_queryset()` to filter by vaults user has access to
+- [x] Add URL route in `urls.py`: `router.register(r'sources', SourceViewSet)`
+- [x] Typecheck passes
 
 ---
 

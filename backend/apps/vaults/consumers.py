@@ -4,11 +4,15 @@ WebSocket consumers for real-time vault collaboration.
 
 import json
 import logging
+import time
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.contrib.auth.models import AnonymousUser
+from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from apps.vaults.models import VaultMembership  # type: ignore[import-not-found]
 
+User = get_user_model()
 logger = logging.getLogger('channels.vault.consumer')
 
 
@@ -70,6 +74,9 @@ class VaultConsumer(AsyncWebsocketConsumer):
         # Get current sequence number (placeholder - will be implemented with Redis in later tasks)
         sequence_number = 0
 
+        # Add user to presence tracking
+        await self._add_to_presence(user.id, self.vault_id)
+
         # Send connection success message
         await self.send(text_data=json.dumps({
             'type': 'connection.success',
@@ -86,6 +93,10 @@ class VaultConsumer(AsyncWebsocketConsumer):
         Args:
             code: WebSocket close code
         """
+        # Remove user from presence tracking
+        if hasattr(self, 'user') and hasattr(self, 'vault_id'):
+            await self._remove_from_presence(self.user.id, self.vault_id)
+
         # Leave vault room group
         if hasattr(self, 'room_group_name'):
             await self.channel_layer.group_discard(  # type: ignore[union-attr]

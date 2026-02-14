@@ -141,3 +141,22 @@
   - Inline Serializer class pattern (CompletionRequestSerializer) is valid for simple one-off validators
   - TODO comments are acceptable for placeholder functionality (Celery task)
 ---
+
+## Iteration 8 - US-008: Create download URL endpoint
+- Implemented download_url() action method in PDFUploadViewSet
+- Endpoint: GET /api/v1/sources/pdfs/{pdf_id}/download-url/
+- Permission validation allows VIEWER, CONTRIBUTOR, or OWNER roles
+- Uses generate_presigned_download_url() from storage.py
+- Returns: download_url (15min expiry), expires_in, filename, file_size
+- Content-Disposition header triggers browser download with original filename
+- Files changed:
+  - backend/apps/sources/views.py (added download_url action, imported generate_presigned_download_url)
+  - PRD6.md (marked US-008 complete)
+- Learnings for future iterations:
+  - @action(detail=True) creates routes like /pdfs/{pk}/download-url/
+  - _check_vault_permission() accepts custom required_roles list
+  - pdf_upload.file.name gives the S3 object key stored in FileField
+  - Presigned download URLs expire in 900 seconds (15 minutes)
+  - Pyright typecheck passes with 0 errors
+  - Django system check passes (security warnings are expected in dev mode)
+---

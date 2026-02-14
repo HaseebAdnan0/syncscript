@@ -107,3 +107,19 @@
   - Common API types should include generic types like PaginatedResponse for reusability
 ---
 
+## Iteration 8 - US-008: Auth Store with Zustand
+- Created src/lib/types/user.ts with User interface
+- Created src/lib/stores/auth.ts with Zustand persist middleware
+- Implemented AuthState interface with user, accessToken, refreshToken, isAuthenticated
+- Added three actions: login(), logout(), setAccessToken()
+- Used skipHydration: true to avoid SSR hydration mismatches
+- Verified typecheck passes
+- Files changed: frontend/src/lib/stores/auth.ts, frontend/src/lib/types/user.ts, PRD4.md
+- Learnings for future iterations:
+  - Zustand persist middleware requires 'use client' directive since it uses browser localStorage
+  - skipHydration: true is critical for SSR apps to prevent hydration mismatch errors
+  - The persist middleware wraps the create() call with persist((set) => {...}, { name, skipHydration })
+  - Auth store is now available for api.ts to reference via @/stores/auth alias
+  - User type includes optional fields (first_name, last_name) for Django user model compatibility
+---
+

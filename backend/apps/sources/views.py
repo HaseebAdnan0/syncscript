@@ -4,11 +4,12 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import serializers as drf_serializers
 from django.shortcuts import get_object_or_404
-from .models import PDFUpload
+from .models import PDFUpload, Source
 from .serializers import (
     UploadURLRequestSerializer,
     UploadURLResponseSerializer,
-    PDFUploadSerializer
+    PDFUploadSerializer,
+    SourceSerializer
 )
 from .storage import generate_presigned_upload_url, generate_presigned_download_url
 from apps.vaults.models import Vault, VaultMembership, RoleChoices
@@ -205,3 +206,41 @@ class PDFUploadViewSet(viewsets.ModelViewSet):
             'filename': pdf_upload.original_filename,
             'file_size': pdf_upload.file_size
         }, status=status.HTTP_200_OK)
+
+
+class SourceViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for Source CRUD operations (US-008).
+    Provides list, retrieve, create, update functionality for sources.
+    """
+    queryset = Source.objects.filter(is_deleted=False)
+    serializer_class = SourceSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        """
+        Override perform_create to set created_by from request.user (US-008).
+        """
+        serializer.save(created_by=self.request.user)
+
+    def get_queryset(self):
+        """
+        Override get_queryset to filter by vaults user has access to (US-008).
+        Returns only sources from vaults where user is owner or member.
+        """
+        user = self.request.user
+
+        # Get vaults where user is owner
+        owned_vault_ids = Vault.objects.filter(owner=user).values_list('id', flat=True)
+
+        # Get vaults where user is a member (through VaultMembership)
+        member_vault_ids = VaultMembership.objects.filter(user=user).values_list('vault_id', flat=True)
+
+        # Combine both sets of vault IDs
+        accessible_vault_ids = list(owned_vault_ids) + list(member_vault_ids)
+
+        # Filter sources by accessible vaults and not deleted
+        return Source.objects.filter(
+            vault_id__in=accessible_vault_ids,
+            is_deleted=False
+        )
