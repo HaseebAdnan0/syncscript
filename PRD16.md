@@ -255,15 +255,15 @@ Create SyncScript's production landing page following the Bitcoin DeFi aesthetic
 **Description:** As a user, I want a sticky navbar so I can navigate while scrolling.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/marketing/Navbar.tsx`
-- [ ] Sticky positioning with backdrop blur on scroll
-- [ ] Logo on left linking to home
-- [ ] Nav links: Features, How It Works, Pricing (smooth scroll anchors)
-- [ ] Right side: "Sign In" text link, "Get Started" gradient button
-- [ ] Mobile: hamburger menu with slide-out drawer
-- [ ] Background becomes more opaque on scroll
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/marketing/Navbar.tsx`
+- [x] Sticky positioning with backdrop blur on scroll
+- [x] Logo on left linking to home
+- [x] Nav links: Features, How It Works, Pricing (smooth scroll anchors)
+- [x] Right side: "Sign In" text link, "Get Started" gradient button
+- [x] Mobile: hamburger menu with slide-out drawer
+- [x] Background becomes more opaque on scroll
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-019: Assemble Complete Landing Page
 **Description:** As a developer, I need to combine all sections into the final landing page.
