@@ -915,3 +915,36 @@ In Progress - US-004 complete
   - Handle undefined oldData case when cache is empty
 ---
 
+## Iteration 32 - US-033: Create Toast Notification System
+- Created NotificationToast component with full toast popup functionality
+- Implemented auto-dismiss timer (5 seconds) with cleanup on unmount
+- Exit animation using isExiting state and setTimeout for smooth slide-out
+- Click handler navigates and dismisses toast via onNavigate callback
+- Dismiss button (X) uses stopPropagation to prevent click-through
+- Icon mapping using typeIcons record (same pattern as NotificationItem)
+- Truncate body text to 100 characters with truncateText utility
+- Created NotificationToastContainer for managing multiple toasts
+- Container stacks up to 3 toasts using .slice(0, 3)
+- Toasts stack with newest at bottom using flex-col-reverse
+- Slide-in/out animation: translate-x-full (exit) to translate-x-0 (enter)
+- Positioned fixed bottom-right with z-50 for overlay
+- pointer-events-none on container, pointer-events-auto on individual toasts
+- Bitcoin DeFi styling: bg-[#0F1115], border white/10, orange shadow glow
+- Hover effects: border-[#F7931A]/50 and -translate-y-1 lift
+- Accessibility: role="alert" and aria-live="polite" for screen readers
+- TypeScript typecheck passes
+- Commit 1bbdf79
+- Files changed:
+  - frontend/src/components/features/notifications/NotificationToast.tsx (new)
+  - PRD19.md (marked US-033 complete except browser verification)
+- Learnings for future iterations:
+  - Use state + setTimeout for controlled exit animations before unmount
+  - Match animation duration in code (setTimeout) with CSS transition-duration
+  - stopPropagation on nested buttons prevents parent click handlers
+  - flex-col-reverse reverses visual order (newest at bottom in DOM = bottom on screen)
+  - pointer-events-none on container + pointer-events-auto on children for click-through
+  - Auto-dismiss pattern: useEffect with timer, cleanup on unmount
+  - role="alert" + aria-live="polite" for accessibility announcements
+  - Fixed positioning with z-50 ensures toasts appear above all content
+---
+

@@ -753,3 +753,30 @@ Learnings for future iterations:
 - When testing None values with APIClient, use format='json' to avoid encoding errors
 - Test pattern: verify field is null initially, test setting values, test clearing values
 ---
+
+## Iteration 19 - US-015: Create CitationButton component
+- Created frontend/src/components/features/sources/CitationButton.tsx
+- Implemented dropdown button with citation icon (Quote from Lucide)
+- Dropdown menu shows all 6 citation formats: APA 7th, MLA 9th, Chicago 17th, BibTeX, IEEE, Harvard
+- Uses Radix UI DropdownMenu for accessibility
+- Features:
+  - Gradient button with Bitcoin DeFi design system (orange accent, dark theme)
+  - Shadow with orange tint: shadow-[0_0_20px_-5px_rgba(234,88,12,0.5)]
+  - Hover scale effect: hover:scale-105
+  - Loading state with disabled button
+  - onFormatSelect callback for parent components to handle format selection
+  - Dark glass morphism dropdown: bg-[#0F1115] with border-white/10
+- TypeScript typecheck: Passes with 0 errors
+- Files changed: frontend/src/components/features/sources/CitationButton.tsx (65 lines), PRD14.md
+- Committed: fd668f5
+
+Learnings for future iterations:
+- Radix UI DropdownMenu pattern: DropdownMenuTrigger + DropdownMenuContent + DropdownMenuItem
+- asChild prop allows custom button component instead of default Radix button
+- Bitcoin DeFi button style: rounded-full, gradient bg, colored shadow, uppercase tracking-wider
+- Dropdown styling: dark bg, subtle border, orange shadow glow, rounded-xl
+- State management: useState for open/setOpen to control dropdown visibility
+- Disabled button styling: opacity-50, cursor-not-allowed, remove hover effects
+- Citation format constants: define as const array of {value, label} objects
+- Component composition: button receives onFormatSelect callback to decouple from API logic
+---

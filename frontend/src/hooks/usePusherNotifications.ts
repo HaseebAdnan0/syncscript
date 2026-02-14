@@ -9,13 +9,14 @@ import type { Notification } from '@/types/notifications';
 interface UsePusherNotificationsOptions {
   userId: string | null;
   enabled?: boolean;
+  onNotification?: (notification: Notification) => void;
 }
 
 /**
  * Hook to subscribe to real-time notifications via Pusher
  * Listens for 'notification' and 'badge_update' events from private user channel
  */
-export function usePusherNotifications({ userId, enabled = true }: UsePusherNotificationsOptions) {
+export function usePusherNotifications({ userId, enabled = true, onNotification }: UsePusherNotificationsOptions) {
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -55,6 +56,11 @@ export function usePusherNotifications({ userId, enabled = true }: UsePusherNoti
             };
           }
         );
+
+        // Trigger toast callback if provided
+        if (onNotification) {
+          onNotification(notification);
+        }
       });
 
       // Listen for badge update events
@@ -73,5 +79,5 @@ export function usePusherNotifications({ userId, enabled = true }: UsePusherNoti
         pusher.unsubscribe(channelName);
       }
     };
-  }, [userId, enabled, queryClient]);
+  }, [userId, enabled, queryClient, onNotification]);
 }

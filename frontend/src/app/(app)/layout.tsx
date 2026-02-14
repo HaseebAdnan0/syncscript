@@ -7,8 +7,11 @@ import { Sidebar } from '@/components/features/dashboard/Sidebar';
 import OnboardingFlow from '@/components/features/onboarding/OnboardingFlow';
 import GlobalSearch from '@/components/features/search/GlobalSearch';
 import EmailVerificationModal from '@/components/features/auth/EmailVerificationModal';
+import { NotificationToastContainer } from '@/components/features/notifications/NotificationToast';
 import { useAuthStore } from '@/stores/authStore';
 import { useGlobalSearchShortcut } from '@/hooks/useGlobalSearchShortcut';
+import { usePusherNotifications } from '@/hooks/usePusherNotifications';
+import type { Notification } from '@/types/notifications';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -19,6 +22,8 @@ export default function AppLayout({ children }: AppLayoutProps) {
   const { user, isLoading } = useAuthStore();
   const { isOpen, open, close } = useGlobalSearchShortcut();
   const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [toastNotifications, setToastNotifications] = useState<Notification[]>([]);
+  const [isNotificationPanelOpen, setIsNotificationPanelOpen] = useState(false);
 
   // Listen for email verification requirement from API interceptor
   useEffect(() => {
@@ -31,6 +36,40 @@ export default function AppLayout({ children }: AppLayoutProps) {
       window.removeEventListener('email-verification-required', handleVerificationRequired);
     };
   }, []);
+
+  // Track notification panel state from AppHeader
+  useEffect(() => {
+    const handlePanelOpen = () => setIsNotificationPanelOpen(true);
+    const handlePanelClose = () => setIsNotificationPanelOpen(false);
+
+    window.addEventListener('notification-panel-opened', handlePanelOpen);
+    window.addEventListener('notification-panel-closed', handlePanelClose);
+
+    return () => {
+      window.removeEventListener('notification-panel-opened', handlePanelOpen);
+      window.removeEventListener('notification-panel-closed', handlePanelClose);
+    };
+  }, []);
+
+  // Subscribe to Pusher notifications and trigger toasts
+  usePusherNotifications({
+    userId: user?.id?.toString() || null,
+    enabled: !!user,
+    onNotification: (notification: Notification) => {
+      // Don't show toast if notification panel is open
+      if (isNotificationPanelOpen) {
+        return;
+      }
+
+      // Don't show toast if page is not visible
+      if (typeof document !== 'undefined' && document.hidden) {
+        return;
+      }
+
+      // Add to toast notifications
+      setToastNotifications((prev) => [notification, ...prev]);
+    },
+  });
 
   // Redirect unauthenticated users to login
   // Redirect unverified users to verification pending page
@@ -61,6 +100,26 @@ export default function AppLayout({ children }: AppLayoutProps) {
     return null;
   }
 
+  const handleDismissToast = (id: string) => {
+    setToastNotifications((prev) => prev.filter((n) => n.id !== id));
+  };
+
+  const handleNavigateFromToast = (notification: Notification) => {
+    // Map notification type to route
+    const routes: Record<string, string> = {
+      vault_invite: `/vaults/${notification.data?.vault_id}`,
+      member_joined: `/vaults/${notification.data?.vault_id}/members`,
+      source_added: `/vaults/${notification.data?.vault_id}/sources/${notification.data?.source_id}`,
+      annotation_reply: `/vaults/${notification.data?.vault_id}/sources/${notification.data?.source_id}#annotation-${notification.data?.annotation_id}`,
+      mention: `/vaults/${notification.data?.vault_id}/sources/${notification.data?.source_id}#annotation-${notification.data?.annotation_id}`,
+    };
+
+    const route = routes[notification.type];
+    if (route) {
+      router.push(route);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#030304]">
       <AppHeader onSearchClick={open} />
@@ -73,6 +132,12 @@ export default function AppLayout({ children }: AppLayoutProps) {
       <EmailVerificationModal
         isOpen={showVerificationModal}
         onClose={() => setShowVerificationModal(false)}
+      />
+      {/* Toast notifications for real-time Pusher events */}
+      <NotificationToastContainer
+        notifications={toastNotifications}
+        onDismiss={handleDismissToast}
+        onNavigate={handleNavigateFromToast}
       />
     </div>
   );

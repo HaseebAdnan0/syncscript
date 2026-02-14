@@ -52,6 +52,11 @@ export function AppHeader({ vaultId, onSearchClick }: AppHeaderProps) {
         !bellButtonRef.current.contains(event.target as Node)
       ) {
         setIsNotificationPanelOpen(false);
+        // Emit close event
+        if (typeof window !== 'undefined') {
+          const event = new CustomEvent('notification-panel-closed');
+          window.dispatchEvent(event);
+        }
       }
     };
 
@@ -66,6 +71,11 @@ export function AppHeader({ vaultId, onSearchClick }: AppHeaderProps) {
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape' && isNotificationPanelOpen) {
         setIsNotificationPanelOpen(false);
+        // Emit close event
+        if (typeof window !== 'undefined') {
+          const evt = new CustomEvent('notification-panel-closed');
+          window.dispatchEvent(evt);
+        }
       }
     };
 
@@ -76,7 +86,15 @@ export function AppHeader({ vaultId, onSearchClick }: AppHeaderProps) {
   }, [isNotificationPanelOpen]);
 
   const toggleNotificationPanel = () => {
-    setIsNotificationPanelOpen((prev) => !prev);
+    setIsNotificationPanelOpen((prev) => {
+      const newValue = !prev;
+      // Emit event for layout to track panel state
+      if (typeof window !== 'undefined') {
+        const event = new CustomEvent(newValue ? 'notification-panel-opened' : 'notification-panel-closed');
+        window.dispatchEvent(event);
+      }
+      return newValue;
+    });
   };
 
   const handleLogout = async () => {

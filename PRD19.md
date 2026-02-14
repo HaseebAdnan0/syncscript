@@ -452,11 +452,11 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a user, I want toasts to appear when I receive real-time notifications.
 
 **Acceptance Criteria:**
-- [ ] Hook usePusherNotifications triggers toast on new notification
-- [ ] Use existing toast/sonner system if available, or NotificationToast
-- [ ] Don't show toast if notification dropdown is open
-- [ ] Don't show toast if page is not visible (document.hidden)
-- [ ] Typecheck passes
+- [x] Hook usePusherNotifications triggers toast on new notification
+- [x] Use existing toast/sonner system if available, or NotificationToast
+- [x] Don't show toast if notification dropdown is open
+- [x] Don't show toast if page is not visible (document.hidden)
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---
