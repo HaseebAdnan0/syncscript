@@ -1,4 +1,4 @@
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from .models import Vault, VaultMembership, AuditLog, RoleChoices
 
@@ -51,3 +51,30 @@ def log_membership_added(sender, instance, created, **kwargs):
             action='membership.added',
             metadata=metadata
         )
+
+
+@receiver(pre_save, sender=VaultMembership)
+def log_membership_role_changed(sender, instance, **kwargs):
+    """
+    Log when a member's role is changed.
+    """
+    # Only check if this is an update (pk exists)
+    if instance.pk:
+        try:
+            old_membership = VaultMembership.objects.get(pk=instance.pk)
+            # Check if role has changed
+            if old_membership.role != instance.role:
+                metadata = {
+                    'user_id': str(instance.user.id),
+                    'old_role': old_membership.role,
+                    'new_role': instance.role
+                }
+                AuditLog.objects.create(
+                    vault=instance.vault,
+                    actor=instance.added_by,
+                    action='membership.role_changed',
+                    metadata=metadata
+                )
+        except VaultMembership.DoesNotExist:
+            # Should not happen, but handle gracefully
+            pass

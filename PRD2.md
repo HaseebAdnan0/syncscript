@@ -281,11 +281,11 @@ Create a secure, collaborative Knowledge Vault system where researchers can crea
 **Description:** As a system, I need to log role changes.
 
 **Acceptance Criteria:**
-- [ ] pre_save signal on VaultMembership
-- [ ] If pk exists and role changed, create AuditLog
-- [ ] Action: 'membership.role_changed'
-- [ ] Metadata includes user_id, old_role, new_role
-- [ ] Typecheck passes
+- [x] pre_save signal on VaultMembership
+- [x] If pk exists and role changed, create AuditLog
+- [x] Action: 'membership.role_changed'
+- [x] Metadata includes user_id, old_role, new_role
+- [x] Typecheck passes
 
 ### US-028: Create membership removed audit signal
 **Description:** As a system, I need to log when members are removed.
