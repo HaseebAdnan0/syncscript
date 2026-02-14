@@ -119,13 +119,13 @@ Replace stub email implementation with production-ready email system using Hosti
 **Description:** As a user, I want to receive a welcome email after verifying my account.
 
 **Acceptance Criteria:**
-- [ ] Create `templates/emails/welcome.html` extending base.html
-- [ ] Preheader: "Your SyncScript account is ready!"
-- [ ] Celebratory heading: "You're all set!"
-- [ ] Brief intro to SyncScript features (3 bullet points max)
-- [ ] Orange CTA button: "Go to Dashboard" linking to app
-- [ ] Create `templates/emails/welcome.txt` plaintext version
-- [ ] Typecheck passes
+- [x] Create `templates/emails/welcome.html` extending base.html
+- [x] Preheader: "Your SyncScript account is ready!"
+- [x] Celebratory heading: "You're all set!"
+- [x] Brief intro to SyncScript features (3 bullet points max)
+- [x] Orange CTA button: "Go to Dashboard" linking to app
+- [x] Create `templates/emails/welcome.txt` plaintext version
+- [x] Typecheck passes
 
 ---
 
