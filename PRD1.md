@@ -139,10 +139,10 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a developer, I need serializers for password reset request and confirmation.
 
 **Acceptance Criteria:**
-- [ ] Add PasswordResetRequestSerializer with email field
-- [ ] Add PasswordResetConfirmSerializer with uid, token, new_password fields
-- [ ] Add password validation to PasswordResetConfirmSerializer
-- [ ] Typecheck passes
+- [x] Add PasswordResetRequestSerializer with email field
+- [x] Add PasswordResetConfirmSerializer with uid, token, new_password fields
+- [x] Add password validation to PasswordResetConfirmSerializer
+- [x] Typecheck passes
 
 ---
 

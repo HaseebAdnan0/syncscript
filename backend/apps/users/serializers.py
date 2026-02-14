@@ -168,6 +168,37 @@ class EmailVerificationSerializer(serializers.Serializer):
     token = serializers.CharField(required=True, max_length=64)
 
 
+class PasswordResetRequestSerializer(serializers.Serializer):
+    """
+    Serializer for password reset request (US-010).
+    Accepts email address to send password reset link.
+    """
+    email = serializers.EmailField(required=True)
+
+
+class PasswordResetConfirmSerializer(serializers.Serializer):
+    """
+    Serializer for password reset confirmation (US-010).
+    Validates uid, token, and new password.
+    """
+    uid = serializers.CharField(required=True)
+    token = serializers.CharField(required=True)
+    new_password = serializers.CharField(
+        required=True,
+        min_length=8,
+        write_only=True,
+        style={'input_type': 'password'}
+    )
+
+    def validate_new_password(self, value):
+        """Validate password strength using Django's password validators."""
+        try:
+            validate_password(value)
+        except DjangoValidationError as e:
+            raise serializers.ValidationError(list(e.messages))
+        return value
+
+
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     """
     Custom JWT serializer that includes user ID and email in token claims.
