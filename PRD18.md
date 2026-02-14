@@ -237,12 +237,12 @@ Implement a global full-text search system for SyncScript that enables researche
 **Description:** As a developer, I need a hook for search suggestions with fast debouncing.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/hooks/useSuggestionsQuery.ts`
-- [ ] Debounce: 150ms (faster than full search)
-- [ ] Only fires when query >= 2 characters
-- [ ] Returns top 5 suggestions
-- [ ] Lightweight response for speed
-- [ ] Typecheck passes
+- [x] Create `frontend/src/hooks/useSuggestionsQuery.ts`
+- [x] Debounce: 150ms (faster than full search)
+- [x] Only fires when query >= 2 characters
+- [x] Returns top 5 suggestions
+- [x] Lightweight response for speed
+- [x] Typecheck passes
 
 ---
 
