@@ -364,11 +364,11 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a developer, I need a consistent 429 response when rate limits are exceeded.
 
 **Acceptance Criteria:**
-- [ ] Create rate limit exception handler in views.py or separate module
-- [ ] Return 429 status code with JSON error message
-- [ ] Include Retry-After header
-- [ ] Register handler in DRF exception handling
-- [ ] Typecheck passes
+- [x] Create rate limit exception handler in views.py or separate module
+- [x] Return 429 status code with JSON error message
+- [x] Include Retry-After header
+- [x] Register handler in DRF exception handling
+- [x] Typecheck passes
 
 ---
 

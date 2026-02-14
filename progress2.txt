@@ -406,3 +406,17 @@
   - Pyright warning about "could not be resolved" on relative import is false positive - works at runtime
 ---
 
+## Iteration 31 - US-030: Configure URL router for vaults
+- Verified existing URL configuration meets all acceptance criteria
+- Files verified:
+  - backend/apps/vaults/urls.py (DefaultRouter configured, VaultViewSet registered at 'vaults', urlpatterns exports router.urls)
+  - PRD2.md (marked US-030 as complete)
+- Django check passed with no issues
+- Learnings for future iterations:
+  - URLs file was already implemented with nested routing (more advanced than basic requirement)
+  - DefaultRouter at module level provides REST endpoint registration
+  - urlpatterns can include multiple router.urls with path('', include(router.urls)) pattern
+  - VaultViewSet registered with basename='vault' for URL name generation
+  - Task completion can verify existing code if it meets acceptance criteria
+---
+

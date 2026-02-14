@@ -25,7 +25,10 @@ from .storage import (
 from .services import extract_metadata
 from .permissions import VaultSourcePermission
 from .filters import SourceFilter
+from .utils import update_vault_storage_usage
 from apps.vaults.models import Vault, VaultMembership, RoleChoices
+from datetime import datetime, timedelta
+from django.utils import timezone
 
 
 class PDFUploadViewSet(viewsets.ModelViewSet):
@@ -350,6 +353,56 @@ class PDFUploadViewSet(viewsets.ModelViewSet):
             'pdf_id': pdf_upload.id,
             'status': pdf_upload.processing_status,
             'message': 'Multipart upload completed. Processing will begin shortly.'
+        }, status=status.HTTP_200_OK)
+
+    def destroy(self, request, *args, **kwargs):
+        """
+        DELETE /api/v1/sources/pdfs/{pdf_id}/
+
+        Soft-delete a PDF upload by setting deleted_at timestamp.
+        Only vault owner or the uploader can delete PDFs.
+        Files are permanently deleted after 30 days.
+
+        Response:
+        - message (str): Success message
+        - pdf_id (UUID): PDFUpload record ID
+        - permanent_deletion_date (str): ISO 8601 date when file will be permanently deleted
+        """
+        # Get PDFUpload record
+        pdf_upload = self.get_object()
+
+        # Verify user has permission: must be owner or uploader
+        is_owner = pdf_upload.vault.owner == request.user
+        is_uploader = pdf_upload.uploaded_by == request.user
+
+        # Also allow vault owner with owner role via membership
+        is_vault_admin = False
+        if not is_owner:
+            membership = VaultMembership.objects.filter(
+                vault=pdf_upload.vault,
+                user=request.user,
+                role=RoleChoices.OWNER
+            ).first()
+            is_vault_admin = membership is not None
+
+        if not (is_owner or is_uploader or is_vault_admin):
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied("Only the vault owner or the uploader can delete this PDF.")
+
+        # Set deleted_at timestamp (soft-delete)
+        pdf_upload.deleted_at = timezone.now()
+        pdf_upload.save()
+
+        # Update vault storage usage
+        update_vault_storage_usage(pdf_upload.vault.id)
+
+        # Calculate permanent deletion date (30 days from now)
+        permanent_deletion_date = pdf_upload.deleted_at + timedelta(days=30)
+
+        return Response({
+            'message': 'PDF has been deleted. It will be permanently removed in 30 days.',
+            'pdf_id': pdf_upload.id,
+            'permanent_deletion_date': permanent_deletion_date.isoformat()
         }, status=status.HTTP_200_OK)
 
 
