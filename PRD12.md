@@ -264,16 +264,16 @@ Add social authentication to SyncScript using Google and GitHub OAuth providers.
 **Description:** As a user with an existing account, I need to confirm linking by entering my password.
 
 **Acceptance Criteria:**
-- [ ] Create `components/features/auth/AccountLinkingModal.tsx`
-- [ ] Display: "An account with this email already exists"
-- [ ] Show which provider is being linked (Google/GitHub icon + name)
-- [ ] Password input field with show/hide toggle
-- [ ] "Link Account" button, "Cancel" button
-- [ ] Call `POST /api/v1/auth/oauth/link/` on submit
-- [ ] Show loading state during API call
-- [ ] On success: close modal, redirect to dashboard
-- [ ] On error: show inline error message
-- [ ] Typecheck passes
+- [x] Create `components/features/auth/AccountLinkingModal.tsx`
+- [x] Display: "An account with this email already exists"
+- [x] Show which provider is being linked (Google/GitHub icon + name)
+- [x] Password input field with show/hide toggle
+- [x] "Link Account" button, "Cancel" button
+- [x] Call `POST /api/v1/auth/oauth/link/` on submit
+- [x] Show loading state during API call
+- [x] On success: close modal, redirect to dashboard
+- [x] On error: show inline error message
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---
