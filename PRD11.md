@@ -193,11 +193,11 @@ Replace stub email implementation with production-ready email system using Hosti
 **Description:** As a developer, I need registration to send verification emails asynchronously.
 
 **Acceptance Criteria:**
-- [ ] Update `RegisterView` in `apps/users/views.py`
-- [ ] Replace direct `send_verification_email()` call with `send_verification_email_task.delay()`
-- [ ] Ensure token is saved to database before queuing task
-- [ ] Add error handling if Celery is unavailable (fallback to sync)
-- [ ] Typecheck passes
+- [x] Update `RegisterView` in `apps/users/views.py`
+- [x] Replace direct `send_verification_email()` call with `send_verification_email_task.delay()`
+- [x] Ensure token is saved to database before queuing task
+- [x] Add error handling if Celery is unavailable (fallback to sync)
+- [x] Typecheck passes
 
 ---
 

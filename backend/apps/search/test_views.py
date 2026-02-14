@@ -192,6 +192,33 @@ class SearchViewTest(TestCase):
         # Total results should not exceed limit per type
         self.assertLessEqual(len(response.data['sources']), 1)
 
+    def test_search_tracks_analytics(self):
+        """Test that search endpoint tracks analytics"""
+        from apps.search.models import SearchAnalytics
+
+        self.client.force_authenticate(user=self.user1)
+        query = "machine learning analytics"
+
+        # Perform search
+        response = self.client.get(self.url, {'q': query})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Verify analytics record was created
+        normalized = query.strip().lower()
+        query_hash = SearchAnalytics.hash_query(normalized)
+        analytics = SearchAnalytics.objects.get(query_hash=query_hash)
+
+        self.assertEqual(analytics.query_normalized, normalized)
+        self.assertEqual(analytics.search_count, 0)  # First search
+
+        # Search again
+        response = self.client.get(self.url, {'q': query})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Verify count was incremented
+        analytics.refresh_from_db()
+        self.assertEqual(analytics.search_count, 1)
+
 
 class SuggestionsViewTest(TestCase):
     def setUp(self):

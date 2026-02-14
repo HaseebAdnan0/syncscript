@@ -224,16 +224,16 @@ Create SyncScript's production landing page following the Bitcoin DeFi aesthetic
 **Description:** As a user, I want a final compelling CTA so I'm motivated to sign up.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/marketing/CTASection.tsx`
-- [ ] Full-width gradient background (dark to orange tint)
-- [ ] Headline: "Start Your Research Journey Today"
-- [ ] Email input field with "Get Started" button
-- [ ] Form submits to `/register?email={input}`
-- [ ] Input style: bottom border, orange on focus
-- [ ] Button: primary gradient style
-- [ ] Centered layout with max-width constraint
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/marketing/CTASection.tsx`
+- [x] Full-width gradient background (dark to orange tint)
+- [x] Headline: "Start Your Research Journey Today"
+- [x] Email input field with "Get Started" button
+- [x] Form submits to `/register?email={input}`
+- [x] Input style: bottom border, orange on focus
+- [x] Button: primary gradient style
+- [x] Centered layout with max-width constraint
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-017: Create Marketing Footer
 **Description:** As a user, I want a comprehensive footer so I can navigate to other resources.

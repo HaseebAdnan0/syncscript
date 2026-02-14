@@ -183,3 +183,24 @@
   - Hover effects: -translate-y-1 for lift, border color change to orange/50
   - Typecheck passes with no errors
 ---
+
+## Iteration 9 - US-009: Create recent activity section
+- Created RecentActivity component showing last 10 activity items from all accessible vaults
+- Files changed:
+  - frontend/src/components/features/dashboard/RecentActivity.tsx (new component)
+  - PRD17.md (marked US-009 complete)
+- Learnings for future iterations:
+  - Component fetches from /api/v1/dashboard/activity/?limit=10 with Bearer token
+  - Activity items are clickable links to relevant resources (vaults, sources, annotations)
+  - Smart link generation: vault actions → /vaults/{id}, sources → /vaults/{id}/sources/{target_id}, annotations → /vaults/{id}#annotation-{target_id}
+  - Icon selection based on action type: vault (Folder), source (FileText), annotation (MessageSquare), member (User), fallback (Activity)
+  - User avatar shows initials: first_name[0] + last_name[0], fallback to email[0]
+  - Relative time: < 1min = "Just now", < 60min = "Xm ago", < 24h = "Xh ago", < 7d = "Xd ago", else date
+  - Loading state: 5 skeleton cards with animate-pulse
+  - Empty state: centered icon with message and subtitle
+  - Activity cards show: avatar with gradient background, icon, actor name, description, vault name, time
+  - Hover effects: lift (-translate-y-1), border color change, actor name changes to orange
+  - "View all activity" link at bottom with gradient text (orange to gold)
+  - Bitcoin DeFi design system: dark backgrounds (#0F1115), orange gradients, white/10 borders
+  - Typecheck passes with no errors
+---

@@ -1509,7 +1509,7 @@ class AsyncCitationEndpointTests(TestCase):
         self.assertEqual(response.data['source'], 'structured')
         self.assertFalse(response.data['cached'])
 
-    @patch('apps.citations.tasks.AsyncResult')
+    @patch('apps.citations.views.AsyncResult')
     def test_task_status_pending(self, mock_async_result):
         """Test task status endpoint for pending task"""
         # Mock pending task
@@ -1523,7 +1523,7 @@ class AsyncCitationEndpointTests(TestCase):
         self.assertEqual(response.data['status'], 'pending')
         self.assertNotIn('result', response.data)
 
-    @patch('apps.citations.tasks.AsyncResult')
+    @patch('apps.citations.views.AsyncResult')
     def test_task_status_completed(self, mock_async_result):
         """Test task status endpoint for completed task"""
         # Mock completed task
@@ -1545,7 +1545,7 @@ class AsyncCitationEndpointTests(TestCase):
         self.assertIn('result', response.data)
         self.assertEqual(response.data['result']['citation'], 'Test, A. (2024). Test Article.')
 
-    @patch('apps.citations.tasks.AsyncResult')
+    @patch('apps.citations.views.AsyncResult')
     def test_task_status_failed(self, mock_async_result):
         """Test task status endpoint for failed task"""
         # Mock failed task

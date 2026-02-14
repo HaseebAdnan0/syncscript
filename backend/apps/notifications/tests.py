@@ -578,7 +578,7 @@ class MutedVaultsTestCase(TestCase):
             data={'vault_id': str(self.vault1.id)}
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data['vault_id'], self.vault1.id)  # type: ignore[attr-defined]
+        self.assertEqual(str(response.data['vault_id']), str(self.vault1.id))  # type: ignore[attr-defined]
         self.assertEqual(response.data['vault_name'], self.vault1.name)  # type: ignore[attr-defined]
 
         # Verify muted vault was created in database
@@ -655,10 +655,10 @@ class MutedVaultsTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 2)  # type: ignore[attr-defined]
 
-        # Verify vault details are included
-        vault_ids = [item['vault_id'] for item in response.data]  # type: ignore[attr-defined]
-        self.assertIn(self.vault1.id, vault_ids)
-        self.assertIn(self.vault2.id, vault_ids)
+        # Verify vault details are included (vault_id is serialized as string)
+        vault_ids = [str(item['vault_id']) for item in response.data]  # type: ignore[attr-defined]
+        self.assertIn(str(self.vault1.id), vault_ids)
+        self.assertIn(str(self.vault2.id), vault_ids)
 
     def test_unmute_vault(self) -> None:
         """Test DELETE /api/v1/notifications/muted-vaults/{vault_id}/ unmutes a vault."""
@@ -691,7 +691,7 @@ class MutedVaultsTestCase(TestCase):
 
         response = self.client.get('/api/v1/notifications/muted-vaults/')
         self.assertEqual(len(response.data), 1)  # type: ignore[attr-defined]
-        self.assertEqual(response.data[0]['vault_id'], self.vault1.id)  # type: ignore[attr-defined]
+        self.assertEqual(str(response.data[0]['vault_id']), str(self.vault1.id))  # type: ignore[attr-defined]
 
     def test_requires_authentication(self) -> None:
         """Test muted vaults endpoints require authentication."""
