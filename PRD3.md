@@ -386,14 +386,14 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need a ViewSet for Annotation CRUD operations.
 
 **Acceptance Criteria:**
-- [ ] Create `AnnotationViewSet` extending `ModelViewSet` in `views.py`
-- [ ] Set `queryset = Annotation.objects.all()`
-- [ ] Set `serializer_class = AnnotationSerializer`
-- [ ] Set `permission_classes = [IsAuthenticated, IsAuthorOrReadOnly]`
-- [ ] Override `perform_create()` to set `user` from request.user
-- [ ] Override `get_queryset()` to filter by sources in user's vaults
-- [ ] Add URL route: `router.register(r'annotations', AnnotationViewSet)`
-- [ ] Typecheck passes
+- [x] Create `AnnotationViewSet` extending `ModelViewSet` in `views.py`
+- [x] Set `queryset = Annotation.objects.all()`
+- [x] Set `serializer_class = AnnotationSerializer`
+- [x] Set `permission_classes = [IsAuthenticated, IsAuthorOrReadOnly]`
+- [x] Override `perform_create()` to set `user` from request.user
+- [x] Override `get_queryset()` to filter by sources in user's vaults
+- [x] Add URL route: `router.register(r'annotations', AnnotationViewSet)`
+- [x] Typecheck passes
 
 ---
 
