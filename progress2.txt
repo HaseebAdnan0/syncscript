@@ -237,3 +237,17 @@
   - DRF will automatically return 403 Forbidden when permission check fails
   - Import IsVaultOwner from .permissions module
 ---
+
+## Iteration 19 - US-018: Add archive action to VaultViewSet
+- Implemented @action decorator for POST /vaults/{id}/archive/
+- Files changed:
+  - backend/apps/vaults/views.py (added action and Response imports, added archive() method)
+  - PRD2.md (marked US-018 as complete)
+- Django check passed with no issues
+- Learnings for future iterations:
+  - DRF @action decorator requires detail=True for single object actions (/{id}/action/)
+  - methods=['post'] restricts endpoint to POST requests only
+  - permission_classes on @action decorator overrides ViewSet-level permissions for that specific action
+  - Response({'status': 'archived'}) returns simple JSON response
+  - Must import both action decorator and Response class from rest_framework
+---

@@ -143,11 +143,11 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need DELETE to soft-delete sources instead of hard delete.
 
 **Acceptance Criteria:**
-- [ ] Override `destroy()` method in `SourceViewSet`
-- [ ] Set `instance.is_deleted = True` and save
-- [ ] Return `Response(status=204)`
-- [ ] Verify soft-deleted sources excluded from default queryset
-- [ ] Typecheck passes
+- [x] Override `destroy()` method in `SourceViewSet`
+- [x] Set `instance.is_deleted = True` and save
+- [x] Return `Response(status=204)`
+- [x] Verify soft-deleted sources excluded from default queryset
+- [x] Typecheck passes
 
 ---
 

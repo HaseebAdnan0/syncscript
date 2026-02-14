@@ -199,10 +199,10 @@ Create a secure, collaborative Knowledge Vault system where researchers can crea
 **Description:** As a vault owner, I want to archive completed vaults for decluttering.
 
 **Acceptance Criteria:**
-- [ ] @action(detail=True, methods=['post'], permission_classes=[IsVaultOwner])
-- [ ] Sets vault.is_archived = True and saves
-- [ ] Returns {'status': 'archived'}
-- [ ] Typecheck passes
+- [x] @action(detail=True, methods=['post'], permission_classes=[IsVaultOwner])
+- [x] Sets vault.is_archived = True and saves
+- [x] Returns {'status': 'archived'}
+- [x] Typecheck passes
 
 ### US-019: Add restore action to VaultViewSet
 **Description:** As a vault owner, I want to restore archived vaults.

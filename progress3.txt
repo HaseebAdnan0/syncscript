@@ -222,3 +222,22 @@
   - Django check is sufficient for validation when typecheck requires full venv setup
   - Object-level permissions only apply to retrieve/update/delete, not list/create
 ---
+
+## Iteration 11 - US-010: Add soft delete to SourceViewSet
+- Overrode destroy() method in SourceViewSet
+- Implementation:
+  - Gets object instance using get_object() (which applies permissions)
+  - Sets instance.is_deleted = True instead of deleting
+  - Saves instance
+  - Returns HTTP 204 No Content
+- Soft-deleted sources automatically excluded via queryset filter (is_deleted=False)
+- Django check passes with 0 issues
+- Files changed:
+  - backend/apps/sources/views.py (added destroy() method)
+  - PRD3.md (marked US-010 complete)
+- Learnings for future iterations:
+  - destroy() signature requires *args, **kwargs even if not used
+  - get_object() applies permission checks automatically, so permissions still enforced
+  - Default queryset already filters is_deleted=False, so soft-deleted sources hidden automatically
+  - Return status.HTTP_204_NO_CONTENT for successful delete (standard REST convention)
+---
