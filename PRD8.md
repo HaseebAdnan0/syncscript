@@ -132,15 +132,15 @@ Create the complete vault management interface for SyncScript, enabling research
 **Description:** As a user, I want to see vault details in a tabbed layout so I can switch between Sources, Members, and Settings.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/app/vaults/[id]/page.tsx`
-- [ ] Page header: vault name, description, back button
-- [ ] Radix Tabs with three tabs: Sources, Members, Settings
-- [ ] Tab styling: underline indicator in orange when active
-- [ ] Active tab stored in Zustand store (persists during session)
-- [ ] Uses useVault hook to fetch vault data
-- [ ] Shows loading state while fetching
-- [ ] 404 handling if vault not found
-- [ ] Typecheck passes
+- [x] Create `frontend/src/app/vaults/[id]/page.tsx`
+- [x] Page header: vault name, description, back button
+- [x] Radix Tabs with three tabs: Sources, Members, Settings
+- [x] Tab styling: underline indicator in orange when active
+- [x] Active tab stored in Zustand store (persists during session)
+- [x] Uses useVault hook to fetch vault data
+- [x] Shows loading state while fetching
+- [x] 404 handling if vault not found
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-011: Sources tab list component
