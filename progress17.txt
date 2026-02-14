@@ -147,3 +147,21 @@
   - All components follow Bitcoin DeFi design system (dark backgrounds, orange accents, glassmorphism)
   - Typecheck passes with no errors
 ---
+
+## Iteration 7 - US-007: Create welcome header component
+- Component was already created in a previous iteration (commit c283bcc)
+- Updated PRD17.md to mark US-007 complete (all implementation criteria met)
+- Files changed:
+  - PRD17.md (marked US-007 complete)
+- Learnings for future iterations:
+  - Always check git log to see if files were already created
+  - WelcomeHeader component already implements all requirements:
+    - Time-based greeting logic (5am-12pm = morning, 12pm-5pm = afternoon, else evening)
+    - Fetches from /api/v1/dashboard/stats/ endpoint
+    - Skeleton loader with 3 animated cards during loading
+    - Gradient text on greeting (orange to gold)
+    - 3 stat cards with icons (LayoutDashboard, FileText, MessageSquare)
+    - Responsive grid (1 column mobile, 3 columns desktop)
+    - Bitcoin DeFi design system applied (dark cards, orange accents, hover effects)
+  - Typecheck passes
+---
