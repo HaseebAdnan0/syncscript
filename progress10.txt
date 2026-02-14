@@ -6,7 +6,7 @@
 - [x] US-001: Create useVaultSocket hook for WebSocket connection management
 - [x] US-002: Create ConnectionStatus indicator component
 - [x] US-003: Create useRealtimeUpdates hook for optimistic updates with reconciliation
-- [ ] US-004: Integrate real-time source updates in vault detail page
+- [x] US-004: Integrate real-time source updates in vault detail page
 - [ ] US-005: Integrate real-time annotation updates
 - [ ] US-006: Create usePresence hook for tracking active vault members
 - [ ] US-007: Create PresenceIndicator component with animate-ping effect
@@ -73,6 +73,24 @@
   - On error event: rolls back to previous cached state using stored snapshot
   - Uses refs to track pending updates Map to prevent stale closures
   - Cleanup on unmount clears all pending updates
+  - Typecheck passes without issues
+---
+
+## Iteration 4 - US-004: Integrate real-time source updates in vault detail page
+- Implemented vault detail page with real-time source updates at `frontend/src/app/vaults/[id]/page.tsx`
+- Files changed:
+  - Created `frontend/src/hooks/useSources.ts` (React Query hooks for sources)
+  - Created `frontend/src/app/vaults/[id]/page.tsx` (vault detail page)
+  - Updated `PRD10.md` (marked US-004 complete)
+- Learnings for future iterations:
+  - useVaultSocket expects object parameter: `{ vaultId: string }` (vaultId must be string, not number)
+  - Event listeners should be set up without checking connection status - addEventListener handles this internally
+  - WebSocket events format: `source.created`, `source.updated`, `source.deleted`
+  - Event data structure: `{ source: Source }` for created/updated, `{ source_id: number }` for deleted
+  - Used `refetch()` from React Query to update the list after WebSocket events
+  - Implemented fade-in animation using `animate-in fade-in duration-500` Tailwind classes
+  - Tracked new source IDs in local state to trigger animation, cleared after 2 seconds
+  - Connection status displayed in vault header for user awareness
   - Typecheck passes without issues
 ---
 

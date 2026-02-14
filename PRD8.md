@@ -66,14 +66,14 @@ Create the complete vault management interface for SyncScript, enabling research
 **Description:** As a user, I want to see vault information in a card format so I can quickly scan my vaults.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/vaults/VaultCard.tsx`
-- [ ] Card displays: vault name, description (truncated), source count, member count, last updated
-- [ ] Card shows role badge: "Owner" (orange), "Contributor" (blue), "Viewer" (gray)
-- [ ] Card uses `bg-[#0F1115] border border-white/10 rounded-2xl` styling
-- [ ] Hover effect: `-translate-y-1` lift and `border-[#F7931A]/50` orange glow
-- [ ] Card is clickable, navigates to vault detail page
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/features/vaults/VaultCard.tsx`
+- [x] Card displays: vault name, description (truncated), source count, member count, last updated
+- [x] Card shows role badge: "Owner" (orange), "Contributor" (blue), "Viewer" (gray)
+- [x] Card uses `bg-[#0F1115] border border-white/10 rounded-2xl` styling
+- [x] Hover effect: `-translate-y-1` lift and `border-[#F7931A]/50` orange glow
+- [x] Card is clickable, navigates to vault detail page
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-006: Vaults listing page with grid layout
 **Description:** As a user, I want to see all my vaults in a grid so I can browse and select one to work on.

@@ -76,3 +76,23 @@ Learnings for future iterations:
 - API client was already comprehensive from US-001, just needed React Query wrappers
 ---
 
+## Iteration 4 - US-004: Zustand store for vaults UI state
+- Created `frontend/src/stores/vaultsStore.ts` with Zustand store for global UI state:
+  - isCreateModalOpen: boolean - Controls create vault modal visibility
+  - searchQuery: string - Stores vault search filter text
+  - activeTab: string - Persists active tab on vault detail page (defaults to 'sources')
+  - Actions: openCreateModal, closeCreateModal, setSearchQuery, setActiveTab
+- Store follows minimal state principle - only truly global UI state
+- Typecheck passes successfully
+
+Files changed:
+- frontend/src/stores/vaultsStore.ts (created)
+- PRD8.md (marked US-004 complete)
+
+Learnings for future iterations:
+- Zustand create() pattern is simple: define interface + create store with initial state + actions
+- Keep stores minimal - component-local state should stay in useState/useReducer
+- Default activeTab to 'sources' since that's typically the first tab users want
+- Next.js requires building the app before typecheck to generate .next/types files
+---
+
