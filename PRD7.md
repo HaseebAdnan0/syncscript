@@ -162,14 +162,14 @@ SyncScript needs a complete frontend authentication system that enables users to
 **Description:** As a user, I want a registration page so that I can create an account.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/app/(auth)/register/page.tsx`
-- [ ] Glass card container with title "Create Account"
-- [ ] Fields: name, email, password, confirm password
-- [ ] All fields use FormInput component
-- [ ] Gradient submit button "Create Account"
-- [ ] Link to login: "Already have an account? Sign in"
-- [ ] Form is presentational only (no logic yet)
-- [ ] Typecheck passes
+- [x] Create `frontend/src/app/(auth)/register/page.tsx`
+- [x] Glass card container with title "Create Account"
+- [x] Fields: name, email, password, confirm password
+- [x] All fields use FormInput component
+- [x] Gradient submit button "Create Account"
+- [x] Link to login: "Already have an account? Sign in"
+- [x] Form is presentational only (no logic yet)
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---

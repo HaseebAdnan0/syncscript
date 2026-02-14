@@ -9,6 +9,7 @@ import {
   updatePreferences,
   type NotificationPreferences as PreferencesType,
 } from "@/lib/api/notifications";
+import { requestNotificationPermission } from "@/lib/pusher";
 
 export function NotificationPreferences() {
   const queryClient = useQueryClient();
@@ -45,16 +46,12 @@ export function NotificationPreferences() {
   const handlePushToggle = async (checked: boolean) => {
     if (checked) {
       // Request browser notification permission
-      if ("Notification" in window) {
-        const permission = await Notification.requestPermission();
-        if (permission === "granted") {
-          updateMutation.mutate({ push_notifications_enabled: true });
-        } else {
-          // Permission denied, don't update backend
-          console.warn("Browser notification permission denied");
-        }
+      const granted = await requestNotificationPermission();
+      if (granted) {
+        updateMutation.mutate({ push_notifications_enabled: true });
       } else {
-        console.warn("Browser notifications not supported");
+        // Permission denied, don't update backend
+        console.warn("Browser notification permission denied");
       }
     } else {
       updateMutation.mutate({ push_notifications_enabled: false });

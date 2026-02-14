@@ -283,3 +283,28 @@ Learnings for future iterations:
 - Component accepts callbacks (onAddSource, onCancel, onRetry) for parent control
 - detectedType from metadata determines which SourceTypeBadge variant to show
 ---
+## Iteration 11 - US-012: Create useAddSourceMutation hook
+- Created useAddSourceMutation hook at frontend/src/hooks/useAddSourceMutation.ts
+- Follows same mutation pattern as useCreateVault from useVaults.ts
+- Uses React Query useMutation with Source, Error, CreateSourceRequest generic types
+- Invalidates sources query cache using queryKey: ['sources', vaultId] on success
+- Shows success toast with source title confirmation message
+- Shows error toast on failure with error message
+- Fixed unrelated TypeScript error: removed unused SourcesList import in vault detail page
+- Typecheck passes ✓
+
+Files changed:
+- frontend/src/hooks/useAddSourceMutation.ts (new)
+- frontend/src/app/vaults/[id]/page.tsx (fixed unused import)
+- PRD9.md (marked US-012 complete)
+
+Learnings for future iterations:
+- Mutation hooks follow pattern: useMutation<ReturnType, ErrorType, RequestType>
+- Query invalidation uses queryClient.invalidateQueries({ queryKey: [...] })
+- Toast notifications imported via named export: import { toast } from '@/hooks/useToast'
+- Success toast includes entity title for user confirmation
+- Error toast displays error.message with fallback generic message
+- Hook exports mutation object with: mutate, mutateAsync, isPending, error (React Query v5)
+- Query key for sources includes vault ID for proper cache invalidation
+- Always fix unrelated TypeScript errors to ensure clean typecheck pass
+---

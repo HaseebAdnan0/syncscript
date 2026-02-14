@@ -292,3 +292,37 @@ Learnings for future iterations:
 - Back button pattern: ArrowLeft icon + "Back to vaults" text with router.push('/vaults')
 - Task US-010 was already complete from previous work on different PRD (PRD4), just needed PRD8 marked
 ---
+
+## Iteration 12 - US-011: Sources tab list component
+- Created `frontend/src/components/features/vaults/SourcesList.tsx` with complete sources list UI:
+  - Displays sources in card format with title, URL (truncated), added date, contributor
+  - Each source card uses SourceTypeBadge component for type indicator
+  - Cards have Bitcoin DeFi hover effects: `-translate-y-1` lift and `border-[#F7931A]/50` orange glow
+  - Cards are clickable, navigate to `/sources/{id}` (placeholder route)
+  - Loading skeleton with 3 card placeholders using animate-pulse
+  - Error state with red error message
+  - Helper functions: formatDate() for human-readable dates, truncateUrl() for long URLs
+- Integrated SourcesList into vault detail page:
+  - Imported SourcesList component and useSources hook
+  - Fetches sources to get count for tab badge
+  - Updated "Sources" tab to show count: "Sources (12)" when sources exist
+  - Replaced placeholder content with <SourcesList vaultId={vaultId} />
+- Build passes successfully (with pre-existing linter warnings in other files)
+- Typecheck passes successfully
+
+Files changed:
+- frontend/src/components/features/vaults/SourcesList.tsx (created)
+- frontend/src/app/vaults/[id]/page.tsx (integrated SourcesList)
+- PRD8.md (marked US-011 complete except browser verification)
+
+Learnings for future iterations:
+- Sources API already existed from previous PRD work (types, API client, hooks)
+- SourceTypeBadge component provides colored badges for URL, PDF, Citation, Article types
+- Source interface includes contributor object with id, username, email
+- useSources hook returns array directly (getSources returns results from paginated response)
+- Card pattern: Link wrapper around card div for full card clickability
+- Stop propagation on nested links (e.g., URL link inside card) to prevent double navigation
+- formatDate helper provides relative dates (today, yesterday, X days ago) with fallback to full date
+- Tab badges should conditionally render: `{count > 0 && <span>(count)</span>}`
+- Build cache corruption can be fixed with `rm -rf .next` before rebuild
+---

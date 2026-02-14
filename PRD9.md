@@ -195,12 +195,12 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 **Description:** As a user, I want to paste multiple URLs at once so I can quickly import many sources.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/sources/BulkImportModal.tsx`
-- [ ] Large textarea for pasting URLs (one per line)
-- [ ] "Parse URLs" button extracts and validates URLs
-- [ ] Shows count of valid/invalid URLs detected
-- [ ] Invalid URLs highlighted in red with error message
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/sources/BulkImportModal.tsx`
+- [x] Large textarea for pasting URLs (one per line)
+- [x] "Parse URLs" button extracts and validates URLs
+- [x] Shows count of valid/invalid URLs detected
+- [x] Invalid URLs highlighted in red with error message
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---

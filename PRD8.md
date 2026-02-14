@@ -147,12 +147,12 @@ Create the complete vault management interface for SyncScript, enabling research
 **Description:** As a user, I want to see all sources in a vault so I can browse the research materials.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/vaults/SourcesList.tsx`
-- [ ] Display sources in a list/card format with: title, URL (truncated), added date, added by
-- [ ] Each source card has hover effect consistent with VaultCard
-- [ ] Source cards are clickable (link to source detail - can be placeholder route)
-- [ ] Shows source count in tab badge: "Sources (12)"
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/vaults/SourcesList.tsx`
+- [x] Display sources in a list/card format with: title, URL (truncated), added date, added by
+- [x] Each source card has hover effect consistent with VaultCard
+- [x] Source cards are clickable (link to source detail - can be placeholder route)
+- [x] Shows source count in tab badge: "Sources (12)"
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-012: Empty state for no sources

@@ -253,3 +253,30 @@
   - Component removed onClose prop (not used in implementation)
   - Typecheck passes without issues
 ---
+## Iteration 12 - US-012: Create NotificationPreferences panel for user settings
+- Implemented notification preferences panel at `frontend/src/components/features/notifications/NotificationPreferences.tsx`
+- Files changed:
+  - Created `frontend/src/components/ui/switch.tsx` (Radix UI switch with Bitcoin DeFi styling)
+  - Created `frontend/src/components/features/notifications/NotificationPreferences.tsx`
+  - Updated `frontend/src/lib/api/notifications.ts` (added getPreferences and updatePreferences functions)
+  - Updated `frontend/package.json` (added @radix-ui/react-switch dependency)
+  - Updated `PRD10.md` (marked US-012 complete except browser verification)
+- Learnings for future iterations:
+  - Installed @radix-ui/react-switch package for toggle switches
+  - Switch component styling: gradient orange (from-[#EA580C] to-[#F7931A]) when checked, gray (#1E293B) when unchecked
+  - Switch thumb is white circle that translates across (translate-x-5 when checked)
+  - Focus ring uses Bitcoin orange (#F7931A) with ring-offset for visibility
+  - NotificationPreferences component uses TanStack Query for fetching/updating preferences
+  - API endpoints: GET /users/me/preferences/ and PATCH /users/me/preferences/
+  - Three toggles: notifications_enabled, push_notifications_enabled, sound_enabled
+  - Browser push requires Notification.requestPermission() before enabling backend setting
+  - Sound preference also saved to localStorage for immediate access (key: "notification-sound-enabled")
+  - Push and sound toggles disabled when main notifications toggle is off (dependency logic)
+  - Loading state shows skeleton with animate-pulse (three gray bars)
+  - Each preference row has icon, title, description, and switch
+  - Rows use hover effect: border-[#F7931A]/30 on hover
+  - Icon containers use gradient background with rounded-full
+  - Volume2 icon when sound enabled, VolumeX when disabled
+  - Pending state message shown while saving preferences
+  - Typecheck passes without issues
+---
