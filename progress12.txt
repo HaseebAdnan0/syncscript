@@ -669,3 +669,30 @@ Learnings for future iterations:
   - Common OAuth errors: access_denied (user cancelled), invalid_request (server error), email_exists (duplicate), provider_error (can't connect)
 ---
 
+## Iteration 24 - US-024: Add API client methods for OAuth endpoints
+- Added four OAuth API methods to frontend/src/lib/api.ts
+- Created linkOAuthAccount(password, provider) for account linking with password confirmation
+- Created completeOAuthEmail(email, tempToken) for GitHub private email flow
+- Created getConnectedAccounts() to fetch list of connected OAuth providers
+- Created disconnectOAuthProvider(provider) to remove OAuth provider from account
+- Added TypeScript types: OAuthProvider, ConnectedAccount, LinkOAuthAccountRequest/Response, CompleteOAuthEmailRequest/Response
+- All methods use existing api instance with interceptors for auth and error handling
+- Typecheck passes (pre-existing dashboard error unrelated to OAuth)
+- Committed successfully
+
+Files changed:
+  - frontend/src/lib/api.ts (added OAuth API methods and types)
+  - PRD12.md (marked US-024 complete)
+
+Learnings for future iterations:
+  - API methods should follow existing patterns in the file (async/await, return response.data)
+  - TypeScript interfaces should be exported for use in components
+  - OAuthProvider type union ('google' | 'github') provides type safety
+  - Optional fields in interfaces (?) handle provider-specific data (Google profile_picture, GitHub username)
+  - Existing handleApiError and interceptors handle error responses consistently
+  - temp_token parameter uses snake_case to match backend API convention
+  - DELETE endpoints typically return void (no response body expected)
+  - GET endpoints return arrays or objects directly from response.data
+  - POST endpoints return response objects with message/tokens/flags
+---
+

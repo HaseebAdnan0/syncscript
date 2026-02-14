@@ -270,11 +270,11 @@ Create a comprehensive user dashboard as the primary logged-in landing page for 
 **Description:** As a user, I want to land on the dashboard after logging in so I see my personalized home page.
 
 **Acceptance Criteria:**
-- [ ] Update AuthProvider to redirect to `/dashboard` after successful login
-- [ ] Update any hardcoded `/vaults` redirects to `/dashboard`
-- [ ] Ensure protected route logic includes `/dashboard`
-- [ ] If user navigates to `/` while logged in, redirect to `/dashboard`
-- [ ] Typecheck passes
+- [x] Update AuthProvider to redirect to `/dashboard` after successful login
+- [x] Update any hardcoded `/vaults` redirects to `/dashboard`
+- [x] Ensure protected route logic includes `/dashboard`
+- [x] If user navigates to `/` while logged in, redirect to `/dashboard`
+- [x] Typecheck passes
 - [ ] Verify redirect works in browser after login
 
 ### US-020: Create API client functions for dashboard

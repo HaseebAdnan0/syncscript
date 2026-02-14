@@ -915,6 +915,8 @@ Smith, J. (2024). Test article. <i>Nature</i>, <i>123</i>(4), 567-589."""
 ---SPLIT---
 Unknown. (n.d.). Untitled source. Retrieved February 14, 2026 from https://example.com"""
         mock_message.content = [mock_content]
+        mock_message.usage = MagicMock(input_tokens=100, output_tokens=30)
+        mock_message.model = 'claude-3-5-sonnet-20241022'
 
         mock_client = MagicMock()
         mock_client.messages.create.return_value = mock_message
@@ -925,7 +927,7 @@ Unknown. (n.d.). Untitled source. Retrieved February 14, 2026 from https://examp
             'url': 'https://example.com',
         }
 
-        plain, html = generate_ai_citation(source_data, CitationFormat.APA7)
+        plain, html, _usage_data = generate_ai_citation(source_data, CitationFormat.APA7)
 
         self.assertIn("Unknown", plain)
         self.assertIn("n.d.", plain)
@@ -1354,14 +1356,15 @@ class AsyncCitationTaskTests(TestCase):
         """Test successful async AI citation generation"""
         from apps.citations.tasks import generate_ai_citation_task
 
-        # Mock AI citation service
+        # Mock AI citation service with usage data
         mock_ai_citation.return_value = (
             'Test, A. (2024). Test Article.',
-            'Test, A. (2024). <i>Test Article</i>.'
+            'Test, A. (2024). <i>Test Article</i>.',
+            {'input_tokens': 150, 'output_tokens': 50, 'total_tokens': 200, 'model': 'claude-3-5-sonnet-20241022'}
         )
 
-        # Run task synchronously (not via .delay())
-        result = generate_ai_citation_task(self.source.id, 'apa7')
+        # Run task synchronously (not via .delay()) with user_id
+        result = generate_ai_citation_task(self.source.id, 'apa7', self.user.id)
 
         # Verify result structure
         self.assertEqual(result['source_id'], self.source.id)
@@ -1384,14 +1387,15 @@ class AsyncCitationTaskTests(TestCase):
         """Test task handles different citation formats"""
         from apps.citations.tasks import generate_ai_citation_task
 
-        # Mock AI citation service
+        # Mock AI citation service with usage data
         mock_ai_citation.return_value = (
             'Test. "Article." Journal.',
-            'Test. "Article." <i>Journal</i>.'
+            'Test. "Article." <i>Journal</i>.',
+            {'input_tokens': 120, 'output_tokens': 40, 'total_tokens': 160, 'model': 'claude-3-5-sonnet-20241022'}
         )
 
-        # Generate BibTeX citation
-        result = generate_ai_citation_task(self.source.id, 'bibtex')
+        # Generate BibTeX citation with user_id
+        result = generate_ai_citation_task(self.source.id, 'bibtex', self.user.id)
 
         self.assertEqual(result['format'], 'bibtex')
         self.assertIn('Test. "Article." Journal.', result['citation'])
@@ -1408,18 +1412,18 @@ class AsyncCitationTaskTests(TestCase):
         # Mock API error
         mock_ai_citation.side_effect = Exception("API error")
 
-        # Task should raise the original exception (wrapped in Retry)
+        # Task should raise the original exception (wrapped in Retry) with user_id
         with self.assertRaises(Exception):
-            generate_ai_citation_task(self.source.id, 'apa7')
+            generate_ai_citation_task(self.source.id, 'apa7', self.user.id)
 
     def test_generate_ai_citation_task_source_not_found(self):
         """Test task handles non-existent source"""
         from apps.citations.tasks import generate_ai_citation_task
         from django.http import Http404
 
-        # Non-existent source ID
+        # Non-existent source ID with user_id
         with self.assertRaises(Http404):
-            generate_ai_citation_task(99999, 'apa7')
+            generate_ai_citation_task(99999, 'apa7', self.user.id)
 
 
 class AsyncCitationEndpointTests(TestCase):

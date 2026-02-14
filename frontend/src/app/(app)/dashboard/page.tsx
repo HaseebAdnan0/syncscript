@@ -10,6 +10,7 @@ import { AlertTriangle } from 'lucide-react';
 
 // Error fallback component for failed sections
 function SectionErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
+  const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
   return (
     <div className="bg-[#0F1115] border border-red-500/20 rounded-2xl p-8">
       <div className="flex items-start gap-4">
@@ -18,7 +19,7 @@ function SectionErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
         </div>
         <div className="flex-1">
           <h3 className="text-white font-bold mb-2">Failed to load section</h3>
-          <p className="text-white/60 text-sm mb-4">{error.message}</p>
+          <p className="text-white/60 text-sm mb-4">{errorMessage}</p>
           <button
             onClick={resetErrorBoundary}
             className="text-sm text-[#F7931A] hover:text-[#FFD600] transition-colors uppercase tracking-wide font-medium"

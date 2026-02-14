@@ -416,3 +416,34 @@
 - All US-018 acceptance criteria met (imports, order, spacing, FAB, loading, error boundaries, typecheck)
 - Typecheck passes with no errors
 - Ready for browser verification
+
+## Iteration 19 - US-019: Update post-login redirect to dashboard
+- Updated all login/registration flows to redirect to /dashboard instead of /vaults
+- Added client-side route protection for (app) layout (redirects to /login if not authenticated)
+- Added client-side redirect for marketing page (redirects to /dashboard if authenticated)
+- Files changed:
+  - frontend/src/app/(auth)/login/page.tsx (changed default returnUrl from /vaults to /dashboard)
+  - frontend/src/app/(auth)/callback/page.tsx (OAuth success redirects to /dashboard)
+  - frontend/src/app/(marketing)/page.tsx (added redirect logic for logged-in users)
+  - frontend/src/app/(app)/layout.tsx (added auth protection with login redirect)
+  - PRD17.md (marked US-019 acceptance criteria complete)
+- Learnings for future iterations:
+  - Next.js App Router uses client-side routing, so middleware not needed for simple redirects
+  - (app) layout wraps all protected routes (/dashboard, /vaults, /settings, etc.)
+  - Auth check in layout prevents unauthorized access to entire (app) route group
+  - Marketing page (/) now checks user state and redirects to /dashboard if logged in
+  - Login page accepts returnUrl query param for post-login navigation
+  - OAuth callback page (success case) redirects to /dashboard instead of /vaults
+  - Loading states prevent flash of content before redirect (show spinner during auth check)
+  - All redirect logic uses useAuthStore from Zustand for consistent auth state
+  - Typecheck passes with no errors
+---
+
+## What Worked
+- Dashboard is now the default post-login destination
+- Root path (/) redirects logged-in users to /dashboard
+- All (app) routes are protected and redirect to /login if unauthenticated
+- Login preserves returnUrl for deep linking (e.g., /login?returnUrl=/vaults/123)
+- Typecheck passes with no errors
+- Ready for browser verification
+

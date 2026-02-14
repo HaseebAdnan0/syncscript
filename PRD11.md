@@ -228,16 +228,16 @@ Replace stub email implementation with production-ready email system using Hosti
 **Description:** As a user who just registered, I want to see a "check your email" page with resend option.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/app/auth/verify-email/pending/page.tsx`
-- [ ] Display "Check your email" message with envelope icon
-- [ ] Show the email address verification was sent to (from URL param or context)
-- [ ] "Resend verification email" button with countdown timer (60 seconds)
-- [ ] Button disabled during countdown, shows remaining time
-- [ ] Call `/api/v1/auth/resend-verification/` on click
-- [ ] Show success/error toast after resend
-- [ ] "Back to login" link
-- [ ] Bitcoin DeFi dark theme styling
-- [ ] Typecheck passes
+- [x] Create `frontend/src/app/auth/verify-email/pending/page.tsx`
+- [x] Display "Check your email" message with envelope icon
+- [x] Show the email address verification was sent to (from URL param or context)
+- [x] "Resend verification email" button with countdown timer (60 seconds)
+- [x] Button disabled during countdown, shows remaining time
+- [x] Call `/api/v1/auth/resend-verification/` on click
+- [x] Show success/error toast after resend
+- [x] "Back to login" link
+- [x] Bitcoin DeFi dark theme styling
+- [x] Typecheck passes
 
 ---
 
