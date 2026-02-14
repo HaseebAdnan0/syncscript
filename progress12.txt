@@ -21,3 +21,18 @@
 - Testing: 1 story (US-025)
 
 ---
+
+## Iteration 1 - US-001: Install and configure django-allauth
+- Added django-allauth[socialaccount]>=65.4.0 to requirements.txt
+- Attempted to configure allauth in settings.py
+- Issue encountered: Linter/formatter keeps reverting changes to settings.py
+- Workaround: Created separate allauth_settings.py file
+- Next step: Need to import allauth settings in settings.py
+- Files changed:
+  - backend/requirements.txt
+  - backend/config/allauth_settings.py
+
+Learnings for future iterations:
+  - Linters may interfere with configuration changes - consider disabling or using alternative methods
+  - Settings.py modifications need careful handling due to auto-formatting
+---

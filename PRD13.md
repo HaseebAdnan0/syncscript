@@ -28,10 +28,10 @@ Enhance SyncScript's file storage system to production-ready status with Cloudfl
 **Description:** As a developer, I need a field to store extracted PDF text so it can be used for search indexing.
 
 **Acceptance Criteria:**
-- [ ] Add `extracted_text = models.TextField(blank=True, default='')` to PDFUpload model
-- [ ] Generate migration file
-- [ ] Run migration successfully
-- [ ] Typecheck passes
+- [x] Add `extracted_text = models.TextField(blank=True, default='')` to PDFUpload model
+- [x] Generate migration file
+- [x] Run migration successfully
+- [x] Typecheck passes
 
 ---
 

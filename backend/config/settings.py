@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.postgres',
 
     # Third-party apps
     'rest_framework',
@@ -47,6 +48,8 @@ INSTALLED_APPS = [
     'apps.sources',
     'apps.vaults',
     'apps.annotations',
+    'apps.notifications',
+    'apps.ai',
 ]
 
 MIDDLEWARE = [
@@ -219,9 +222,10 @@ CORS_ALLOW_HEADERS = [
 
 # Email Settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
-EMAIL_PORT = int(os.getenv('EMAIL_PORT', '587'))
-EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.hostinger.com')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', '465'))
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'False') == 'True'
+EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', 'True') == 'True'
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@syncscript.com')
@@ -278,3 +282,25 @@ CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60  # 30 minutes max per task
 CELERY_TASK_ALWAYS_EAGER = os.getenv('CELERY_TASK_ALWAYS_EAGER', 'False').lower() == 'true'
+
+# django-allauth Configuration
+INSTALLED_APPS += [
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.github',
+]
+
+# Add allauth middleware
+_msg_middleware_idx = MIDDLEWARE.index('django.contrib.messages.middleware.MessageMiddleware')
+MIDDLEWARE.insert(_msg_middleware_idx, 'allauth.account.middleware.AccountMiddleware')
+
+# Add allauth authentication backend
+AUTHENTICATION_BACKENDS.append('allauth.account.auth_backends.AuthenticationBackend')
+
+# Allauth account settings
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+SOCIALACCOUNT_AUTO_SIGNUP = True
+SOCIALACCOUNT_EMAIL_AUTHENTICATION = False

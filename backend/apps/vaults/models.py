@@ -30,6 +30,16 @@ class Vault(models.Model):
         on_delete=models.CASCADE,
         related_name='owned_vaults'
     )
+    ai_insights_cache = models.JSONField(
+        null=True,
+        blank=True,
+        help_text='AI-generated vault insights: {themes[], research_gaps[], cross_references[], suggested_searches[], generated_at}'
+    )
+    ai_insights_updated_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text='Timestamp of last AI insights generation'
+    )
     is_archived = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

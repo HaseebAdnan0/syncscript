@@ -1,6 +1,8 @@
 import uuid
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.contrib.postgres.search import SearchVectorField
+from django.contrib.postgres.indexes import GinIndex
 from dirtyfields import DirtyFieldsMixin
 
 User = get_user_model()
@@ -30,6 +32,11 @@ class Source(DirtyFieldsMixin, models.Model):
         default=SourceType.URL
     )
     metadata = models.JSONField(default=dict)
+    ai_summary = models.JSONField(
+        null=True,
+        blank=True,
+        help_text='AI-generated summary: {abstract, key_findings[], methodology, limitations, keywords[], generated_at}'
+    )
     created_by = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -39,6 +46,7 @@ class Source(DirtyFieldsMixin, models.Model):
     is_deleted = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    search_vector = SearchVectorField(null=True)
 
     class Meta:
         ordering = ['-created_at']
@@ -46,6 +54,7 @@ class Source(DirtyFieldsMixin, models.Model):
             models.Index(fields=['vault', 'is_deleted']),
             models.Index(fields=['source_type']),
             models.Index(fields=['created_at']),
+            GinIndex(fields=['search_vector'], name='source_search_vector_idx'),
         ]
         constraints = [
             models.UniqueConstraint(
@@ -109,6 +118,7 @@ class PDFUpload(models.Model):
     pdf_author = models.CharField(max_length=255, blank=True)
     page_count = models.IntegerField(null=True, blank=True)
     thumbnail_url = models.URLField(max_length=500, blank=True)
+    extracted_text = models.TextField(blank=True, default='')
 
     # Soft delete
     deleted_at = models.DateTimeField(null=True, blank=True, db_index=True)

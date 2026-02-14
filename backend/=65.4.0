@@ -1,0 +1,20 @@
+Defaulting to user installation because normal site-packages is not writeable
+Requirement already satisfied: django-allauth[socialaccount] in c:\users\user\appdata\roaming\python\python314\site-packages (65.14.3)
+Requirement already satisfied: Django>=4.2.16 in c:\users\user\appdata\roaming\python\python314\site-packages (from django-allauth[socialaccount]) (6.0.1)
+Requirement already satisfied: asgiref>=3.8.1 in c:\users\user\appdata\roaming\python\python314\site-packages (from django-allauth[socialaccount]) (3.11.0)
+Collecting oauthlib<4,>=3.3.0 (from django-allauth[socialaccount])
+  Downloading oauthlib-3.3.1-py3-none-any.whl.metadata (7.9 kB)
+Requirement already satisfied: requests<3,>=2.0.0 in c:\users\user\appdata\roaming\python\python314\site-packages (from django-allauth[socialaccount]) (2.31.0)
+Requirement already satisfied: pyjwt<3,>=2.0 in c:\users\user\appdata\roaming\python\python314\site-packages (from pyjwt[crypto]<3,>=2.0; extra == "socialaccount"->django-allauth[socialaccount]) (2.10.1)
+Requirement already satisfied: cryptography>=3.4.0 in c:\users\user\appdata\roaming\python\python314\site-packages (from pyjwt[crypto]<3,>=2.0; extra == "socialaccount"->django-allauth[socialaccount]) (46.0.3)
+Requirement already satisfied: charset-normalizer<4,>=2 in c:\users\user\appdata\roaming\python\python314\site-packages (from requests<3,>=2.0.0->django-allauth[socialaccount]) (3.4.4)
+Requirement already satisfied: idna<4,>=2.5 in c:\users\user\appdata\roaming\python\python314\site-packages (from requests<3,>=2.0.0->django-allauth[socialaccount]) (3.11)
+Requirement already satisfied: urllib3<3,>=1.21.1 in c:\users\user\appdata\roaming\python\python314\site-packages (from requests<3,>=2.0.0->django-allauth[socialaccount]) (2.6.3)
+Requirement already satisfied: certifi>=2017.4.17 in c:\users\user\appdata\roaming\python\python314\site-packages (from requests<3,>=2.0.0->django-allauth[socialaccount]) (2026.1.4)
+Requirement already satisfied: cffi>=2.0.0 in c:\users\user\appdata\roaming\python\python314\site-packages (from cryptography>=3.4.0->pyjwt[crypto]<3,>=2.0; extra == "socialaccount"->django-allauth[socialaccount]) (2.0.0)
+Requirement already satisfied: pycparser in c:\users\user\appdata\roaming\python\python314\site-packages (from cffi>=2.0.0->cryptography>=3.4.0->pyjwt[crypto]<3,>=2.0; extra == "socialaccount"->django-allauth[socialaccount]) (2.23)
+Requirement already satisfied: sqlparse>=0.5.0 in c:\users\user\appdata\roaming\python\python314\site-packages (from Django>=4.2.16->django-allauth[socialaccount]) (0.5.5)
+Requirement already satisfied: tzdata in c:\users\user\appdata\roaming\python\python314\site-packages (from Django>=4.2.16->django-allauth[socialaccount]) (2025.3)
+Downloading oauthlib-3.3.1-py3-none-any.whl (160 kB)
+Installing collected packages: oauthlib
+Successfully installed oauthlib-3.3.1
