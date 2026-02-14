@@ -239,12 +239,12 @@ This feature uses Claude as the AI backbone with a simple chunking strategy (no 
 **Description:** As a user, I want nicely formatted chat messages with citations.
 
 **Acceptance Criteria:**
-- [ ] Create `components/features/ai/ChatMessage.tsx`
-- [ ] Props: `role`, `content`, `citations[]`, `timestamp`
-- [ ] User messages: right-aligned, subtle background
-- [ ] Assistant messages: left-aligned, glass card style
-- [ ] Citations rendered as orange pill badges linking to source
-- [ ] Typecheck passes
+- [x] Create `components/features/ai/ChatMessage.tsx`
+- [x] Props: `role`, `content`, `citations[]`, `timestamp`
+- [x] User messages: right-aligned, subtle background
+- [x] Assistant messages: left-aligned, glass card style
+- [x] Citations rendered as orange pill badges linking to source
+- [x] Typecheck passes
 
 ### US-020: Create ChatHistory sidebar
 **Description:** As a user, I want to see and switch between my past conversations.
