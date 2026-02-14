@@ -246,3 +246,34 @@ In Progress - US-004 complete
   - Validation in serializer (validate_field_name) runs automatically
   - PATCH should handle both GET and PATCH in same action method
 ---
+
+## Iteration 10 - US-010: Muted Vaults Endpoints
+- Implemented GET /api/v1/notifications/muted-vaults/ to list muted vaults
+- Implemented POST /api/v1/notifications/muted-vaults/ to mute a vault with vault_id validation
+- Implemented DELETE /api/v1/notifications/muted-vaults/{vault_id}/ to unmute a vault
+- Validates user is a member of the vault before allowing mute operation (403 if not)
+- Validates vault exists (404 if not found)
+- Idempotent operations: mute returns 201 on create, 200 on existing; unmute always returns 204
+- Fixed MutedVaultSerializer to use UUIDField instead of IntegerField for vault_id
+- Created comprehensive test suite with 11 test cases covering all scenarios:
+  - Empty list, mute vault, idempotent mute, vault_id required
+  - Membership validation, vault exists validation
+  - Get muted vaults with details, unmute vault, idempotent unmute
+  - User filtering, authentication required
+- Fixed setUp to avoid duplicate VaultMembership creation (owner membership auto-created by signal)
+- Fixed variable naming conflict in views (muted vs muted_vaults)
+- All tests pass (11/11), mypy typecheck passes
+- Files changed:
+  - backend/apps/notifications/views.py (added muted_vaults and unmute_vault actions)
+  - backend/apps/notifications/serializers.py (fixed vault_id to UUIDField)
+  - backend/apps/notifications/tests.py (added MutedVaultsTestCase with 11 tests)
+  - PRD19.md (marked US-010 complete)
+- Learnings for future iterations:
+  - Vault.objects.create(owner=user) auto-creates VaultMembership via signal (don't create manually)
+  - UUIDs are serialized as strings in JSON, compare with str() in tests
+  - Use get_or_create for idempotent create operations, check 'created' boolean for status code
+  - Variable names in same function scope must be unique for mypy
+  - Import models locally in views to avoid circular imports
+  - Custom URL path patterns: @action(detail=False, url_path='muted-vaults/(?P<vault_id>[^/.]+)')
+  - DELETE endpoints should be idempotent (204 even if resource doesn't exist)
+---
