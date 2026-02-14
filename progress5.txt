@@ -232,3 +232,32 @@
   - Migration can be created even if database doesn't exist (makemigrations works offline)
   - Verify signal registration with: post_save._live_receivers(Model)
 ---
+## Iteration 14 - US-015: Implement VaultMembership signal handlers and tasks
+- Updated apps/vaults/signals.py with new post_save signal handler for WebSocket broadcasting
+  - Added broadcast_membership_added receiver (created=True only)
+  - Enqueues broadcast_member_added Celery task
+  - Imports task inside handler to avoid circular imports
+- Created apps/vaults/tasks.py with broadcast_member_added Celery task
+  - Accepts membership_id parameter (UUID string)
+  - Fetches VaultMembership with select_related for user, vault, added_by
+  - Builds payload with member details: user_id, username, role, added_at
+  - Includes added_by info when available (user_id and username)
+  - Broadcasts member.added event to vault room via broadcast_to_vault
+  - Error handling for VaultMembership.DoesNotExist
+- Files changed: backend/apps/vaults/signals.py, backend/apps/vaults/tasks.py (new), PRD5.md
+- Verification tests created (test_us015.py) - all pass:
+  - Signal registration: 2 post_save receivers for VaultMembership
+  - Task imports successfully
+  - Task signature has membership_id parameter
+  - Payload includes all required fields
+- Typecheck passes (0 errors, 0 warnings)
+- Committed in 5a8956f
+- Learnings for future iterations:
+  - VaultMembership already had log_membership_added signal - added second receiver for broadcasting
+  - Created first tasks.py file in vaults app (sources and annotations already have tasks.py)
+  - Signal handler pattern: enqueue Celery task with .delay() for async processing
+  - Payload structure follows event catalog: member object with nested added_by when present
+  - Use select_related('user', 'vault', 'added_by') for efficient queries
+  - Test verification: check signal receiver count instead of parsing names
+  - VaultMembership uses UUID primary key (id field)
+---
