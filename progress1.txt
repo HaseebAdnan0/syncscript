@@ -404,3 +404,40 @@ Learnings for future iterations:
 - ProfileUpdateSerializer handles validation (length limits, URL format) automatically
 - request.user is the authenticated User instance (provided by DRF's authentication middleware)
 ---
+## Iteration 21 - Create users app URL routing (US-023)
+- Updated existing apps/users/urls.py with new URL patterns
+- Added auth URLs: auth/register, auth/verify-email, auth/login, auth/logout, auth/refresh
+- Added password reset URLs: auth/password-reset, auth/password-reset-confirm
+- Added profile URL: users/profile
+- Imported all view classes created in previous iterations (RegisterView, VerifyEmailView, etc.)
+- Used app_name='users' for proper namespacing
+- Django system check passes
+
+Files changed:
+- backend/apps/users/urls.py (updated URL patterns)
+- PRD1.md (marked US-023 complete)
+
+Learnings for future iterations:
+- URL patterns follow convention: path('auth/...') for auth endpoints, path('users/...') for user-specific endpoints
+- URL names use kebab-case (register, verify-email, password-reset-confirm)
+- All views imported as class-based views with .as_view() method
+- Pyright warnings on Django imports are false positives - Django system check is the real typecheck
+---
+
+## Iteration 22 - Include users URLs in main config (US-024)
+- Updated config/urls.py to include users app URLs at /api/v1/
+- Changed from path('api/v1/auth/', include('apps.users.urls')) to path('api/v1/', include('apps.users.urls'))
+- This correctly maps auth endpoints to /api/v1/auth/* and user endpoints to /api/v1/users/*
+- Django system check passes
+
+Files changed:
+- backend/config/urls.py (updated users URLs include)
+- PRD1.md (marked US-024 complete)
+
+Learnings for future iterations:
+- users/urls.py defines paths like 'auth/register/' and 'users/profile/', so the include() in main urls.py should be at '/api/v1/' (not '/api/v1/auth/')
+- This creates final URLs: /api/v1/auth/register/, /api/v1/auth/login/, /api/v1/users/profile/
+- Including at wrong prefix creates double paths like /api/v1/auth/auth/register/ (incorrect)
+- Django's URL routing concatenates the include() prefix with the app's urlpatterns paths
+---
+
