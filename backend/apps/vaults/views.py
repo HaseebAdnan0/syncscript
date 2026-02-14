@@ -7,9 +7,9 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from .models import Vault, VaultMembership
+from .models import Vault, VaultMembership, AuditLog
 from .permissions import IsVaultOwner, IsVaultMember
-from .serializers import VaultSerializer, VaultMembershipSerializer
+from .serializers import VaultSerializer, VaultMembershipSerializer, AuditLogSerializer
 
 
 class VaultViewSet(viewsets.ModelViewSet):
@@ -106,3 +106,19 @@ class VaultMembershipViewSet(viewsets.ModelViewSet):
         vault_pk = self.kwargs.get('vault_pk')
         vault = Vault.objects.get(pk=vault_pk)
         serializer.save(vault=vault, added_by=self.request.user)
+
+
+class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Read-only ViewSet for audit logs.
+
+    Nested under /vaults/{vault_pk}/audit-logs/
+    Provides immutable audit trail for research integrity.
+    """
+    serializer_class = AuditLogSerializer
+    permission_classes = [IsVaultMember]
+
+    def get_queryset(self):
+        """Filter audit logs by vault from URL, ordered by newest first."""
+        vault_pk = self.kwargs.get('vault_pk')
+        return AuditLog.objects.filter(vault_id=vault_pk).order_by('-created_at')

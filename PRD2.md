@@ -242,11 +242,11 @@ Create a secure, collaborative Knowledge Vault system where researchers can crea
 **Description:** As a researcher, I need to view audit history for research integrity.
 
 **Acceptance Criteria:**
-- [ ] ReadOnlyModelViewSet with AuditLogSerializer
-- [ ] Permission: IsVaultMember
-- [ ] `get_queryset` filters by vault_pk from URL
-- [ ] Ordered by '-created_at'
-- [ ] Typecheck passes
+- [x] ReadOnlyModelViewSet with AuditLogSerializer
+- [x] Permission: IsVaultMember
+- [x] `get_queryset` filters by vault_pk from URL
+- [x] Ordered by '-created_at'
+- [x] Typecheck passes
 
 ### US-024: Create vault creation signal for owner membership
 **Description:** As a system, I need to auto-create owner membership when vault is created.

@@ -336,3 +336,26 @@ Learnings for future iterations:
 - TODO comment left in code indicating email function needs implementation in US-020
 ---
 
+
+## Iteration 18 - Create password reset email template (US-020)
+- Created templates/emails/password_reset.html with Bitcoin DeFi aesthetic
+- Template includes reset URL with uid and token parameters
+- 1-hour expiration warning prominently displayed
+- Security notice for unauthorized requests included
+- Added send_password_reset_email function to emails.py
+- Updated PasswordResetRequestView to call send_password_reset_email
+- Django system check passes
+
+Files changed:
+- backend/templates/emails/password_reset.html (created)
+- backend/apps/users/emails.py (added send_password_reset_email function)
+- backend/apps/users/views.py (updated import and uncommented email send)
+- PRD1.md (marked US-020 complete)
+
+Learnings for future iterations:
+- Password reset template follows same design system as verify_email.html
+- Warning box uses rgba(234, 88, 12, 0.1) background with EA580C left border
+- send_password_reset_email takes uid and token (not raw user.pk and token)
+- Reset URL format: /auth/reset-password?uid={uid}&token={token}
+- Email functions use same pattern: render_to_string + strip_tags + send_mail
+---

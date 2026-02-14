@@ -149,12 +149,12 @@ This PRD covers the full implementation: core infrastructure, event broadcasting
 **Description:** As a developer, I need shared utilities for broadcasting so signal handlers can send events consistently.
 
 **Acceptance Criteria:**
-- [ ] Create `core/websocket_utils.py`
-- [ ] Implement `broadcast_to_vault(vault_id, event_type, payload, user)` function
-- [ ] Function increments sequence number in Redis (`vault_{id}:seq`)
-- [ ] Function builds message envelope with type, seq, event, payload, metadata
-- [ ] Function sends via `channel_layer.group_send`
-- [ ] Typecheck passes
+- [x] Create `core/websocket_utils.py`
+- [x] Implement `broadcast_to_vault(vault_id, event_type, payload, user)` function
+- [x] Function increments sequence number in Redis (`vault_{id}:seq`)
+- [x] Function builds message envelope with type, seq, event, payload, metadata
+- [x] Function sends via `channel_layer.group_send`
+- [x] Typecheck passes
 
 ---
 

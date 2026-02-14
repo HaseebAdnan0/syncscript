@@ -215,6 +215,76 @@ class PDFUploadViewSet(viewsets.ModelViewSet):
             'file_size': pdf_upload.file_size
         }, status=status.HTTP_200_OK)
 
+    @action(detail=False, methods=['post'], url_path='multipart-upload/initiate')
+    def multipart_upload_initiate(self, request):
+        """
+        POST /api/v1/sources/pdfs/multipart-upload/initiate/
+
+        Initiate a multipart upload for large PDF files (>20MB).
+        Returns presigned URLs for each part that the client uploads individually.
+
+        Request body:
+        - vault_id (UUID): Target vault
+        - filename (str): Original filename
+        - file_size (int): Total file size in bytes
+        - part_size (int): Size of each part in bytes (minimum 5MB)
+        - content_type (str): MIME type (must be application/pdf)
+
+        Response:
+        - upload_id (str): S3 multipart upload ID (required for completion)
+        - pdf_upload_id (UUID): PDFUpload record ID
+        - file_key (str): S3 object key where file will be stored
+        - part_urls (list): Array of {part_number, upload_url} for each part
+        - expires_in (int): URL expiration time in seconds
+        """
+        # Validate request data
+        request_serializer = MultipartUploadRequestSerializer(data=request.data)
+        request_serializer.is_valid(raise_exception=True)
+
+        vault_id = request_serializer.validated_data['vault_id']
+        filename = request_serializer.validated_data['filename']
+        file_size = request_serializer.validated_data['file_size']
+        part_size = request_serializer.validated_data['part_size']
+        content_type = request_serializer.validated_data['content_type']
+
+        # Check user has contributor or owner permission on vault
+        vault = self._check_vault_permission(vault_id, request.user)
+
+        # Initiate S3 multipart upload
+        upload_id, file_key, part_urls = initiate_multipart_upload(
+            vault_id=str(vault_id),
+            filename=filename,
+            file_size=file_size,
+            part_size=part_size,
+            content_type=content_type
+        )
+
+        # Create PDFUpload record with status='pending'
+        # Store upload_id in metadata for later completion
+        pdf_upload = PDFUpload.objects.create(
+            vault=vault,
+            file=file_key,  # Store the S3 key in the file field
+            original_filename=filename,
+            file_size=file_size,
+            mime_type=content_type,
+            uploaded_by=request.user,
+            processing_status='pending'
+        )
+
+        # Prepare response
+        response_data = {
+            'upload_id': upload_id,
+            'pdf_upload_id': pdf_upload.id,
+            'file_key': file_key,
+            'part_urls': part_urls,
+            'expires_in': 3600,  # 1 hour
+        }
+
+        response_serializer = MultipartUploadResponseSerializer(data=response_data)
+        response_serializer.is_valid(raise_exception=True)
+
+        return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+
 
 class SourceViewSet(viewsets.ModelViewSet):
     """
