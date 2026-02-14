@@ -168,15 +168,15 @@ Create SyncScript's production landing page following the Bitcoin DeFi aesthetic
 **Description:** As a developer, I need a testimonial card component for social proof.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/marketing/TestimonialCard.tsx`
-- [ ] Props: avatar, name, title, institution, quote
-- [ ] Glass morphism style (`backdrop-blur-lg bg-white/5 border border-white/10`)
-- [ ] Avatar as circular image (48px)
-- [ ] Quote with quotation marks styling
-- [ ] Name in white, title and institution in muted
-- [ ] Subtle hover lift effect
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/marketing/TestimonialCard.tsx`
+- [x] Props: avatar, name, title, institution, quote
+- [x] Glass morphism style (`backdrop-blur-lg bg-white/5 border border-white/10`)
+- [x] Avatar as circular image (48px)
+- [x] Quote with quotation marks styling
+- [x] Name in white, title and institution in muted
+- [x] Subtle hover lift effect
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-013: Create Testimonials Section with Carousel
 **Description:** As a user, I want to see what other researchers say so I trust the platform.
