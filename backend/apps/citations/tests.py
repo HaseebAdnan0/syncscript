@@ -814,6 +814,8 @@ Smith, J. (2024). <i>Test article</i>."""
 ---SPLIT---
 Smith, J. (2024). Test article. <i>Nature</i>, <i>123</i>(4), 567-589."""
         mock_message.content = [mock_content]
+        mock_message.usage = MagicMock(input_tokens=150, output_tokens=50)
+        mock_message.model = 'claude-3-5-sonnet-20241022'
 
         mock_client = MagicMock()
         mock_client.messages.create.return_value = mock_message
@@ -831,11 +833,17 @@ Smith, J. (2024). Test article. <i>Nature</i>, <i>123</i>(4), 567-589."""
             }
         }
 
-        plain, html = generate_ai_citation(source_data, CitationFormat.APA7)
+        plain, html, usage_data = generate_ai_citation(source_data, CitationFormat.APA7)
 
         self.assertIn("Smith, J. (2024)", plain)
         self.assertIn("<i>Nature</i>", html)
         self.assertNotIn("<i>", plain)
+
+        # Verify usage data
+        self.assertEqual(usage_data['input_tokens'], 150)
+        self.assertEqual(usage_data['output_tokens'], 50)
+        self.assertEqual(usage_data['total_tokens'], 200)
+        self.assertEqual(usage_data['model'], 'claude-3-5-sonnet-20241022')
 
         # Verify API was called correctly
         mock_client.messages.create.assert_called_once()
@@ -863,6 +871,8 @@ Smith, J. (2024). Test article. <i>Nature</i>, <i>123</i>(4), 567-589."""
   year = {2024}
 }"""
         mock_message.content = [mock_content]
+        mock_message.usage = MagicMock(input_tokens=120, output_tokens=40)
+        mock_message.model = 'claude-3-5-sonnet-20241022'
 
         mock_client = MagicMock()
         mock_client.messages.create.return_value = mock_message
@@ -877,7 +887,7 @@ Smith, J. (2024). Test article. <i>Nature</i>, <i>123</i>(4), 567-589."""
             }
         }
 
-        plain, html = generate_ai_citation(source_data, CitationFormat.BIBTEX)
+        plain, html, _usage_data = generate_ai_citation(source_data, CitationFormat.BIBTEX)
 
         self.assertIn("@article{Smith2024Test", plain)
         self.assertIn("author = {Smith, John}", plain)

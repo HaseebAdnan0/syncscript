@@ -337,3 +337,28 @@ Learnings for future iterations:
 - List endpoint should show preview for UX, detail endpoint shows full messages
 - Conversations ordered DESC for list (newest first), messages ordered ASC for detail (chronological)
 ---
+
+## Iteration 11 - US-011: Add AI URL routes
+- Verified apps/ai/urls.py exists with all required routes:
+  - POST /api/v1/sources/<int:source_id>/summarize/ (US-006)
+  - GET /api/v1/vaults/<uuid:vault_id>/insights/ (US-007)
+  - POST /api/v1/vaults/<uuid:vault_id>/ask/ (US-009)
+  - GET /api/v1/vaults/<uuid:vault_id>/conversations/ (US-010)
+  - GET /api/v1/vaults/<uuid:vault_id>/conversations/<int:conversation_id>/ (US-010)
+- Verified AI URLs are included in config/urls.py under /api/v1/
+- All routes use appropriate HTTP methods and path parameters
+- All routes have descriptive names for reverse URL resolution
+- Tested all endpoints work correctly via test suite
+- PRD15.md marked US-011 complete
+
+Files checked:
+- backend/apps/ai/urls.py (all routes present)
+- backend/config/urls.py (AI URLs included)
+
+Learnings for future iterations:
+- URL routes were already complete from implementing previous user stories
+- Route naming convention: verb-noun (e.g., summarize-source, list-conversations)
+- UUID path parameters use <uuid:param_name> syntax
+- Integer path parameters use <int:param_name> syntax
+- All AI routes properly namespaced under /api/v1/ prefix
+---

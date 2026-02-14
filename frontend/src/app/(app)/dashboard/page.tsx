@@ -1,7 +1,7 @@
 'use client';
 
 import { ErrorBoundary, type FallbackProps } from 'react-error-boundary';
-import WelcomeHeader from '@/components/features/dashboard/WelcomeHeader';
+import { WelcomeHeader } from '@/components/features/dashboard/WelcomeHeader';
 import ContinueResearch from '@/components/features/dashboard/ContinueResearch';
 import RecentActivity from '@/components/features/dashboard/RecentActivity';
 import AnalyticsSection from '@/components/features/dashboard/AnalyticsSection';

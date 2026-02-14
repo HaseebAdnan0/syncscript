@@ -967,3 +967,134 @@ class VaultInviteSignalTestCase(TestCase):
         notification = notifications.first()
         self.assertEqual(notification.data['inviter_name'], 'Unknown')  # type: ignore[union-attr, index]
         self.assertIsNone(notification.data['inviter_id'])  # type: ignore[union-attr, index]
+
+
+class MemberJoinedSignalTestCase(TestCase):
+    """Test member_joined notification signal (US-013)."""
+
+    def setUp(self) -> None:
+        """Create test users and vault."""
+        from apps.vaults.models import Vault
+
+        self.owner = User.objects.create_user(  # type: ignore[attr-defined]
+            username='owner',
+            email='owner@example.com',
+            password='testpass123'
+        )
+        self.new_member = User.objects.create_user(  # type: ignore[attr-defined]
+            username='newmember',
+            email='newmember@example.com',
+            password='testpass123'
+        )
+        self.vault = Vault.objects.create(
+            name='Test Vault',
+            owner=self.owner
+        )
+
+    def test_signal_creates_notification_for_vault_owner(self) -> None:
+        """Test owner is notified when someone joins their vault."""
+        from apps.vaults.models import VaultMembership
+
+        # Add new member to vault (triggers signal)
+        VaultMembership.objects.create(
+            vault=self.vault,
+            user=self.new_member,
+            added_by=self.owner
+        )
+
+        # Verify owner received member_joined notification
+        owner_notifications = Notification.objects.filter(
+            user=self.owner,
+            type='member_joined'
+        )
+        self.assertEqual(owner_notifications.count(), 1)
+
+        notification = owner_notifications.first()
+        self.assertEqual(notification.title, f'New member in {self.vault.name}')  # type: ignore[union-attr]
+        self.assertIn(self.new_member.username, notification.body)  # type: ignore[union-attr]
+        self.assertIn(self.vault.name, notification.body)  # type: ignore[union-attr]
+
+        # Verify data includes vault and member info
+        self.assertEqual(notification.data['vault_id'], str(self.vault.id))  # type: ignore[union-attr, index]
+        self.assertEqual(notification.data['vault_name'], self.vault.name)  # type: ignore[union-attr, index]
+        self.assertEqual(notification.data['member_id'], self.new_member.id)  # type: ignore[union-attr, index]
+        self.assertEqual(notification.data['member_name'], self.new_member.username)  # type: ignore[union-attr, index]
+
+    def test_signal_does_not_notify_when_owner_is_new_member(self) -> None:
+        """Test owner doesn't get notified when they join their own vault."""
+        # Owner membership is auto-created by vault creation signal
+        # Verify owner only received notifications about themselves
+        owner_notifications = Notification.objects.filter(
+            user=self.owner,
+            type='member_joined'
+        )
+        self.assertEqual(owner_notifications.count(), 0)
+
+    def test_signal_respects_muted_vault(self) -> None:
+        """Test signal respects owner's muted vault preference."""
+        from apps.vaults.models import VaultMembership
+
+        # Owner mutes their own vault
+        MutedVault.objects.create(user=self.owner, vault=self.vault)
+
+        # Add new member to vault
+        VaultMembership.objects.create(
+            vault=self.vault,
+            user=self.new_member,
+            added_by=self.owner
+        )
+
+        # Verify no notification was created (vault is muted)
+        owner_notifications = Notification.objects.filter(
+            user=self.owner,
+            type='member_joined'
+        )
+        self.assertEqual(owner_notifications.count(), 0)
+
+    def test_signal_respects_email_vault_activity_preference(self) -> None:
+        """Test signal respects owner's email_vault_activity preference."""
+        from apps.vaults.models import VaultMembership
+
+        # Disable vault activity notifications for owner
+        prefs, _ = NotificationPreferences.objects.get_or_create(user=self.owner)
+        prefs.email_vault_activity = False
+        prefs.save()
+
+        # Add new member to vault
+        VaultMembership.objects.create(
+            vault=self.vault,
+            user=self.new_member,
+            added_by=self.owner
+        )
+
+        # Verify no notification was created (preference disabled)
+        owner_notifications = Notification.objects.filter(
+            user=self.owner,
+            type='member_joined'
+        )
+        self.assertEqual(owner_notifications.count(), 0)
+
+    def test_both_notifications_created_on_membership(self) -> None:
+        """Test both vault_invite and member_joined notifications are created."""
+        from apps.vaults.models import VaultMembership
+
+        # Add new member to vault
+        VaultMembership.objects.create(
+            vault=self.vault,
+            user=self.new_member,
+            added_by=self.owner
+        )
+
+        # Verify new member received vault_invite notification
+        invite_notifications = Notification.objects.filter(
+            user=self.new_member,
+            type='vault_invite'
+        )
+        self.assertEqual(invite_notifications.count(), 1)
+
+        # Verify owner received member_joined notification
+        joined_notifications = Notification.objects.filter(
+            user=self.owner,
+            type='member_joined'
+        )
+        self.assertEqual(joined_notifications.count(), 1)

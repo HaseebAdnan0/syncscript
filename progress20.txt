@@ -316,3 +316,28 @@
   - TutorialProvider wraps Joyride with custom Bitcoin DeFi styling automatically
   - Next/Back/Skip controls and progress dots already configured in TutorialProvider
 ---
+## Iteration 16 - Tutorial navigation and completion (US-016)
+- Enhanced TutorialProvider to track step changes with onStepChange callback
+- Modified handleJoyrideCallback to detect ACTIONS.NEXT and ACTIONS.PREV events
+- Added onStepChange prop to TutorialProvider interface
+- Enhanced InteractiveTutorial to update backend onboarding state on each navigation
+- Implemented handleStepChange() to persist tutorial step to backend via updateOnboarding()
+- Added scroll behavior with useEffect to ensure target elements are visible
+- Enabled beacon for first tutorial step (disableBeacon: false) to draw attention with pulse
+- Added beacon styling to TutorialProvider (orange gradient with gold border)
+- All navigation features already working via react-joyride: Next, Back, Skip, Finish
+- Files changed: InteractiveTutorial.tsx, TutorialProvider.tsx, PRD20.md, progress20.txt
+- Commit: 3c3904c (already committed)
+- Typecheck passes (no onboarding-related errors)
+- Learnings for future iterations:
+  - react-joyride callback provides { index, action, type, status } for tracking navigation
+  - EVENTS.STEP_AFTER fires after step transition completes
+  - ACTIONS.NEXT and ACTIONS.PREV distinguish forward/backward navigation
+  - Store tutorial sub-state in onboarding.data.tutorialStep for resume capability
+  - Beacon styling: beacon, beaconInner, beaconOuter in Joyride Styles
+  - disableBeacon: false on first step creates pulsing attention beacon
+  - scrollToFirstStep prop in Joyride handles initial scroll automatically
+  - Backend updates should be non-blocking (catch errors, let tutorial continue)
+  - Tutorial already had complete navigation via react-joyride continuous mode
+  - Check git log before implementing - code may already be committed from previous iteration
+---

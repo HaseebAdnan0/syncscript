@@ -146,10 +146,10 @@ This feature uses Claude as the AI backbone with a simple chunking strategy (no 
 **Description:** As a developer, I need to wire up all AI endpoints to the URL router.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/ai/urls.py` with all AI routes
-- [ ] Include in main `config/urls.py` under `/api/v1/`
-- [ ] Routes: sources summarize, vault insights, vault ask, vault conversations
-- [ ] Typecheck passes
+- [x] Create `apps/ai/urls.py` with all AI routes
+- [x] Include in main `config/urls.py` under `/api/v1/`
+- [x] Routes: sources summarize, vault insights, vault ask, vault conversations
+- [x] Typecheck passes
 
 ### US-012: Create AISummaryCard component
 **Description:** As a user, I want to see an expandable AI summary card on source pages.

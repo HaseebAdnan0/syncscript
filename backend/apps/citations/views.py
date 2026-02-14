@@ -161,7 +161,7 @@ class CitationViewSet(viewsets.ViewSet):
             increment_ai_citation_counter(request.user.id, source.vault.id)
 
             # Use AI citation (asynchronous via Celery)
-            task = generate_ai_citation_task.delay(source.id, citation_format_str)  # type: ignore[misc]
+            task = generate_ai_citation_task.delay(source.id, citation_format_str, request.user.id)  # type: ignore[misc]
 
             # Return 202 Accepted with task ID and status URL
             return Response({

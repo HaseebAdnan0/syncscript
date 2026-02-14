@@ -21,6 +21,7 @@ export default function VerifyEmailPendingPage() {
       const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [countdown]);
 
   // Handle resend verification email
@@ -54,21 +55,18 @@ export default function VerifyEmailPendingPage() {
         toast({
           title: 'Too Many Requests',
           description: 'Please wait a moment before requesting another email.',
-          variant: 'destructive',
         });
       } else {
         const data = await response.json();
         toast({
           title: 'Resend Failed',
           description: data.error || 'Failed to resend verification email.',
-          variant: 'destructive',
         });
       }
     } catch (error) {
       toast({
         title: 'Error',
         description: 'An error occurred. Please try again.',
-        variant: 'destructive',
       });
     } finally {
       setIsResending(false);

@@ -22,7 +22,7 @@ export default function OAuthCallbackPage() {
       setStatus('success');
       setMessage('Successfully signed in! Redirecting to dashboard...');
       setTimeout(() => {
-        router.push('/vaults');
+        router.push('/dashboard');
       }, 1000);
       return;
     }

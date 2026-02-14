@@ -277,14 +277,14 @@ Implement a global full-text search system for SyncScript that enables researche
 **Description:** As a user, I want a search input with icon and clear button so I can enter and modify queries easily.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/search/SearchInput.tsx`
-- [ ] Search icon (magnifying glass) on left
-- [ ] Input uses bottom-border focus style (orange)
-- [ ] Clear button (X) appears when input has value
-- [ ] Placeholder: "Search vaults, sources, annotations..."
-- [ ] Auto-focus when modal opens
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/features/search/SearchInput.tsx`
+- [x] Search icon (magnifying glass) on left
+- [x] Input uses bottom-border focus style (orange)
+- [x] Clear button (X) appears when input has value
+- [x] Placeholder: "Search vaults, sources, annotations..."
+- [x] Auto-focus when modal opens
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 

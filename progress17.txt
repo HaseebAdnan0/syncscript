@@ -381,3 +381,38 @@
 - All US-017 acceptance criteria met (integration, positioning, z-index, mobile responsiveness, typecheck)
 - Typecheck passes with no errors in notification-related files
 - Ready for browser verification
+
+---
+
+## Iteration 18 - US-018: Assemble dashboard page with all sections
+- Replaced placeholder content with actual dashboard components
+- Installed react-error-boundary package for error handling
+- Files changed:
+  - frontend/src/app/(app)/dashboard/page.tsx (assembled all sections with error boundaries)
+  - frontend/package.json (added react-error-boundary ^4.1.2)
+  - frontend/package-lock.json (updated dependencies)
+  - PRD17.md (marked US-018 acceptance criteria complete)
+- Learnings for future iterations:
+  - Dashboard components use default exports, not named exports (import Component, not { Component })
+  - ErrorBoundary FallbackComponent prop expects FallbackProps type from react-error-boundary
+  - FallbackProps includes: error, resetErrorBoundary, and additional context
+  - Each section wrapped in separate ErrorBoundary for isolated error handling
+  - SectionErrorFallback shows red border card with error icon, message, and retry button
+  - Section order: WelcomeHeader → ContinueResearch → RecentActivity → AnalyticsSection → QuickActionsFAB
+  - Used space-y-8 for consistent vertical spacing (32px between sections)
+  - QuickActionsFAB rendered last but has fixed positioning (bottom-8 right-8 z-50)
+  - Each component already has built-in loading states with skeleton loaders
+  - No need for page-level loading state since components handle their own
+  - Responsive padding: p-6 (24px) on mobile, lg:p-8 (32px) on desktop
+  - max-w-7xl mx-auto centers content and constrains width
+  - Bitcoin DeFi design system: dark backgrounds, orange gradients, white/10 borders
+  - Typecheck passes with no errors
+  - react-error-boundary installed successfully (1 package added)
+---
+
+## What Worked
+- Dashboard page successfully assembled with all sections in correct order
+- Error boundaries provide graceful degradation if any section fails
+- All US-018 acceptance criteria met (imports, order, spacing, FAB, loading, error boundaries, typecheck)
+- Typecheck passes with no errors
+- Ready for browser verification

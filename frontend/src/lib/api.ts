@@ -224,4 +224,100 @@ export const resetDemoVault = async (): Promise<Vault> => {
   return response.data;
 };
 
+// ============================
+// OAuth API Functions
+// ============================
+
+/**
+ * OAuth provider types
+ */
+export type OAuthProvider = 'google' | 'github';
+
+/**
+ * Connected account data
+ */
+export interface ConnectedAccount {
+  provider: OAuthProvider;
+  connected_at: string;
+  email: string;
+  profile_picture?: string; // Google only
+  username?: string;        // GitHub only
+  avatar_url?: string;      // GitHub only
+}
+
+/**
+ * Link OAuth account request
+ */
+export interface LinkOAuthAccountRequest {
+  password: string;
+  provider: OAuthProvider;
+}
+
+/**
+ * Link OAuth account response
+ */
+export interface LinkOAuthAccountResponse {
+  message: string;
+  access: string;
+  refresh: string;
+}
+
+/**
+ * Complete OAuth email request
+ */
+export interface CompleteOAuthEmailRequest {
+  email: string;
+  temp_token: string;
+}
+
+/**
+ * Complete OAuth email response
+ */
+export interface CompleteOAuthEmailResponse {
+  message?: string;
+  link_required?: boolean;
+  access?: string;
+  refresh?: string;
+}
+
+/**
+ * Link OAuth account to existing user (requires password confirmation)
+ */
+export const linkOAuthAccount = async (
+  password: string,
+  provider: OAuthProvider
+): Promise<LinkOAuthAccountResponse> => {
+  const response = await api.post('/auth/oauth/link/', { password, provider });
+  return response.data;
+};
+
+/**
+ * Complete OAuth registration by providing email (for GitHub private email)
+ */
+export const completeOAuthEmail = async (
+  email: string,
+  tempToken: string
+): Promise<CompleteOAuthEmailResponse> => {
+  const response = await api.post('/auth/oauth/complete-email/', {
+    email,
+    temp_token: tempToken,
+  });
+  return response.data;
+};
+
+/**
+ * Get list of connected OAuth accounts
+ */
+export const getConnectedAccounts = async (): Promise<ConnectedAccount[]> => {
+  const response = await api.get('/auth/oauth/connected/');
+  return response.data;
+};
+
+/**
+ * Disconnect an OAuth provider from the current user's account
+ */
+export const disconnectOAuthProvider = async (provider: OAuthProvider): Promise<void> => {
+  await api.delete(`/auth/oauth/connected/${provider}/`);
+};
+
 export default api;

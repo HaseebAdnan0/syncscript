@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 
 @shared_task(bind=True, max_retries=2, default_retry_delay=30, time_limit=30)
-def generate_ai_citation_task(self, source_id: int, citation_format: str) -> dict[str, Any]:
+def generate_ai_citation_task(self, source_id: int, citation_format: str, user_id: int) -> dict[str, Any]:
     """
     Generate AI citation for a source asynchronously.
 
@@ -30,6 +30,7 @@ def generate_ai_citation_task(self, source_id: int, citation_format: str) -> dic
         self: Celery task instance (bound task)
         source_id: ID of the Source to generate citation for
         citation_format: Citation format string (apa7, mla9, etc.)
+        user_id: ID of the User who requested the citation
 
     Returns:
         dict with generation results:
@@ -45,6 +46,11 @@ def generate_ai_citation_task(self, source_id: int, citation_format: str) -> dic
     try:
         # Get source
         source = get_object_or_404(Source, id=source_id, is_deleted=False)
+
+        # Get user
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+        user = get_object_or_404(User, id=user_id)
 
         # Prepare metadata
         metadata = source.metadata.copy() if source.metadata else {}
@@ -62,10 +68,7 @@ def generate_ai_citation_task(self, source_id: int, citation_format: str) -> dic
         _cache_citation(source, citation_format, citation_text, citation_html, 'ai')
 
         # Log AI usage in audit log
-        # Note: In Celery task context, we need to get the user from the source's vault
-        # The user who triggered this task isn't directly available, so we use the vault owner
         vault = source.vault
-        user = vault.owner  # Use vault owner as the actor for async tasks
         log_ai_citation_usage(user, vault, source, citation_format, usage_data)
 
         logger.info(f"Successfully generated AI citation for source {source_id}")

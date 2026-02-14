@@ -640,3 +640,32 @@ Learnings for future iterations:
   - Non-placeholder sections don't have opacity-50 class
 ---
 
+## Iteration 23 - US-023: Handle OAuth error states in UI
+- Enhanced error message handling in OAuthCallbackPage
+- Added error message mappings for common OAuth errors: access_denied, invalid_request, email_exists, provider_error
+- Improved provider name formatting (capitalize first letter) in error messages
+- Enhanced AccountLinkingModal with error mappings: invalid_password, no_pending_oauth, invalid_request
+- Enhanced EmailPromptModal with error mappings: email_exists, invalid_token, invalid_email, invalid_request
+- All components display user-friendly error messages with clear next steps
+- "Try Again" button in callback page redirects to /login to restart OAuth flow
+- Error messages already displayed inline in modals (red border, red background)
+- Frontend typecheck passes (pre-existing errors in dashboard/page.tsx unrelated to OAuth)
+- Committed successfully
+
+Files changed:
+  - frontend/src/app/(auth)/callback/page.tsx (enhanced error message mapping)
+  - frontend/src/components/features/auth/AccountLinkingModal.tsx (added error mappings)
+  - frontend/src/components/features/auth/EmailPromptModal.tsx (added error mappings)
+  - PRD12.md (marked US-023 complete except browser verification)
+
+Learnings for future iterations:
+  - Error message mapping pattern: Record<string, string> with specific error codes as keys
+  - Capitalize provider names dynamically: provider.charAt(0).toUpperCase() + provider.slice(1)
+  - User-friendly error messages should explain what happened and suggest next steps
+  - Backend error codes should be mapped to frontend error messages (don't show raw codes)
+  - "Try Again" buttons should redirect to a clean state (like /login) to restart flow
+  - Error state already existed in all three components, just needed better message mappings
+  - Inline error display pattern: red border, red background, red text in rounded card
+  - Common OAuth errors: access_denied (user cancelled), invalid_request (server error), email_exists (duplicate), provider_error (can't connect)
+---
+
