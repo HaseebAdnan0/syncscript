@@ -270,7 +270,7 @@ This feature uses Claude as the AI backbone with a simple chunking strategy (no 
 - [x] Show loading skeleton while AI responds
 - [x] Handle rate limit: show message with retry time
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser
 
 ### US-022: Create TokenUsageDisplay component
 **Description:** As a user, I want to see my AI usage stats in settings.

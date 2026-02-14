@@ -1228,3 +1228,30 @@
 
 ### Issues Found
 (Append any bugs, edge cases, or unexpected behavior discovered during testing)
+
+## US-021: Integrate AskAI chat into vault sidebar - 2026-02-14
+- [ ] Navigate to a vault detail page
+- [ ] Verify "Ask AI" collapsible section appears in right sidebar
+- [ ] Click "Ask AI" header to expand the section
+- [ ] Verify chat interface appears with ChatHistory sidebar and AskAIChat area
+- [ ] Click "New Chat" button in ChatHistory sidebar
+- [ ] Type a question about vault sources and send it
+- [ ] Verify loading skeleton appears while AI responds
+- [ ] Verify AI response appears with citations (if applicable)
+- [ ] Verify conversation appears in ChatHistory sidebar with preview
+- [ ] Click on conversation in history to verify it loads
+- [ ] Try creating multiple conversations and switching between them
+- [ ] Send enough messages to hit rate limit (20 requests)
+- [ ] Verify rate limit error toast appears with retry time
+- [ ] Verify collapsible section can be collapsed/expanded without losing state
+
+### Expected Behavior:
+- Chat sidebar integrates seamlessly with vault layout
+- Conversations persist across page refreshes
+- Citations are clickable and show source excerpts
+- Rate limit handling is graceful with clear error messages
+- Loading states prevent duplicate requests
+- UI follows Bitcoin DeFi design system
+
+### Issues Found:
+(Document any bugs or UX issues discovered during testing)
