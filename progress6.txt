@@ -18,3 +18,17 @@
   - Vault model was needed as dependency even though PRD2 isn't complete
   - Migrations can be created even without database connection (just warnings)
 ---
+
+## Iteration 2 - US-002: Create VaultStorageUsage database model
+- VaultStorageUsage was already implemented in Iteration 1 alongside PDFUpload
+- Verified all acceptance criteria met:
+  - Model exists in backend/apps/sources/models.py (lines 126-150)
+  - All required fields present: vault (OneToOne), total_bytes, file_count, user_breakdown, last_updated
+  - Migration created and included in 0001_initial.py
+  - Typecheck passed in iteration 1
+- Files changed:
+  - PRD6.md (marked US-002 complete)
+- Learnings for future iterations:
+  - When implementing related models together, mark all corresponding US as complete
+  - VaultStorageUsage uses OneToOneField as primary_key (no separate id field)
+---

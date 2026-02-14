@@ -34,10 +34,10 @@ Implement cloud file storage for SyncScript using Cloudflare R2 (S3-compatible).
 **Description:** As a developer, I need to cache storage usage per vault for fast retrieval.
 
 **Acceptance Criteria:**
-- [ ] Create `VaultStorageUsage` model in `backend/apps/sources/models.py`
-- [ ] Fields: vault (OneToOne), total_bytes (BigInt), file_count (Int), user_breakdown (JSONField), last_updated
-- [ ] Run makemigrations and migrate successfully
-- [ ] Typecheck passes
+- [x] Create `VaultStorageUsage` model in `backend/apps/sources/models.py`
+- [x] Fields: vault (OneToOne), total_bytes (BigInt), file_count (Int), user_breakdown (JSONField), last_updated
+- [x] Run makemigrations and migrate successfully
+- [x] Typecheck passes
 
 ### US-003: Configure django-storages with Cloudflare R2
 **Description:** As a developer, I need S3-compatible storage configured so files can be stored in the cloud.
