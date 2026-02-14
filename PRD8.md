@@ -37,11 +37,11 @@ Create the complete vault management interface for SyncScript, enabling research
 **Description:** As a developer, I need React Query hooks for vault data fetching so components can easily query and mutate vault data with caching.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/hooks/useVaults.ts` with useVaults, useVault, useCreateVault, useUpdateVault, useDeleteVault hooks
-- [ ] useVaults accepts optional search query parameter for server-side filtering
-- [ ] Mutations invalidate relevant queries on success
-- [ ] Hooks use query keys that support cache invalidation
-- [ ] Typecheck passes
+- [x] Create `frontend/src/hooks/useVaults.ts` with useVaults, useVault, useCreateVault, useUpdateVault, useDeleteVault hooks
+- [x] useVaults accepts optional search query parameter for server-side filtering
+- [x] Mutations invalidate relevant queries on success
+- [x] Hooks use query keys that support cache invalidation
+- [x] Typecheck passes
 
 ### US-003: Vault members API client and hooks
 **Description:** As a developer, I need API functions and hooks for vault membership management.

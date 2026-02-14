@@ -26,3 +26,30 @@ Learnings for future iterations:
 - TypeScript compilation is fast and reliable for verification
 ---
 
+## Iteration 2 - US-002: React Query hooks for vaults
+- Created `frontend/src/hooks/useVaults.ts` with comprehensive React Query hooks:
+  - useVaults(search?: string) - Fetches all vaults with optional search filtering
+  - useVault(id) - Fetches single vault by ID
+  - useCreateVault() - Creates new vault with automatic cache invalidation
+  - useUpdateVault(id) - Updates vault and refreshes cache
+  - useDeleteVault() - Deletes vault and removes from cache
+  - useArchiveVault(id) - Archives vault (soft delete) with cache update
+- Implemented query key factory pattern (vaultKeys) for organized cache management
+- All mutations properly invalidate relevant queries on success
+- useUpdateVault and useArchiveVault use setQueryData for optimistic updates
+- Fixed pre-existing typecheck error in useAuth.ts (removed unused LoginCredentials interface)
+- Typecheck passes successfully
+
+Files changed:
+- frontend/src/hooks/useVaults.ts (created)
+- frontend/src/hooks/useAuth.ts (fixed unused import)
+- PRD8.md (marked US-002 complete)
+
+Learnings for future iterations:
+- React Query provider already set up in `frontend/src/lib/providers/query-provider.tsx`
+- Query key factory pattern keeps cache management organized and type-safe
+- The `@/` import alias is configured and used throughout the project
+- Mutations should invalidate lists() and update individual detail() queries
+- enabled: !!id pattern prevents queries from running with falsy IDs
+---
+
