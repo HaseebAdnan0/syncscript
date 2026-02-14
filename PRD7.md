@@ -73,13 +73,13 @@ SyncScript needs a complete frontend authentication system that enables users to
 **Description:** As a user, I want styled form inputs so that the auth forms match the app's design system.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/ui/FormInput.tsx`
-- [ ] Bottom border style: `border-b-2 border-white/20 focus:border-[#F7931A]`
-- [ ] Background: `bg-black/50`
-- [ ] Support props: `label`, `error`, `type`, `placeholder`, standard input props
-- [ ] Display inline error message in red below input when `error` prop present
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/ui/FormInput.tsx`
+- [x] Bottom border style: `border-b-2 border-white/20 focus:border-[#F7931A]`
+- [x] Background: `bg-black/50`
+- [x] Support props: `label`, `error`, `type`, `placeholder`, standard input props
+- [x] Display inline error message in red below input when `error` prop present
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 
