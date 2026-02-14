@@ -195,11 +195,11 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a user, I want to be notified when someone replies to my annotation.
 
 **Acceptance Criteria:**
-- [ ] Listen for Annotation creation where `parent` is set
-- [ ] Notify parent annotation author (if different from reply author)
-- [ ] Create notification with type `annotation_reply`
-- [ ] Data includes: `source_id`, `annotation_id`, `parent_id`, `replier_name`, `preview` (first 100 chars)
-- [ ] Typecheck passes
+- [x] Listen for Annotation creation where `parent` is set
+- [x] Notify parent annotation author (if different from reply author)
+- [x] Create notification with type `annotation_reply`
+- [x] Data includes: `source_id`, `annotation_id`, `parent_id`, `replier_name`, `preview` (first 100 chars)
+- [x] Typecheck passes
 
 ---
 

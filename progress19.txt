@@ -373,3 +373,30 @@ In Progress - US-004 complete
   - create_notification automatically handles muting and preferences per user
   - Separate test file is acceptable when test suite gets large
 ---
+
+## Iteration 15 - US-015: Signal Handler for annotation_reply Notifications
+- Created Annotation post_save signal handler to notify parent annotation authors of replies
+- Only handles new annotations with parent set (replies)
+- Prevents self-notification when replying to own annotation
+- Truncates preview to 100 characters with "..." for long content
+- Signal respects email_mentions preference via create_notification service
+- Created comprehensive test suite with 6 test cases:
+  - Test notification created when someone replies
+  - Test preview truncated to 100 chars for long content
+  - Test signal doesn't fire for top-level annotations (no parent)
+  - Test no notification for self-replies
+  - Test signal doesn't trigger on updates (only creation)
+  - Test respects email_mentions preference
+- All tests pass (68/68)
+- Files changed:
+  - backend/apps/notifications/signals.py (added annotation_created handler, imported Annotation)
+  - backend/apps/notifications/test_annotation_signal.py (new test file)
+  - PRD19.md (marked US-015 complete)
+- Learnings for future iterations:
+  - Check if instance.parent exists to identify replies vs top-level annotations
+  - instance.parent.user gives access to the parent annotation's author
+  - String slicing with [:100] + "..." pattern for preview truncation
+  - annotation_reply uses email_mentions preference (not email_vault_activity)
+  - Annotation model has self-referential ForeignKey for threading
+  - Preview field useful for showing context in notification UI without full content
+---
