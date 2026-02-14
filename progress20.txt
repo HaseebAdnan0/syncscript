@@ -51,3 +51,20 @@
   - arXiv papers are ideal demo content (freely available, real research)
   - Annotations should demonstrate various features: threading, cross-references, metadata
 ---
+
+## Iteration 4 - Create demo vault service (US-004)
+- Created backend/apps/users/services/onboarding.py with create_demo_vault(user) function
+- Service loads demo_vault.json fixture and creates vault with sources and annotations
+- Implemented idempotency check - returns existing vault if already created for user
+- Transaction-based creation ensures atomicity (all-or-nothing)
+- Resolved index-based relationships for annotations (source_index, parent_index)
+- Created comprehensive test suite: DemoVaultServiceTests with 5 test methods in test_onboarding.py
+- Files changed: backend/apps/users/services/__init__.py, onboarding.py, tests/test_onboarding.py, PRD20.md
+- All tests pass (5/5)
+- Learnings for future iterations:
+  - Vault creation signals auto-create owner membership - don't duplicate
+  - Transaction.atomic() ensures rollback on error during multi-step creation
+  - Index-based relationships in fixtures resolve to actual objects during creation
+  - Test idempotency by calling service twice and verifying same vault returned
+  - Pre-existing import error in sources.services fixed during this iteration
+---
