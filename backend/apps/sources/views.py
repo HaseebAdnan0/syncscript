@@ -4,12 +4,14 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import serializers as drf_serializers
 from django.shortcuts import get_object_or_404
+from django.db import transaction
 from .models import PDFUpload, Source
 from .serializers import (
     UploadURLRequestSerializer,
     UploadURLResponseSerializer,
     PDFUploadSerializer,
     SourceSerializer,
+    BulkSourceSerializer,
     MultipartUploadRequestSerializer,
     MultipartUploadResponseSerializer,
     MultipartUploadCompleteRequestSerializer,
@@ -20,6 +22,7 @@ from .storage import (
     initiate_multipart_upload,
     complete_multipart_upload,
 )
+from .services import extract_metadata
 from .permissions import VaultSourcePermission
 from .filters import SourceFilter
 from apps.vaults.models import Vault, VaultMembership, RoleChoices
@@ -491,3 +494,106 @@ class SourceViewSet(viewsets.ModelViewSet):
         # Return serialized source
         serializer = self.get_serializer(instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['post'])
+    def bulk_import(self, request):
+        """
+        POST /api/v1/sources/bulk_import/
+
+        Bulk import multiple source URLs (US-017).
+        Creates multiple sources with auto metadata extraction.
+        Detects duplicates and returns created/skipped/errors.
+
+        Request body:
+        - urls (list): List of URLs to import (max 50)
+
+        Response:
+        - created (list): Successfully created sources
+        - skipped (list): URLs that already exist in vault
+        - errors (list): URLs that failed validation or creation
+        """
+        # Validate request data
+        request_serializer = BulkSourceSerializer(data=request.data)
+        request_serializer.is_valid(raise_exception=True)
+
+        urls = request_serializer.validated_data['urls']
+
+        # Check if this is a nested route from /vaults/{vault_id}/sources/bulk_import/
+        vault_pk = self.kwargs.get('vault_pk')
+
+        if not vault_pk:
+            from rest_framework.exceptions import ValidationError
+            raise ValidationError("bulk_import must be called via nested route: /api/v1/vaults/{vault_id}/sources/bulk_import/")
+
+        # Get vault and check permissions
+        vault = get_object_or_404(Vault, id=vault_pk)
+
+        # Check if user is owner or contributor
+        if vault.owner != request.user:
+            membership = VaultMembership.objects.filter(
+                vault=vault,
+                user=request.user,
+                role__in=[RoleChoices.OWNER, RoleChoices.CONTRIBUTOR]
+            ).first()
+
+            if not membership:
+                from rest_framework.exceptions import PermissionDenied
+                raise PermissionDenied("You must be an Owner or Contributor to bulk import sources.")
+
+        # Check for existing sources in vault
+        existing_urls = set(
+            Source.objects.filter(
+                vault=vault,
+                is_deleted=False
+            ).values_list('url', flat=True)
+        )
+
+        created = []
+        skipped = []
+        errors = []
+
+        # Process each URL in a transaction
+        with transaction.atomic():
+            for url in urls:
+                # Skip if URL already exists in vault
+                if url in existing_urls:
+                    skipped.append({
+                        'url': url,
+                        'reason': 'URL already exists in vault'
+                    })
+                    continue
+
+                try:
+                    # Extract metadata for each URL
+                    metadata = extract_metadata(url)
+
+                    # Use extracted title or fall back to URL
+                    title = metadata.get('title', url)
+
+                    # Create source
+                    source = Source.objects.create(
+                        vault=vault,
+                        url=url,
+                        title=title,
+                        source_type='URL',
+                        metadata=metadata,
+                        created_by=request.user,
+                        is_deleted=False
+                    )
+
+                    # Serialize and add to created list
+                    source_serializer = SourceSerializer(source)
+                    created.append(source_serializer.data)
+
+                except Exception as e:
+                    # Capture any errors during creation
+                    errors.append({
+                        'url': url,
+                        'error': str(e)
+                    })
+
+        return Response({
+            'created': created,
+            'skipped': skipped,
+            'errors': errors
+        }, status=status.HTTP_200_OK)

@@ -300,9 +300,9 @@ Create a secure, collaborative Knowledge Vault system where researchers can crea
 **Description:** As a developer, I need signals connected on app startup.
 
 **Acceptance Criteria:**
-- [ ] Override ready() in VaultsConfig
-- [ ] Import signals module to connect handlers
-- [ ] Typecheck passes
+- [x] Override ready() in VaultsConfig
+- [x] Import signals module to connect handlers
+- [x] Typecheck passes
 
 ### US-030: Configure URL router for vaults
 **Description:** As a developer, I need REST endpoints routed properly.

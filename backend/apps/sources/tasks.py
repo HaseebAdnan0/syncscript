@@ -203,32 +203,32 @@ def broadcast_source_created(source_id: int) -> None:
     Args:
         source_id: ID of the newly created Source
     """
-    from apps.sources.models import Source
-    from core.websocket_utils import broadcast_to_vault
+    from apps.sources.models import Source  # type: ignore[import-not-found]
+    from core.websocket_utils import broadcast_to_vault  # type: ignore[import-not-found]
 
     try:
         source = Source.objects.select_related('created_by', 'vault').get(id=source_id)
 
         payload = {
-            'id': source.id,
+            'id': source.id,  # type: ignore[attr-defined]
             'url': source.url,
             'title': source.title,
             'description': source.description,
             'source_type': source.source_type,
             'created_by': {
-                'id': source.created_by.id if source.created_by else None,
-                'username': source.created_by.username if source.created_by else None,
+                'id': source.created_by.id if source.created_by else None,  # type: ignore[attr-defined]
+                'username': source.created_by.username if source.created_by else None,  # type: ignore[attr-defined]
             },
             'created_at': source.created_at.isoformat(),
         }
 
         broadcast_to_vault(
-            vault_id=source.vault.id,
+            vault_id=source.vault.id,  # type: ignore[attr-defined]
             event_type='source.created',
             payload=payload,
             user=source.created_by,
         )
-        logger.info(f"Broadcasted source.created for source {source_id} in vault {source.vault.id}")
+        logger.info(f"Broadcasted source.created for source {source_id} in vault {source.vault.id}")  # type: ignore[attr-defined]
 
     except Source.DoesNotExist:
         logger.error(f"Source {source_id} not found for broadcast")
@@ -243,14 +243,14 @@ def broadcast_source_updated(source_id: int, changed_fields: list[str]) -> None:
         source_id: ID of the updated Source
         changed_fields: List of field names that were changed
     """
-    from apps.sources.models import Source
-    from core.websocket_utils import broadcast_to_vault
+    from apps.sources.models import Source  # type: ignore[import-not-found]
+    from core.websocket_utils import broadcast_to_vault  # type: ignore[import-not-found]
 
     try:
         source = Source.objects.select_related('created_by', 'vault').get(id=source_id)
 
         payload = {
-            'id': source.id,
+            'id': source.id,  # type: ignore[attr-defined]
             'url': source.url,
             'title': source.title,
             'description': source.description,
@@ -260,12 +260,12 @@ def broadcast_source_updated(source_id: int, changed_fields: list[str]) -> None:
         }
 
         broadcast_to_vault(
-            vault_id=source.vault.id,
+            vault_id=source.vault.id,  # type: ignore[attr-defined]
             event_type='source.updated',
             payload=payload,
             user=None,  # Updated by might not be tracked
         )
-        logger.info(f"Broadcasted source.updated for source {source_id} in vault {source.vault.id}")
+        logger.info(f"Broadcasted source.updated for source {source_id} in vault {source.vault.id}")  # type: ignore[attr-defined]
 
     except Source.DoesNotExist:
         logger.error(f"Source {source_id} not found for broadcast")
@@ -282,11 +282,11 @@ def broadcast_source_deleted(source_id: int, vault_id: int, deleted_by_id: int |
         deleted_by_id: ID of the user who deleted the source (optional)
     """
     from django.contrib.auth import get_user_model
-    from core.websocket_utils import broadcast_to_vault
+    from core.websocket_utils import broadcast_to_vault  # type: ignore[import-not-found]
 
     User = get_user_model()
 
-    payload = {
+    payload: dict[str, Any] = {
         'id': source_id,
         'vault_id': vault_id,
     }
@@ -297,8 +297,8 @@ def broadcast_source_deleted(source_id: int, vault_id: int, deleted_by_id: int |
         try:
             deleted_by = User.objects.get(id=deleted_by_id)
             payload['deleted_by'] = {
-                'id': deleted_by.id,
-                'username': deleted_by.username,
+                'id': deleted_by.id,  # type: ignore[attr-defined]
+                'username': deleted_by.username,  # type: ignore[attr-defined]
             }
         except User.DoesNotExist:
             logger.warning(f"User {deleted_by_id} not found for source deletion broadcast")

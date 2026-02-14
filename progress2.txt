@@ -378,3 +378,17 @@
   - Metadata includes user_id, old_role, and new_role for complete audit trail
   - Action naming: 'membership.role_changed' follows 'entity.verb_phrase' convention
 ---
+
+## Iteration 29 - US-028: Create membership removed audit signal
+- Implemented post_delete signal on VaultMembership to log member removals
+- Files changed:
+  - backend/apps/vaults/signals.py (added post_delete import, added log_membership_removed signal handler)
+  - PRD2.md (marked US-028 as complete)
+- Django check passed with no issues
+- Learnings for future iterations:
+  - post_delete signals run after object deletion, so instance data is still accessible but object is no longer in database
+  - Actor field set to None because deletion context doesn't reliably track who performed the action (could be owner via API, cascade, or admin)
+  - Metadata includes user_id to track which member was removed from the vault
+  - Action naming: 'membership.removed' follows 'entity.verb_past' convention
+  - Signal registered with @receiver(post_delete, sender=VaultMembership)
+---
