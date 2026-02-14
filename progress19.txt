@@ -400,3 +400,34 @@ In Progress - US-004 complete
   - Annotation model has self-referential ForeignKey for threading
   - Preview field useful for showing context in notification UI without full content
 ---
+
+## Iteration 16 - US-016: Create @mention Detection Utility
+- Created apps/notifications/mentions.py with two utility functions
+- extract_mentions(text): Uses regex pattern (?:^|\s)@(\w+) to find @username mentions
+  - Handles edge cases: start of text, after whitespace, after punctuation
+  - Ignores email addresses (email@domain.com not treated as mention)
+  - Supports usernames with underscores and numbers
+  - Deduplicates mentions while preserving order
+- resolve_mentions(usernames, vault_id): Resolves usernames to User objects
+  - Filters by vault membership (only returns users who are vault members)
+  - Ignores invalid/non-existent usernames silently
+  - Handles invalid vault_id gracefully (returns empty list)
+  - Automatically deduplicates via database query
+- Created comprehensive test suite with 18 test cases:
+  - Extract: single, multiple, at start, after whitespace, after punctuation
+  - Extract: ignore emails, handle underscores/numbers, deduplicate, empty text
+  - Resolve: valid members, ignore non-members, ignore invalid usernames
+  - Resolve: empty list, invalid vault, all members, duplicates
+- All tests pass (86/86)
+- Files changed:
+  - backend/apps/notifications/mentions.py (new utility module)
+  - backend/apps/notifications/test_mentions.py (new test file)
+  - PRD19.md (marked US-016 complete)
+- Learnings for future iterations:
+  - Regex pattern (?:^|\s)@(\w+) captures @ at start or after whitespace
+  - re.findall() returns only captured groups (usernames without @)
+  - Preserve order while deduplicating: use set to track seen + list for order
+  - Import Vault locally in function to avoid circular imports
+  - vault.members.filter(username__in=usernames) efficiently resolves multiple usernames
+  - Type annotation List[User] requires # type: ignore[type-arg] for Django User model
+---
