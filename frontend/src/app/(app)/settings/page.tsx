@@ -1,11 +1,40 @@
 'use client';
 
-import { Bell, User, Shield, Palette, Link, GraduationCap } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Bell, User, Shield, Palette, Link, GraduationCap, Sparkles } from 'lucide-react';
 import { NotificationPreferences } from '@/components/features/notifications/NotificationPreferences';
 import { ConnectedAccounts } from '@/components/features/settings/ConnectedAccounts';
 import { OnboardingSettings } from '@/components/features/settings/OnboardingSettings';
+import TokenUsageDisplay from '@/components/features/ai/TokenUsageDisplay';
+import { getAIUsage } from '@/lib/api/ai';
+import { AIUsageStats } from '@/lib/types/ai';
+import { useToast } from '@/hooks/useToast';
 
 export default function SettingsPage() {
+  const { toast } = useToast();
+  const [aiUsage, setAiUsage] = useState<AIUsageStats | null>(null);
+  const [isLoadingUsage, setIsLoadingUsage] = useState(true);
+
+  // Fetch AI usage stats on mount
+  useEffect(() => {
+    const fetchAIUsage = async () => {
+      try {
+        const usage = await getAIUsage();
+        setAiUsage(usage);
+      } catch (error) {
+        console.error('Failed to fetch AI usage:', error);
+        toast({
+          title: 'Error',
+          description: 'Failed to load AI usage statistics',
+        });
+      } finally {
+        setIsLoadingUsage(false);
+      }
+    };
+
+    fetchAIUsage();
+  }, [toast]);
+
   return (
     <div className="min-h-screen bg-[#030304] py-12">
       <div className="max-w-4xl mx-auto px-6">
@@ -21,6 +50,28 @@ export default function SettingsPage() {
 
         {/* Settings Sections */}
         <div className="space-y-8">
+          {/* AI Usage Section */}
+          <section className="bg-[#0F1115] border border-white/10 rounded-2xl p-8">
+            <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
+              <div className="h-10 w-10 rounded-full bg-gradient-to-r from-[#EA580C] to-[#F7931A] flex items-center justify-center">
+                <Sparkles className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-heading font-bold text-white">AI Usage</h2>
+                <p className="text-[#94A3B8] text-sm">Monitor your AI research assistant usage</p>
+              </div>
+            </div>
+            {isLoadingUsage ? (
+              <div className="flex items-center justify-center py-8">
+                <div className="h-8 w-8 border-4 border-[#F7931A] border-t-transparent rounded-full animate-spin" />
+              </div>
+            ) : aiUsage ? (
+              <TokenUsageDisplay usage={aiUsage} />
+            ) : (
+              <p className="text-[#94A3B8]">Unable to load usage statistics</p>
+            )}
+          </section>
+
           {/* Notifications Section */}
           <section className="bg-[#0F1115] border border-white/10 rounded-2xl p-8">
             <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">

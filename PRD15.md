@@ -297,11 +297,11 @@ This feature uses Claude as the AI backbone with a simple chunking strategy (no 
 **Description:** As a user, I want to see my AI usage in my account settings.
 
 **Acceptance Criteria:**
-- [ ] Add "AI Usage" section to user settings page
-- [ ] Fetch usage from `GET /api/v1/ai/usage/`
-- [ ] Render TokenUsageDisplay component
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Add "AI Usage" section to user settings page
+- [x] Fetch usage from `GET /api/v1/ai/usage/`
+- [x] Render TokenUsageDisplay component
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-025: Add academic prompt templates
 **Description:** As a developer, I need well-crafted prompts for academic rigor in AI responses.

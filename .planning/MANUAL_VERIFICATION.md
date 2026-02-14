@@ -1255,3 +1255,33 @@
 
 ### Issues Found:
 (Document any bugs or UX issues discovered during testing)
+
+## US-024: Integrate TokenUsageDisplay into user settings - 2026-02-14
+- [ ] Navigate to the Settings page (/settings)
+- [ ] Verify "AI Usage" section appears at the top of the settings page
+- [ ] Verify the section has Sparkles icon and proper heading
+- [ ] Verify loading spinner appears while usage data is fetched
+- [ ] Verify TokenUsageDisplay component renders with usage statistics:
+  - [ ] Progress bar showing requests used / limit
+  - [ ] "Resets in X hours Y minutes" countdown timer
+  - [ ] Token count formatted with locale (e.g., "12,345" not "12345")
+- [ ] Send some AI requests to increase usage (use source summarize or vault insights)
+- [ ] Refresh settings page and verify usage stats update correctly
+- [ ] Send enough requests to exceed 80% threshold (17+ requests)
+- [ ] Verify warning state appears:
+  - [ ] Progress bar changes to orange-red gradient
+  - [ ] "High Usage" badge displayed in header
+  - [ ] Warning message showing percentage used
+- [ ] Wait for reset time and verify usage resets to 0
+
+### Expected Behavior:
+- AI Usage section positioned at top of settings for prominence
+- Loading state prevents empty content flash
+- Usage stats accurate and update in real-time
+- Warning threshold (80%) provides advance notice before hitting limit
+- Countdown timer shows accurate time until midnight UTC reset
+- Error handling graceful if API call fails
+- UI follows Bitcoin DeFi design system (glass card, orange accents)
+
+### Issues Found:
+(Document any bugs or UX issues discovered during testing)
