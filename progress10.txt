@@ -280,3 +280,32 @@
   - Pending state message shown while saving preferences
   - Typecheck passes without issues
 ---
+## Iteration 13 - US-013: Integrate Pusher for browser push notifications
+- Implemented Pusher client setup and browser push notification system
+- Files changed:
+  - Created `frontend/src/lib/pusher.ts` (Pusher client initialization and subscription logic)
+  - Created `frontend/src/hooks/usePusherSubscription.ts` (React hook for app-level Pusher subscription)
+  - Updated `frontend/src/components/features/notifications/NotificationPreferences.tsx` (integrated requestNotificationPermission)
+  - Updated `frontend/package.json` and `frontend/package-lock.json` (added pusher-js dependency)
+  - Updated `PRD10.md` (marked US-013 complete except browser verification)
+- Learnings for future iterations:
+  - Pusher client is singleton - created once and reused across the app
+  - Private channel naming: `private-user-{userId}` for user-specific notifications
+  - Pusher auth endpoint: `${NEXT_PUBLIC_API_URL}/pusher/auth` with Bearer token
+  - Access token retrieved from localStorage for Pusher auth headers
+  - Two high-priority event types: `member.joined` and `mention.created`
+  - member.joined data: `{ vault_id, vault_name, member_name, member_role }`
+  - mention.created data: `{ vault_id, vault_name, source_title?, mentioned_by, annotation_text }`
+  - Browser Notification API: check `'Notification' in window` for support
+  - Permission states: 'default', 'granted', 'denied'
+  - Notification.requestPermission() returns Promise<NotificationPermission>
+  - Native notifications accept: title, body, icon, badge, data
+  - Click handler focuses window and navigates to vault using window.location.href
+  - usePusherSubscription hook manages subscription lifecycle (subscribe on mount, unsubscribe on unmount)
+  - Hook accepts userId and enabled flag - only subscribes if both are truthy
+  - Cleanup disconnectPusher() called on app unmount (root component)
+  - NotificationPreferences uses requestNotificationPermission utility (cleaner than inline logic)
+  - Install pusher-js: `npm install pusher-js`
+  - Typecheck passes without issues
+---
+
