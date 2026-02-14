@@ -130,3 +130,31 @@ In Progress - US-004 complete
 - [ ] US-044: Comprehensive tests
 
 ---
+
+## Iteration 5 - US-005: Notification List Endpoint
+- Implemented NotificationViewSet with ReadOnlyModelViewSet
+- GET /api/v1/notifications/ returns paginated notifications (20 per page)
+- Filters to authenticated user only
+- Ordering: unread first using F('read_at').asc(nulls_first=True), then by -created_at
+- Support ?unread_only=true query parameter
+- Added mark_as_read() method to Notification model for tests
+- Created comprehensive test suite (6 test cases, all passing)
+- Created notifications URLs and registered in config/urls.py
+- Fixed import issue in sources.services.__init__.py
+- All tests pass, mypy typecheck passes
+- Files changed: 
+  - backend/apps/notifications/views.py
+  - backend/apps/notifications/urls.py
+  - backend/apps/notifications/models.py
+  - backend/apps/notifications/tests.py
+  - backend/config/urls.py
+  - PRD19.md
+- Learnings for future iterations:
+  - Use F('read_at').asc(nulls_first=True) for PostgreSQL NULL ordering (unread first)
+  - Default order_by('read_at') puts NULL last in PostgreSQL
+  - ReadOnlyModelViewSet for list/retrieve-only endpoints
+  - Custom pagination class: inherit PageNumberPagination, set page_size
+  - Test response.data needs # type: ignore[attr-defined] for mypy
+  - Query param filtering: self.request.query_params.get('param') == 'value'
+---
+
