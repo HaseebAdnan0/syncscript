@@ -164,3 +164,26 @@
   - Typecheck passes successfully
   - US-009 was already marked complete in PRD7.md
 ---
+
+## Iteration 10 - US-010: Add login form validation and submission
+- Added validation logic for email (required, valid format) and password (required, min 8 chars)
+- Integrated useAuth hook for login submission with loading state
+- Added redirect to returnUrl query param or /dashboard on success
+- Display error toast on failed login attempts
+- Fixed textarea.tsx lint error (changed empty interface to type)
+- Files changed:
+  - frontend/src/app/(auth)/login/page.tsx (added validation and submission)
+  - frontend/src/components/ui/textarea.tsx (fixed lint error)
+- Learnings for future iterations:
+  - Login page uses useState for form fields (email, password) and errors object
+  - Validation runs before submission via validate() function
+  - Email regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  - Password minimum length: 8 characters
+  - useAuth().login() returns { success, error } for UI handling
+  - Toast component accepts { title, description } (no variant prop)
+  - useSearchParams from next/navigation for returnUrl query param
+  - useRouter().push() for redirects after successful login
+  - Pre-existing lint errors in other files don't block build if only warnings
+  - Empty interface extending another type should use type alias instead
+  - Changes may be auto-committed by linters/hooks during other operations
+---

@@ -146,15 +146,15 @@ SyncScript needs a complete frontend authentication system that enables users to
 **Description:** As a user, I want the login form to validate my input and submit so that I can authenticate.
 
 **Acceptance Criteria:**
-- [ ] Email validation: required, valid email format
-- [ ] Password validation: required, minimum 8 characters
-- [ ] Inline error messages displayed below invalid fields
-- [ ] On submit, call `useAuth().login()`
-- [ ] Show loading state on button during submission
-- [ ] On success, redirect to `returnUrl` query param or `/dashboard`
-- [ ] On error, display error toast notification
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Email validation: required, valid email format
+- [x] Password validation: required, minimum 8 characters
+- [x] Inline error messages displayed below invalid fields
+- [x] On submit, call `useAuth().login()`
+- [x] Show loading state on button during submission
+- [x] On success, redirect to `returnUrl` query param or `/dashboard`
+- [x] On error, display error toast notification
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 
