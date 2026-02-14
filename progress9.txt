@@ -371,3 +371,34 @@ Learnings for future iterations:
 - Import button disabled state includes isLoading prop for async operations
 - font-mono used for URL display for better readability
 ---
+
+## Iteration 14 - US-015: Create sources page route and layout
+- Created sources page at frontend/src/app/vaults/[id]/sources/page.tsx
+- Page fetches vault data using useVault(parseInt(vaultId, 10))
+- Fetches sources using useSourcesQuery({ vaultId: parseInt(vaultId, 10) })
+- Uses useSourcesViewPreference hook for grid/table view state management
+- Renders SourcesListHeader with source count, view toggle, and Add Source button
+- Renders SourcesFilterBar for filtering (without vault members - Vault type doesn't have members array)
+- Renders SourcesList with sources data, view mode, and loading state
+- AddSourceModal integrated with open/close state management
+- Page includes breadcrumb navigation back to vault detail page
+- Page title dynamically set via useEffect: "[Vault Name] - Sources | SyncScript"
+- Header shows vault context: "{vault.name} / Sources"
+- Loading and error states handled with proper UI feedback
+- Typecheck passes ✓
+
+Files changed:
+- frontend/src/app/vaults/[id]/sources/page.tsx (new)
+- PRD9.md (marked US-015 complete except browser verification)
+
+Learnings for future iterations:
+- useSourcesQuery expects object param: { vaultId, filters? } not just vaultId number
+- Vault type doesn't include members array - members need separate fetch or API endpoint
+- Page title updates use useEffect with vault dependency: document.title = `${vault.name} - Sources | SyncScript`
+- Breadcrumb uses router.push() for navigation back to parent vault detail page
+- SourcesFilterBar has optional vaultMembers prop - can be omitted if members not available
+- Glass morphism header style: bg-[#0F1115] border-b border-white/10
+- parseInt(vaultId, 10) used consistently for converting URL param to number
+- Sources list empty state handled by SourcesList component internally
+- Modal state managed via useState in parent page component
+---

@@ -3,7 +3,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 type ConnectionStatus = 'connecting' | 'connected' | 'disconnected' | 'reconnecting';
 
 interface VaultSocketOptions {
-  vaultId: string;
+  vaultId?: string;
 }
 
 interface VaultSocketReturn {

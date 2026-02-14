@@ -238,12 +238,12 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 **Description:** As a user, I want a dedicated page for viewing a single source with its PDF and annotations.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/app/vaults/[id]/sources/[sourceId]/page.tsx`
-- [ ] Two-column layout: PDF viewer (70%) + Annotation sidebar (30%)
-- [ ] Header shows source title, type badge, metadata
-- [ ] Back button returns to sources list
-- [ ] Breadcrumb navigation: Vault > Sources > [Source Title]
-- [ ] Typecheck passes
+- [x] Create `frontend/src/app/vaults/[id]/sources/[sourceId]/page.tsx`
+- [x] Two-column layout: PDF viewer (70%) + Annotation sidebar (30%)
+- [x] Header shows source title, type badge, metadata
+- [x] Back button returns to sources list
+- [x] Breadcrumb navigation: Vault > Sources > [Source Title]
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---

@@ -309,3 +309,28 @@
   - Typecheck passes without issues
 ---
 
+---
+## Iteration 14 - US-014: Implement sound notification with global toggle
+- Implemented notification sound system with user preference support
+- Files changed:
+  - Created `frontend/src/lib/notificationSound.ts` (sound playback utility)
+  - Created `frontend/public/sounds/README.md` (instructions for adding sound file)
+  - Modified `frontend/src/hooks/useToast.ts` (integrated playNotificationSound call)
+  - Updated `PRD10.md` (marked US-014 complete except browser verification)
+- Learnings for future iterations:
+  - Sound utility checks localStorage for "notification-sound-enabled" preference (defaults to true)
+  - playNotificationSound() only plays if: sound enabled + tab visible + browser supports Audio API
+  - Tab visibility checked using `document.hidden` (prevents annoying background sounds)
+  - Audio instance lazy-loaded and reused (singleton pattern for efficiency)
+  - Volume set to 50% (0.5) to avoid being too loud
+  - currentTime reset to 0 before play to allow rapid repeated playback
+  - audio.play() returns Promise - catch errors for autoplay restrictions
+  - Silently fail with console.debug for audio errors (graceful degradation)
+  - Sound file path: `/sounds/notification.mp3` (public directory)
+  - Sound requirements: MP3 format, <50KB, 0.5-1.5 seconds duration
+  - README provides free sound sources (Freesound, Zapsplat, Mixkit)
+  - preloadNotificationSound() function available for app initialization (reduces first-play latency)
+  - playNotificationSound() called in toast() function after dispatch (every toast triggers sound check)
+  - Typecheck passes without issues
+---
+

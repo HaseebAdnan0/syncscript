@@ -172,13 +172,13 @@ Create the complete vault management interface for SyncScript, enabling research
 **Description:** As a user, I want to see all vault members so I know who has access.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/vaults/MembersList.tsx`
-- [ ] Display members in list with: avatar (initials fallback), name, email, role badge
-- [ ] Role badges use colors: Owner (orange), Contributor (blue), Viewer (gray)
-- [ ] Members sorted: Owner first, then alphabetically
-- [ ] Shows member count in tab badge: "Members (5)"
-- [ ] Uses useVaultMembers hook
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/vaults/MembersList.tsx`
+- [x] Display members in list with: avatar (initials fallback), name, email, role badge
+- [x] Role badges use colors: Owner (orange), Contributor (blue), Viewer (gray)
+- [x] Members sorted: Owner first, then alphabetically
+- [x] Shows member count in tab badge: "Members (5)"
+- [x] Uses useVaultMembers hook
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-014: Add existing user to vault
