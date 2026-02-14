@@ -5,7 +5,7 @@
 ## User Stories (22 total)
 - [x] US-001: Create Zustand auth store
 - [x] US-002: Create axios instance with interceptors
-- [ ] US-003: Create useAuth hook with auth operations
+- [x] US-003: Create useAuth hook with auth operations
 - [ ] US-004: Create AuthProvider for app initialization
 - [ ] US-005: Create reusable form input component (Bitcoin DeFi style)
 - [ ] US-006: Create gradient button component
@@ -57,4 +57,18 @@
   - On refresh failure, call clearUser() from auth store and redirect to /login
   - Kept ApiError and handleApiError utilities for consistent error handling
   - Request queueing mechanism prevents multiple simultaneous refresh attempts
+---
+
+## Iteration 3 - US-003: Create useAuth hook with auth operations
+- Created `frontend/src/hooks/useAuth.ts` with login, register, logout, and refreshUser methods
+- Files changed: frontend/src/hooks/useAuth.ts (new file)
+- Learnings for future iterations:
+  - All auth methods return `{ success, error }` for consistent UI error handling
+  - login() accepts email and password parameters directly (not an object)
+  - register() accepts RegisterData object with email, password, username, optional first_name/last_name
+  - logout() clears local state even if API call fails (defensive programming)
+  - refreshUser() is used for app initialization - clears user on failure (not authenticated)
+  - All methods use useCallback with proper dependencies (setUser, clearUser, setLoading)
+  - setLoading(true) at start, setLoading(false) in finally block for proper loading states
+  - RegisterData interface exported for use in registration forms
 ---
