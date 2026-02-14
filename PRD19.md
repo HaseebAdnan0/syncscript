@@ -132,11 +132,11 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a user, I want to mute/unmute specific vaults to control notifications.
 
 **Acceptance Criteria:**
-- [ ] GET `/api/v1/notifications/muted-vaults/` lists muted vaults
-- [ ] POST `/api/v1/notifications/muted-vaults/` with `{ "vault_id": X }` mutes a vault
-- [ ] DELETE `/api/v1/notifications/muted-vaults/{vault_id}/` unmutes
-- [ ] Validate user is member of vault before muting
-- [ ] Typecheck passes
+- [x] GET `/api/v1/notifications/muted-vaults/` lists muted vaults
+- [x] POST `/api/v1/notifications/muted-vaults/` with `{ "vault_id": X }` mutes a vault
+- [x] DELETE `/api/v1/notifications/muted-vaults/{vault_id}/` unmutes
+- [x] Validate user is member of vault before muting
+- [x] Typecheck passes
 
 ---
 

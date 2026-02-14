@@ -182,3 +182,31 @@
   - Store wizard state in onboarding.data JSONField for persistence across steps
   - Pattern for multi-step wizards: update step field to advance (guided-1 → guided-2)
 ---
+
+## Iteration 11 - GuidedVaultWizard Step 2 (Add Source) (US-011)
+- Enhanced GuidedVaultWizard.tsx to support multi-step wizard (Step 1 and Step 2)
+- Made wizard step-aware by reading `step` from onboarding context
+- Implemented Step 2: "Add your first source" with URL input
+- Features added:
+  - URL validation using try/catch with URL() constructor
+  - "Back" button to return to Step 1 (updates step to 'guided-1')
+  - "Next" button to advance to Step 3 (updates step to 'guided-3')
+  - "Skip this step" link to proceed without adding source
+  - Progress indicator now dynamically highlights completed steps with gradient
+  - Stores sourceUrl in onboarding.data JSONField
+  - Enter key support for quick submission
+  - Error message display for invalid URLs
+- Files changed: GuidedVaultWizard.tsx, PRD20.md, progress20.txt
+- Commit: b37c595
+- Typecheck passes, build compiles successfully
+- Learnings for future iterations:
+  - Multi-step wizard pattern: Use single component with conditional rendering based on step
+  - Read step from onboarding context: `const { step, data, updateOnboarding } = useOnboarding()`
+  - Parse step number from string: `step === 'guided-1' ? 1 : step === 'guided-2' ? 2 : 1`
+  - Progress indicator should show gradient for completed/current steps, white/10 for future
+  - Load saved data from context using useEffect: `if (data?.vaultName) setVaultName(data.vaultName)`
+  - URL validation pattern: `try { new URL(url); return true; } catch { return false; }`
+  - Back button updates step to previous value, preserving existing data
+  - Skip link is alternative navigation that proceeds without required input
+  - Always merge existing data when updating: `{ vaultName: data?.vaultName || vaultName, sourceUrl }`
+---

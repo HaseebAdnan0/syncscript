@@ -156,15 +156,15 @@ Create a comprehensive user dashboard as the primary logged-in landing page for 
 **Description:** As a user, I want to see a line chart of sources added over time so I can visualize my research productivity.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/dashboard/charts/SourcesTimelineChart.tsx`
-- [ ] Line chart showing sources added per day, last 30 days
-- [ ] X-axis: dates, Y-axis: count
-- [ ] Line color: Bitcoin orange (#F7931A)
-- [ ] Custom tooltip matching design system (dark bg, orange accent)
-- [ ] Responsive - resizes with container
-- [ ] Fetches from `/api/v1/dashboard/analytics/sources-timeline/`
-- [ ] Empty state: onboarding prompt "Add your first source to see analytics"
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/dashboard/charts/SourcesTimelineChart.tsx`
+- [x] Line chart showing sources added per day, last 30 days
+- [x] X-axis: dates, Y-axis: count
+- [x] Line color: Bitcoin orange (#F7931A)
+- [x] Custom tooltip matching design system (dark bg, orange accent)
+- [x] Responsive - resizes with container
+- [x] Fetches from `/api/v1/dashboard/analytics/sources-timeline/`
+- [x] Empty state: onboarding prompt "Add your first source to see analytics"
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-012: Create source types donut chart

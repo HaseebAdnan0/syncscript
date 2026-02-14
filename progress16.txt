@@ -399,3 +399,48 @@
   - 'use client' directive required for useState and useRouter hooks
   - Preventing form default and using router.push provides SPA navigation
 ---
+
+## Iteration 17 - US-017: Create Marketing Footer
+- Created `frontend/src/components/marketing/Footer.tsx` component
+- Implemented 4-column footer layout with organized link sections:
+  - Product: Features (/#features anchor), Pricing (/#pricing anchor), Demo, Changelog
+  - Resources: Documentation, API, Blog, Help Center
+  - Company: About, Careers, Contact, Press
+  - Legal: Privacy, Terms, Security, Cookies
+- Footer link styling:
+  - Default: text-[#94A3B8] (muted)
+  - Hover: text-[#F7931A] (orange)
+  - transition-colors duration-200 for smooth color change
+- Social media icon row with 4 platforms:
+  - Twitter, GitHub, LinkedIn, Discord (using MessageCircle icon)
+  - Circular buttons: w-10 h-10 rounded-full
+  - Glass morphism: bg-white/5 border border-white/10
+  - Hover effects: text-[#F7931A], border-[#F7931A]/50, scale-110
+  - target="_blank" rel="noopener noreferrer" for security
+  - aria-label for accessibility
+- Social links row separated by border-b border-white/10
+- Copyright section:
+  - Dynamic year using new Date().getFullYear()
+  - Tagline: "Built for researchers, by researchers" in white/40
+- Responsive grid layout:
+  - Mobile: grid-cols-2 (2 columns stacked)
+  - Desktop: md:grid-cols-4 (4 columns side-by-side)
+- Footer background: bg-[#0F1115] (dark matter surface)
+- Top border: border-t border-white/10 for separation from content
+- Integrated into marketing layout (not page) so it appears on all marketing routes
+- Replaced placeholder footer in layout.tsx with full Footer component
+- Files changed:
+  - Created: `frontend/src/components/marketing/Footer.tsx`
+  - Modified: `frontend/src/app/(marketing)/layout.tsx` (imported and integrated Footer)
+  - Modified: `PRD16.md` (marked US-017 complete)
+- Learnings for future iterations:
+  - Organizing footer links into sections improves scannability
+  - Dynamic year in copyright prevents stale dates
+  - target="_blank" with rel="noopener noreferrer" is security best practice
+  - Circular icon buttons with glass morphism match Bitcoin DeFi aesthetic
+  - Social links in separate row with border creates visual hierarchy
+  - grid-cols-2 on mobile provides better balance than single column
+  - Integrating footer in layout (not page) ensures consistency across routes
+  - Space Grotesk font on section headings maintains design system consistency
+  - aria-label on icon-only buttons improves screen reader accessibility
+---

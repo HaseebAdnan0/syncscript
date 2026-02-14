@@ -1495,8 +1495,12 @@ class AsyncCitationEndpointTests(TestCase):
         # Verify task was queued
         mock_task_delay.assert_called_once_with(self.source_incomplete.id, 'apa7')
 
-    def test_complete_metadata_returns_200_synchronously(self):
+    @patch('apps.citations.views.generate_structured_citation')
+    def test_complete_metadata_returns_200_synchronously(self, mock_structured_citation):
         """Test endpoint returns 200 OK for complete metadata (structured citation)"""
+        # Mock structured citation service
+        mock_structured_citation.return_value = 'Smith, J., & Doe, J. (2024). Complete Article. Test Journal, 42(3), 123-145.'
+
         response = self.client.post(
             f'/api/v1/citations/sources/{self.source_complete.id}/citation/',
             {'format': 'apa7'}

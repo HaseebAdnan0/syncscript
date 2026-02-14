@@ -9,6 +9,7 @@ import GlassCard from '@/components/ui/GlassCard';
 import { PasswordStrength } from '@/components/ui/PasswordStrength';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from '@/hooks/useToast';
+import { OAuthButtons } from '@/components/features/auth/OAuthButtons';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -126,6 +127,19 @@ export default function RegisterPage() {
         <p className="text-[#94A3B8] text-sm">
           Join SyncScript and start building Knowledge Vaults
         </p>
+      </div>
+
+      {/* OAuth Buttons */}
+      <OAuthButtons disabled={isLoading} />
+
+      {/* Divider */}
+      <div className="relative my-6">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-white/10" />
+        </div>
+        <div className="relative flex justify-center text-sm">
+          <span className="px-4 bg-[#0F1115] text-[#94A3B8]">or</span>
+        </div>
       </div>
 
       {/* Registration Form */}
