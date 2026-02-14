@@ -134,3 +134,18 @@
   - Build compiled successfully - component has no type errors
   - Pre-existing warnings in vaults/page.tsx don't affect new components
 ---
+
+## Iteration 8 - US-008: Create auth layout with centered card
+- Created `frontend/src/app/(auth)/layout.tsx` with centered auth layout
+- Files changed: frontend/src/app/(auth)/layout.tsx (new file)
+- Learnings for future iterations:
+  - Auth layout uses route group (auth) for scoped layout application
+  - Full viewport centered layout: `min-h-screen flex items-center justify-center`
+  - Dark background matches design system: `bg-[#030304]`
+  - Floating decorative gradients add premium feel: orange/red gradient blurs in corners
+  - Decorative gradients use low opacity (/10) and heavy blur (blur-3xl) for subtlety
+  - Content wrapper uses relative z-10 to sit above decorative elements
+  - Max-width container (max-w-md) centers auth cards on desktop
+  - Pre-existing error in notifications.ts was auto-fixed by linter (import path)
+  - Typecheck passes after linter fix
+---
