@@ -240,11 +240,11 @@ This PRD covers the full implementation: core infrastructure, event broadcasting
 **Description:** As a developer, I need to limit connections per user to prevent resource abuse.
 
 **Acceptance Criteria:**
-- [ ] Track active connections in Redis set `user_{id}:connections`
-- [ ] On connect, check if user has >= 5 connections
-- [ ] If limit exceeded, close oldest connection with code 1008
-- [ ] On disconnect, remove channel from user's connection set
-- [ ] Typecheck passes
+- [x] Track active connections in Redis set `user_{id}:connections`
+- [x] On connect, check if user has >= 5 connections
+- [x] If limit exceeded, close oldest connection with code 1008
+- [x] On disconnect, remove channel from user's connection set
+- [x] Typecheck passes
 
 ---
 
