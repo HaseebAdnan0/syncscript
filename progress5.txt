@@ -210,3 +210,25 @@
   - User.DoesNotExist should be caught separately when fetching deleted_by user
   - Consistent logging: logger.info for success, logger.error for not found
 ---
+## Iteration 13 - US-014: Implement Annotation signal handlers and tasks
+- Discovered US-014 implementation already complete from previous commits
+- Verified all components in place:
+  - apps/annotations/models.py with Annotation model (id, source, text, page_number, created_by, timestamps)
+  - apps/annotations/signals.py with post_save handler for created=True only
+  - apps/annotations/tasks.py with broadcast_annotation_created Celery task
+  - apps/annotations/apps.py with ready() method to register signals
+  - apps/annotations/migrations/0001_initial.py migration created
+  - Added apps.annotations to INSTALLED_APPS in settings.py
+- Signal registration verified: 2 post_save receivers for Annotation model
+- Typecheck passes for annotations app (0 errors)
+- Payload includes: id, source_id, text, page_number, created_by{id, username}, created_at
+- Files changed: All annotations app files already committed
+- Learnings for future iterations:
+  - Auto-commit hooks may commit entire app structure during development
+  - Check git log and git show to verify what's already committed before implementing
+  - Django auto-creates 'id' field, but add type annotation (id: int) for Pyright compatibility
+  - Annotation model uses simple integer PK (not UUID like PDFUpload)
+  - Signal handler only broadcasts on created=True, not on updates
+  - Migration can be created even if database doesn't exist (makemigrations works offline)
+  - Verify signal registration with: post_save._live_receivers(Model)
+---
