@@ -160,3 +160,19 @@
   - Pyright typecheck passes with 0 errors
   - Django system check passes (security warnings are expected in dev mode)
 ---
+
+## Iteration 9 - US-009: Create PDF serializers
+- Verified existing serializer implementations in backend/apps/sources/serializers.py
+- All required serializers already implemented in previous session:
+  - UploadURLRequestSerializer (lines 6-20): vault_id, filename, file_size, content_type with validation
+  - UploadURLResponseSerializer (lines 23-32): upload_id, upload_url, expires_in, callback_url
+  - PDFUploadSerializer (lines 34-54): Full model serializer with related fields (vault_name, uploaded_by_username)
+- Django system check passes (6 security warnings are expected in dev mode)
+- Files changed:
+  - PRD6.md (marked US-009 complete)
+- Learnings for future iterations:
+  - Serializers were already complete from prior work, just needed PRD update
+  - PDFUploadSerializer includes useful computed fields like uploaded_by_username and vault_name via source attribute
+  - read_only_fields protects sensitive fields like processing_status from client modification
+  - Django system check validates all imports and wiring successfully
+---

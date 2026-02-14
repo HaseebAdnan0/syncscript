@@ -107,11 +107,11 @@ Implement cloud file storage for SyncScript using Cloudflare R2 (S3-compatible).
 **Description:** As a developer, I need serializers for PDF upload API responses.
 
 **Acceptance Criteria:**
-- [ ] Create `backend/apps/sources/serializers.py` (or add to existing)
-- [ ] Add `UploadURLRequestSerializer` with vault_id, filename, file_size, content_type
-- [ ] Add `UploadURLResponseSerializer` with upload_id, upload_url, expires_in, callback_url
-- [ ] Add `PDFUploadSerializer` for listing/detail views
-- [ ] Typecheck passes
+- [x] Create `backend/apps/sources/serializers.py` (or add to existing)
+- [x] Add `UploadURLRequestSerializer` with vault_id, filename, file_size, content_type
+- [x] Add `UploadURLResponseSerializer` with upload_id, upload_url, expires_in, callback_url
+- [x] Add `PDFUploadSerializer` for listing/detail views
+- [x] Typecheck passes
 
 ### US-010: Create post-upload Celery task for metadata extraction
 **Description:** As a user, I want PDF metadata extracted automatically so I don't have to enter it manually.
