@@ -808,3 +808,84 @@
 ### Issues Found
 (Append any bugs, edge cases, or unexpected behavior discovered during testing)
 
+
+---
+
+## PRD15: AI Research Assistant - US-014 Integration - 2026-02-14
+
+### AISummaryCard Integration in Source Detail Page
+- [ ] Start backend server: `cd backend && python manage.py runserver`
+- [ ] Start frontend dev server: `cd frontend && npm run dev`
+- [ ] Login with valid user account
+- [ ] Navigate to a vault and open any source detail page
+- [ ] Verify AISummaryCard component renders above PDF viewer in left column (70% width)
+
+### Generate Summary Flow
+- [ ] Click "Generate Summary" button on source without ai_summary
+- [ ] Verify AILoadingSkeleton appears with "Analyzing..." text
+- [ ] Verify skeleton shows pulsing orange accents
+- [ ] Wait for Claude API response (10-30 seconds depending on source length)
+- [ ] Verify AISummaryCard appears with summary content:
+  - Abstract section
+  - Key Findings (list)
+  - Methodology section
+  - Limitations section
+  - Keywords (tag pills)
+  - Language indicator (if non-English)
+  - Quality flags (if present: "preprint", "not peer-reviewed", etc.)
+  - Generated timestamp
+- [ ] Verify success toast appears: "Summary generated successfully"
+- [ ] Verify "Regenerate" button now visible in card header
+
+### Regenerate Summary Flow
+- [ ] Click "Regenerate" button on source with existing summary
+- [ ] Verify loading skeleton replaces card during regeneration
+- [ ] Verify new summary appears after completion
+- [ ] Verify updated timestamp reflects regeneration time
+- [ ] Verify success toast appears
+
+### Rate Limit Error Handling
+- [ ] Trigger 20+ AI requests in one day to hit rate limit
+- [ ] Click "Generate Summary" button after limit exceeded
+- [ ] Verify error toast appears with message: "AI request limit reached. Resets at {time}"
+- [ ] Verify summary does NOT generate
+- [ ] Verify cached summary still visible (if exists)
+
+### Error Handling (General)
+- [ ] Disconnect internet or stop backend server
+- [ ] Click "Generate Summary" button
+- [ ] Verify error toast appears: "Failed to generate summary"
+- [ ] Verify card state resets (button re-enabled)
+- [ ] Reconnect and verify retry works
+
+### UI/UX Verification
+- [ ] Verify AISummaryCard follows Bitcoin DeFi design:
+  - Glass morphism background (backdrop-blur-lg)
+  - Orange gradient accents on buttons
+  - Dark theme (#0F1115 surface color)
+  - Border with white/10 opacity
+- [ ] Verify expand/collapse animations smooth
+- [ ] Verify card is responsive on mobile viewports
+- [ ] Verify quality flags display as warning badges (orange/yellow)
+- [ ] Verify language indicator shows for non-English sources
+
+### Expected Behavior
+- AISummaryCard integrates seamlessly into source detail page
+- Generate/Regenerate buttons trigger AI summarization
+- Loading skeleton provides feedback during API processing
+- Rate limit errors handled gracefully with informative messages
+- Success/error toasts appear for all user actions
+- Card styling matches Bitcoin DeFi aesthetic
+- Auto-refetch sources after summary generation to update cache
+
+### Prerequisites
+1. Backend server running with AI endpoints functional
+2. Frontend dev server running
+3. Valid Anthropic API key configured in backend .env
+4. Test user account with AI usage quota available
+5. Vault with sources (PDF or URL) for testing
+6. Browser DevTools for inspecting network requests
+
+### Issues Found
+(Append any bugs, edge cases, or unexpected behavior discovered during testing)
+

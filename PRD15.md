@@ -185,7 +185,7 @@ This feature uses Claude as the AI backbone with a simple chunking strategy (no 
 - [x] Show AILoadingSkeleton while request pending
 - [x] Handle rate limit error: show toast with "Limit reached" message
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser
 
 ### US-015: Create ResearchInsightsPanel component
 **Description:** As a user, I want a panel showing AI insights about my vault's research themes.
