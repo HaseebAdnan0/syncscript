@@ -234,9 +234,9 @@ Create a secure, collaborative Knowledge Vault system where researchers can crea
 **Description:** As a system, I need to auto-set vault and added_by on member creation.
 
 **Acceptance Criteria:**
-- [ ] Get vault from kwargs['vault_pk']
-- [ ] Call serializer.save(vault=vault, added_by=request.user)
-- [ ] Typecheck passes
+- [x] Get vault from kwargs['vault_pk']
+- [x] Call serializer.save(vault=vault, added_by=request.user)
+- [x] Typecheck passes
 
 ### US-023: Create AuditLogViewSet (read-only)
 **Description:** As a researcher, I need to view audit history for research integrity.

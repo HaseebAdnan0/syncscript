@@ -313,3 +313,26 @@ Learnings for future iterations:
 - TokenError should return 401 Unauthorized (not 400) for expired/invalid tokens
 ---
 
+## Iteration 17 - Create PasswordResetRequestView endpoint (US-019)
+- Created PasswordResetRequestView as class-based APIView in apps/users/views.py
+- POST /api/v1/auth/password-reset/ accepts email via PasswordResetRequestSerializer
+- Generates reset token using Django's PasswordResetTokenGenerator().make_token(user)
+- Encodes user ID in base64 using urlsafe_base64_encode(force_bytes(user.pk))
+- Always returns success message to prevent user enumeration
+- Applied @method_decorator with @ratelimit(key='user_or_ip', rate='3/h', method='POST', block=True)
+- Django system check passes
+
+Files changed:
+- backend/apps/users/views.py (added PasswordResetRequestView class, imported PasswordResetTokenGenerator, urlsafe_base64_encode, force_bytes, PasswordResetRequestSerializer)
+- PRD1.md (marked US-019 complete)
+
+Learnings for future iterations:
+- Django's PasswordResetTokenGenerator is built-in from django.contrib.auth.tokens
+- urlsafe_base64_encode from django.utils.http creates URL-safe base64 strings
+- force_bytes from django.utils.encoding converts user.pk to bytes for encoding
+- Security pattern: always return success for password reset requests (no user enumeration)
+- Rate limiting 3/h uses key='user_or_ip' to limit per email/IP combination
+- Email sending function (send_password_reset_email) will be created in next task (US-020)
+- TODO comment left in code indicating email function needs implementation in US-020
+---
+

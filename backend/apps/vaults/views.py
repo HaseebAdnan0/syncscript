@@ -100,3 +100,9 @@ class VaultMembershipViewSet(viewsets.ModelViewSet):
         """Filter memberships by vault from URL."""
         vault_pk = self.kwargs.get('vault_pk')
         return VaultMembership.objects.filter(vault_id=vault_pk)
+
+    def perform_create(self, serializer):
+        """Set vault and added_by when creating a membership."""
+        vault_pk = self.kwargs.get('vault_pk')
+        vault = Vault.objects.get(pk=vault_pk)
+        serializer.save(vault=vault, added_by=self.request.user)

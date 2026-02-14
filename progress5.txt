@@ -130,3 +130,19 @@
   - Added type: ignore[attr-defined] for user.username to satisfy Pyright
   - Broadcast happens AFTER user is added/removed from presence sorted set
 ---
+## Iteration 9 - US-010: Implement heartbeat handling
+- Implemented receive method in VaultConsumer to handle incoming WebSocket messages
+- Added support for {"type": "heartbeat"} messages from clients
+- Created _update_presence method to update user timestamp in Redis sorted set
+- Heartbeat updates timestamp without broadcasting (internal tracking only)
+- Files changed: backend/apps/vaults/consumers.py, PRD5.md
+- Created test_heartbeat.py to verify functionality (all tests passed)
+- Typecheck passes (0 errors, 0 warnings)
+- Learnings for future iterations:
+  - receive method signature must match base class: text_data and bytes_data parameters with defaults
+  - Early return on None text_data prevents unnecessary processing
+  - JSON decode errors should be caught and logged but not crash the connection
+  - Unknown message types should be logged as warnings for debugging
+  - _update_presence reuses same Redis zadd logic as _add_to_presence (updates score)
+  - Windows console doesn't support Unicode checkmarks - use [OK] prefix instead
+---

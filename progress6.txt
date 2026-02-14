@@ -206,3 +206,35 @@
   - Exponential backoff: countdown=2^retries * base_delay provides good retry spacing
   - Django automatically loads config/__init__.py, which imports celery_app
 ---
+
+## Iteration 11 - US-011: Add thumbnail generation to processing task
+- Task was already implemented in a previous session (commit f463ad4)
+- Verified implementation in backend/apps/sources/tasks.py:
+  - Imported pdf2image.convert_from_bytes and PIL.Image
+  - Added thumbnail generation after metadata extraction (lines 83-137)
+  - Convert first page to image with pdf2image at 72 DPI, 300px width
+  - Save as JPEG with 80% quality using Pillow
+  - Upload to S3 at vaults/{vault_id}/thumbnails/{uuid}.jpg
+  - Generate 7-day presigned URL (604800 seconds)
+  - Store in PDFUpload.thumbnail_url field
+  - Graceful error handling: thumbnail failures logged as warnings, don't fail task
+- Verified dependencies in backend/requirements.txt:
+  - pdf2image>=1.17.0 (already present)
+  - Pillow>=11.1.0 (already present)
+- Verified documentation in .planning/USER_SETUP.md:
+  - Poppler utils installation instructions for Windows/Linux/macOS
+  - Explains why poppler is needed (pdftoppm for pdf2image)
+- PRD6.md already marked US-011 complete in commit f463ad4
+- Files verified:
+  - backend/apps/sources/tasks.py (thumbnail generation implemented)
+  - backend/requirements.txt (dependencies present)
+  - .planning/USER_SETUP.md (poppler docs already added)
+  - PRD6.md (already marked complete)
+- Learnings for future iterations:
+  - Always check git log first: git log --oneline -10
+  - Previous sessions may complete multiple tasks in parallel
+  - pdf2image requires poppler-utils system dependency (not a Python package)
+  - Thumbnail generation wrapped in try-except to prevent task failure on thumbnail errors
+  - presigned URLs for thumbnails use longer expiry (7 days) than download URLs (15 min)
+  - S3 upload via upload_fileobj() requires BytesIO.seek(0) after saving image
+---

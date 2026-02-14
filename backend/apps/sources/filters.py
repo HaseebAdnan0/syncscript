@@ -1,4 +1,5 @@
 from django_filters import rest_framework as filters
+from django.db.models import Q
 from .models import Source
 
 
@@ -18,9 +19,12 @@ class SourceFilter(filters.FilterSet):
     # Tags filter (US-013)
     tags = filters.CharFilter(method='filter_tags')
 
+    # Search filter (US-014)
+    search = filters.CharFilter(method='filter_search')
+
     class Meta:
         model = Source
-        fields = ['vault', 'source_type', 'created_by', 'date_from', 'date_to', 'tags']
+        fields = ['vault', 'source_type', 'created_by', 'date_from', 'date_to', 'tags', 'search']
 
     def filter_tags(self, queryset, name, value):
         """
@@ -41,3 +45,18 @@ class SourceFilter(filters.FilterSet):
         # Use PostgreSQL metadata__tags__overlap lookup for array overlap
         # This checks if metadata['tags'] array overlaps with tag_list
         return queryset.filter(metadata__tags__overlap=tag_list)
+
+    def filter_search(self, queryset, name, value):
+        """
+        Search filter for text search across title and description fields (US-014).
+        Uses case-insensitive containment (icontains) on both fields with OR logic.
+
+        Example: ?search=neural returns sources where title OR description contains 'neural'
+        """
+        if not value:
+            return queryset
+
+        # Use Q objects for OR condition across title and description
+        return queryset.filter(
+            Q(title__icontains=value) | Q(description__icontains=value)
+        )
