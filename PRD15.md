@@ -70,11 +70,11 @@ This feature uses Claude as the AI backbone with a simple chunking strategy (no 
 **Description:** As a developer, I need to chunk source text intelligently so it fits in Claude's context window for Q&A.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/ai/services/chunking.py`
-- [ ] `chunk_text(text, max_tokens=2000, overlap=200)` splits text into overlapping chunks
-- [ ] `get_relevant_chunks(question, chunks, max_chunks=5)` returns most relevant chunks (keyword matching for now, vector-ready interface)
-- [ ] Handles empty text gracefully
-- [ ] Typecheck passes
+- [x] Create `apps/ai/services/chunking.py`
+- [x] `chunk_text(text, max_tokens=2000, overlap=200)` splits text into overlapping chunks
+- [x] `get_relevant_chunks(question, chunks, max_chunks=5)` returns most relevant chunks (keyword matching for now, vector-ready interface)
+- [x] Handles empty text gracefully
+- [x] Typecheck passes
 
 ### US-006: Implement source summarization endpoint
 **Description:** As a user, I want to get an AI-generated summary of any source so I can quickly understand its contents.
