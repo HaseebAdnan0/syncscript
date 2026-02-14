@@ -264,3 +264,50 @@ def suggestions_view(request):
     suggestions = suggestions[:5]
 
     return Response({'suggestions': suggestions})
+
+
+@api_view(['GET', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def recent_searches_view(request):
+    """
+    Get or clear recent search history.
+
+    GET: Return last 10 searches for authenticated user.
+    DELETE: Clear all search history for authenticated user.
+    """
+    if request.method == 'GET':
+        # Get last 10 searches ordered by most recent
+        recent_searches = SearchHistory.objects.filter(
+            user=request.user
+        ).order_by('-created_at')[:10]
+
+        serializer = SearchHistorySerializer(recent_searches, many=True)
+        return Response({'recent_searches': serializer.data})
+
+    elif request.method == 'DELETE':
+        # Clear all search history for this user
+        deleted_count, _ = SearchHistory.objects.filter(user=request.user).delete()
+        return Response({
+            'message': f'Deleted {deleted_count} search history entries',
+            'deleted_count': deleted_count
+        }, status=status.HTTP_200_OK)
+
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_recent_search_view(request, search_id):
+    """
+    Delete a single search history entry.
+
+    DELETE /api/v1/search/recent/{id}/
+    """
+    try:
+        search_entry = SearchHistory.objects.get(id=search_id, user=request.user)
+        search_entry.delete()
+        return Response({
+            'message': 'Search history entry deleted'
+        }, status=status.HTTP_200_OK)
+    except SearchHistory.DoesNotExist:
+        return Response({
+            'error': 'Search history entry not found or access denied'
+        }, status=status.HTTP_404_NOT_FOUND)

@@ -91,12 +91,12 @@ Create a comprehensive new user onboarding experience for SyncScript that guides
 **Description:** As a frontend developer, I need a React context to manage onboarding state so components can access and update it.
 
 **Acceptance Criteria:**
-- [ ] Create `providers/OnboardingProvider.tsx`
-- [ ] Fetches onboarding state on mount for authenticated users
-- [ ] Provides: `step`, `completed`, `path`, `data`, `updateOnboarding()`, `completeOnboarding()`
-- [ ] Syncs state changes to backend via PATCH endpoint
-- [ ] Handles loading and error states
-- [ ] Typecheck passes
+- [x] Create `providers/OnboardingProvider.tsx`
+- [x] Fetches onboarding state on mount for authenticated users
+- [x] Provides: `step`, `completed`, `path`, `data`, `updateOnboarding()`, `completeOnboarding()`
+- [x] Syncs state changes to backend via PATCH endpoint
+- [x] Handles loading and error states
+- [x] Typecheck passes
 
 ### US-008: Create WelcomeModal component
 **Description:** As a new user, I want to see a welcome modal after first login so I understand what SyncScript offers.
