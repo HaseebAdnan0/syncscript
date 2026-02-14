@@ -45,13 +45,13 @@ Integrate SyncScript's frontend with the existing backend WebSocket system and n
 **Description:** As a developer, I need a hook that handles optimistic UI updates and reconciles with server state so that the UI feels instant while staying consistent.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/hooks/useRealtimeUpdates.ts`
-- [ ] Accepts React Query mutation and query key parameters
-- [ ] Provides `optimisticUpdate` function that immediately updates cache
-- [ ] Listens for WebSocket confirmation events and reconciles state
-- [ ] Rolls back optimistic update on WebSocket error event
-- [ ] Integrates with TanStack Query cache invalidation
-- [ ] Typecheck passes
+- [x] Create `frontend/src/hooks/useRealtimeUpdates.ts`
+- [x] Accepts React Query mutation and query key parameters
+- [x] Provides `optimisticUpdate` function that immediately updates cache
+- [x] Listens for WebSocket confirmation events and reconciles state
+- [x] Rolls back optimistic update on WebSocket error event
+- [x] Integrates with TanStack Query cache invalidation
+- [x] Typecheck passes
 
 ### US-004: Integrate real-time source updates in vault detail page
 **Description:** As a user, I want to see new sources appear instantly when collaborators add them so I stay in sync with my team.

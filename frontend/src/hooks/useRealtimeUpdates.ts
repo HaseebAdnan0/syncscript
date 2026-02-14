@@ -101,9 +101,9 @@ export function useRealtimeUpdates<TData = any, TVariables = any>(
 
   // Handle WebSocket error event (rollback optimistic update)
   useEffect(() => {
-    const handleError = (data: any) => {
+    const handleError = (errorData: any) => {
       // Find the pending update that failed (if we tracked it)
-      const updateId = data?.updateId;
+      const updateId = errorData?.updateId;
       if (updateId && pendingUpdatesRef.current.has(updateId)) {
         const { previousData } = pendingUpdatesRef.current.get(updateId)!;
 
@@ -116,11 +116,9 @@ export function useRealtimeUpdates<TData = any, TVariables = any>(
       }
     };
 
-    on(events.error, handleError);
-    return () => {
-      off(events.error, handleError);
-    };
-  }, [on, off, events.error, queryClient, queryKey]);
+    const cleanup = addEventListener(events.error, handleError);
+    return cleanup;
+  }, [addEventListener, events.error, queryClient, queryKey]);
 
   // Cleanup on unmount
   useEffect(() => {
