@@ -225,11 +225,11 @@ Implement cloud file storage for SyncScript using Cloudflare R2 (S3-compatible).
 **Description:** As a user, I want real-time notifications when PDFs are uploaded or deleted.
 
 **Acceptance Criteria:**
-- [ ] In `process_uploaded_pdf` task, send WebSocket message to `vault_{vault_id}` group
-- [ ] Event type: `pdf.uploaded` with pdf_id, filename, uploaded_by
-- [ ] In soft-delete view, send `pdf.deleted` event
-- [ ] Use existing channel_layer infrastructure
-- [ ] Typecheck passes
+- [x] In `process_uploaded_pdf` task, send WebSocket message to `vault_{vault_id}` group
+- [x] Event type: `pdf.uploaded` with pdf_id, filename, uploaded_by
+- [x] In soft-delete view, send `pdf.deleted` event
+- [x] Use existing channel_layer infrastructure
+- [x] Typecheck passes
 
 ### US-021: Add audit logging for file operations
 **Description:** As a researcher, I need file operations logged for research integrity.

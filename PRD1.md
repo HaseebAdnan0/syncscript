@@ -415,12 +415,12 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a developer, I need integration tests for email verification.
 
 **Acceptance Criteria:**
-- [ ] Add tests to `apps/users/tests/test_auth.py`
-- [ ] Test valid token activates account
-- [ ] Test expired token returns error
-- [ ] Test invalid token returns error
-- [ ] Test already verified user handles gracefully
-- [ ] All tests pass
+- [x] Add tests to `apps/users/tests/test_auth.py`
+- [x] Test valid token activates account
+- [x] Test expired token returns error
+- [x] Test invalid token returns error
+- [x] Test already verified user handles gracefully
+- [x] All tests pass
 
 ---
 
