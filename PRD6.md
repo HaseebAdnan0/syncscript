@@ -141,12 +141,12 @@ Implement cloud file storage for SyncScript using Cloudflare R2 (S3-compatible).
 **Description:** As a researcher, I want to upload large PDFs (>20MB) reliably via multipart upload.
 
 **Acceptance Criteria:**
-- [ ] Add `POST /api/v1/sources/pdfs/multipart-upload/initiate/` endpoint
-- [ ] Request body: vault_id, filename, file_size, part_size, content_type
-- [ ] Initiate S3 multipart upload via boto3
-- [ ] Calculate number of parts and generate presigned URL for each
-- [ ] Return: upload_id, pdf_upload_id, file_key, part_urls array, expires_in
-- [ ] Typecheck passes
+- [x] Add `POST /api/v1/sources/pdfs/multipart-upload/initiate/` endpoint
+- [x] Request body: vault_id, filename, file_size, part_size, content_type
+- [x] Initiate S3 multipart upload via boto3
+- [x] Calculate number of parts and generate presigned URL for each
+- [x] Return: upload_id, pdf_upload_id, file_key, part_urls array, expires_in
+- [x] Typecheck passes
 
 ### US-013: Create multipart upload complete endpoint
 **Description:** As a client, I need to finalize multipart upload after all parts are uploaded.
