@@ -85,3 +85,20 @@
   - Test cascade deletion by capturing IDs before delete, verifying they don't exist after
   - VaultSerializer context={'request': request} needed for user_role field computation
 ---
+
+## Iteration 6 - Prompt to recreate deleted demo vault (US-006)
+- Created DemoVaultStatusView at GET /api/v1/users/me/demo-vault/status/
+- Created DemoVaultCreateView at POST /api/v1/users/me/demo-vault/create/
+- Status endpoint returns { exists: boolean, vault_id: string | null }
+- Create endpoint creates vault only if it doesn't exist, returns error if already exists
+- Added URL routing for both endpoints in users/urls.py
+- Created comprehensive test suite: DemoVaultStatusAPITests (3 tests) and DemoVaultCreateAPITests (4 tests)
+- Files changed: backend/apps/users/views.py, urls.py, tests/test_onboarding.py, PRD20.md
+- All 7 tests pass, typecheck passes
+- Learnings for future iterations:
+  - Status endpoint pattern: return boolean existence flag plus optional ID
+  - Create endpoint should validate non-existence before creating to prevent duplicates
+  - Idempotent create_demo_vault service already handles duplicates, but explicit check gives better error message
+  - Test both exists/not-exists scenarios for status endpoints
+  - Test both success and already-exists scenarios for create endpoints
+---

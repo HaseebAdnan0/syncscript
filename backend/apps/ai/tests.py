@@ -775,3 +775,254 @@ class SourceSummarizationTestCase(APITestCase):
 
             self.assertEqual(response.status_code, 500)
             self.assertIn('error', response.data)
+
+
+class VaultInsightsTestCase(APITestCase):
+    """Test vault insights endpoint (US-007)."""
+
+    def setUp(self):
+        """Create test fixtures."""
+        from apps.vaults.models import Vault
+        from apps.sources.models import Source
+
+        # Create test user
+        self.user = User.objects.create_user(
+            email='test@example.com',
+            username='testuser',
+            password='testpass123'
+        )
+
+        # Create vault
+        self.vault = Vault.objects.create(
+            name='Research Vault',
+            owner=self.user
+        )
+
+        # Create multiple sources with summaries
+        self.source1 = Source.objects.create(
+            vault=self.vault,
+            url='https://example.com/paper1',
+            title='Machine Learning Paper',
+            description='A paper about neural networks',
+            source_type='URL',
+            created_by=self.user,
+            ai_summary={
+                'abstract': 'Summary of ML paper',
+                'key_findings': ['Deep learning is effective'],
+                'keywords': ['machine learning', 'neural networks'],
+            }
+        )
+
+        self.source2 = Source.objects.create(
+            vault=self.vault,
+            url='https://example.com/paper2',
+            title='AI Ethics Paper',
+            description='A paper about AI ethics',
+            source_type='URL',
+            created_by=self.user,
+            ai_summary={
+                'abstract': 'Summary of ethics paper',
+                'key_findings': ['AI needs ethical guidelines'],
+                'keywords': ['AI', 'ethics', 'fairness'],
+            }
+        )
+
+        # Authentication
+        self.client.force_authenticate(user=self.user)
+
+    def test_vault_insights_success(self):
+        """Test successful generation of vault insights."""
+        from unittest.mock import patch, Mock
+
+        with patch('apps.ai.views.ClaudeClient') as MockClient:
+            mock_instance = Mock()
+            MockClient.return_value = mock_instance
+            mock_instance.analyze_sources.return_value = {
+                'themes': [
+                    {'name': 'Machine Learning', 'weight': 0.8, 'source_count': 2},
+                    {'name': 'Ethics', 'weight': 0.5, 'source_count': 1}
+                ],
+                'research_gaps': ['Need more studies on bias mitigation'],
+                'cross_references': [
+                    {
+                        'sources': ['Machine Learning Paper', 'AI Ethics Paper'],
+                        'relationship': 'Both discuss AI systems'
+                    }
+                ],
+                'suggested_searches': ['AI bias', 'neural network ethics'],
+                'tokens_used': 400
+            }
+
+            response = self.client.get(f'/api/v1/vaults/{self.vault.id}/insights/')
+
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(response.data['themes']), 2)
+            self.assertEqual(response.data['themes'][0]['name'], 'Machine Learning')
+            self.assertIn('research_gaps', response.data)
+            self.assertIn('cross_references', response.data)
+            self.assertIn('suggested_searches', response.data)
+            self.assertIn('generated_at', response.data)
+
+    def test_vault_insights_returns_cached_if_fresh(self):
+        """Test that cached insights are returned if less than 24 hours old."""
+        from django.utils import timezone
+
+        # Set cached insights
+        cached_insights = {
+            'themes': [{'name': 'Cached Theme', 'weight': 0.9, 'source_count': 1}],
+            'research_gaps': ['Cached gap'],
+            'cross_references': [],
+            'suggested_searches': ['cached search'],
+            'generated_at': '2024-01-01T00:00:00Z'
+        }
+        self.vault.ai_insights_cache = cached_insights
+        self.vault.ai_insights_updated_at = timezone.now() - timedelta(hours=12)
+        self.vault.save()
+
+        # Should return cached without calling Claude
+        response = self.client.get(f'/api/v1/vaults/{self.vault.id}/insights/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['themes'][0]['name'], 'Cached Theme')
+
+    def test_vault_insights_regenerates_if_stale(self):
+        """Test that insights are regenerated if cache is older than 24 hours."""
+        from unittest.mock import patch, Mock
+        from django.utils import timezone
+
+        # Set stale cached insights
+        self.vault.ai_insights_cache = {'themes': []}
+        self.vault.ai_insights_updated_at = timezone.now() - timedelta(hours=25)
+        self.vault.save()
+
+        with patch('apps.ai.views.ClaudeClient') as MockClient:
+            mock_instance = Mock()
+            MockClient.return_value = mock_instance
+            mock_instance.analyze_sources.return_value = {
+                'themes': [{'name': 'New Theme', 'weight': 0.7, 'source_count': 1}],
+                'research_gaps': [],
+                'cross_references': [],
+                'suggested_searches': [],
+                'tokens_used': 300
+            }
+
+            response = self.client.get(f'/api/v1/vaults/{self.vault.id}/insights/')
+
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.data['themes'][0]['name'], 'New Theme')
+
+    def test_vault_insights_requires_authentication(self):
+        """Test that endpoint requires authentication."""
+        self.client.force_authenticate(user=None)
+
+        response = self.client.get(f'/api/v1/vaults/{self.vault.id}/insights/')
+
+        self.assertEqual(response.status_code, 401)
+
+    def test_vault_insights_checks_vault_permission(self):
+        """Test that user must have vault access."""
+        # Create another user without access
+        other_user = User.objects.create_user(
+            email='other@example.com',
+            username='otheruser',
+            password='testpass123'
+        )
+        self.client.force_authenticate(user=other_user)
+
+        response = self.client.get(f'/api/v1/vaults/{self.vault.id}/insights/')
+
+        self.assertEqual(response.status_code, 403)
+
+    def test_vault_insights_handles_empty_vault(self):
+        """Test error when vault has no sources."""
+        from apps.vaults.models import Vault
+
+        # Create empty vault
+        empty_vault = Vault.objects.create(
+            name='Empty Vault',
+            owner=self.user
+        )
+
+        response = self.client.get(f'/api/v1/vaults/{empty_vault.id}/insights/')
+
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('error', response.data)
+        self.assertIn('no sources', response.data['error'].lower())
+
+    def test_vault_insights_logs_usage(self):
+        """Test that token usage is logged."""
+        from unittest.mock import patch, Mock
+
+        with patch('apps.ai.views.ClaudeClient') as MockClient:
+            mock_instance = Mock()
+            MockClient.return_value = mock_instance
+            mock_instance.analyze_sources.return_value = {
+                'themes': [],
+                'research_gaps': [],
+                'cross_references': [],
+                'suggested_searches': [],
+                'tokens_used': 600
+            }
+
+            response = self.client.get(f'/api/v1/vaults/{self.vault.id}/insights/')
+
+            self.assertEqual(response.status_code, 200)
+
+            # Check usage log
+            from apps.ai.models import AIUsageLog
+            logs = AIUsageLog.objects.filter(user=self.user, request_type='insights')
+            self.assertEqual(logs.count(), 1)
+            self.assertEqual(logs.first().tokens_used, 600)
+
+    def test_vault_insights_handles_sources_without_summaries(self):
+        """Test that insights work with sources that don't have AI summaries."""
+        from unittest.mock import patch, Mock
+        from apps.sources.models import Source
+
+        # Create source without AI summary
+        Source.objects.create(
+            vault=self.vault,
+            url='https://example.com/paper3',
+            title='Paper Without Summary',
+            description='This paper has no AI summary yet',
+            source_type='URL',
+            created_by=self.user
+        )
+
+        with patch('apps.ai.views.ClaudeClient') as MockClient:
+            mock_instance = Mock()
+            MockClient.return_value = mock_instance
+            mock_instance.analyze_sources.return_value = {
+                'themes': [{'name': 'General', 'weight': 0.5, 'source_count': 3}],
+                'research_gaps': [],
+                'cross_references': [],
+                'suggested_searches': [],
+                'tokens_used': 350
+            }
+
+            response = self.client.get(f'/api/v1/vaults/{self.vault.id}/insights/')
+
+            self.assertEqual(response.status_code, 200)
+            # Verify that analyze_sources was called with source data including description
+            call_args = mock_instance.analyze_sources.call_args[0][0]
+            self.assertEqual(len(call_args), 3)  # All 3 sources
+            # Check that source without summary has description
+            source_without_summary = next(s for s in call_args if s['title'] == 'Paper Without Summary')
+            self.assertEqual(source_without_summary['description'], 'This paper has no AI summary yet')
+
+    def test_vault_insights_handles_claude_error(self):
+        """Test error handling when Claude API fails."""
+        from unittest.mock import patch, Mock
+
+        with patch('apps.ai.views.ClaudeClient') as MockClient:
+            mock_instance = Mock()
+            MockClient.return_value = mock_instance
+            mock_instance.analyze_sources.return_value = {
+                'error': 'API connection failed',
+                'tokens_used': 0
+            }
+
+            response = self.client.get(f'/api/v1/vaults/{self.vault.id}/insights/')
+
+            self.assertEqual(response.status_code, 500)
+            self.assertIn('error', response.data)

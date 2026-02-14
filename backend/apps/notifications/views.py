@@ -10,8 +10,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
-from .models import Notification
-from .serializers import NotificationSerializer
+from .models import Notification, NotificationPreferences
+from .serializers import NotificationSerializer, NotificationPreferencesSerializer
 
 
 class NotificationPagination(PageNumberPagination):

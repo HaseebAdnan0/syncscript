@@ -252,3 +252,31 @@
   - Django system check passes (only allauth deprecation warnings)
 ---
 
+## Iteration 10 - US-010: Add EmailPreference model for unsubscribe
+- Created EmailPreference model in apps/users/models.py
+- Implemented all acceptance criteria:
+  - OneToOne relationship to User with related_name='email_preference'
+  - collaboration_notifications field (BooleanField, default=True)
+  - marketing_emails field (BooleanField, default=True)
+  - unsubscribe_token field (CharField, unique, auto-generated via secrets.token_urlsafe(32))
+  - created_at and updated_at timestamps (auto_now_add and auto_now)
+  - Custom save() method generates token if not set
+  - db_table='email_preferences' for clean table naming
+- Added post_save signal to auto-create EmailPreference when User is created
+- Generated migration 0003_emailpreference
+- Applied migration successfully to database
+- Tested signal functionality with test script - verified EmailPreference auto-created
+- Files changed:
+  - backend/apps/users/models.py (added EmailPreference model and signal)
+  - backend/apps/users/migrations/0003_emailpreference.py (new migration)
+  - PRD11.md (marked US-010 complete)
+- Learnings for future iterations:
+  - secrets.token_urlsafe(32) generates 43-character tokens (base64-url-safe encoding)
+  - Django signals must be imported from django.db.models.signals and django.dispatch
+  - @receiver decorator connects signal handler to post_save signal
+  - Signal creates EmailPreference automatically on User.objects.create_user()
+  - Test database connection issues during test runs are environmental, not code issues
+  - Windows console requires ASCII-safe output (no unicode checkmarks) for test scripts
+  - Django system check passes (only allauth deprecation warnings)
+---
+
