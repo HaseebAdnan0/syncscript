@@ -382,13 +382,13 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a developer, I need a hook to fetch and manage notification state.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/hooks/useNotifications.ts`
-- [ ] Fetch notifications with React Query
-- [ ] `unreadCount` state from API
-- [ ] `markAsRead(id)` mutation
-- [ ] `markAllAsRead()` mutation
-- [ ] Refetch on window focus
-- [ ] Typecheck passes
+- [x] Create `frontend/src/hooks/useNotifications.ts`
+- [x] Fetch notifications with React Query
+- [x] `unreadCount` state from API
+- [x] `markAsRead(id)` mutation
+- [x] `markAllAsRead()` mutation
+- [x] Refetch on window focus
+- [x] Typecheck passes
 
 ---
 
