@@ -116,3 +116,41 @@ Learnings for future iterations:
 - Use __new__ pattern in tests to bypass __init__ when mocking dependencies
 - Keep context limits in mind: truncate text to ~40-50k chars before sending to API
 ---
+
+## Iteration 5 - US-005: Add source text chunking utility
+- Created apps/ai/services/chunking.py with two main functions
+- Implemented chunk_text(text, max_tokens=2000, overlap=200):
+  - Uses character approximation (1 token ≈ 4 chars) for chunk size calculation
+  - Attempts to break at sentence boundaries for cleaner chunks
+  - Creates overlapping chunks with specified overlap
+  - Returns Chunk TypedDict with text, start_index, end_index, chunk_id
+  - Handles empty/whitespace text gracefully
+- Implemented get_relevant_chunks(question, chunks, max_chunks=5):
+  - Simple keyword matching with frequency scoring
+  - Proximity bonus for keywords appearing within 100 chars of each other
+  - Returns top-ranked chunks sorted by relevance score
+  - Interface designed for future vector search drop-in replacement
+- Created comprehensive test suite with 10 tests in ChunkingServiceTestCase:
+  - Basic chunking functionality
+  - Empty/short text handling
+  - Sentence boundary awareness
+  - Overlap verification
+  - Keyword matching
+  - Proximity scoring
+  - Max chunks limit
+- All 29 AI app tests pass successfully
+
+Files changed:
+- backend/apps/ai/services/chunking.py (created)
+- backend/apps/ai/tests.py (added ChunkingServiceTestCase with 10 tests)
+- PRD15.md (marked US-005 complete)
+
+Learnings for future iterations:
+- Character approximation (4 chars per token) works well for English text chunking
+- Sentence boundary detection improves chunk quality: look for '.!?' followed by whitespace
+- TypedDict is perfect for chunk metadata without heavy class overhead
+- Keyword proximity scoring adds value: bonus for keywords within 100 chars improves relevance
+- Keep interface simple and vector-ready: current keyword matching can be swapped for embeddings later
+- Test edge cases: empty text, short text, single chunk scenarios all important
+- Allow some flexibility in sentence boundary tests (70% threshold vs 100%)
+---
