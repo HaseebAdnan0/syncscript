@@ -586,3 +586,146 @@
 ### Issues Found
 (Append any bugs, edge cases, or unexpected behavior discovered during testing)
 
+
+## PRD20: Onboarding & Interactive Tutorial - US-018 OnboardingFlow Orchestrator - 2026-02-14
+
+### OnboardingFlow State Machine Testing
+- [ ] **Setup: Create test user without onboarding completed**
+  - Register a new user account OR reset existing user's onboarding state in database:
+    ```sql
+    UPDATE users_user SET onboarding_completed = FALSE, onboarding_step = 'welcome' WHERE id = <user_id>;
+    ```
+  - Verify backend server running: `cd backend && python manage.py runserver`
+  - Verify frontend dev server running: `cd frontend && npm run dev`
+
+- [ ] **Step 1: Welcome Modal**
+  - Login as user with incomplete onboarding
+  - Verify WelcomeModal appears automatically
+  - Verify modal shows: "Welcome to SyncScript, {name}!" with gradient text
+  - Verify 3 feature highlights visible (Knowledge Vaults, Real-time collaboration, Annotations)
+  - Verify glass morphism styling (backdrop-blur, dark bg, orange accents)
+  - Click "Let's get started" button
+  - Verify modal transitions to PathSelection step
+
+- [ ] **Step 2: Path Selection**
+  - Verify PathSelection component displays 3 path cards:
+    - Create your first vault (guided icon with orange gradient)
+    - Explore demo vault (explore icon with orange-gold gradient)
+    - Skip tutorial (skip icon with gray gradient)
+  - Verify cards have hover effects (translate-y, border glow, icon scale)
+  - Verify responsive grid (3 cols desktop, 1 col mobile)
+
+- [ ] **Step 3a: Guided Path - Vault Creation**
+  - Click "Create your first vault" card
+  - Verify GuidedVaultWizard appears at Step 1
+  - Verify progress indicator shows "Step 1 of 3" with visual circles
+  - Enter vault name (e.g., "My Research Vault")
+  - Click "Next" button
+  - Verify wizard advances to Step 2
+  - Enter source URL (e.g., "https://arxiv.org/abs/1706.03762")
+  - Click "Next" button OR "Skip this step" link
+  - Verify wizard advances to Step 3
+  - Enter collaborator email (e.g., "colleague@example.com") OR click "Skip"
+  - Click "Create Vault" button
+  - Verify loading state appears
+  - Verify vault created successfully
+  - Verify onboarding transitions to 'tutorial' step
+  - Verify source added if URL was provided
+  - Verify collaborator invite sent if email was provided
+  - Verify error handling: if creation fails, error message shown, retry allowed
+
+- [ ] **Step 3b: Demo Path - Explore Demo Vault**
+  - Reset onboarding state to 'path' step
+  - Click "Explore demo vault" card
+  - Verify demo vault created (if doesn't exist)
+  - Verify redirect to demo vault detail page: `/vaults/{demo_vault_id}`
+  - Verify demo vault contains 10 AI research paper sources
+  - Verify demo vault contains multiple annotations demonstrating threading
+  - Verify onboarding transitions to 'tutorial' step after navigation
+
+- [ ] **Step 3c: Skip Path**
+  - Reset onboarding state to 'path' step
+  - Click "Skip tutorial" card
+  - Verify onboarding marked as completed immediately
+  - Verify onboarding_path set to 'skipped'
+  - Verify onboarding modal dismisses
+  - Verify normal app UI is accessible
+
+- [ ] **Step 4: Interactive Tutorial**
+  - Complete guided or demo path to reach 'tutorial' step
+  - Verify InteractiveTutorial starts automatically
+  - Verify tutorial highlights 7 UI elements in sequence:
+    - Vault list sidebar (data-tour="vault-list")
+    - Add source button (data-tour="add-source")
+    - Invite collaborator button (data-tour="invite-collaborator")
+    - Annotations panel (data-tour="annotations")
+    - Search functionality (data-tour="search")
+    - Settings & preferences (data-tour="settings")
+    - Vault header completion (data-tour="vault-header")
+  - Verify each tooltip shows title, description, and custom Bitcoin DeFi styling
+  - Verify orange gradient buttons (Back, Next, Skip Tutorial)
+  - Verify progress dots show current step
+  - Click "Next" through all steps
+  - Verify scroll behavior brings target elements into view
+  - Verify beacon pulse on first step
+  - Click "Skip Tutorial" button mid-flow
+  - Verify tutorial exits and advances to completion
+  - Note: Tutorial step persistence - if user navigates away, does tutorial resume from last step?
+
+- [ ] **Step 5: Completion Celebration**
+  - Complete tutorial to reach 'complete' step
+  - Verify CompletionCelebration component displays
+  - Verify confetti animation launches from both sides of screen
+  - Verify confetti uses Bitcoin colors (orange, gold, white)
+  - Verify "You're all set!" gradient heading visible
+  - Verify 3 quick action cards visible:
+    - Add Source (Plus icon)
+    - Invite Team (Users icon)
+    - Explore Features (BookOpen icon)
+  - Verify cards have hover effects
+  - Click "Get Started" button
+  - Verify onboarding marked as completed
+  - Verify redirect to normal app UI
+  - Verify onboarding modal no longer appears on page reload
+
+- [ ] **Edge Cases and State Recovery**
+  - Login with incomplete onboarding at step 'guided-2'
+  - Verify wizard opens at Step 2 (resumes from saved state)
+  - Verify saved data (vaultName) is pre-filled from onboarding.data
+  - Navigate away from onboarding (close tab, logout)
+  - Login again - verify onboarding resumes from last saved step
+  - Verify onboarding only shows for users with `onboarding_completed === false`
+  - Complete user's onboarding, verify modal never appears again
+
+- [ ] **Mobile Responsiveness**
+  - Test onboarding flow on mobile viewport (< 768px)
+  - Verify all modals are full-screen on mobile
+  - Verify button sizes are touch-friendly (min 44px tap targets)
+  - Verify wizard steps stack vertically on mobile
+  - Verify PathSelection grid shows 1 column
+  - Verify CompletionCelebration action cards stack vertically
+
+### Expected Behavior
+- OnboardingFlow orchestrates entire onboarding state machine
+- Welcome → Path → (Guided/Demo/Skip) → Tutorial → Completion flow works seamlessly
+- Guided path creates vault with optional source and collaborator
+- Demo path creates/fetches demo vault and redirects to it
+- Skip path immediately completes onboarding
+- Tutorial highlights key UI elements with custom Bitcoin DeFi styling
+- Completion shows confetti celebration and quick actions
+- Onboarding state persists and resumes from last step on return
+- Completed onboarding never shows again
+- All components mobile-responsive
+
+### Prerequisites
+1. Backend server running with all onboarding endpoints functional
+2. Frontend dev server running with all components built
+3. PostgreSQL database with User model onboarding fields
+4. Test user account with onboarding_completed = false
+5. Demo vault fixture data available at backend/apps/users/fixtures/demo_vault.json
+6. Browser DevTools for inspecting network requests and state changes
+7. Mobile device or responsive design mode for mobile testing
+
+### Issues Found
+(Append any bugs, edge cases, or unexpected behavior discovered during testing)
+

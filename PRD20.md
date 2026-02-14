@@ -257,7 +257,7 @@ Create a comprehensive new user onboarding experience for SyncScript that guides
 - [x] Handles step transitions and state updates
 - [x] Only renders for users with `onboarding_completed === false`
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser
 
 ### US-019: Integrate onboarding into app layout
 **Description:** As a new user, I want onboarding to appear automatically after first login.

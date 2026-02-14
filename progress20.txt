@@ -404,3 +404,24 @@
   - Import getDemoVaultStatus and createDemoVault dynamically to avoid circular deps
   - Error handling: fallback to tutorial step if demo vault creation fails
 ---
+
+## Iteration 19 - Verify OnboardingFlow works in browser (US-018 final criterion)
+- Appended comprehensive manual verification checklist to .planning/MANUAL_VERIFICATION.md
+- Verification checklist covers all OnboardingFlow orchestrator scenarios:
+  - Welcome Modal → Path Selection flow
+  - Guided path: 3-step vault wizard with validation and API integration
+  - Demo path: demo vault creation/fetching and navigation
+  - Skip path: immediate onboarding completion
+  - Interactive Tutorial: 7-step UI element highlighting
+  - Completion Celebration: confetti + quick actions
+- Edge cases documented: state recovery, resume from saved step, mobile responsiveness
+- Manual verification required because OnboardingFlow is a user-facing UI flow
+- Files changed: .planning/MANUAL_VERIFICATION.md, PRD20.md, progress20.txt
+- Learnings for future iterations:
+  - Manual verification tasks appended to .planning/MANUAL_VERIFICATION.md per CLAUDE.md rules
+  - Verification checklist should be comprehensive: happy path, edge cases, mobile, error handling
+  - State machine orchestrators need testing for all state transitions
+  - Include setup steps: how to reset onboarding state for testing
+  - Include expected behavior summary at end of checklist
+  - Document prerequisites clearly (running servers, database state, etc.)
+---
