@@ -1567,8 +1567,12 @@ class RateLimitingTests(TestCase):
         from apps.vaults.models import Vault
         from apps.sources.models import Source
         from django.core.cache import cache
+        from rest_framework.test import APIClient
 
         User = get_user_model()
+
+        # Use DRF APIClient instead of Django Client
+        self.client = APIClient()
 
         # Clear cache before each test
         cache.clear()
