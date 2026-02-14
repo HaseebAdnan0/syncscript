@@ -288,11 +288,11 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need the annotations app scaffolding so I can build annotation features.
 
 **Acceptance Criteria:**
-- [ ] Create `backend/apps/annotations/` directory with `__init__.py`
-- [ ] Create `models.py`, `views.py`, `serializers.py`, `filters.py`, `permissions.py`
-- [ ] Create `tests/` directory with `__init__.py`, `test_models.py`, `test_views.py`
-- [ ] Add `'apps.annotations'` to `INSTALLED_APPS` in settings
-- [ ] Typecheck passes
+- [x] Create `backend/apps/annotations/` directory with `__init__.py`
+- [x] Create `models.py`, `views.py`, `serializers.py`, `filters.py`, `permissions.py`
+- [x] Create `tests/` directory with `__init__.py`, `test_models.py`, `test_views.py`
+- [x] Add `'apps.annotations'` to `INSTALLED_APPS` in settings
+- [x] Typecheck passes
 
 ---
 
