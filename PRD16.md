@@ -68,15 +68,15 @@ Create SyncScript's production landing page following the Bitcoin DeFi aesthetic
 **Description:** As a user, I want to see compelling headlines and clear CTAs so I understand the value and can take action.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/marketing/HeroContent.tsx`
-- [ ] Headline: "Collaborative Research" on line 1
-- [ ] "Reimagined" on line 2 with gradient text (`bg-gradient-to-r from-[#F7931A] to-[#FFD600]`)
-- [ ] Subheadline describing value prop (muted text color)
-- [ ] "Start Free" button: primary gradient style, links to `/register`
-- [ ] "Watch Demo" button: outline style with border
-- [ ] Use Space Grotesk font for headlines
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/marketing/HeroContent.tsx`
+- [x] Headline: "Collaborative Research" on line 1
+- [x] "Reimagined" on line 2 with gradient text (`bg-gradient-to-r from-[#F7931A] to-[#FFD600]`)
+- [x] Subheadline describing value prop (muted text color)
+- [x] "Start Free" button: primary gradient style, links to `/register`
+- [x] "Watch Demo" button: outline style with border
+- [x] Use Space Grotesk font for headlines
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-006: Create Video Demo Modal
 **Description:** As a user, I want to watch a demo video in a modal so I can learn about the product without leaving the page.

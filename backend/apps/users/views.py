@@ -580,3 +580,65 @@ class OnboardingView(APIView):
             'path': user.onboarding_path,
             'data': user.onboarding_data or {}
         }, status=status.HTTP_200_OK)
+
+
+# OAuth Views (PRD12)
+
+class GoogleOAuthRedirectView(APIView):
+    """
+    Initiate Google OAuth flow (US-005).
+
+    GET /api/v1/auth/google/
+    Accepts optional 'next' query parameter for post-auth redirect.
+    Redirects user to Google's consent screen.
+    """
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        """Redirect to Google OAuth consent screen."""
+        # Check if Google OAuth is configured
+        google_client_id = settings.SOCIALACCOUNT_PROVIDERS.get('google', {}).get('APP', {}).get('client_id')
+
+        if not google_client_id:
+            return Response({
+                'error': 'Google OAuth is not configured. Please contact support.'
+            }, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
+        # Store 'next' URL in session for post-auth redirect
+        next_url = request.GET.get('next', '')
+        if next_url:
+            request.session['oauth_next_url'] = next_url
+
+        # Use allauth's Google OAuth view to redirect to consent screen
+        from allauth.socialaccount.providers.google.views import oauth2_login
+        return oauth2_login(request)
+
+
+class GitHubOAuthRedirectView(APIView):
+    """
+    Initiate GitHub OAuth flow (US-007).
+
+    GET /api/v1/auth/github/
+    Accepts optional 'next' query parameter for post-auth redirect.
+    Redirects user to GitHub's authorization screen.
+    """
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        """Redirect to GitHub OAuth authorization screen."""
+        # Check if GitHub OAuth is configured
+        github_client_id = settings.SOCIALACCOUNT_PROVIDERS.get('github', {}).get('APP', {}).get('client_id')
+
+        if not github_client_id:
+            return Response({
+                'error': 'GitHub OAuth is not configured. Please contact support.'
+            }, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
+        # Store 'next' URL in session for post-auth redirect
+        next_url = request.GET.get('next', '')
+        if next_url:
+            request.session['oauth_next_url'] = next_url
+
+        # Use allauth's GitHub OAuth view to redirect to authorization screen
+        from allauth.socialaccount.providers.github.views import oauth2_login
+        return oauth2_login(request)

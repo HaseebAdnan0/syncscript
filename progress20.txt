@@ -34,3 +34,20 @@
   - Use `update_fields` parameter in save() for efficiency
   - URL verification: `python manage.py shell -c "from django.urls import reverse; print(reverse('users:onboarding'))"`
 ---
+
+## Iteration 3 - Create demo vault fixture data (US-003)
+- Created backend/apps/users/fixtures/demo_vault.json with demo vault template
+- Included 10 real AI research papers from arXiv (freely available)
+- Papers cover: Transformers, GPT-3, CLIP, PaLM, GPT-4, Llama 2, Constitutional AI, Chinchilla, Tree of Thoughts, BitNet
+- Added 18 annotations demonstrating threading (6 with parent references), citations, and metadata
+- Created load_demo_vault.py management command to validate fixture structure
+- Fixture structured as JSON template (not Django loaddata format) for use by service layer
+- Validation passed: 10 sources, 18 annotations (6 threaded)
+- Files changed: backend/apps/users/fixtures/demo_vault.json, load_demo_vault.py, PRD20.md
+- Learnings for future iterations:
+  - Fixtures for programmatic use should be JSON templates, not Django loaddata format
+  - Use source_index/parent_index for relationships instead of foreign keys
+  - Management commands useful for validation without modifying database
+  - arXiv papers are ideal demo content (freely available, real research)
+  - Annotations should demonstrate various features: threading, cross-references, metadata
+---

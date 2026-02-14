@@ -61,11 +61,11 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a developer, I need serializers for notifications to power the API.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/notifications/serializers.py`
-- [ ] NotificationSerializer with all fields, `is_read` computed property
-- [ ] NotificationPreferencesSerializer for user preferences
-- [ ] MutedVaultSerializer with vault details (id, name)
-- [ ] Typecheck passes
+- [x] Create `apps/notifications/serializers.py`
+- [x] NotificationSerializer with all fields, `is_read` computed property
+- [x] NotificationPreferencesSerializer for user preferences
+- [x] MutedVaultSerializer with vault details (id, name)
+- [x] Typecheck passes
 
 ---
 

@@ -24,3 +24,5 @@ newspaper3k>=0.2.8
 lxml>=5.0
 django-dirtyfields>=1.9
 crossref-commons>=0.0.7
+citeproc-py>=0.6.0
+citeproc-py-styles>=0.1.3

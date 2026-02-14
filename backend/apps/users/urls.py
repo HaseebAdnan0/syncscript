@@ -12,6 +12,8 @@ from .views import (
     PasswordResetConfirmView,
     ProfileView,
     OnboardingView,
+    GoogleOAuthRedirectView,
+    GitHubOAuthRedirectView,
 )
 
 app_name = 'users'
@@ -36,4 +38,8 @@ urlpatterns = [
 
     # Onboarding endpoints (US-002)
     path('users/me/onboarding/', OnboardingView.as_view(), name='onboarding'),
+
+    # OAuth endpoints (PRD12)
+    path('auth/google/', GoogleOAuthRedirectView.as_view(), name='google-oauth'),
+    path('auth/github/', GitHubOAuthRedirectView.as_view(), name='github-oauth'),
 ]

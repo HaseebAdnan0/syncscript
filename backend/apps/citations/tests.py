@@ -3,6 +3,11 @@ from unittest.mock import patch, MagicMock
 from django.test import TestCase
 from apps.citations.services.doi_lookup import normalize_doi, fetch_doi_metadata
 from apps.citations.services.isbn_lookup import normalize_isbn, fetch_isbn_metadata
+from apps.citations.services.structured_citation import (
+    has_complete_metadata,
+    generate_structured_citation,
+)
+from apps.citations.models import CitationFormat
 
 
 class DOILookupTests(TestCase):
@@ -393,3 +398,303 @@ class ISBNLookupTests(TestCase):
         self.assertIsNotNone(result)
         assert result is not None  # Type narrowing
         self.assertEqual(result['publisher'], 'Test Publisher')
+
+
+class StructuredCitationTests(TestCase):
+    """Tests for structured citation generation service"""
+
+    def test_has_complete_metadata_valid(self):
+        """Test metadata completeness check with valid data"""
+        metadata = {
+            'title': 'Test Article',
+            'authors': ['John Doe', 'Jane Smith'],
+            'publication_date': '2024',
+        }
+        self.assertTrue(has_complete_metadata(metadata))
+
+    def test_has_complete_metadata_missing_title(self):
+        """Test metadata completeness check fails without title"""
+        metadata = {
+            'authors': ['John Doe'],
+            'publication_date': '2024',
+        }
+        self.assertFalse(has_complete_metadata(metadata))
+
+    def test_has_complete_metadata_empty_title(self):
+        """Test metadata completeness check fails with empty title"""
+        metadata = {
+            'title': '   ',
+            'authors': ['John Doe'],
+            'publication_date': '2024',
+        }
+        self.assertFalse(has_complete_metadata(metadata))
+
+    def test_has_complete_metadata_missing_authors(self):
+        """Test metadata completeness check fails without authors"""
+        metadata = {
+            'title': 'Test Article',
+            'publication_date': '2024',
+        }
+        self.assertFalse(has_complete_metadata(metadata))
+
+    def test_has_complete_metadata_empty_authors(self):
+        """Test metadata completeness check fails with empty authors list"""
+        metadata = {
+            'title': 'Test Article',
+            'authors': [],
+            'publication_date': '2024',
+        }
+        self.assertFalse(has_complete_metadata(metadata))
+
+    def test_has_complete_metadata_missing_date(self):
+        """Test metadata completeness check fails without date"""
+        metadata = {
+            'title': 'Test Article',
+            'authors': ['John Doe'],
+        }
+        self.assertFalse(has_complete_metadata(metadata))
+
+    def test_has_complete_metadata_with_author_key(self):
+        """Test metadata completeness accepts 'author' instead of 'authors'"""
+        metadata = {
+            'title': 'Test Article',
+            'author': 'John Doe',
+            'date': '2024',
+        }
+        self.assertTrue(has_complete_metadata(metadata))
+
+    def test_has_complete_metadata_with_year_key(self):
+        """Test metadata completeness accepts 'year' instead of 'publication_date'"""
+        metadata = {
+            'title': 'Test Article',
+            'authors': ['John Doe'],
+            'year': '2024',
+        }
+        self.assertTrue(has_complete_metadata(metadata))
+
+    def test_generate_bibtex_article(self):
+        """Test BibTeX generation for journal article"""
+        metadata = {
+            'title': 'Machine Learning in Healthcare',
+            'authors': ['Smith, John', 'Doe, Jane'],
+            'publication_date': '2024-01-15',
+            'journal': 'Journal of AI Research',
+            'volume': '10',
+            'issue': '2',
+            'pages': '123-145',
+            'doi': '10.1234/example',
+        }
+
+        citation = generate_structured_citation(metadata, CitationFormat.BIBTEX, 'smith2024')
+
+        self.assertIn('@article{smith2024,', citation)
+        self.assertIn('title = {Machine Learning in Healthcare}', citation)
+        self.assertIn('author = {Smith, John and Doe, Jane}', citation)
+        self.assertIn('year = {2024}', citation)
+        self.assertIn('journal = {Journal of AI Research}', citation)
+        self.assertIn('volume = {10}', citation)
+        self.assertIn('number = {2}', citation)
+        self.assertIn('pages = {123-145}', citation)
+        self.assertIn('doi = {10.1234/example}', citation)
+
+    def test_generate_bibtex_book(self):
+        """Test BibTeX generation for book"""
+        metadata = {
+            'title': 'Deep Learning Fundamentals',
+            'authors': ['Brown, Alice'],
+            'publication_date': '2024',
+            'publisher': 'MIT Press',
+            'edition': '2nd',
+            'isbn': '9780123456789',
+        }
+
+        citation = generate_structured_citation(metadata, CitationFormat.BIBTEX, 'brown2024')
+
+        self.assertIn('@book{brown2024,', citation)
+        self.assertIn('title = {Deep Learning Fundamentals}', citation)
+        self.assertIn('author = {Brown, Alice}', citation)
+        self.assertIn('year = {2024}', citation)
+        self.assertIn('publisher = {MIT Press}', citation)
+        self.assertIn('edition = {2nd}', citation)
+        self.assertIn('isbn = {9780123456789}', citation)
+
+    def test_generate_bibtex_web_source(self):
+        """Test BibTeX generation for web source"""
+        metadata = {
+            'title': 'Introduction to Python',
+            'authors': ['Python Foundation'],
+            'publication_date': '2024',
+            'url': 'https://python.org/docs/intro',
+        }
+
+        citation = generate_structured_citation(metadata, CitationFormat.BIBTEX, 'python2024')
+
+        self.assertIn('@misc{python2024,', citation)
+        self.assertIn('title = {Introduction to Python}', citation)
+        self.assertIn('url = {https://python.org/docs/intro}', citation)
+
+    @patch('apps.citations.services.structured_citation.CitationStylesBibliography')
+    @patch('apps.citations.services.structured_citation.CitationStylesStyle')
+    @patch('apps.citations.services.structured_citation.get_style_filepath')
+    def test_generate_apa7_citation(self, mock_get_style, mock_style, mock_bib):
+        """Test APA 7th edition citation generation"""
+        # Mock style file path
+        mock_get_style.return_value = '/fake/path/apa-7th-edition.csl'
+
+        # Mock bibliography output
+        mock_bib_instance = MagicMock()
+        mock_bib_instance.bibliography.return_value = ['Smith, J., & Doe, J. (2024). Test article. <i>Journal</i>, <i>10</i>(2), 123-145.']
+        mock_bib.return_value = mock_bib_instance
+
+        metadata = {
+            'title': 'Test article',
+            'authors': ['Smith, John', 'Doe, Jane'],
+            'publication_date': '2024',
+            'journal': 'Journal',
+            'volume': '10',
+            'issue': '2',
+            'pages': '123-145',
+        }
+
+        citation = generate_structured_citation(metadata, CitationFormat.APA7)
+
+        self.assertIn('Smith, J., & Doe, J. (2024)', citation)
+        mock_get_style.assert_called_once_with('apa-7th-edition')
+
+    @patch('apps.citations.services.structured_citation.CitationStylesBibliography')
+    @patch('apps.citations.services.structured_citation.CitationStylesStyle')
+    @patch('apps.citations.services.structured_citation.get_style_filepath')
+    def test_generate_mla9_citation(self, mock_get_style, mock_style, mock_bib):
+        """Test MLA 9th edition citation generation"""
+        mock_get_style.return_value = '/fake/path/mla9.csl'
+        mock_bib_instance = MagicMock()
+        mock_bib_instance.bibliography.return_value = ['Smith, John, and Jane Doe. "Test Article." <i>Journal</i>, vol. 10, no. 2, 2024, pp. 123-145.']
+        mock_bib.return_value = mock_bib_instance
+
+        metadata = {
+            'title': 'Test Article',
+            'authors': ['Smith, John', 'Doe, Jane'],
+            'publication_date': '2024',
+            'journal': 'Journal',
+            'volume': '10',
+            'issue': '2',
+            'pages': '123-145',
+        }
+
+        citation = generate_structured_citation(metadata, CitationFormat.MLA9)
+
+        self.assertIn('Smith, John', citation)
+        mock_get_style.assert_called_once_with('modern-language-association-9th-edition')
+
+    @patch('apps.citations.services.structured_citation.CitationStylesBibliography')
+    @patch('apps.citations.services.structured_citation.CitationStylesStyle')
+    @patch('apps.citations.services.structured_citation.get_style_filepath')
+    def test_generate_chicago_citation(self, mock_get_style, mock_style, mock_bib):
+        """Test Chicago 17th edition citation generation"""
+        mock_get_style.return_value = '/fake/path/chicago.csl'
+        mock_bib_instance = MagicMock()
+        mock_bib_instance.bibliography.return_value = ['Smith, John, and Jane Doe. 2024. "Test Article." <i>Journal</i> 10 (2): 123-145.']
+        mock_bib.return_value = mock_bib_instance
+
+        metadata = {
+            'title': 'Test Article',
+            'authors': ['Smith, John', 'Doe, Jane'],
+            'publication_date': '2024',
+            'journal': 'Journal',
+            'volume': '10',
+            'issue': '2',
+            'pages': '123-145',
+        }
+
+        citation = generate_structured_citation(metadata, CitationFormat.CHICAGO17)
+
+        self.assertIn('2024', citation)
+        mock_get_style.assert_called_once_with('chicago-author-date')
+
+    @patch('apps.citations.services.structured_citation.CitationStylesBibliography')
+    @patch('apps.citations.services.structured_citation.CitationStylesStyle')
+    @patch('apps.citations.services.structured_citation.get_style_filepath')
+    def test_generate_ieee_citation(self, mock_get_style, mock_style, mock_bib):
+        """Test IEEE citation generation"""
+        mock_get_style.return_value = '/fake/path/ieee.csl'
+        mock_bib_instance = MagicMock()
+        mock_bib_instance.bibliography.return_value = ['J. Smith and J. Doe, "Test article," <i>Journal</i>, vol. 10, no. 2, pp. 123-145, 2024.']
+        mock_bib.return_value = mock_bib_instance
+
+        metadata = {
+            'title': 'Test article',
+            'authors': ['Smith, John', 'Doe, Jane'],
+            'publication_date': '2024',
+            'journal': 'Journal',
+            'volume': '10',
+            'issue': '2',
+            'pages': '123-145',
+        }
+
+        citation = generate_structured_citation(metadata, CitationFormat.IEEE)
+
+        self.assertIn('J. Smith', citation)
+        mock_get_style.assert_called_once_with('ieee')
+
+    @patch('apps.citations.services.structured_citation.CitationStylesBibliography')
+    @patch('apps.citations.services.structured_citation.CitationStylesStyle')
+    @patch('apps.citations.services.structured_citation.get_style_filepath')
+    def test_generate_harvard_citation(self, mock_get_style, mock_style, mock_bib):
+        """Test Harvard citation generation"""
+        mock_get_style.return_value = '/fake/path/harvard.csl'
+        mock_bib_instance = MagicMock()
+        mock_bib_instance.bibliography.return_value = ['Smith, J. and Doe, J. (2024) "Test article", <i>Journal</i>, 10(2), pp. 123-145.']
+        mock_bib.return_value = mock_bib_instance
+
+        metadata = {
+            'title': 'Test article',
+            'authors': ['Smith, John', 'Doe, Jane'],
+            'publication_date': '2024',
+            'journal': 'Journal',
+            'volume': '10',
+            'issue': '2',
+            'pages': '123-145',
+        }
+
+        citation = generate_structured_citation(metadata, CitationFormat.HARVARD)
+
+        self.assertIn('Smith, J.', citation)
+        mock_get_style.assert_called_once_with('harvard-cite-them-right')
+
+    def test_generate_citation_incomplete_metadata(self):
+        """Test citation generation fails with incomplete metadata"""
+        metadata = {
+            'title': 'Test Article',
+            # Missing authors and date
+        }
+
+        with self.assertRaises(ValueError) as cm:
+            generate_structured_citation(metadata, CitationFormat.APA7)
+
+        self.assertIn('Incomplete metadata', str(cm.exception))
+
+    def test_generate_citation_with_doi(self):
+        """Test citation generation includes DOI"""
+        metadata = {
+            'title': 'Test Article',
+            'authors': ['Smith, John'],
+            'publication_date': '2024',
+            'doi': '10.1234/example',
+        }
+
+        citation = generate_structured_citation(metadata, CitationFormat.BIBTEX)
+
+        self.assertIn('doi = {10.1234/example}', citation)
+
+    def test_generate_citation_with_url(self):
+        """Test citation generation includes URL"""
+        metadata = {
+            'title': 'Web Article',
+            'authors': ['Smith, John'],
+            'publication_date': '2024',
+            'url': 'https://example.com/article',
+        }
+
+        citation = generate_structured_citation(metadata, CitationFormat.BIBTEX)
+
+        self.assertIn('url = {https://example.com/article}', citation)
