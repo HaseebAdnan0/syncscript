@@ -55,21 +55,22 @@ class DashboardStatsTests(TestCase):
         )
 
         # Create annotations - one from this week, one older
-        Annotation.objects.create(
+        # Use QuerySet.bulk_create to bypass the custom save() validation
+        recent_annotation = Annotation(
             source=source1,
             user=self.user,
             content='Recent annotation',
-            position={}
+            position={'x': 0, 'y': 0},
+            created_at=timezone.now()
         )
-        old_annotation = Annotation.objects.create(
+        old_annotation = Annotation(
             source=source2,
             user=self.user,
             content='Old annotation',
-            position={}
+            position={'x': 0, 'y': 0},
+            created_at=timezone.now() - timedelta(days=10)
         )
-        # Manually set created_at to 10 days ago
-        old_annotation.created_at = timezone.now() - timedelta(days=10)
-        old_annotation.save()
+        Annotation.objects.bulk_create([recent_annotation, old_annotation])
 
         # Authenticate and make request
         self.client.force_authenticate(user=self.user)

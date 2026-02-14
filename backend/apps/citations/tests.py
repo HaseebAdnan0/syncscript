@@ -49,14 +49,11 @@ class DOILookupTests(TestCase):
         result = normalize_doi(doi)
         self.assertEqual(result, "10.1234/example")
 
-    @patch('apps.citations.services.doi_lookup.Works')
-    def test_fetch_doi_metadata_success(self, mock_works_class):
+    @patch('apps.citations.services.doi_lookup.get_publication_as_json')
+    def test_fetch_doi_metadata_success(self, mock_get_publication):
         """Test successful DOI metadata fetch"""
         # Mock CrossRef API response
-        mock_works_instance = MagicMock()
-        mock_works_class.return_value = mock_works_instance
-
-        mock_works_instance.doi.return_value = {
+        mock_get_publication.return_value = {
             'title': ['Test Article Title'],
             'author': [
                 {'given': 'John', 'family': 'Doe'},
@@ -85,13 +82,10 @@ class DOILookupTests(TestCase):
         self.assertEqual(result['publisher'], 'Test Publisher')
         self.assertEqual(result['doi'], '10.1234/test')
 
-    @patch('apps.citations.services.doi_lookup.Works')
-    def test_fetch_doi_metadata_minimal(self, mock_works_class):
+    @patch('apps.citations.services.doi_lookup.get_publication_as_json')
+    def test_fetch_doi_metadata_minimal(self, mock_get_publication):
         """Test DOI metadata fetch with minimal data"""
-        mock_works_instance = MagicMock()
-        mock_works_class.return_value = mock_works_instance
-
-        mock_works_instance.doi.return_value = {
+        mock_get_publication.return_value = {
             'title': ['Minimal Article'],
             # No authors, dates, or other fields
         }
@@ -108,13 +102,10 @@ class DOILookupTests(TestCase):
         self.assertEqual(result['pages'], '')
         self.assertEqual(result['publisher'], '')
 
-    @patch('apps.citations.services.doi_lookup.Works')
-    def test_fetch_doi_metadata_no_title(self, mock_works_class):
+    @patch('apps.citations.services.doi_lookup.get_publication_as_json')
+    def test_fetch_doi_metadata_no_title(self, mock_get_publication):
         """Test DOI metadata fetch fails without title"""
-        mock_works_instance = MagicMock()
-        mock_works_class.return_value = mock_works_instance
-
-        mock_works_instance.doi.return_value = {
+        mock_get_publication.return_value = {
             'author': [{'given': 'John', 'family': 'Doe'}],
             # No title - should fail
         }
@@ -122,25 +113,19 @@ class DOILookupTests(TestCase):
         result = fetch_doi_metadata("10.1234/notitle")
         self.assertIsNone(result)
 
-    @patch('apps.citations.services.doi_lookup.Works')
-    def test_fetch_doi_metadata_api_error(self, mock_works_class):
+    @patch('apps.citations.services.doi_lookup.get_publication_as_json')
+    def test_fetch_doi_metadata_api_error(self, mock_get_publication):
         """Test DOI metadata fetch returns None on API error"""
-        mock_works_instance = MagicMock()
-        mock_works_class.return_value = mock_works_instance
-
         # Simulate API error
-        mock_works_instance.doi.side_effect = Exception("API Error")
+        mock_get_publication.side_effect = Exception("API Error")
 
         result = fetch_doi_metadata("10.1234/error")
         self.assertIsNone(result)
 
-    @patch('apps.citations.services.doi_lookup.Works')
-    def test_fetch_doi_metadata_not_found(self, mock_works_class):
+    @patch('apps.citations.services.doi_lookup.get_publication_as_json')
+    def test_fetch_doi_metadata_not_found(self, mock_get_publication):
         """Test DOI metadata fetch returns None when DOI not found"""
-        mock_works_instance = MagicMock()
-        mock_works_class.return_value = mock_works_instance
-
-        mock_works_instance.doi.return_value = None
+        mock_get_publication.return_value = None
 
         result = fetch_doi_metadata("10.9999/notfound")
         self.assertIsNone(result)
@@ -150,13 +135,10 @@ class DOILookupTests(TestCase):
         result = fetch_doi_metadata("not-a-doi")
         self.assertIsNone(result)
 
-    @patch('apps.citations.services.doi_lookup.Works')
-    def test_fetch_doi_metadata_author_family_only(self, mock_works_class):
+    @patch('apps.citations.services.doi_lookup.get_publication_as_json')
+    def test_fetch_doi_metadata_author_family_only(self, mock_get_publication):
         """Test DOI metadata with authors having only family name"""
-        mock_works_instance = MagicMock()
-        mock_works_class.return_value = mock_works_instance
-
-        mock_works_instance.doi.return_value = {
+        mock_get_publication.return_value = {
             'title': ['Test Article'],
             'author': [
                 {'family': 'Doe'},  # No given name
@@ -169,13 +151,10 @@ class DOILookupTests(TestCase):
         self.assertIsNotNone(result)
         self.assertEqual(result['authors'], ['Doe', 'Smith, Jane'])
 
-    @patch('apps.citations.services.doi_lookup.Works')
-    def test_fetch_doi_metadata_created_date_fallback(self, mock_works_class):
+    @patch('apps.citations.services.doi_lookup.get_publication_as_json')
+    def test_fetch_doi_metadata_created_date_fallback(self, mock_get_publication):
         """Test DOI metadata uses created date when published not available"""
-        mock_works_instance = MagicMock()
-        mock_works_class.return_value = mock_works_instance
-
-        mock_works_instance.doi.return_value = {
+        mock_get_publication.return_value = {
             'title': ['Test Article'],
             'created': {
                 'date-parts': [[2023, 5, 20]]
@@ -188,13 +167,10 @@ class DOILookupTests(TestCase):
         self.assertIsNotNone(result)
         self.assertEqual(result['publication_date'], '2023-05-20')
 
-    @patch('apps.citations.services.doi_lookup.Works')
-    def test_fetch_doi_metadata_year_only_date(self, mock_works_class):
+    @patch('apps.citations.services.doi_lookup.get_publication_as_json')
+    def test_fetch_doi_metadata_year_only_date(self, mock_get_publication):
         """Test DOI metadata with year-only publication date"""
-        mock_works_instance = MagicMock()
-        mock_works_class.return_value = mock_works_instance
-
-        mock_works_instance.doi.return_value = {
+        mock_get_publication.return_value = {
             'title': ['Test Article'],
             'published': {
                 'date-parts': [[2024]]  # Only year

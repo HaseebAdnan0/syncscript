@@ -1,9 +1,12 @@
+import { HeroBackground } from '@/components/marketing/HeroBackground';
+
 export default function LandingPage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section Placeholder */}
-      <section className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
+      <section className="min-h-screen flex items-center justify-center relative">
+        <HeroBackground />
+        <div className="text-center relative z-10">
           <h1 className="text-6xl font-bold text-white mb-4">
             Collaborative Research
           </h1>

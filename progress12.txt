@@ -61,3 +61,24 @@ Learnings for future iterations:
   - django-allauth deprecation warnings are acceptable per PRD requirements
   - Migrations ran automatically when allauth apps were added
 ---
+
+## Iteration 2 - US-002: Configure Google OAuth provider settings
+- Added SOCIALACCOUNT_PROVIDERS configuration for Google OAuth 2.0
+- Configured required scopes: 'email' and 'profile'
+- Added GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET environment variables to .env.example
+- Set callback URL pattern to `/api/v1/auth/google/callback/`
+- Documented complete Google Cloud Console setup in USER_SETUP.md (with step-by-step instructions)
+- Typecheck passed (django-allauth deprecation warnings are expected)
+
+Files changed:
+  - backend/config/settings.py (added SOCIALACCOUNT_PROVIDERS config)
+  - backend/.env.example (added Google OAuth env vars)
+  - .planning/USER_SETUP.md (added Google OAuth setup section)
+
+Learnings for future iterations:
+  - Google OAuth setup requires 6 main steps: create project, enable API, configure consent screen, create credentials, add redirect URIs, and save credentials
+  - Callback URL must match exactly what's configured in Google Cloud Console
+  - For testing, OAuth consent screen should be in "Testing" mode with test users added
+  - SOCIALACCOUNT_PROVIDERS uses nested 'APP' config with 'client_id' and 'secret' keys
+  - Environment variables should have sensible defaults (empty string) to avoid crashes when not configured
+---

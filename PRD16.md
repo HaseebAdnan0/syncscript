@@ -30,13 +30,13 @@ Create SyncScript's production landing page following the Bitcoin DeFi aesthetic
 **Description:** As a user, I want to see an impressive dark background with grid pattern so the page feels premium and crypto-native.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/marketing/HeroBackground.tsx`
-- [ ] Implement CSS grid pattern overlay (subtle white/5 lines)
-- [ ] Add radial gradient vignette fading to edges
-- [ ] Background color uses `--background: #030304`
-- [ ] Pattern is purely CSS (no images)
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/marketing/HeroBackground.tsx`
+- [x] Implement CSS grid pattern overlay (subtle white/5 lines)
+- [x] Add radial gradient vignette fading to edges
+- [x] Background color uses `--background: #030304`
+- [x] Pattern is purely CSS (no images)
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-003: Create Animated 3D Orb Component
 **Description:** As a user, I want to see an eye-catching animated orb so the hero section feels dynamic and futuristic.

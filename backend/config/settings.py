@@ -321,4 +321,17 @@ SOCIALACCOUNT_PROVIDERS = {
             'access_type': 'online',
         },
     },
+    'github': {
+        'APP': {
+            'client_id': os.getenv('GITHUB_CLIENT_ID', ''),
+            'secret': os.getenv('GITHUB_CLIENT_SECRET', ''),
+        },
+        'SCOPE': [
+            'read:user',
+            'user:email',
+        ],
+    },
 }
+
+# AI Settings
+AI_DAILY_LIMIT = int(os.getenv('AI_DAILY_LIMIT', '20'))  # Maximum AI requests per user per day

@@ -357,3 +357,57 @@ Will be configured when implementing real-time collaboration (US-008)
 - Keep your Client Secret confidential
 - For production, move the OAuth consent screen from "Testing" to "Published" status
 - Add your production domain to authorized redirect URIs before deploying
+
+---
+
+## GitHub OAuth
+### Required For: OAuth authentication (GitHub login)
+### Steps:
+
+1. **Go to GitHub Settings:**
+   - Navigate to https://github.com/settings/developers
+   - Sign in with your GitHub account
+   - Click "OAuth Apps" in the left sidebar
+
+2. **Create a new OAuth App:**
+   - Click "New OAuth App"
+   - Fill in the application details:
+     - Application name: SyncScript
+     - Homepage URL: `http://localhost:3000` (development) or `https://yourdomain.com` (production)
+     - Application description: Collaborative research & citation engine (optional)
+     - Authorization callback URL: `http://localhost:8000/api/v1/auth/github/callback/` (development)
+   - Click "Register application"
+
+3. **Get your credentials:**
+   - After registration, you'll see your **Client ID**
+   - Click "Generate a new client secret"
+   - Copy both the **Client ID** and **Client Secret** immediately (secret is only shown once)
+
+4. **Add credentials to .env file:**
+   ```
+   GITHUB_CLIENT_ID=your-github-client-id-here
+   GITHUB_CLIENT_SECRET=your-github-client-secret-here
+   ```
+
+5. **For production deployment:**
+   - Create a new OAuth App (or update the existing one)
+   - Set Homepage URL to your production domain: `https://yourdomain.com`
+   - Set Authorization callback URL to: `https://api.yourdomain.com/api/v1/auth/github/callback/`
+
+### Environment Variables:
+- `GITHUB_CLIENT_ID`: OAuth App Client ID from GitHub Developer Settings
+- `GITHUB_CLIENT_SECRET`: OAuth App Client Secret from GitHub Developer Settings
+
+### Callback URL Pattern:
+- Development: `http://localhost:8000/api/v1/auth/github/callback/`
+- Production: `https://api.yourdomain.com/api/v1/auth/github/callback/`
+
+### Scopes Used:
+- `read:user`: Read user profile information
+- `user:email`: Read user email addresses (including private emails)
+
+**Important Notes:**
+- Keep your Client Secret confidential
+- GitHub OAuth Apps support both public and private repositories (we only request user data)
+- If a user has made their email private on GitHub, we'll prompt them to enter their email during registration
+- You can have separate OAuth Apps for development and production, or use the same one with multiple callback URLs

@@ -1,7 +1,7 @@
 """DOI metadata lookup service using CrossRef API"""
 import re
 from typing import Optional
-from crossref.restful import Works
+from crossref_commons.retrieval import get_publication_as_json
 
 
 def normalize_doi(doi_input: str) -> Optional[str]:
@@ -60,8 +60,7 @@ def fetch_doi_metadata(doi: str) -> Optional[dict]:
         return None
 
     try:
-        works = Works()
-        result = works.doi(normalized_doi)
+        result = get_publication_as_json(normalized_doi)
 
         if not result:
             return None

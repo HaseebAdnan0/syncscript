@@ -1,5 +1,7 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.contrib.postgres.search import SearchVectorField
+from django.contrib.postgres.indexes import GinIndex
 from dirtyfields import DirtyFieldsMixin
 from apps.sources.models import Source
 from apps.users.models import User
@@ -12,6 +14,7 @@ class Annotation(DirtyFieldsMixin, models.Model):
     page_number = models.IntegerField(null=True, blank=True)
     position = models.JSONField(default=dict)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='replies')
+    search_vector = SearchVectorField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -20,6 +23,7 @@ class Annotation(DirtyFieldsMixin, models.Model):
         indexes = [
             models.Index(fields=['source', 'parent']),
             models.Index(fields=['user']),
+            GinIndex(fields=['search_vector']),
         ]
 
     def __str__(self) -> str:
