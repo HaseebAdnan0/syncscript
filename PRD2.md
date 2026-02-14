@@ -74,15 +74,15 @@ Create a secure, collaborative Knowledge Vault system where researchers can crea
 **Description:** As a developer, I need audit logging for research integrity tracking.
 
 **Acceptance Criteria:**
-- [ ] UUID primary key
-- [ ] `vault` ForeignKey to Vault with CASCADE
-- [ ] `actor` ForeignKey to User, SET_NULL, null=True
-- [ ] `action` CharField max_length=100 (e.g., 'vault.created')
-- [ ] `metadata` JSONField default=dict
-- [ ] `created_at` DateTimeField auto_now_add=True
-- [ ] Meta: ordering=['-created_at']
-- [ ] Index on ['vault', '-created_at'] and ['action']
-- [ ] Typecheck passes
+- [x] UUID primary key
+- [x] `vault` ForeignKey to Vault with CASCADE
+- [x] `actor` ForeignKey to User, SET_NULL, null=True
+- [x] `action` CharField max_length=100 (e.g., 'vault.created')
+- [x] `metadata` JSONField default=dict
+- [x] `created_at` DateTimeField auto_now_add=True
+- [x] Meta: ordering=['-created_at']
+- [x] Index on ['vault', '-created_at'] and ['action']
+- [x] Typecheck passes
 
 ### US-007: Generate and run initial migration
 **Description:** As a developer, I need database tables created for vaults app.
