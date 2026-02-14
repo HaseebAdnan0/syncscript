@@ -117,13 +117,13 @@ Implement cloud file storage for SyncScript using Cloudflare R2 (S3-compatible).
 **Description:** As a user, I want PDF metadata extracted automatically so I don't have to enter it manually.
 
 **Acceptance Criteria:**
-- [ ] Create `process_uploaded_pdf` task in `backend/apps/sources/tasks.py`
-- [ ] Download file from S3, parse with pypdf
-- [ ] Extract: title, author, page_count from PDF metadata
-- [ ] Update PDFUpload record with extracted fields
-- [ ] Set processing_status to 'completed' on success, 'failed' on error
-- [ ] Add max_retries=3 with exponential backoff
-- [ ] Typecheck passes
+- [x] Create `process_uploaded_pdf` task in `backend/apps/sources/tasks.py`
+- [x] Download file from S3, parse with pypdf
+- [x] Extract: title, author, page_count from PDF metadata
+- [x] Update PDFUpload record with extracted fields
+- [x] Set processing_status to 'completed' on success, 'failed' on error
+- [x] Add max_retries=3 with exponential backoff
+- [x] Typecheck passes
 
 ### US-011: Add thumbnail generation to processing task
 **Description:** As a user, I want to see PDF thumbnails so I can visually identify files.

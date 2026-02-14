@@ -414,12 +414,12 @@ frontend/
 
 ## Success Criteria Summary
 
-- [ ] `npm run dev` starts without errors
-- [ ] All base components render with Bitcoin DeFi styling
-- [ ] API client auto-refreshes tokens on 401
-- [ ] Auth state persists across browser reloads
-- [ ] `npm run lint` passes
-- [ ] `npm run type-check` passes
+- [x] `npm run dev` starts without errors
+- [x] All base components render with Bitcoin DeFi styling
+- [x] API client auto-refreshes tokens on 401
+- [x] Auth state persists across browser reloads
+- [x] `npm run lint` passes
+- [x] `npm run type-check` passes
 
 ---
 

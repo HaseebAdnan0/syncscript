@@ -245,3 +245,13 @@ class SourceViewSet(viewsets.ModelViewSet):
             vault_id__in=accessible_vault_ids,
             is_deleted=False
         )
+
+    def destroy(self, request, *args, **kwargs):
+        """
+        Override destroy to soft-delete sources instead of hard delete (US-010).
+        Sets is_deleted=True rather than removing from database.
+        """
+        instance = self.get_object()
+        instance.is_deleted = True
+        instance.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)

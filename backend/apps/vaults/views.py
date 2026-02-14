@@ -1,9 +1,11 @@
 from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
+from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from .models import Vault
 from .permissions import IsVaultOwner
@@ -57,3 +59,11 @@ class VaultViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         """Set the vault owner to the current user."""
         serializer.save(owner=self.request.user)
+
+    @action(detail=True, methods=['post'], permission_classes=[IsVaultOwner])
+    def archive(self, request, pk=None):
+        """Archive a vault (owner only)."""
+        vault = self.get_object()
+        vault.is_archived = True
+        vault.save()
+        return Response({'status': 'archived'})
