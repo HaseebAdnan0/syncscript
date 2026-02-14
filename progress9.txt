@@ -541,3 +541,32 @@ Learnings for future iterations:
 - Annotation type has author property with nested user object: { id, username, email }
 - Annotation type has optional replies array with AnnotationReply objects
 ---
+
+## Iteration 19 - US-020: Create AnnotationReplyCard component
+- Created AnnotationReplyCard at frontend/src/components/features/sources/AnnotationReplyCard.tsx
+- Indented with left border accent (pl-4 border-l-2 border-[#F7931A]/30)
+- Smaller text sizes: text-xs for author/timestamp, text-sm for reply text
+- Author avatar is smaller (w-7 h-7) than parent annotation avatars
+- Shows author username and timestamp formatted as 'MMM d, yyyy • h:mm a'
+- Delete button (Trash2 icon) appears on hover when canDelete is true
+- Delete button uses red theme: bg-red-500/10 border border-red-500/30 text-red-400
+- Component accepts reply prop (AnnotationReply type) and optional callbacks
+- Fixed missing ChevronDown import in MembersList.tsx to allow typecheck to pass
+- Typecheck passes ✓
+
+Files changed:
+- frontend/src/components/features/sources/AnnotationReplyCard.tsx (new)
+- frontend/src/components/features/vaults/MembersList.tsx (added ChevronDown to imports)
+- PRD9.md (marked US-020 complete except browser verification)
+
+Learnings for future iterations:
+- Reply cards use smaller dimensions than parent annotations for visual hierarchy
+- Left border (border-l-2) with orange accent creates clear visual nesting without full indentation
+- Hover state managed via useState for showing/hiding action buttons
+- Delete button only rendered when all conditions met: isHovered && canDelete && onDelete
+- Reply text uses white/80 opacity for subtle hierarchy vs parent annotation text
+- Author info displayed in single line with separator: "username • timestamp"
+- Component design allows parent (AnnotationCard) to control delete permissions via props
+- Fixed unrelated import errors to ensure clean typecheck pass
+- AnnotationReplyCard can be used standalone or integrated into AnnotationCard's reply expansion
+---
