@@ -204,11 +204,11 @@ This PRD covers the full implementation: core infrastructure, event broadcasting
 **Description:** As a developer, I need member additions to broadcast so collaborators see new team members.
 
 **Acceptance Criteria:**
-- [ ] Update `apps/vaults/signals.py`
-- [ ] Connect `post_save` signal for VaultMembership model (created=True only)
-- [ ] Create `apps/vaults/tasks.py` with `broadcast_member_added` task
-- [ ] Payload includes member user_id, username, role, added_by
-- [ ] Typecheck passes
+- [x] Update `apps/vaults/signals.py`
+- [x] Connect `post_save` signal for VaultMembership model (created=True only)
+- [x] Create `apps/vaults/tasks.py` with `broadcast_member_added` task
+- [x] Payload includes member user_id, username, role, added_by
+- [x] Typecheck passes
 
 ---
 

@@ -53,6 +53,19 @@ def log_membership_added(sender, instance, created, **kwargs):
         )
 
 
+@receiver(post_save, sender=VaultMembership)
+def broadcast_membership_added(sender, instance, created, **kwargs):
+    """
+    Broadcast member.added event via WebSocket when a new member is added to a vault.
+    """
+    if created:
+        # Import inside handler to avoid circular imports
+        from apps.vaults.tasks import broadcast_member_added
+        broadcast_member_added.delay(  # type: ignore[attr-defined]
+            membership_id=str(instance.id)
+        )
+
+
 @receiver(pre_save, sender=VaultMembership)
 def log_membership_role_changed(sender, instance, **kwargs):
     """
