@@ -390,11 +390,11 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a developer, I need unit tests for all serializers.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/users/tests/test_serializers.py`
-- [ ] Test RegisterSerializer validation (email uniqueness, password strength)
-- [ ] Test ProfileUpdateSerializer field limits
-- [ ] Test PasswordResetConfirmSerializer password validation
-- [ ] All tests pass
+- [x] Create `apps/users/tests/test_serializers.py`
+- [x] Test RegisterSerializer validation (email uniqueness, password strength)
+- [x] Test ProfileUpdateSerializer field limits
+- [x] Test PasswordResetConfirmSerializer password validation
+- [x] All tests pass
 
 ---
 
