@@ -1426,6 +1426,133 @@ class AsyncCitationTaskTests(TestCase):
             generate_ai_citation_task(99999, 'apa7', self.user.id)
 
 
+class AIUsageLoggingTests(TestCase):
+    """Tests for AI citation usage logging (US-010)"""
+
+    def setUp(self):
+        """Set up test data"""
+        from django.contrib.auth import get_user_model
+        from apps.vaults.models import Vault
+        from apps.sources.models import Source
+
+        User = get_user_model()
+        self.user = User.objects.create_user(
+            email='test@example.com',
+            username='testuser',
+            password='testpass123'
+        )
+
+        self.vault = Vault.objects.create(
+            name='Test Vault',
+            owner=self.user
+        )
+
+        self.source = Source.objects.create(
+            vault=self.vault,
+            title='Test Source',
+            url='https://example.com/test',
+            source_type='URL',
+            created_by=self.user
+        )
+
+    def test_log_ai_citation_usage(self):
+        """Test logging AI citation usage creates audit log"""
+        from apps.citations.utils import log_ai_citation_usage
+        from apps.vaults.models import AuditLog
+
+        usage_data = {
+            'input_tokens': 150,
+            'output_tokens': 50,
+            'total_tokens': 200,
+            'model': 'claude-3-5-sonnet-20241022'
+        }
+
+        audit_log = log_ai_citation_usage(
+            self.user,
+            self.vault,
+            self.source,
+            'apa7',
+            usage_data
+        )
+
+        # Verify audit log was created
+        self.assertIsNotNone(audit_log)
+        self.assertEqual(audit_log.vault, self.vault)
+        self.assertEqual(audit_log.actor, self.user)
+        self.assertEqual(audit_log.action, 'AI_CITATION_GENERATED')
+
+        # Verify metadata
+        self.assertEqual(audit_log.metadata['source_id'], self.source.id)
+        self.assertEqual(audit_log.metadata['source_title'], 'Test Source')
+        self.assertEqual(audit_log.metadata['format'], 'apa7')
+        self.assertEqual(audit_log.metadata['input_tokens'], 150)
+        self.assertEqual(audit_log.metadata['output_tokens'], 50)
+        self.assertEqual(audit_log.metadata['total_tokens'], 200)
+        self.assertEqual(audit_log.metadata['model_used'], 'claude-3-5-sonnet-20241022')
+
+        # Verify in database
+        logs = AuditLog.objects.filter(action='AI_CITATION_GENERATED')
+        self.assertEqual(logs.count(), 1)
+
+    @patch('apps.citations.tasks.generate_ai_citation')
+    def test_task_logs_ai_usage(self, mock_ai_citation):
+        """Test that the Celery task logs AI usage"""
+        from apps.citations.tasks import generate_ai_citation_task
+        from apps.vaults.models import AuditLog
+
+        # Mock AI citation service with usage data
+        mock_ai_citation.return_value = (
+            'Test, A. (2024). Test Article.',
+            'Test, A. (2024). <i>Test Article</i>.',
+            {
+                'input_tokens': 175,
+                'output_tokens': 60,
+                'total_tokens': 235,
+                'model': 'claude-3-5-sonnet-20241022'
+            }
+        )
+
+        # Run task
+        generate_ai_citation_task(self.source.id, 'mla9', self.user.id)
+
+        # Verify audit log was created
+        logs = AuditLog.objects.filter(action='AI_CITATION_GENERATED')
+        self.assertEqual(logs.count(), 1)
+
+        log = logs.first()
+        self.assertEqual(log.vault, self.vault)
+        self.assertEqual(log.actor, self.user)
+        self.assertEqual(log.metadata['format'], 'mla9')
+        self.assertEqual(log.metadata['input_tokens'], 175)
+        self.assertEqual(log.metadata['output_tokens'], 60)
+        self.assertEqual(log.metadata['total_tokens'], 235)
+
+    def test_log_usage_with_missing_usage_fields(self):
+        """Test logging handles missing usage data fields gracefully"""
+        from apps.citations.utils import log_ai_citation_usage
+        from apps.vaults.models import AuditLog
+
+        # Missing fields in usage data
+        usage_data = {
+            'model': 'claude-3-5-sonnet-20241022'
+            # input_tokens, output_tokens, total_tokens missing
+        }
+
+        audit_log = log_ai_citation_usage(
+            self.user,
+            self.vault,
+            self.source,
+            'bibtex',
+            usage_data
+        )
+
+        # Verify defaults to 0 for missing token counts
+        self.assertEqual(audit_log.metadata['input_tokens'], 0)
+        self.assertEqual(audit_log.metadata['output_tokens'], 0)
+        self.assertEqual(audit_log.metadata['total_tokens'], 0)
+        self.assertEqual(audit_log.metadata['model_used'], 'claude-3-5-sonnet-20241022')
+
+
 class AsyncCitationEndpointTests(TestCase):
     """Tests for async citation generation endpoints"""
 

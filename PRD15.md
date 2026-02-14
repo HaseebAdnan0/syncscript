@@ -155,14 +155,14 @@ This feature uses Claude as the AI backbone with a simple chunking strategy (no 
 **Description:** As a user, I want to see an expandable AI summary card on source pages.
 
 **Acceptance Criteria:**
-- [ ] Create `components/features/ai/AISummaryCard.tsx`
-- [ ] Props: `sourceId`, `summary` (nullable), `onRegenerate`
-- [ ] Collapsed state shows "AI Summary" header with expand chevron
-- [ ] Expanded state shows collapsible sections: Key Findings, Methodology, Limitations, Keywords
-- [ ] "Generate Summary" button if no summary exists
-- [ ] "Regenerate" button in header when summary exists
-- [ ] Follows Bitcoin DeFi design (glass card, orange accents)
-- [ ] Typecheck passes
+- [x] Create `components/features/ai/AISummaryCard.tsx`
+- [x] Props: `sourceId`, `summary` (nullable), `onRegenerate`
+- [x] Collapsed state shows "AI Summary" header with expand chevron
+- [x] Expanded state shows collapsible sections: Key Findings, Methodology, Limitations, Keywords
+- [x] "Generate Summary" button if no summary exists
+- [x] "Regenerate" button in header when summary exists
+- [x] Follows Bitcoin DeFi design (glass card, orange accents)
+- [x] Typecheck passes
 
 ### US-013: Create AI loading skeleton
 **Description:** As a user, I want to see a loading state while AI processes my request.

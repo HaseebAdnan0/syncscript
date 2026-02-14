@@ -219,14 +219,14 @@ Enhance SyncScript's file storage system to production-ready status with Cloudfl
 **Description:** As a user, I want to see upload progress so I know how long to wait.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/uploads/UploadProgressBar.tsx`
-- [ ] Props: `filename: string`, `progress: number (0-100)`, `status: 'uploading' | 'processing' | 'complete' | 'error'`
-- [ ] Show filename truncated to 30 chars with ellipsis
-- [ ] Animated progress bar with gradient (orange to gold)
-- [ ] Show percentage text
-- [ ] Different colors for status: orange=uploading, blue=processing, green=complete, red=error
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/features/uploads/UploadProgressBar.tsx`
+- [x] Props: `filename: string`, `progress: number (0-100)`, `status: 'uploading' | 'processing' | 'complete' | 'error'`
+- [x] Show filename truncated to 30 chars with ellipsis
+- [x] Animated progress bar with gradient (orange to gold)
+- [x] Show percentage text
+- [x] Different colors for status: orange=uploading, blue=processing, green=complete, red=error
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 

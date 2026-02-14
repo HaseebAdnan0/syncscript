@@ -364,3 +364,22 @@
   - Next incomplete task is US-019 (GlobalSearchModal component)
 ---
 
+
+## Iteration 18 - US-021: Create SearchTypeFilter component
+- Created SearchTypeFilter.tsx with tab-based filtering UI
+- Tab options: All, Vaults, Sources, Annotations
+- Active tab highlighted with orange (#F7931A) text and gradient underline
+- Result count badges display conditionally when counts > 0
+- onClick handler immediately triggers filter change via onTypeChange callback
+- Files changed:
+  - frontend/src/components/features/search/SearchTypeFilter.tsx (created)
+  - PRD18.md (marked US-021 complete)
+- Learnings for future iterations:
+  - Filter tabs pattern: array of tab configs with id/label, map over them to render
+  - Active state styling: conditional className with template literals
+  - Badge placement: inline with label using flexbox (gap-2)
+  - Orange gradient underline: absolute positioned div at bottom with h-0.5
+  - Result counts should be optional (undefined for 'all' tab, or when no results yet)
+  - Bitcoin aesthetic: use orange gradient for active state, white/60 for inactive
+  - Typecheck passes when union types ('all' | 'vaults' | ...) are used consistently
+---

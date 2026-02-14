@@ -15,7 +15,6 @@ interface AISummary {
 }
 
 interface AISummaryCardProps {
-  sourceId: number;
   summary: AISummary | null;
   onRegenerate: () => void;
 }
@@ -27,7 +26,7 @@ const QUALITY_FLAG_LABELS: Record<string, string> = {
   non_english: 'Non-English Source',
 };
 
-export default function AISummaryCard({ sourceId, summary, onRegenerate }: AISummaryCardProps) {
+export default function AISummaryCard({ summary, onRegenerate }: AISummaryCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   if (!summary) {
