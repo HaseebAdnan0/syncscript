@@ -176,3 +176,33 @@
   - read_only_fields protects sensitive fields like processing_status from client modification
   - Django system check validates all imports and wiring successfully
 ---
+
+## Iteration 10 - US-010: Create post-upload Celery task for metadata extraction
+- Task was already implemented in a previous session (commit 47b2c6e)
+- Verified implementation in backend/apps/sources/tasks.py:
+  - process_uploaded_pdf() Celery task with @shared_task decorator
+  - Downloads PDF from S3 via boto3 into in-memory BytesIO
+  - Parses PDF with pypdf.PdfReader
+  - Extracts: pdf_title (from /Title or /Subject metadata), pdf_author (from /Author), page_count
+  - Updates PDFUpload record with extracted fields
+  - Sets processing_status to 'completed' on success, 'failed' on error
+  - Configured with max_retries=3 and exponential backoff (2^retries * 60 seconds)
+- Verified Celery configuration:
+  - backend/config/celery.py: Celery app initialization with Redis broker
+  - backend/config/__init__.py: Auto-imports celery_app when Django starts
+  - backend/config/settings.py: CELERY_* settings configured with Redis backend
+- Verified task trigger in backend/apps/sources/views.py:
+  - PDFUploadViewSet.complete() imports and calls process_uploaded_pdf.delay()
+  - Task triggered after upload completion with pdf_upload_id
+- Django system check passes (6 security warnings expected in dev mode)
+- Task import test passes: max_retries=3 confirmed
+- Files changed:
+  - None (already implemented, just verified)
+- Learnings for future iterations:
+  - Always check git log before re-implementing (git show HEAD:file)
+  - Celery tasks use @shared_task decorator for auto-discovery
+  - boto3 client can download S3 objects into in-memory BytesIO for processing
+  - pypdf.PdfReader.metadata returns dict with /Title, /Author, /Subject keys
+  - Exponential backoff: countdown=2^retries * base_delay provides good retry spacing
+  - Django automatically loads config/__init__.py, which imports celery_app
+---
