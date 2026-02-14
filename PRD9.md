@@ -383,13 +383,13 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 **Description:** As a user, I want a confirmation dialog before deleting sources or annotations so I don't accidentally lose data.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/sources/DeleteConfirmationDialog.tsx`
-- [ ] Radix AlertDialog with glass morphism styling
-- [ ] Shows item type and title being deleted
-- [ ] "Delete" button in destructive red style
-- [ ] "Cancel" button as secondary
-- [ ] Accepts `onConfirm` callback
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/sources/DeleteConfirmationDialog.tsx`
+- [x] Radix AlertDialog with glass morphism styling
+- [x] Shows item type and title being deleted
+- [x] "Delete" button in destructive red style
+- [x] "Cancel" button as secondary
+- [x] Accepts `onConfirm` callback
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---

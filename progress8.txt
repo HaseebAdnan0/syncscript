@@ -590,3 +590,43 @@ Learnings for future iterations:
 - useArchiveVault takes vaultId in constructor, mutateAsync() called with no params
 - Archived vaults will be hidden from main list (backend filters by is_archived=false)
 ---
+
+## Iteration 21 - US-020: Settings tab - delete vault with type-to-confirm
+- Added "Delete Vault" button to Danger Zone section in VaultSettings component:
+  - Button uses red color scheme: bg-red-600/10 text-red-500 border border-red-500/50
+  - Trash2 icon from Lucide for visual warning cue
+  - Only visible to vault Owners (isOwner check)
+- Implemented delete confirmation dialog with type-to-confirm pattern:
+  - Glass morphism modal with red border: border-red-500/20
+  - Red-themed warning box explaining irreversible consequences
+  - Bullet list of what will be permanently deleted (sources, annotations, members, audit logs)
+  - Input field requiring exact vault name match to enable delete
+  - Real-time validation with visual feedback icons (CheckCircle2 green / XCircle red)
+- Added state management:
+  - isDeleteDialogOpen controls modal visibility
+  - deleteConfirmText tracks user input for name validation
+  - isDeleteConfirmed computed from deleteConfirmText === vault.name
+  - useEffect resets deleteConfirmText when dialog closes
+- Delete flow uses useDeleteVault mutation:
+  - On success: toast "{vault.name} has been permanently deleted", redirect to /vaults
+  - On error: displays error toast with failure message
+  - Loading state: disabled buttons, "Deleting..." text
+- Typecheck passes (pre-existing errors in useAnnotationMutations.ts unrelated to this change)
+- Committed changes with feat: commit message
+
+Files changed:
+- frontend/src/components/features/vaults/VaultSettings.tsx (added delete section, dialog, handlers)
+- PRD8.md (marked US-020 complete except browser verification)
+
+Learnings for future iterations:
+- Type-to-confirm pattern: input validation with exact string match prevents accidental deletions
+- Visual validation feedback: CheckCircle2 (green) / XCircle (red) icons provide clear user feedback
+- Delete button double-disabled: !isDeleteConfirmed || deleteVault.isPending for extra safety
+- Red color theme for destructive actions: text-red-500, border-red-500, bg-red-600
+- Dialog styling differences: red border (border-red-500/20) and shadow (rgba(239,68,68,0.3)) for danger
+- Warning box pattern: bg-red-500/10 border border-red-500/30 for highlighted danger zones
+- useEffect cleanup on dialog close: reset form state when isDeleteDialogOpen becomes false
+- Delete vault is permanent (unlike archive which is reversible) - emphasize in UI/copy
+- Input with icon overlay: absolute positioning with right-3 top-1/2 -translate-y-1/2
+- useDeleteVault takes vault ID as parameter to mutateAsync (unlike useArchiveVault)
+---

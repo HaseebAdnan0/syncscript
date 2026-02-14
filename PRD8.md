@@ -283,14 +283,14 @@ Create the complete vault management interface for SyncScript, enabling research
 **Description:** As a user, I want to see only the actions I'm allowed to perform based on my role.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/hooks/useVaultPermissions.ts` hook
-- [ ] Hook returns: canEdit, canManageMembers, canDelete, isOwner, isContributor, isViewer
-- [ ] Settings tab: hidden for Viewers, read-only for Contributors
-- [ ] Add Member button: hidden for non-Owners
-- [ ] Role dropdowns and remove buttons: hidden for non-Owners
-- [ ] "Add Source" buttons: hidden for Viewers
-- [ ] Edit buttons throughout: hidden for Viewers
-- [ ] Typecheck passes
+- [x] Create `frontend/src/hooks/useVaultPermissions.ts` hook
+- [x] Hook returns: canEdit, canManageMembers, canDelete, isOwner, isContributor, isViewer
+- [x] Settings tab: hidden for Viewers, read-only for Contributors
+- [x] Add Member button: hidden for non-Owners
+- [x] Role dropdowns and remove buttons: hidden for non-Owners
+- [x] "Add Source" buttons: hidden for Viewers
+- [x] Edit buttons throughout: hidden for Viewers
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-022: Loading skeletons for vault pages
