@@ -150,12 +150,12 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a developer, I need functions to generate and validate email verification tokens.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/users/tokens.py`
-- [ ] Implement generate_verification_token(user) using secrets.token_urlsafe(32)
-- [ ] Token expires in 24 hours
-- [ ] Implement verify_token(token) that validates and returns user or None
-- [ ] Delete token after successful verification
-- [ ] Typecheck passes
+- [x] Create `apps/users/tokens.py`
+- [x] Implement generate_verification_token(user) using secrets.token_urlsafe(32)
+- [x] Token expires in 24 hours
+- [x] Implement verify_token(token) that validates and returns user or None
+- [x] Delete token after successful verification
+- [x] Typecheck passes
 
 ---
 
