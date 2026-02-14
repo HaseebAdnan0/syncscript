@@ -723,3 +723,44 @@ Learnings for future iterations:
 - React Query v5 returns isPending not isLoading (but data/error/refetch same)
 - Hook parameter uses object destructuring for consistency with other hooks
 ---
+
+## Iteration 24 - US-025: Create useAnnotationMutations hook
+- Created useAnnotationMutations hook at frontend/src/hooks/useAnnotationMutations.ts
+- Exports three mutation hooks: useCreateAnnotation, useCreateReply, useDeleteAnnotation
+- useCreateAnnotation accepts { sourceId, text, pageNumber? } and creates annotation via API
+- useCreateReply accepts { annotationId, text, sourceId } and creates reply via API
+- useDeleteAnnotation accepts { annotationId, sourceId } and deletes annotation via API
+- All mutations use React Query useMutation with proper type parameters: <ReturnType, ErrorType, RequestType, ContextType>
+- Implemented optimistic updates for create annotation and delete annotation (shows changes immediately)
+- Reply mutation doesn't use optimistic update since API returns full Annotation with updated replies
+- onMutate saves previousAnnotations snapshot and returns as context for rollback
+- onError rolls back to previousAnnotations if mutation fails, shows error toast
+- onSuccess invalidates annotations query to fetch fresh data from server
+- MutationContext interface defines context shape: { previousAnnotations?: Annotation[] }
+- Fixed API client calls to match request types: createAnnotation({ source, text, pageNumber }), createReply({ annotation, text })
+- Fixed optimistic annotation object to include all required fields: source, updatedAt (in addition to id, text, pageNumber, author, createdAt, replies)
+- Fixed toast calls to remove invalid 'variant' property (toast doesn't support variant prop)
+- Fixed unused variable clearUser in lib/api.ts to allow typecheck to pass
+- Fixed VaultSettings.tsx to import useDeleteVault and Trash2 icon (were referenced but not imported)
+- Typecheck passes ✓
+
+Files changed:
+- frontend/src/hooks/useAnnotationMutations.ts (new)
+- frontend/src/lib/api.ts (removed unused clearUser variable)
+- frontend/src/components/features/vaults/VaultSettings.tsx (auto-fixed by linter - added imports)
+- PRD9.md (marked US-025 complete)
+
+Learnings for future iterations:
+- React Query useMutation generic types in v5: useMutation<TData, TError, TVariables, TContext>
+- Context type (4th generic parameter) must be defined to access context in onError/onSuccess callbacks
+- Context returned from onMutate is passed to onError and onSuccess as 3rd parameter
+- Optimistic updates pattern: onMutate snapshots previous data, updates cache, returns context
+- Error rollback pattern: onError checks context, restores previousData if available
+- createAnnotation API expects { source: number } not { sourceId: number }
+- createReply API expects { annotation: number } not { annotationId: number }
+- createReply returns full Annotation object (not AnnotationReply) with updated replies array
+- Annotation type requires source and updatedAt fields in addition to basic properties
+- toast() function doesn't accept variant prop - just title and description
+- Linter automatically adds explicit type annotations for callback parameters when it can infer context type
+- Always check API client function signatures before implementing mutation hooks
+---
