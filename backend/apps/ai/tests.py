@@ -245,9 +245,13 @@ class ClaudeClientTestCase(TestCase):
     def test_summarize_api_error(self):
         """Test summarize handles API errors gracefully."""
         import anthropic
+        from unittest.mock import Mock
 
-        # Mock API error
-        self.mock_client.messages.create.side_effect = anthropic.APIError("API error")
+        # Mock API error - APIError requires message and request parameters
+        mock_request = Mock()
+        self.mock_client.messages.create.side_effect = anthropic.APIError(
+            "API error", request=mock_request
+        )
 
         result = self.claude_client.summarize("Test content", "pdf")
 

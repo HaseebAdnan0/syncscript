@@ -97,14 +97,14 @@ Create SyncScript's production landing page following the Bitcoin DeFi aesthetic
 **Description:** As a developer, I need to combine all hero components into a cohesive section.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/marketing/HeroSection.tsx`
-- [ ] Integrates HeroBackground, AnimatedOrb, FloatingStatCards, HeroContent
-- [ ] Two-column layout on desktop (content left, orb right)
-- [ ] Stacked layout on mobile (content top, orb bottom)
-- [ ] Minimum height of viewport (`min-h-screen`)
-- [ ] Proper z-index layering
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/marketing/HeroSection.tsx`
+- [x] Integrates HeroBackground, AnimatedOrb, FloatingStatCards, HeroContent
+- [x] Two-column layout on desktop (content left, orb right)
+- [x] Stacked layout on mobile (content top, orb bottom)
+- [x] Minimum height of viewport (`min-h-screen`)
+- [x] Proper z-index layering
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-008: Create Stats Ticker Section
 **Description:** As a user, I want to see impressive platform statistics so I trust the platform's credibility.

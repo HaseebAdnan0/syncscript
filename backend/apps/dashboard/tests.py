@@ -440,6 +440,13 @@ class ActivityFeedTests(TestCase):
         """Test that activity feed only shows logs from accessible vaults."""
         # Create vault user has no access to
         inaccessible_vault = Vault.objects.create(name='Private Vault', owner=self.other_user)
+
+        # Create vault user has access to
+        accessible_vault = Vault.objects.create(name='Accessible Vault', owner=self.user)
+
+        # Clear auto-generated audit logs from vault creation
+        AuditLog.objects.all().delete()
+
         AuditLog.objects.create(
             vault=inaccessible_vault,
             actor=self.other_user,
@@ -447,8 +454,6 @@ class ActivityFeedTests(TestCase):
             metadata={}
         )
 
-        # Create vault user has access to
-        accessible_vault = Vault.objects.create(name='Accessible Vault', owner=self.user)
         AuditLog.objects.create(
             vault=accessible_vault,
             actor=self.user,
