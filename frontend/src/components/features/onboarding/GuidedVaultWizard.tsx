@@ -8,11 +8,13 @@ const GuidedVaultWizard: React.FC = () => {
   const { step, data, updateOnboarding } = useOnboarding();
   const [vaultName, setVaultName] = useState('');
   const [sourceUrl, setSourceUrl] = useState('');
+  const [collaboratorEmail, setCollaboratorEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [urlError, setUrlError] = useState<string | null>(null);
+  const [emailError, setEmailError] = useState<string | null>(null);
 
   // Determine current step number from step string
-  const currentStep = step === 'guided-1' ? 1 : step === 'guided-2' ? 2 : 1;
+  const currentStep = step === 'guided-1' ? 1 : step === 'guided-2' ? 2 : step === 'guided-3' ? 3 : 1;
 
   // Load saved data from context
   useEffect(() => {
@@ -21,6 +23,9 @@ const GuidedVaultWizard: React.FC = () => {
     }
     if (data?.sourceUrl && typeof data.sourceUrl === 'string') {
       setSourceUrl(data.sourceUrl);
+    }
+    if (data?.collaboratorEmail && typeof data.collaboratorEmail === 'string') {
+      setCollaboratorEmail(data.collaboratorEmail);
     }
   }, [data]);
 
@@ -33,6 +38,13 @@ const GuidedVaultWizard: React.FC = () => {
     } catch {
       return false;
     }
+  };
+
+  // Basic email validation
+  const isValidEmail = (email: string): boolean => {
+    if (!email.trim()) return true; // Allow empty (optional)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   };
 
   const handleStep1Next = async () => {
@@ -109,12 +121,63 @@ const GuidedVaultWizard: React.FC = () => {
     }
   };
 
+  const handleStep3Back = async () => {
+    setIsSubmitting(true);
+    try {
+      await updateOnboarding({
+        step: 'guided-2',
+        data: {
+          vaultName: data?.vaultName || vaultName,
+          sourceUrl: data?.sourceUrl || sourceUrl,
+          collaboratorEmail: collaboratorEmail
+        },
+      });
+    } catch (error) {
+      console.error('Failed to go back to step 2:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleStep3Skip = async () => {
+    // Skip proceeds to creation without collaborator
+    handleCreateVault('');
+  };
+
+  const handleCreateVault = async (email?: string) => {
+    // Validate email if provided
+    const emailToUse = email !== undefined ? email : collaboratorEmail;
+    if (emailToUse.trim() && !isValidEmail(emailToUse)) {
+      setEmailError('Please enter a valid email address');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setEmailError(null);
+    try {
+      await updateOnboarding({
+        step: 'tutorial',
+        data: {
+          vaultName: data?.vaultName || vaultName,
+          sourceUrl: data?.sourceUrl || sourceUrl,
+          collaboratorEmail: emailToUse.trim()
+        },
+      });
+    } catch (error) {
+      console.error('Failed to complete wizard:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       if (currentStep === 1 && vaultName.trim()) {
         handleStep1Next();
       } else if (currentStep === 2) {
         handleStep2Next();
+      } else if (currentStep === 3) {
+        handleCreateVault();
       }
     }
   };

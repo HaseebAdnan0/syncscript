@@ -9,7 +9,7 @@ import GlassCard from '@/components/ui/GlassCard';
 import { PasswordStrength } from '@/components/ui/PasswordStrength';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from '@/hooks/useToast';
-import { OAuthButtons } from '@/components/features/auth/OAuthButtons';
+import OAuthButtons from '@/components/features/auth/OAuthButtons';
 
 export default function RegisterPage() {
   const router = useRouter();

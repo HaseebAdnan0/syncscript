@@ -1030,3 +1030,172 @@ class VaultInsightsTestCase(APITestCase):
 
             self.assertEqual(response.status_code, 500)
             self.assertIn('error', response.data)
+
+
+class CacheInvalidationSignalsTestCase(TestCase):
+    """Test signal handlers for cache invalidation (US-008)."""
+
+    def setUp(self):
+        """Create test fixtures."""
+        from apps.vaults.models import Vault
+        from apps.sources.models import Source
+
+        # Create test user
+        self.user = User.objects.create_user(
+            email='test@example.com',
+            username='testuser',
+            password='testpass123'
+        )
+
+        # Create vault with cached insights
+        self.vault = Vault.objects.create(
+            name='Test Vault',
+            owner=self.user,
+            ai_insights_cache={
+                'themes': [{'name': 'Theme 1', 'weight': 0.8, 'source_count': 1}],
+                'research_gaps': [],
+                'cross_references': [],
+                'suggested_searches': [],
+                'generated_at': '2024-01-01T00:00:00Z'
+            },
+            ai_insights_updated_at=timezone.now()
+        )
+
+        # Create a source
+        self.source = Source.objects.create(
+            vault=self.vault,
+            url='https://example.com/paper',
+            title='Test Paper',
+            description='Test description',
+            source_type='URL',
+            created_by=self.user
+        )
+
+    def test_cache_invalidated_on_source_save(self):
+        """Test that vault insights cache is invalidated when source is updated."""
+        # Verify cache exists
+        self.assertIsNotNone(self.vault.ai_insights_cache)
+        self.assertIsNotNone(self.vault.ai_insights_updated_at)
+
+        # Update source (triggers post_save signal)
+        self.source.title = 'Updated Title'
+        self.source.save()
+
+        # Reload vault from database
+        self.vault.refresh_from_db()
+
+        # Cache timestamp should be null
+        self.assertIsNone(self.vault.ai_insights_updated_at)
+        # Cache content should still exist (only timestamp is invalidated)
+        self.assertIsNotNone(self.vault.ai_insights_cache)
+
+    def test_cache_invalidated_on_source_create(self):
+        """Test that vault insights cache is invalidated when new source is added."""
+        from apps.sources.models import Source
+
+        # Verify cache exists
+        self.assertIsNotNone(self.vault.ai_insights_cache)
+        self.assertIsNotNone(self.vault.ai_insights_updated_at)
+
+        # Create new source (triggers post_save signal)
+        Source.objects.create(
+            vault=self.vault,
+            url='https://example.com/new-paper',
+            title='New Paper',
+            description='New description',
+            source_type='URL',
+            created_by=self.user
+        )
+
+        # Reload vault from database
+        self.vault.refresh_from_db()
+
+        # Cache timestamp should be null
+        self.assertIsNone(self.vault.ai_insights_updated_at)
+
+    def test_cache_invalidated_on_source_delete(self):
+        """Test that vault insights cache is invalidated when source is deleted."""
+        # Verify cache exists
+        self.assertIsNotNone(self.vault.ai_insights_cache)
+        self.assertIsNotNone(self.vault.ai_insights_updated_at)
+
+        # Delete source (triggers post_delete signal)
+        source_id = self.source.id
+        self.source.delete()
+
+        # Reload vault from database
+        self.vault.refresh_from_db()
+
+        # Cache timestamp should be null
+        self.assertIsNone(self.vault.ai_insights_updated_at)
+
+    def test_no_error_when_vault_has_no_cache(self):
+        """Test that signal handlers don't error when vault has no cache."""
+        from apps.vaults.models import Vault
+        from apps.sources.models import Source
+
+        # Create vault without cache
+        vault_no_cache = Vault.objects.create(
+            name='Vault Without Cache',
+            owner=self.user
+        )
+
+        # Create source (should not error)
+        source = Source.objects.create(
+            vault=vault_no_cache,
+            url='https://example.com/test',
+            title='Test',
+            description='Test',
+            source_type='URL',
+            created_by=self.user
+        )
+
+        # Update source (should not error)
+        source.title = 'Updated'
+        source.save()
+
+        # Delete source (should not error)
+        source.delete()
+
+        # No exceptions means test passed
+
+    def test_multiple_sources_in_same_vault(self):
+        """Test that signal only affects the source's vault, not others."""
+        from apps.vaults.models import Vault
+        from apps.sources.models import Source
+
+        # Create second vault with cache
+        vault2 = Vault.objects.create(
+            name='Vault 2',
+            owner=self.user,
+            ai_insights_cache={'themes': []},
+            ai_insights_updated_at=timezone.now()
+        )
+
+        # Update source in vault 1
+        self.source.title = 'Updated'
+        self.source.save()
+
+        # Reload both vaults
+        self.vault.refresh_from_db()
+        vault2.refresh_from_db()
+
+        # Only vault 1 should be invalidated
+        self.assertIsNone(self.vault.ai_insights_updated_at)
+        self.assertIsNotNone(vault2.ai_insights_updated_at)
+
+    def test_cache_not_invalidated_if_already_null(self):
+        """Test that saving when cache is already null doesn't cause issues."""
+        # Set cache timestamp to null
+        self.vault.ai_insights_updated_at = None
+        self.vault.save()
+
+        # Update source
+        self.source.title = 'Updated Again'
+        self.source.save()
+
+        # Reload vault
+        self.vault.refresh_from_db()
+
+        # Should still be null (no error)
+        self.assertIsNone(self.vault.ai_insights_updated_at)
