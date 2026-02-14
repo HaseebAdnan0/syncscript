@@ -2,9 +2,16 @@
 
 from datetime import datetime, timedelta
 from django.test import TestCase
+from django.utils import timezone
+from rest_framework.test import APITestCase
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+
 from apps.users.models import User
 from apps.ai.services.usage import log_usage, get_daily_usage, get_remaining_requests
 from apps.ai.models import AIUsageLog
+from apps.ai.decorators import ai_rate_limit
 
 
 class UsageTrackingTestCase(TestCase):
