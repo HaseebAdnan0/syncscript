@@ -404,3 +404,23 @@
   - Typecheck passes successfully with all SearchResult types properly typed
 ---
 
+## Iteration 20 - US-023: Create SearchResultsList component
+- Created SearchResultsList.tsx to display grouped search results
+- Sections: Vaults, Sources, Annotations (each with its own header)
+- Shows max 5 results per type in quick view with .slice(0, MAX_QUICK_VIEW)
+- "See all X results →" link displayed when section has > 5 results
+- Empty sections hidden with hasResults() helper checking array length
+- Scrollable container with max-h-[500px] and overflow-y-auto
+- Files changed:
+  - frontend/src/components/features/search/SearchResultsList.tsx (created)
+  - PRD18.md (marked US-023 complete)
+- Learnings for future iterations:
+  - SearchResultItem uses default export (not named export), so import as: import SearchResultItem from './SearchResultItem'
+  - Grouping pattern: separate sections for each result type with conditional rendering
+  - Slice array for quick view: items.slice(0, MAX_QUICK_VIEW) limits display
+  - hasResults helper checks both existence and length: items && items.length > 0
+  - Section header pattern: uppercase tracking-wider text-white/80 for consistency
+  - "See all" links use orange (#F7931A) with hover to gold (#FFD600) transition
+  - Typecheck passes when using SearchResponse type with nested results structure
+---
+

@@ -8,6 +8,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from apps.vaults.models import VaultMembership
+from apps.sources.models import Source
 from apps.notifications.services import create_notification
 
 logger = logging.getLogger(__name__)
@@ -86,5 +87,57 @@ def vault_membership_created(sender, instance, created, **kwargs):  # type: igno
         else:
             logger.debug(
                 f"Skipped member_joined notification for owner {instance.vault.owner.id} "
+                f"(preferences or mute)"
+            )
+
+
+@receiver(post_save, sender=Source)
+def source_created(sender, instance, created, **kwargs):  # type: ignore[misc]
+    """
+    Handle Source post_save signal.
+
+    Creates source_added notifications for all vault members except the creator
+    when a new source is added to the vault.
+    """
+    del sender, kwargs  # Mark unused but required params
+
+    if not created:
+        # Only handle new sources, not updates
+        return
+
+    # Get creator name (or "Unknown" if created_by is None)
+    creator_name = instance.created_by.username if instance.created_by else "Unknown"
+
+    # Get all vault members
+    vault_members = instance.vault.members.all()
+
+    # Notify each member except the creator
+    for member in vault_members:
+        # Skip the creator
+        if instance.created_by and member.id == instance.created_by.id:
+            continue
+
+        notification = create_notification(
+            user=member,
+            notification_type="source_added",
+            title=f"New source in {instance.vault.name}",
+            body=f"{creator_name} added \"{instance.title}\" to {instance.vault.name}",
+            data={
+                "vault_id": str(instance.vault.id),
+                "vault_name": instance.vault.name,
+                "source_id": instance.id,
+                "source_title": instance.title,
+                "creator_name": creator_name,
+            },
+        )
+
+        if notification:
+            logger.info(
+                f"Created source_added notification for user {member.id} "
+                f"about source {instance.id} in vault {instance.vault.id}"
+            )
+        else:
+            logger.debug(
+                f"Skipped source_added notification for user {member.id} "
                 f"(preferences or mute)"
             )

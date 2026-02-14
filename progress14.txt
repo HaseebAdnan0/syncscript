@@ -342,3 +342,43 @@ Learnings for future iterations:
 - 429 response format: include both error message and detailed quota breakdown
 ---
 
+## Iteration 10 - US-010: Track AI citation usage in AuditLog
+- Modified generate_ai_citation() to return 3-tuple: (plain_text, html, usage_data)
+- usage_data dict contains: input_tokens, output_tokens, model, total_tokens
+- Created log_ai_citation_usage() helper in apps/citations/utils.py:
+  - Creates AuditLog entry with action='AI_CITATION_GENERATED'
+  - Stores metadata: source_id, source_title, format, token counts, model_used
+  - Returns created AuditLog instance
+- Modified generate_ai_citation_task() to accept user_id parameter
+- Task gets user from DB and passes to log_ai_citation_usage()
+- Modified views.py to pass request.user.id to task.delay()
+- Updated all tests calling generate_ai_citation() to handle 3-tuple return
+- Updated all task tests to pass user_id as third parameter
+- Added mock_message.usage and mock_message.model to test mocks
+- Created AIUsageLoggingTests test class with 3 comprehensive tests:
+  - test_log_ai_citation_usage: verifies audit log creation and metadata
+  - test_task_logs_ai_usage: verifies Celery task logs usage correctly
+  - test_log_usage_with_missing_usage_fields: handles missing fields gracefully (defaults to 0)
+- Tests: All 101 citation tests pass (98 existing + 3 new)
+- Typecheck: 0 errors on all modified files
+- Files changed:
+  - backend/apps/citations/services/ai_citation.py (modified return type)
+  - backend/apps/citations/utils.py (added log_ai_citation_usage)
+  - backend/apps/citations/tasks.py (added user_id param, call logging)
+  - backend/apps/citations/views.py (pass user_id to task)
+  - backend/apps/citations/tests.py (+120 lines, updated 4 existing tests)
+- Committed: (next)
+
+Learnings for future iterations:
+- Anthropic message.usage has input_tokens and output_tokens attributes
+- message.model contains the model name string
+- AuditLog model in this project is in apps.vaults.models (not core.models)
+- AuditLog uses 'actor' field for user, 'metadata' for JSON data
+- Source model uses 'created_by' field, not 'added_by'
+- When modifying function signatures, must update ALL callers (tests, tasks, views)
+- Mock objects need complete attribute structure (usage, model) for realistic testing
+- Dict.get() with default value (0) handles missing usage fields gracefully
+- Audit logs provide immutable history for billing/analytics
+- Token counts track AI API usage for cost monitoring
+
+---

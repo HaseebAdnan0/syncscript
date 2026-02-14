@@ -388,3 +388,27 @@ Learnings for future iterations:
 - Expandable sections improve UX for dense academic content
 ---
 
+## Iteration 13 - US-013: Create AI loading skeleton
+- Created AILoadingSkeleton component with three variants: summary, insights, chat
+- Implemented animated skeleton with pulsing orange accent animations
+- Added variant-specific loading messages: "Analyzing...", "Discovering insights...", "Thinking..."
+- Chat variant includes typing indicator with staggered bounce animations (0ms, 150ms, 300ms delays)
+- Summary variant shows abstract/findings/methodology skeleton structure
+- Insights variant shows themes/gaps/cross-references skeleton structure
+- Footer with "Processing with Claude AI" indicator across all variants
+- All animations use Bitcoin DeFi design: orange gradients, glass morphism, pulsing effects
+- Typecheck passes successfully
+
+Files changed:
+- frontend/src/components/features/ai/AILoadingSkeleton.tsx (created)
+- PRD15.md (marked US-013 complete)
+
+Learnings for future iterations:
+- Staggered animations using style={{ animationDelay }} improve visual polish
+- Skeleton widths should vary (w-full, w-11/12, w-10/12) to look more realistic
+- Typing indicators need explicit delays to create the "bouncing dots" effect
+- Variant-specific content structure helps users understand what's being processed
+- Pulsing animations using animate-ping create good "working" indicator
+- Footer context ("Processing with Claude AI") reassures users during loading
+---
+

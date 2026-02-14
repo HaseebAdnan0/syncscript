@@ -371,15 +371,15 @@ Add social authentication to SyncScript using Google and GitHub OAuth providers.
 **Description:** As a developer, I need tests to verify OAuth functionality works correctly.
 
 **Acceptance Criteria:**
-- [ ] Test Google callback creates new user when email is new
-- [ ] Test Google callback returns link_required when email exists
-- [ ] Test GitHub callback handles missing email correctly
-- [ ] Test account linking endpoint validates password
-- [ ] Test account linking endpoint rejects wrong password
-- [ ] Test unlink endpoint prevents removing last auth method
-- [ ] Test connected accounts endpoint returns correct data
-- [ ] All tests pass
-- [ ] Typecheck passes
+- [x] Test Google callback creates new user when email is new
+- [x] Test Google callback returns link_required when email exists
+- [x] Test GitHub callback handles missing email correctly
+- [x] Test account linking endpoint validates password
+- [x] Test account linking endpoint rejects wrong password
+- [x] Test unlink endpoint prevents removing last auth method
+- [x] Test connected accounts endpoint returns correct data
+- [x] All tests pass
+- [x] Typecheck passes
 
 ## Non-Goals
 
