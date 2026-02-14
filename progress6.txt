@@ -541,3 +541,30 @@
   - Django system check passes with 0 errors (6 security warnings expected in dev mode)
   - Pyright import errors for django_ratelimit are normal without type stubs
 ---
+
+## Iteration 23 - US-023: Create PDF list endpoint for vault
+- Implemented get_queryset() method in PDFUploadViewSet to support nested route filtering
+- Added logic to detect nested route via self.kwargs.get('vault_pk')
+- For nested route /api/v1/vaults/{vault_id}/pdfs/:
+  - Validates user permission (VIEWER, CONTRIBUTOR, or OWNER)
+  - Filters PDFs by vault_id and deleted_at__isnull=True
+  - Orders by uploaded_at descending
+- For standard route /api/v1/sources/pdfs/:
+  - Returns PDFs from all accessible vaults (owned or member)
+- Registered PDFUploadViewSet in vaults/urls.py nested router:
+  - vaults_router.register(r'pdfs', PDFUploadViewSet, basename='vault-pdfs')
+  - Creates endpoint: GET /api/v1/vaults/{vault_id}/pdfs/
+- Files changed:
+  - backend/apps/sources/views.py (added get_queryset method to PDFUploadViewSet)
+  - backend/apps/vaults/urls.py (registered PDFUploadViewSet in nested router)
+  - PRD6.md (marked US-023 complete)
+- Learnings for future iterations:
+  - rest_framework_nested routers pass parent pk as {parent}_pk in ViewSet kwargs
+  - get_queryset() is the correct place to filter based on nested route context
+  - vault_pk in kwargs indicates nested route: /vaults/{vault_id}/pdfs/
+  - Django's pagination happens automatically when get_queryset returns a QuerySet
+  - ViewSet.list() action uses get_queryset() automatically (no custom action needed)
+  - Nested router registration pattern: parent_router.register(r'resource', ViewSet, basename='prefix')
+  - Django system check validates all ViewSet and router configuration
+  - Implementation already existed in HEAD (commit ad903ed) - verified and documented
+---
