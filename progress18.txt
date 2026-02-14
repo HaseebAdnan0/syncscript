@@ -87,3 +87,20 @@
   - Exponential backoff: countdown=2 ** self.request.retries * 60
   - Task should handle DoesNotExist exception gracefully and return status
 ---
+
+## Iteration 6 - US-006: Create Celery task to update Annotation search vectors
+- Added update_annotation_search_vector task to backend/apps/search/tasks.py
+- Task accepts annotation_id parameter and updates search_vector field
+- Indexes content field with weight A (highest relevance)
+- Uses PostgreSQL SearchVector with config='english'
+- Idempotent design with retry logic and exponential backoff
+- Returns status dict: annotation_id and status ('updated', 'not_found', or 'failed')
+- Files changed:
+  - backend/apps/search/tasks.py (added update_annotation_search_vector function)
+  - PRD18.md (marked US-006 complete)
+- Learnings for future iterations:
+  - Same pattern as Source task: shared_task with bind=True, max_retries=3
+  - Annotation model only has content field to index (simpler than Source)
+  - Import models inside task to avoid circular imports (confirmed pattern)
+  - Django check passes even with Pyright warnings about imports in functions
+---

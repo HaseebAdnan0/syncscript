@@ -128,3 +128,29 @@ Learnings for future iterations:
   - Use noqa: ARG002 to suppress unused parameter warnings for required method signatures
   - Testing OAuth adapters requires Django shell context, not raw Python imports
 ---
+
+## Iteration 5 - US-005: Create Google OAuth redirect endpoint
+- Created GoogleOAuthRedirectView in apps/users/views.py
+- Implemented GET /api/v1/auth/google/ endpoint
+- Accepts optional 'next' query parameter for post-auth redirect
+- Stores 'next' URL in request.session['oauth_next_url'] for callback retrieval
+- Validates Google OAuth configuration (client_id) before redirecting
+- Returns 503 error if Google credentials are missing/invalid
+- Uses allauth's oauth2_login view to redirect to Google's consent screen
+- Added URL routing: auth/google/ -> GoogleOAuthRedirectView
+- Imported view in urls.py and verified URL reverse works correctly
+- Typecheck passes (imports successfully via Django shell)
+- Also implemented GitHubOAuthRedirectView (US-007) using same pattern
+
+Files changed:
+  - backend/apps/users/views.py (added GoogleOAuthRedirectView and GitHubOAuthRedirectView)
+  - backend/apps/users/urls.py (added OAuth endpoint routes)
+  - PRD12.md (marked US-005 complete)
+
+Learnings for future iterations:
+  - allauth provides provider-specific oauth2_login functions that handle redirect to provider
+  - Session storage is appropriate for temporary OAuth state (next URL, pending data)
+  - Check provider configuration before initiating OAuth to fail fast with helpful error
+  - Same pattern applies to all OAuth providers (Google, GitHub, etc.)
+  - URL reverse() can verify routes are configured correctly: reverse('users:google-oauth')
+---

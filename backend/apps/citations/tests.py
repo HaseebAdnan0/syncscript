@@ -535,7 +535,7 @@ class StructuredCitationTests(TestCase):
 
     @patch('apps.citations.services.structured_citation.CitationStylesBibliography')
     @patch('apps.citations.services.structured_citation.CitationStylesStyle')
-    @patch('apps.citations.services.structured_citation.get_style_filepath')
+    @patch('apps.citations.services.structured_citation._get_style_file')
     def test_generate_apa7_citation(self, mock_get_style, mock_style, mock_bib):
         """Test APA 7th edition citation generation"""
         # Mock style file path
@@ -559,11 +559,11 @@ class StructuredCitationTests(TestCase):
         citation = generate_structured_citation(metadata, CitationFormat.APA7)
 
         self.assertIn('Smith, J., & Doe, J. (2024)', citation)
-        mock_get_style.assert_called_once_with('apa-7th-edition')
+        mock_get_style.assert_called_once_with(CitationFormat.APA7)
 
     @patch('apps.citations.services.structured_citation.CitationStylesBibliography')
     @patch('apps.citations.services.structured_citation.CitationStylesStyle')
-    @patch('apps.citations.services.structured_citation.get_style_filepath')
+    @patch('apps.citations.services.structured_citation._get_style_file')
     def test_generate_mla9_citation(self, mock_get_style, mock_style, mock_bib):
         """Test MLA 9th edition citation generation"""
         mock_get_style.return_value = '/fake/path/mla9.csl'
@@ -584,7 +584,7 @@ class StructuredCitationTests(TestCase):
         citation = generate_structured_citation(metadata, CitationFormat.MLA9)
 
         self.assertIn('Smith, John', citation)
-        mock_get_style.assert_called_once_with('modern-language-association-9th-edition')
+        mock_get_style.assert_called_once_with(CitationFormat.MLA9)
 
     @patch('apps.citations.services.structured_citation.CitationStylesBibliography')
     @patch('apps.citations.services.structured_citation.CitationStylesStyle')

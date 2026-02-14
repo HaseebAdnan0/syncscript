@@ -217,3 +217,235 @@ class RecentVaultsTests(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 0)
+
+
+class ActivityFeedTests(TestCase):
+    """Test suite for activity feed endpoint."""
+
+    def setUp(self):
+        """Set up test fixtures."""
+        self.client = APIClient()
+        self.user = User.objects.create_user(
+            username='testuser',
+            email='test@example.com',
+            password='testpass123',
+            first_name='Test',
+            last_name='User'
+        )
+        self.other_user = User.objects.create_user(
+            username='otheruser',
+            email='other@example.com',
+            password='testpass123',
+            first_name='Other',
+            last_name='User'
+        )
+
+    def test_activity_feed_requires_auth(self):
+        """Test that activity feed endpoint requires authentication."""
+        url = reverse('dashboard:activity_feed')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_activity_feed_success(self):
+        """Test successful retrieval of activity feed."""
+        # Create vaults
+        vault1 = Vault.objects.create(name='Vault 1', owner=self.user)
+        vault2 = Vault.objects.create(name='Vault 2', owner=self.other_user)
+        VaultMembership.objects.create(vault=vault2, user=self.user, role='CONTRIBUTOR')
+
+        # Create audit logs for vault1
+        log1 = AuditLog.objects.create(
+            vault=vault1,
+            actor=self.user,
+            action='source_created',
+            metadata={'title': 'Research Paper', 'source_id': 123}
+        )
+        log2 = AuditLog.objects.create(
+            vault=vault1,
+            actor=self.other_user,
+            action='annotation_created',
+            metadata={'title': 'Study Results'}
+        )
+
+        # Create audit logs for vault2
+        log3 = AuditLog.objects.create(
+            vault=vault2,
+            actor=self.user,
+            action='member_invited',
+            metadata={'email': 'newuser@example.com'}
+        )
+
+        # Authenticate and make request
+        self.client.force_authenticate(user=self.user)
+        url = reverse('dashboard:activity_feed')
+        response = self.client.get(url)
+
+        # Assert response
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 3)  # All 3 logs from accessible vaults
+
+        # Check ordering (most recent first)
+        self.assertEqual(response.data[0]['action'], 'member_invited')
+        self.assertEqual(response.data[1]['action'], 'annotation_created')
+        self.assertEqual(response.data[2]['action'], 'source_created')
+
+        # Check fields
+        activity_item = response.data[0]
+        self.assertIn('id', activity_item)
+        self.assertIn('action', activity_item)
+        self.assertIn('description', activity_item)
+        self.assertIn('actor', activity_item)
+        self.assertIn('vault_id', activity_item)
+        self.assertIn('vault_name', activity_item)
+        self.assertIn('target_type', activity_item)
+        self.assertIn('target_id', activity_item)
+        self.assertIn('created_at', activity_item)
+
+        # Check actor information
+        self.assertEqual(activity_item['actor']['username'], 'testuser')
+        self.assertEqual(activity_item['actor']['first_name'], 'Test')
+
+        # Check vault information
+        self.assertEqual(activity_item['vault_name'], 'Vault 2')
+
+        # Check description formatting
+        self.assertEqual(activity_item['description'], "invited newuser@example.com to vault")
+
+    def test_activity_feed_description_formatting(self):
+        """Test human-readable description formatting for different action types."""
+        vault = Vault.objects.create(name='Test Vault', owner=self.user)
+
+        # Create logs with different actions
+        AuditLog.objects.create(
+            vault=vault,
+            actor=self.user,
+            action='source_added',
+            metadata={'title': 'Research Paper'}
+        )
+        AuditLog.objects.create(
+            vault=vault,
+            actor=self.user,
+            action='annotation_updated',
+            metadata={'title': 'Study'}
+        )
+        AuditLog.objects.create(
+            vault=vault,
+            actor=self.user,
+            action='member_removed',
+            metadata={'email': 'old@example.com'}
+        )
+        AuditLog.objects.create(
+            vault=vault,
+            actor=self.user,
+            action='vault_created',
+            metadata={'name': 'New Vault'}
+        )
+
+        # Authenticate and make request
+        self.client.force_authenticate(user=self.user)
+        url = reverse('dashboard:activity_feed')
+        response = self.client.get(url)
+
+        # Assert descriptions
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 4)
+
+        descriptions = [item['description'] for item in response.data]
+        self.assertIn("created vault 'New Vault'", descriptions)
+        self.assertIn("removed old@example.com from vault", descriptions)
+        self.assertIn("updated annotation on 'Study'", descriptions)
+        self.assertIn("added source 'Research Paper'", descriptions)
+
+    def test_activity_feed_limit_param(self):
+        """Test limit query parameter."""
+        vault = Vault.objects.create(name='Test Vault', owner=self.user)
+
+        # Create 15 audit logs
+        for i in range(15):
+            AuditLog.objects.create(
+                vault=vault,
+                actor=self.user,
+                action=f'action_{i}',
+                metadata={'index': i}
+            )
+
+        # Authenticate
+        self.client.force_authenticate(user=self.user)
+        url = reverse('dashboard:activity_feed')
+
+        # Test default limit (10)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 10)
+
+        # Test custom limit
+        response = self.client.get(url, {'limit': 5})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 5)
+
+        # Test max limit (50)
+        response = self.client.get(url, {'limit': 100})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 15)  # Capped at actual count
+
+        # Test invalid limit (should default to 10)
+        response = self.client.get(url, {'limit': 'invalid'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 10)
+
+    def test_activity_feed_empty(self):
+        """Test activity feed with no accessible vaults."""
+        self.client.force_authenticate(user=self.user)
+        url = reverse('dashboard:activity_feed')
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 0)
+
+    def test_activity_feed_no_actor(self):
+        """Test activity feed with null actor (system action)."""
+        vault = Vault.objects.create(name='Test Vault', owner=self.user)
+        AuditLog.objects.create(
+            vault=vault,
+            actor=None,  # System action
+            action='system_cleanup',
+            metadata={}
+        )
+
+        self.client.force_authenticate(user=self.user)
+        url = reverse('dashboard:activity_feed')
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertIsNone(response.data[0]['actor'])
+
+    def test_activity_feed_only_accessible_vaults(self):
+        """Test that activity feed only shows logs from accessible vaults."""
+        # Create vault user has no access to
+        inaccessible_vault = Vault.objects.create(name='Private Vault', owner=self.other_user)
+        AuditLog.objects.create(
+            vault=inaccessible_vault,
+            actor=self.other_user,
+            action='private_action',
+            metadata={}
+        )
+
+        # Create vault user has access to
+        accessible_vault = Vault.objects.create(name='Accessible Vault', owner=self.user)
+        AuditLog.objects.create(
+            vault=accessible_vault,
+            actor=self.user,
+            action='accessible_action',
+            metadata={}
+        )
+
+        # Authenticate and request
+        self.client.force_authenticate(user=self.user)
+        url = reverse('dashboard:activity_feed')
+        response = self.client.get(url)
+
+        # Should only see log from accessible vault
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['action'], 'accessible_action')

@@ -69,17 +69,17 @@ Replace stub email implementation with production-ready email system using Hosti
 **Description:** As a developer, I need a base HTML email template with the dark Bitcoin DeFi aesthetic that other templates extend.
 
 **Acceptance Criteria:**
-- [ ] Create `templates/emails/base.html` with:
+- [x] Create `templates/emails/base.html` with:
   - Dark background (#030304 body, #0F1115 content card)
   - SyncScript logo header (text-based, orange gradient)
   - White text (#FFFFFF) on dark background
   - Orange accent color (#F7931A) for links and buttons
   - Responsive design (max-width 600px container)
   - Footer with SyncScript branding and unsubscribe placeholder
-- [ ] Use inline CSS (email client compatibility)
-- [ ] Include `{% block content %}{% endblock %}` for child templates
-- [ ] Include `{% block preheader %}{% endblock %}` for email preview text
-- [ ] Typecheck passes (templates render without error)
+- [x] Use inline CSS (email client compatibility)
+- [x] Include `{% block content %}{% endblock %}` for child templates
+- [x] Include `{% block preheader %}{% endblock %}` for email preview text
+- [x] Typecheck passes (templates render without error)
 
 ---
 
