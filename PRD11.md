@@ -272,14 +272,14 @@ Replace stub email implementation with production-ready email system using Hosti
 **Description:** As a user, I want a page to request a password reset link.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/app/auth/forgot-password/page.tsx`
-- [ ] Email input field with validation
-- [ ] "Send Reset Link" submit button
-- [ ] Call `/api/v1/auth/password-reset/` on submit
-- [ ] Show success message: "If an account exists, we've sent a reset link"
-- [ ] "Back to login" link
-- [ ] Bitcoin DeFi dark theme styling with orange accents
-- [ ] Typecheck passes
+- [x] Create `frontend/src/app/auth/forgot-password/page.tsx`
+- [x] Email input field with validation
+- [x] "Send Reset Link" submit button
+- [x] Call `/api/v1/auth/password-reset/` on submit
+- [x] Show success message: "If an account exists, we've sent a reset link"
+- [x] "Back to login" link
+- [x] Bitcoin DeFi dark theme styling with orange accents
+- [x] Typecheck passes
 
 ---
 

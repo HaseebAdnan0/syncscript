@@ -269,13 +269,13 @@ Create SyncScript's production landing page following the Bitcoin DeFi aesthetic
 **Description:** As a developer, I need to combine all sections into the final landing page.
 
 **Acceptance Criteria:**
-- [ ] Update `frontend/src/app/(marketing)/page.tsx`
-- [ ] Import and render all sections in order: Hero, Stats, Features, HowItWorks, Testimonials, Pricing, CTA
-- [ ] Add section IDs for smooth scroll navigation (#features, #how-it-works, #pricing)
-- [ ] Proper spacing between sections (`py-24`)
-- [ ] Smooth scroll behavior enabled
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Update `frontend/src/app/(marketing)/page.tsx`
+- [x] Import and render all sections in order: Hero, Stats, Features, HowItWorks, Testimonials, Pricing, CTA
+- [x] Add section IDs for smooth scroll navigation (#features, #how-it-works, #pricing)
+- [x] Proper spacing between sections (`py-24`)
+- [x] Smooth scroll behavior enabled
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-020: Add Framer Motion Scroll Animations
 **Description:** As a user, I want smooth reveal animations so the page feels polished and professional.
