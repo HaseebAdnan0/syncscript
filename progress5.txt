@@ -422,3 +422,34 @@
   - User connections tracked in user_{id}:connections sorted set (from Layer 1)
   - Periodic cleanup complements client heartbeat mechanism (US-010)
 ---
+
+## Iteration 21 - US-022: Implement error message format and close handling
+- Enhanced _send_error_and_close method in VaultConsumer
+  - Added optional 'details' parameter for additional error context
+  - Added metadata dict with timezone-aware timestamp to error payload
+  - Implemented 2-second delay (asyncio.sleep) before closing connection
+  - Enhanced logging to include details when present
+- Documented all required error codes in method docstring:
+  - AUTH_FAILED: Authentication failed or missing
+  - PERMISSION_DENIED: User lacks permission to access vault
+  - RATE_LIMIT_EXCEEDED: Rate limit violated
+  - VAULT_NOT_FOUND: Vault ID invalid or not found
+  - INTERNAL_ERROR: Server error during processing
+  - ROOM_FULL: Vault room at capacity
+- Error payload structure: {"type": "error", "error": {"code": X, "message": Y, "details": Z}, "metadata": {"timestamp": ...}}
+- Added imports: asyncio, datetime, timezone
+- Files changed: backend/apps/vaults/consumers.py, PRD5.md, test_us022.py (new)
+- Created test_us022.py verification script - all 5 tests pass
+- Typecheck passes (0 errors, 0 warnings)
+- Committed in fe7dfd0
+- Learnings for future iterations:
+  - asyncio.sleep(2) ensures client receives error message before connection closes
+  - datetime.now(timezone.utc) creates timezone-aware timestamp for consistent time tracking
+  - Optional parameters in Python 3.10+ use 'dict | None' type annotation syntax
+  - Error details parameter provides extensibility for future error context
+  - 2-second delay is critical for WebSocket clients to receive and process error before close
+  - Code 1008 (policy violation) is standard for rate limiting and permission errors
+  - Enhanced logging with conditional details formatting: f"...{f'(details: {details})' if details else ''}"
+  - Docstring documentation of error codes helps frontend developers understand error handling
+  - Method kept existing name _send_error_and_close for consistency with existing codebase
+---
