@@ -79,14 +79,14 @@ Create the complete vault management interface for SyncScript, enabling research
 **Description:** As a user, I want to see all my vaults in a grid so I can browse and select one to work on.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/app/vaults/page.tsx`
-- [ ] Page header with title "My Vaults" and "Create Vault" button
-- [ ] Responsive grid: 1 column on mobile, 2 on tablet, 3 on desktop
-- [ ] Grid uses `gap-6` spacing
-- [ ] Uses useVaults hook to fetch data
-- [ ] Shows loading skeleton while fetching
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/app/vaults/page.tsx`
+- [x] Page header with title "My Vaults" and "Create Vault" button
+- [x] Responsive grid: 1 column on mobile, 2 on tablet, 3 on desktop
+- [x] Grid uses `gap-6` spacing
+- [x] Uses useVaults hook to fetch data
+- [x] Shows loading skeleton while fetching
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-007: Empty state for no vaults
 **Description:** As a new user with no vaults, I want to see a helpful empty state so I know how to get started.
