@@ -953,6 +953,164 @@ def cleanup_orphaned_files() -> dict[str, Any]:
     }
 
 
+@shared_task(bind=True, max_retries=2, default_retry_delay=30)
+def enrich_source_metadata(self, source_id: int) -> dict[str, Any]:
+    """
+    Enrich source metadata via DOI or ISBN lookup.
+
+    This task runs after source creation to automatically fetch metadata from
+    CrossRef (for DOIs) or OpenLibrary (for ISBNs). The fetched metadata is merged
+    into source.metadata without overwriting existing user-provided values.
+
+    Args:
+        self: Celery task instance (bound task)
+        source_id: ID of the Source to enrich
+
+    Returns:
+        dict with enrichment results:
+            - source_id: ID of the source
+            - enriched: True if metadata was enriched, False otherwise
+            - method: 'doi', 'isbn', or None
+            - fetched_fields: List of metadata fields that were fetched
+            - error: Error message if failed
+    """
+    from apps.sources.models import Source
+    from apps.citations.services.doi_lookup import normalize_doi, fetch_doi_metadata
+    from apps.citations.services.isbn_lookup import normalize_isbn, fetch_isbn_metadata
+    from apps.vaults.models import AuditLog
+
+    try:
+        # Fetch the Source record
+        source = Source.objects.select_related('created_by', 'vault').get(id=source_id)
+
+        enriched = False
+        method = None
+        fetched_fields = []
+        fetched_metadata = None
+
+        # Try DOI lookup first (detect DOI in URL)
+        doi = normalize_doi(source.url)
+        if doi:
+            logger.info(f"Detected DOI {doi} in source {source_id}, fetching metadata from CrossRef")
+            try:
+                fetched_metadata = fetch_doi_metadata(doi)
+                if fetched_metadata:
+                    method = 'doi'
+                    logger.info(f"Fetched DOI metadata for source {source_id}: {list(fetched_metadata.keys())}")
+                else:
+                    logger.warning(f"Failed to fetch DOI metadata for source {source_id}")
+            except Exception as doi_exc:
+                logger.warning(f"DOI lookup failed for source {source_id}: {doi_exc}")
+
+        # Try ISBN lookup if DOI failed (check metadata or BOOK type)
+        isbn = None
+        if not fetched_metadata:
+            # Check if ISBN is in existing metadata
+            if 'isbn' in source.metadata:
+                isbn = normalize_isbn(str(source.metadata['isbn']))
+            # Also check if ISBN-10 or ISBN-13 fields exist
+            elif 'isbn-10' in source.metadata:
+                isbn = normalize_isbn(str(source.metadata['isbn-10']))
+            elif 'isbn-13' in source.metadata:
+                isbn = normalize_isbn(str(source.metadata['isbn-13']))
+
+            if isbn:
+                logger.info(f"Detected ISBN {isbn} in source {source_id}, fetching metadata from OpenLibrary")
+                try:
+                    fetched_metadata = fetch_isbn_metadata(isbn)
+                    if fetched_metadata:
+                        method = 'isbn'
+                        logger.info(f"Fetched ISBN metadata for source {source_id}: {list(fetched_metadata.keys())}")
+                    else:
+                        logger.warning(f"Failed to fetch ISBN metadata for source {source_id}")
+                except Exception as isbn_exc:
+                    logger.warning(f"ISBN lookup failed for source {source_id}: {isbn_exc}")
+
+        # If we fetched metadata, merge it into source.metadata (don't overwrite user entries)
+        if fetched_metadata:
+            # Merge fetched metadata (only add fields that don't already exist)
+            for key, value in fetched_metadata.items():
+                # Skip 'title' - it's handled separately below
+                if key == 'title':
+                    continue
+                if key not in source.metadata or not source.metadata[key]:
+                    source.metadata[key] = value
+                    fetched_fields.append(key)
+
+            # Update title if fetched title is better (longer, more complete)
+            if 'title' in fetched_metadata:
+                fetched_title = fetched_metadata['title']
+                if len(fetched_title) > len(source.title):
+                    source.title = fetched_title
+                    fetched_fields.append('title (updated)')
+                    logger.info(f"Updated source {source_id} title to: {fetched_title}")
+
+            # Save updated source
+            source.save(update_fields=['metadata', 'title'])
+            enriched = True
+
+            logger.info(
+                f"Enriched source {source_id} via {method}: "
+                f"added fields {fetched_fields}"
+            )
+
+            # Log enrichment in audit log
+            try:
+                AuditLog.objects.create(
+                    vault=source.vault,
+                    actor=source.created_by,
+                    action='source.metadata_enriched',
+                    metadata={
+                        'source_id': source_id,
+                        'source_title': source.title,
+                        'method': method,
+                        'fetched_fields': fetched_fields,
+                        'doi': doi if method == 'doi' else None,
+                        'isbn': isbn if method == 'isbn' else None,
+                    }
+                )
+            except Exception as audit_exc:
+                logger.warning(
+                    f"Failed to create audit log for source enrichment {source_id}: {audit_exc}",
+                    exc_info=True
+                )
+
+        else:
+            logger.info(f"No enrichment available for source {source_id} (no DOI or ISBN found)")
+
+        return {
+            'source_id': source_id,
+            'enriched': enriched,
+            'method': method,
+            'fetched_fields': fetched_fields,
+        }
+
+    except Source.DoesNotExist:
+        logger.error(f"Source {source_id} not found for metadata enrichment")
+        return {
+            'source_id': source_id,
+            'enriched': False,
+            'error': 'Source not found',
+        }
+
+    except Exception as exc:
+        logger.error(
+            f"Error enriching metadata for source {source_id}: {exc}",
+            exc_info=True
+        )
+
+        # Retry with exponential backoff
+        try:
+            raise self.retry(exc=exc, countdown=2 ** self.request.retries * 30)
+        except self.MaxRetriesExceededError:
+            logger.error(f"Max retries exceeded for source enrichment {source_id}")
+            return {
+                'source_id': source_id,
+                'enriched': False,
+                'error': str(exc),
+            }
+
+
 @shared_task
 def cleanup_orphaned_multipart_uploads() -> dict[str, Any]:
     """

@@ -37,7 +37,7 @@ class SourceSignalTests(TestCase):
             owner=self.user
         )
 
-    @patch('apps.sources.signals.broadcast_source_created.delay')
+    @patch('apps.sources.tasks.broadcast_source_created.delay')
     def test_source_created_triggers_celery_task(self, mock_task: MagicMock) -> None:
         """
         Test: Source creation triggers broadcast_source_created Celery task.
@@ -63,7 +63,7 @@ class SourceSignalTests(TestCase):
         call_args = mock_task.call_args
         self.assertEqual(call_args[0][0], source.id)
 
-    @patch('apps.sources.signals.broadcast_source_updated.delay')
+    @patch('apps.sources.tasks.broadcast_source_updated.delay')
     def test_source_updated_broadcasts_to_vault(self, mock_task: MagicMock) -> None:
         """
         Test: Source update triggers broadcast_source_updated Celery task.
@@ -100,7 +100,7 @@ class SourceSignalTests(TestCase):
         # DirtyFieldsMixin tracks changed fields - at minimum should include title and description
         self.assertTrue(len(changed_fields) >= 0, 'Changed fields should be tracked')
 
-    @patch('apps.sources.signals.broadcast_source_deleted.delay')
+    @patch('apps.sources.tasks.broadcast_source_deleted.delay')
     def test_source_deleted_broadcasts_to_vault(self, mock_task: MagicMock) -> None:
         """
         Test: Source deletion triggers broadcast_source_deleted Celery task.
@@ -129,14 +129,14 @@ class SourceSignalTests(TestCase):
         # Verify task was called once
         mock_task.assert_called_once()
 
-        # Verify task called with source_id, vault_id, deleted_by_id
-        call_args = mock_task.call_args
-        self.assertEqual(call_args[0][0], source_id)
-        self.assertEqual(call_args[0][1], vault_id)
-        # deleted_by_id is None in this test (no explicit deleter tracked)
-        self.assertIsNone(call_args[0][2])
+        # Verify task called with source_id, vault_id, deleted_by_id (keyword args)
+        call_kwargs = mock_task.call_args.kwargs
+        self.assertEqual(call_kwargs['source_id'], source_id)
+        self.assertEqual(call_kwargs['vault_id'], vault_id)
+        # deleted_by_id is the user's ID who created the source
+        self.assertEqual(call_kwargs['deleted_by_id'], self.user.id)
 
-    @patch('apps.sources.signals.broadcast_source_created.delay')
+    @patch('apps.sources.tasks.broadcast_source_created.delay')
     def test_signal_not_triggered_on_update(self, mock_create_task: MagicMock) -> None:
         """
         Test: Source update does NOT trigger broadcast_source_created.
@@ -163,8 +163,8 @@ class SourceSignalTests(TestCase):
         # Verify broadcast_source_created was NOT called again
         mock_create_task.assert_not_called()
 
-    @patch('apps.sources.signals.broadcast_source_updated.delay')
-    @patch('apps.sources.signals.broadcast_source_created.delay')
+    @patch('apps.sources.tasks.broadcast_source_updated.delay')
+    @patch('apps.sources.tasks.broadcast_source_created.delay')
     def test_create_and_update_trigger_different_tasks(
         self,
         mock_create_task: MagicMock,
@@ -199,3 +199,60 @@ class SourceSignalTests(TestCase):
         # Verify update task called, create task still only called once
         mock_update_task.assert_called_once()
         self.assertEqual(mock_create_task.call_count, 1)
+
+    @patch('apps.sources.tasks.enrich_source_metadata.delay')
+    @patch('apps.sources.tasks.broadcast_source_created.delay')
+    def test_source_creation_triggers_metadata_enrichment(
+        self,
+        mock_broadcast: MagicMock,
+        mock_enrich: MagicMock
+    ) -> None:
+        """
+        Test: Source creation triggers metadata enrichment task (US-022).
+
+        Verifies:
+        - Signal handler enqueues enrich_source_metadata task when Source is created
+        - Task called with correct source_id argument
+        """
+        # Create source with DOI URL (triggers post_save signal with created=True)
+        source = Source.objects.create(
+            vault=self.vault,
+            url='https://doi.org/10.1234/example',
+            title='Test Research Paper',
+            description='Test description',
+            source_type='URL',
+            created_by=self.user
+        )
+
+        # Verify enrichment task was called once
+        mock_enrich.assert_called_once_with(source.id)
+
+        # Verify broadcast task also called
+        mock_broadcast.assert_called_once_with(source.id)
+
+    @patch('apps.sources.tasks.enrich_source_metadata.delay')
+    def test_source_update_does_not_trigger_enrichment(self, mock_enrich: MagicMock) -> None:
+        """
+        Test: Source update does NOT trigger metadata enrichment.
+
+        Verifies enrichment only happens on creation, not on updates.
+        """
+        # Create source first
+        source = Source.objects.create(
+            vault=self.vault,
+            url='https://doi.org/10.1234/example',
+            title='Test Research Paper',
+            description='Test description',
+            source_type='URL',
+            created_by=self.user
+        )
+
+        # Reset mock (clear create call)
+        mock_enrich.reset_mock()
+
+        # Update source
+        source.title = 'Updated Title'
+        source.save()
+
+        # Verify enrichment task was NOT called again
+        mock_enrich.assert_not_called()

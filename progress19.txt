@@ -1160,3 +1160,40 @@ In Progress - US-004 complete
   - Mutation.mutate() accepts single parameter (vaultId in this case)
 ---
 
+## Iteration 40 - US-041: Add Mute Vault Button to Vault Settings
+- Added Notification Settings section to VaultSettings component
+- Implemented toggle switch to mute/unmute vault notifications from vault settings page
+- Shows current mute status with Bell (enabled) and BellOff (muted) icons
+- Dynamic title and description based on mute status
+- Toggle switch styled with Bitcoin DeFi gradient (EA580C to F7931A) when enabled, dark (#1E293B) when muted
+- Created muteMutation and unmuteMutation using React Query useMutation
+- Mutations call muteVault(vaultId) and unmuteVault(vaultId) API functions
+- Invalidates muted-vaults query cache on success to refresh mute status
+- Shows success toast on mute/unmute with descriptive message
+- Shows error toast on failure
+- Added helpful note explaining personal vs global notification preferences
+- Link to global notification settings page (/settings/notifications)
+- Fetches muted vaults list to determine current mute status using useQuery
+- Checks if vault is muted by comparing vault IDs in mutedVaults array
+- Toggle button disabled during mutation (prevents double-clicks)
+- TypeScript typecheck passes with no errors
+- Backend tests pass (all notification tests passing)
+- Commit 09125df
+- Files changed:
+  - frontend/src/components/features/vaults/VaultSettings.tsx (added imports, state, mutations, UI section)
+  - PRD19.md (marked US-041 complete except browser verification)
+- Learnings for future iterations:
+  - Import both muteVault and unmuteVault API functions from @/lib/api
+  - Import React Query hooks: useQuery, useMutation, useQueryClient
+  - Query key for muted vaults: ['notifications', 'muted-vaults']
+  - Check mute status with .some() comparing vault IDs (convert to string for consistency)
+  - Single handleToggleMute function checks current state and calls appropriate mutation
+  - invalidateQueries refreshes data after mutation completes
+  - Add Bell and BellOff icons from lucide-react for visual indicators
+  - Toggle switch pattern: bg-gradient when enabled, bg-[#1E293B] when disabled
+  - translate-x-1 (off) vs translate-x-7 (on) for toggle circle animation
+  - Disabled state on toggle button during mutation: muteMutation.isPending || unmuteMutation.isPending
+  - Add helpful context notes in info boxes for better UX
+  - Link to related settings pages using Next.js <a> tags
+---
+

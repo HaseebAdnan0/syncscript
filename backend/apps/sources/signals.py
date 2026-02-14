@@ -20,13 +20,19 @@ def source_saved(sender, instance, created, **kwargs):
 
     Enqueues Celery tasks to broadcast source.created or source.updated
     events to all vault collaborators.
+
+    On source creation, also triggers metadata enrichment via DOI/ISBN lookup.
     """
-    from apps.sources.tasks import broadcast_source_created, broadcast_source_updated
+    from apps.sources.tasks import broadcast_source_created, broadcast_source_updated, enrich_source_metadata
 
     if created:
         # New source created - broadcast creation event
         logger.info(f"Source {instance.id} created in vault {instance.vault_id}, enqueueing broadcast task")
         broadcast_source_created.delay(instance.id)  # type: ignore[attr-defined]
+
+        # Trigger metadata enrichment (US-022)
+        logger.info(f"Enqueueing metadata enrichment task for source {instance.id}")
+        enrich_source_metadata.delay(instance.id)  # type: ignore[attr-defined]
     else:
         # Existing source updated - broadcast update event
         # Track changed fields for minimal updates

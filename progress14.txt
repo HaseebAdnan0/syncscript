@@ -957,3 +957,53 @@ Learnings for future iterations:
 - Author name parsing: handle both "Last, First" and "First Last" formats by checking for comma
 - Duplicate key handling: append a-z suffixes, then numeric if all letters exhausted
 ---
+
+## Iteration 24 - US-022: Add metadata enrichment on source creation
+- Created enrich_source_metadata() Celery task in apps/sources/tasks.py
+- Task detects DOI in source URL using normalize_doi() from apps/citations/services/doi_lookup
+- Task detects ISBN in source.metadata fields (isbn, isbn-10, isbn-13) using normalize_isbn()
+- Task fetches metadata from CrossRef (DOI) or OpenLibrary (ISBN)
+- Metadata merge strategy:
+  - Only adds fields that don't already exist in source.metadata (preserves user data)
+  - Updates title if fetched title is longer than existing (better completeness)
+  - Skips 'title' in metadata loop since it's a model field, not JSON metadata
+- Modified source_saved signal in apps/sources/signals.py to trigger enrichment on creation
+- Signal calls enrich_source_metadata.delay(source_id) after broadcast_source_created
+- Task creates audit log entry with action='source.metadata_enriched'
+- Created comprehensive tests in apps/sources/tests/test_enrichment.py:
+  - test_enrich_source_with_doi_url: Verifies DOI detection and metadata fetch
+  - test_enrich_source_with_isbn_metadata: Verifies ISBN detection in metadata
+  - test_enrich_does_not_overwrite_existing_metadata: Preserves user-provided data
+  - test_enrich_no_doi_or_isbn_returns_not_enriched: Handles missing identifiers
+  - test_enrich_updates_title_if_fetched_title_longer: Title update logic
+  - test_enrich_does_not_update_title_if_existing_longer: Preserves better titles
+  - test_enrich_source_not_found_returns_error: Error handling
+  - test_enrich_handles_api_failure_gracefully: API failure handling
+- Updated apps/sources/tests/test_signals.py:
+  - Fixed existing test patch paths (apps.sources.tasks, not apps.sources.signals)
+  - Fixed test_source_deleted_broadcasts_to_vault to use keyword arguments
+  - Added test_source_creation_triggers_metadata_enrichment
+  - Added test_source_update_does_not_trigger_enrichment
+- Tests: All 15 tests pass (8 enrichment + 7 signal tests)
+- Typecheck: 0 errors on new code (pre-existing errors in PDFUpload/FileUpload unrelated)
+- Files changed:
+  - backend/apps/sources/tasks.py (+174 lines, enrich_source_metadata task)
+  - backend/apps/sources/signals.py (+3 lines, trigger enrichment on create)
+  - backend/apps/sources/tests/test_signals.py (+57 lines, 2 new tests, fixed patches)
+  - backend/apps/sources/tests/test_enrichment.py (new, 361 lines, 8 tests)
+  - PRD14.md: Marked US-022 complete
+- Committed: (next)
+
+Learnings for future iterations:
+- Celery task imports: patch at the actual import location (apps.citations.services.doi_lookup, not apps.sources.tasks)
+- Signal task imports: tasks imported inside signal handler, not at module level
+- Keyword arguments in signals: broadcast_source_deleted uses source_id=, vault_id=, not positional args
+- Test mock call args: use mock.call_args.kwargs for keyword arguments
+- Metadata vs model fields: source.title is a model field, not in source.metadata JSON
+- Title update logic: check length to determine if fetched title is "better"
+- Skip fields in loop: use 'continue' to skip 'title' since it's handled separately
+- ISBN detection: check multiple metadata fields (isbn, isbn-10, isbn-13)
+- Preserve user data: only add fields that don't exist or are empty
+- Audit log action naming: use dot notation like 'source.metadata_enriched'
+---
+

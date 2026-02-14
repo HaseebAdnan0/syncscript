@@ -281,13 +281,13 @@ SyncScript's AI-powered citation generation system enables researchers to genera
 **Description:** As a researcher, I want sources with DOIs or ISBNs to automatically fetch metadata when added so citations are accurate from the start.
 
 **Acceptance Criteria:**
-- [ ] On source creation, detect DOI pattern in URL
-- [ ] On source creation, detect ISBN in metadata or for BOOK type
-- [ ] Trigger async task to fetch metadata from CrossRef/OpenLibrary
-- [ ] Merge fetched metadata into `source.metadata` (don't overwrite user entries)
-- [ ] Update source title if fetched title is better (longer, more complete)
-- [ ] Log enrichment in audit log
-- [ ] Typecheck passes
+- [x] On source creation, detect DOI pattern in URL
+- [x] On source creation, detect ISBN in metadata or for BOOK type
+- [x] Trigger async task to fetch metadata from CrossRef/OpenLibrary
+- [x] Merge fetched metadata into `source.metadata` (don't overwrite user entries)
+- [x] Update source title if fetched title is better (longer, more complete)
+- [x] Log enrichment in audit log
+- [x] Typecheck passes
 
 ## Non-Goals
 
