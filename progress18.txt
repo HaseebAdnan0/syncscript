@@ -4,3 +4,17 @@
 (Patterns discovered during implementation)
 
 ---
+
+## Iteration 1 - US-001: Add tsvector search columns to Source model
+- Added `search_vector` field to Source model using `SearchVectorField(null=True)`
+- Created migration 0004_add_search_vector_to_source with GIN index
+- Also added `ai_summary` and `extracted_text` fields that were in existing migrations
+- Files changed:
+  - backend/apps/sources/models.py (added SearchVectorField import, GinIndex import, search_vector field, GinIndex in Meta)
+  - backend/apps/sources/migrations/0004_add_search_vector_to_source.py (already existed)
+- Learnings for future iterations:
+  - PostgreSQL full-text search requires `django.contrib.postgres.search.SearchVectorField`
+  - GIN indexes are created using `django.contrib.postgres.indexes.GinIndex` in Meta.indexes
+  - Some migrations were already created in previous PRDs - check existing migrations before creating new ones
+  - Django check command confirms models are valid even if mypy shows warnings (Django models don't need type annotations on fields)
+---

@@ -21,13 +21,13 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a developer, I need a Notification model to store user notifications with type, content, and read status.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/notifications/models.py` with Notification model
-- [ ] Fields: `id`, `user` (FK), `type` (CharField with choices), `title`, `body`, `data` (JSONField), `read_at` (nullable DateTime), `created_at`
-- [ ] Type choices: `vault_invite`, `member_joined`, `source_added`, `annotation_reply`, `mention`
-- [ ] Add indexes on `user`, `read_at`, `created_at`
-- [ ] Generate and apply migration
-- [ ] Register in admin
-- [ ] Typecheck passes
+- [x] Create `apps/notifications/models.py` with Notification model
+- [x] Fields: `id`, `user` (FK), `type` (CharField with choices), `title`, `body`, `data` (JSONField), `read_at` (nullable DateTime), `created_at`
+- [x] Type choices: `vault_invite`, `member_joined`, `source_added`, `annotation_reply`, `mention`
+- [x] Add indexes on `user`, `read_at`, `created_at`
+- [x] Generate and apply migration
+- [x] Register in admin
+- [x] Typecheck passes
 
 ---
 

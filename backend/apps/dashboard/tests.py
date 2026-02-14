@@ -58,12 +58,14 @@ class DashboardStatsTests(TestCase):
         Annotation.objects.create(
             source=source1,
             user=self.user,
-            content='Recent annotation'
+            content='Recent annotation',
+            position={}
         )
         old_annotation = Annotation.objects.create(
             source=source2,
             user=self.user,
-            content='Old annotation'
+            content='Old annotation',
+            position={}
         )
         # Manually set created_at to 10 days ago
         old_annotation.created_at = timezone.now() - timedelta(days=10)

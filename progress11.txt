@@ -1,10 +1,33 @@
 # Progress Log - PRD 11: Production Email System & Verification
 
-## Status: Not Started
+## Status: In Progress
 
 ## Learnings
-(Patterns discovered during implementation)
+- Hostinger uses SSL (port 465) instead of TLS (port 587) for SMTP
+- Django requires `EMAIL_USE_SSL = True` for port 465 connections
+- Management commands need `management/commands/` directory structure with __init__.py files
+- django.contrib.postgres must be in INSTALLED_APPS for SearchVectorField
+- External changes (allauth) can interfere with task - use git checkout to clean state
 
+---
+
+## Iteration 1 - US-001: Configure Hostinger SMTP email backend
+- Updated config/settings.py with Hostinger SMTP defaults
+- Changed EMAIL_HOST to smtp.hostinger.com
+- Changed EMAIL_PORT from 587 to 465
+- Changed EMAIL_USE_TLS default to False
+- Added EMAIL_USE_SSL with default True
+- Created management command: test_email.py
+- Added django.contrib.postgres to INSTALLED_APPS
+- Files changed:
+  - backend/config/settings.py
+  - backend/apps/users/management/__init__.py (new)
+  - backend/apps/users/management/commands/__init__.py (new)
+  - backend/apps/users/management/commands/test_email.py (new)
+- Learnings for future iterations:
+  - Always run `python manage.py check` to catch configuration issues
+  - Use git stash/checkout to handle external file modifications
+  - Management commands follow Django's BaseCommand pattern
 ---
 
 ## Story Progress
