@@ -86,15 +86,15 @@ This PRD covers the full implementation: core infrastructure, event broadcasting
 **Description:** As a developer, I need the WebSocket consumer skeleton so clients can establish connections.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/vaults/consumers.py`
-- [ ] Implement `VaultConsumer` extending `AsyncWebsocketConsumer`
-- [ ] `connect()` extracts `vault_id` from URL kwargs
-- [ ] `connect()` checks user is authenticated (not AnonymousUser)
-- [ ] `connect()` verifies user has vault membership (any role)
-- [ ] On success: accept connection
-- [ ] On failure: send error JSON and close with code 1008
-- [ ] `disconnect()` handles cleanup
-- [ ] Typecheck passes
+- [x] Create `apps/vaults/consumers.py`
+- [x] Implement `VaultConsumer` extending `AsyncWebsocketConsumer`
+- [x] `connect()` extracts `vault_id` from URL kwargs
+- [x] `connect()` checks user is authenticated (not AnonymousUser)
+- [x] `connect()` verifies user has vault membership (any role)
+- [x] On success: accept connection
+- [x] On failure: send error JSON and close with code 1008
+- [x] `disconnect()` handles cleanup
+- [x] Typecheck passes
 
 ---
 
