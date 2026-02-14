@@ -149,3 +149,18 @@
   - Pre-existing error in notifications.ts was auto-fixed by linter (import path)
   - Typecheck passes after linter fix
 ---
+## Iteration 9 - US-009: Build login page UI
+- Verified login page already exists at frontend/src/app/(auth)/login/page.tsx
+- Files changed: None (file already existed from previous work)
+- Learnings for future iterations:
+  - Login page was already implemented with correct Bitcoin DeFi styling
+  - Uses GlassCard container with gradient title "Welcome Back"
+  - FormInput components for email and password fields
+  - Forgot password link points to /forgot-password
+  - GradientButton for "Sign In" submission
+  - Link to /register for new account creation
+  - Form is presentational only (no validation or submission logic)
+  - Component imports: GradientButton and GlassCard are default exports, FormInput is named export
+  - Typecheck passes successfully
+  - US-009 was already marked complete in PRD7.md
+---
