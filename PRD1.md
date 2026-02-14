@@ -468,13 +468,13 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a developer, I need integration tests for profile management.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/users/tests/test_profile.py`
-- [ ] Test GET profile returns current user data
-- [ ] Test PATCH updates allowed fields
-- [ ] Test PATCH rejects email/password changes
-- [ ] Test unauthenticated request returns 401
-- [ ] Test field length validation
-- [ ] All tests pass
+- [x] Create `apps/users/tests/test_profile.py`
+- [x] Test GET profile returns current user data
+- [x] Test PATCH updates allowed fields
+- [x] Test PATCH rejects email/password changes
+- [x] Test unauthenticated request returns 401
+- [x] Test field length validation
+- [x] All tests pass
 
 ---
 

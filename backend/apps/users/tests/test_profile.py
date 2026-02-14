@@ -78,7 +78,7 @@ class ProfileEndpointTests(TestCase):
         response = self.client.patch(self.profile_url, update_data, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn('Cannot change email or password', response.data['error'])
+        self.assertEqual(response.data['error'], 'Email and password cannot be changed through this endpoint.')
 
     def test_unauthenticated_request_returns_401(self):
         """Test unauthenticated requests to profile endpoint return 401."""
@@ -127,7 +127,7 @@ class ProfileEndpointTests(TestCase):
         response = self.client.patch(self.profile_url, update_data, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['avatar_url'], 'https://example.com/new-avatar.png')
+        self.assertEqual(response.data['user']['avatar_url'], 'https://example.com/new-avatar.png')
 
         # Verify other fields remained unchanged
         self.user.refresh_from_db()
