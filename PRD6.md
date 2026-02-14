@@ -163,12 +163,12 @@ Implement cloud file storage for SyncScript using Cloudflare R2 (S3-compatible).
 **Description:** As a developer, I need to recalculate vault storage usage when files change.
 
 **Acceptance Criteria:**
-- [ ] Create `update_vault_storage_usage(vault_id)` in `backend/apps/sources/utils.py`
-- [ ] Aggregate total_bytes and file_count from non-deleted PDFUploads
-- [ ] Calculate per-user breakdown as JSON
-- [ ] Update or create VaultStorageUsage record
-- [ ] Invalidate Redis cache key `vault_storage:{vault_id}`
-- [ ] Typecheck passes
+- [x] Create `update_vault_storage_usage(vault_id)` in `backend/apps/sources/utils.py`
+- [x] Aggregate total_bytes and file_count from non-deleted PDFUploads
+- [x] Calculate per-user breakdown as JSON
+- [x] Update or create VaultStorageUsage record
+- [x] Invalidate Redis cache key `vault_storage:{vault_id}`
+- [x] Typecheck passes
 
 ### US-015: Add storage fields to Vault API
 **Description:** As a vault owner, I want to see storage usage in vault details so I can manage resources.
