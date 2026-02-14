@@ -281,19 +281,19 @@ Create a comprehensive user dashboard as the primary logged-in landing page for 
 **Description:** As a developer, I need frontend API client functions for all dashboard endpoints so components can fetch data consistently.
 
 **Acceptance Criteria:**
-- [ ] Add to `frontend/src/lib/api.ts` or create `frontend/src/lib/api/dashboard.ts`
-- [ ] `getDashboardStats()` - fetches `/dashboard/stats/`
-- [ ] `getRecentVaults()` - fetches `/dashboard/recent-vaults/`
-- [ ] `getActivityFeed(limit?)` - fetches `/dashboard/activity/`
-- [ ] `getSourcesTimeline()` - fetches `/dashboard/analytics/sources-timeline/`
-- [ ] `getSourceTypes()` - fetches `/dashboard/analytics/source-types/`
-- [ ] `getTopCollaborators()` - fetches `/dashboard/analytics/top-collaborators/`
-- [ ] `getNotifications()` - fetches `/notifications/`
-- [ ] `getUnreadCount()` - fetches `/notifications/unread-count/`
-- [ ] `markNotificationRead(id)` - POST to `/notifications/{id}/mark-read/`
-- [ ] `markAllNotificationsRead()` - POST to `/notifications/mark-all-read/`
-- [ ] All functions handle errors appropriately
-- [ ] Typecheck passes
+- [x] Add to `frontend/src/lib/api.ts` or create `frontend/src/lib/api/dashboard.ts`
+- [x] `getDashboardStats()` - fetches `/dashboard/stats/`
+- [x] `getRecentVaults()` - fetches `/dashboard/recent-vaults/`
+- [x] `getActivityFeed(limit?)` - fetches `/dashboard/activity/`
+- [x] `getSourcesTimeline()` - fetches `/dashboard/analytics/sources-timeline/`
+- [x] `getSourceTypes()` - fetches `/dashboard/analytics/source-types/`
+- [x] `getTopCollaborators()` - fetches `/dashboard/analytics/top-collaborators/`
+- [x] `getNotifications()` - fetches `/notifications/`
+- [x] `getUnreadCount()` - fetches `/notifications/unread-count/`
+- [x] `markNotificationRead(id)` - POST to `/notifications/{id}/mark-read/`
+- [x] `markAllNotificationsRead()` - POST to `/notifications/mark-all-read/`
+- [x] All functions handle errors appropriately
+- [x] Typecheck passes
 
 ### US-021: Add React Query hooks for dashboard data
 **Description:** As a developer, I need React Query hooks for dashboard data so components have consistent caching and loading states.

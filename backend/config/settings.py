@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.postgres',
+    'django.contrib.sites',
 
     # Third-party apps
     'rest_framework',
@@ -293,6 +294,9 @@ INSTALLED_APPS += [
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.github',
 ]
+
+# Required for django.contrib.sites (needed by allauth)
+SITE_ID = 1
 
 # Add allauth middleware
 _msg_middleware_idx = MIDDLEWARE.index('django.contrib.messages.middleware.MessageMiddleware')

@@ -447,3 +447,32 @@
 - Typecheck passes with no errors
 - Ready for browser verification
 
+
+## Iteration 20 - US-020: Create API client functions for dashboard
+- Created comprehensive dashboard API client with TypeScript types
+- Files changed:
+  - frontend/src/lib/api/dashboard.ts (new file with all dashboard API functions)
+  - PRD17.md (marked US-020 complete)
+- Learnings for future iterations:
+  - Followed existing API client pattern from vaults.ts and notifications.ts
+  - Created TypeScript interfaces for all response types (DashboardStats, RecentVault, ActivityFeedItem, etc.)
+  - All functions use axios api instance with automatic auth header injection
+  - Error handling is automatic via axios interceptors (401 refresh, etc.)
+  - Notification functions re-exported from notifications.ts for convenience
+  - getDashboardStats() - returns vaults_count, sources_count, annotations_this_week
+  - getRecentVaults() - returns array of 3 most recent vaults with metadata
+  - getActivityFeed(limit?) - returns activity items with optional limit param (default 10, max 50)
+  - getSourcesTimeline() - returns 30-day timeline data points (date + count)
+  - getSourceTypes() - returns source type breakdown (type, count, percentage)
+  - getTopCollaborators() - returns top 5 collaborators (user_id, name, avatar, contributions)
+  - All functions properly typed with TypeScript interfaces
+  - Typecheck passes with no errors
+---
+
+## What Worked
+- Dashboard API client created following project conventions
+- All 11 API functions implemented with proper TypeScript types
+- Error handling automatic via existing axios interceptors
+- Notification functions re-exported for single import point
+- Typecheck passes with no errors
+
