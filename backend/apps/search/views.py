@@ -9,6 +9,8 @@ from rest_framework.response import Response
 from apps.sources.models import Source
 from apps.annotations.models import Annotation
 from apps.vaults.models import Vault
+from .models import SearchHistory
+from .serializers import SearchHistorySerializer
 
 
 @api_view(['GET'])

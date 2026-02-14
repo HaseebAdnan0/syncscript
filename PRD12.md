@@ -148,14 +148,14 @@ Add social authentication to SyncScript using Google and GitHub OAuth providers.
 **Description:** As a user with a private GitHub email, I need to provide my email to complete registration.
 
 **Acceptance Criteria:**
-- [ ] Create `POST /api/v1/auth/oauth/complete-email/` endpoint
-- [ ] Accept JSON body: `{ email: string, temp_token: string }`
-- [ ] Validate temp_token matches session data
-- [ ] Validate email format and uniqueness
-- [ ] If email exists: return `link_required=true` for linking flow
-- [ ] If email is new: create User + SocialAccount, generate JWT, return tokens
-- [ ] Clear session data after completion
-- [ ] Typecheck passes
+- [x] Create `POST /api/v1/auth/oauth/complete-email/` endpoint
+- [x] Accept JSON body: `{ email: string, temp_token: string }`
+- [x] Validate temp_token matches session data
+- [x] Validate email format and uniqueness
+- [x] If email exists: return `link_required=true` for linking flow
+- [x] If email is new: create User + SocialAccount, generate JWT, return tokens
+- [x] Clear session data after completion
+- [x] Typecheck passes
 
 ---
 
