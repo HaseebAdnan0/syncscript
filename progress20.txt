@@ -122,3 +122,22 @@
   - Include refetch method for manual state refresh scenarios
   - API imports require proper type imports from lib/types
 ---
+
+## Iteration 8 - Create WelcomeModal component (US-008)
+- Verified US-008 was already completed in a previous commit (de6f33a or earlier)
+- WelcomeModal.tsx already exists at frontend/src/components/features/onboarding/WelcomeModal.tsx
+- Component features:
+  - Gradient welcome heading "Welcome to SyncScript, {userName}!"
+  - 3 feature highlight cards with icons (Database, Users, FileText)
+  - Glass morphism aesthetic (bg-[#0F1115], border border-white/10, backdrop-blur-lg)
+  - Responsive grid (3 cols desktop, 1 col mobile with md: breakpoint)
+  - GradientButton CTA styled per Bitcoin DeFi design system
+- PRD20.md already marked task as [x] complete
+- Typecheck passes
+- No commit needed (already in git history)
+- Learnings for future iterations:
+  - Always check git log and HEAD commit before implementing tasks
+  - Use `git show HEAD:path/to/file` to verify file contents in latest commit
+  - PRD may already have tasks marked complete from previous iterations
+  - Pattern: Check git status AND git show HEAD before creating files
+---

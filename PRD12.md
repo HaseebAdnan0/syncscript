@@ -163,11 +163,11 @@ Add social authentication to SyncScript using Google and GitHub OAuth providers.
 **Description:** As an authenticated user, I want to see which OAuth providers are connected to my account.
 
 **Acceptance Criteria:**
-- [ ] Create `GET /api/v1/auth/oauth/connected/` endpoint (requires auth)
-- [ ] Return list of connected providers: `[{ provider: string, connected_at: datetime, email: string }]`
-- [ ] Include provider-specific data: Google profile picture, GitHub username
-- [ ] Return empty array if no OAuth providers connected
-- [ ] Typecheck passes
+- [x] Create `GET /api/v1/auth/oauth/connected/` endpoint (requires auth)
+- [x] Return list of connected providers: `[{ provider: string, connected_at: datetime, email: string }]`
+- [x] Include provider-specific data: Google profile picture, GitHub username
+- [x] Return empty array if no OAuth providers connected
+- [x] Typecheck passes
 
 ---
 

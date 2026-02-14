@@ -261,3 +261,32 @@ vaults/{vault_id}/thumbnails/{uuid}.jpg
   - URL patterns loaded successfully
 
 ---
+
+## Iteration 10 - Add storage quota warning logic (US-010)
+- Added storage quota settings to backend/config/settings.py:
+  - `VAULT_STORAGE_LIMIT = 1 * 1024 * 1024 * 1024` (1GB)
+  - `VAULT_STORAGE_WARNING_THRESHOLD = 0.8` (80%)
+- Created `apps/sources/services/storage_quota.py`:
+  - Defined `StorageQuotaResult` TypedDict with fields: used_bytes, limit_bytes, percentage, warning, exceeded
+  - Implemented `check_storage_quota(vault_id) -> StorageQuotaResult` function
+  - Function gets or creates VaultStorageUsage record
+  - Calculates usage percentage (used_bytes / limit_bytes)
+  - Returns warning=True when usage >= 80%
+  - Returns exceeded=True when usage >= 100%
+- Verified implementation:
+  - Function imports successfully in Django shell
+  - Function signature correct: `(vault_id: int) -> StorageQuotaResult`
+  - Settings loaded correctly (1073741824 bytes = 1GB)
+  - Django system checks pass (only security warnings, no errors)
+- Files changed:
+  - backend/config/settings.py
+  - backend/apps/sources/services/storage_quota.py
+  - PRD13.md
+  - progress13.txt
+- Learnings for future iterations:
+  - VaultStorageUsage has OneToOne relationship with Vault
+  - get_or_create works well for ensuring storage record exists
+  - TypedDict provides type hints for dictionary returns
+  - Storage quota check is ready to be used in upload views (US-011)
+
+---

@@ -154,12 +154,12 @@ Enhance SyncScript's file storage system to production-ready status with Cloudfl
 **Description:** As a vault owner, I want warnings when storage approaches the 1GB limit.
 
 **Acceptance Criteria:**
-- [ ] Add `VAULT_STORAGE_LIMIT = 1 * 1024 * 1024 * 1024` (1GB) to settings
-- [ ] Add `VAULT_STORAGE_WARNING_THRESHOLD = 0.8` (80%) to settings
-- [ ] Create `check_storage_quota(vault_id) -> dict` in `apps/sources/services/storage_quota.py`
-- [ ] Returns: `{ "used_bytes", "limit_bytes", "percentage", "warning": bool, "exceeded": bool }`
-- [ ] Warning is True when usage >= 80%
-- [ ] Typecheck passes
+- [x] Add `VAULT_STORAGE_LIMIT = 1 * 1024 * 1024 * 1024` (1GB) to settings
+- [x] Add `VAULT_STORAGE_WARNING_THRESHOLD = 0.8` (80%) to settings
+- [x] Create `check_storage_quota(vault_id) -> dict` in `apps/sources/services/storage_quota.py`
+- [x] Returns: `{ "used_bytes", "limit_bytes", "percentage", "warning": bool, "exceeded": bool }`
+- [x] Warning is True when usage >= 80%
+- [x] Typecheck passes
 
 ---
 
