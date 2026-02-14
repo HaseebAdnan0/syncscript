@@ -161,9 +161,9 @@ class PDFUploadViewSet(viewsets.ModelViewSet):
         pdf_upload.file = file_key  # Update with actual S3 key if different
         pdf_upload.save()
 
-        # TODO: Trigger Celery task for post-processing
-        # from .tasks import process_uploaded_pdf
-        # process_uploaded_pdf.delay(str(pdf_upload.id))
+        # Trigger Celery task for post-processing
+        from .tasks import process_uploaded_pdf
+        process_uploaded_pdf.delay(str(pdf_upload.id))
 
         return Response({
             'pdf_id': pdf_upload.id,

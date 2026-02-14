@@ -312,13 +312,13 @@ Establish the Next.js 16 frontend foundation for SyncScript with a Bitcoin DeFi-
 **Description:** As a developer, I want ESLint and Prettier configured so that code style is consistent.
 
 **Acceptance Criteria:**
-- [ ] Update ESLint config (`.eslintrc.json` or `eslint.config.mjs` for flat config):
+- [x] Update ESLint config (`.eslintrc.json` or `eslint.config.mjs` for flat config):
   - Extends: `next/core-web-vitals`, `next/typescript`
   - Rules:
     - `"@typescript-eslint/no-unused-vars": "warn"`
     - `"@typescript-eslint/no-explicit-any": "warn"`
     - `"react/no-unescaped-entities": "off"`
-- [ ] Create `.prettierrc`:
+- [x] Create `.prettierrc`:
   ```json
   {
     "semi": true,
@@ -328,7 +328,7 @@ Establish the Next.js 16 frontend foundation for SyncScript with a Bitcoin DeFi-
     "printWidth": 100
   }
   ```
-- [ ] Add package.json scripts:
+- [x] Add package.json scripts:
   ```json
   {
     "lint": "next lint",
@@ -336,9 +336,9 @@ Establish the Next.js 16 frontend foundation for SyncScript with a Bitcoin DeFi-
     "type-check": "tsc --noEmit"
   }
   ```
-- [ ] `npm run lint` passes
-- [ ] `npm run type-check` passes
-- [ ] Typecheck passes
+- [x] `npm run lint` passes
+- [x] `npm run type-check` passes
+- [x] Typecheck passes
 
 ---
 

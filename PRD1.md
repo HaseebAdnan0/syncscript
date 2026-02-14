@@ -217,14 +217,14 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a user, I want to login with email/password to receive JWT tokens.
 
 **Acceptance Criteria:**
-- [ ] Add LoginView to `apps/users/views.py`
-- [ ] POST /api/v1/auth/login/ accepts email and password
-- [ ] Authenticate using Django's authenticate()
-- [ ] Check email_verified status (reject if not verified)
-- [ ] Generate access and refresh tokens using SimpleJWT
-- [ ] Return tokens and user data
-- [ ] Apply @ratelimit decorator (5/min per IP)
-- [ ] Typecheck passes
+- [x] Add LoginView to `apps/users/views.py`
+- [x] POST /api/v1/auth/login/ accepts email and password
+- [x] Authenticate using Django's authenticate()
+- [x] Check email_verified status (reject if not verified)
+- [x] Generate access and refresh tokens using SimpleJWT
+- [x] Return tokens and user data
+- [x] Apply @ratelimit decorator (5/min per IP)
+- [x] Typecheck passes
 
 ---
 

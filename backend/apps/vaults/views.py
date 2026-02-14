@@ -6,6 +6,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 
 from .models import Vault
+from .permissions import IsVaultOwner
 from .serializers import VaultSerializer
 
 
@@ -25,6 +26,15 @@ class VaultViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['is_archived']
     ordering_fields = ['created_at', 'name']
+
+    def get_permissions(self):
+        """
+        Return different permissions based on action.
+        Mutations (update, partial_update, destroy) require owner permissions.
+        """
+        if self.action in ['update', 'partial_update', 'destroy']:
+            return [IsVaultOwner()]
+        return [IsAuthenticated()]
 
     def get_queryset(self):
         """Return vaults owned by or accessible to the current user."""

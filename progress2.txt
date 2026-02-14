@@ -210,3 +210,17 @@
   - PageNumberPagination class reference (not instance) for DRF pagination
 ---
 
+## Iteration 17 - US-016: Add role filter to vault list
+- Added role filtering to VaultViewSet.get_queryset()
+- Users can now filter vaults by their role using ?role=OWNER, ?role=CONTRIBUTOR, or ?role=VIEWER
+- Files changed:
+  - backend/apps/vaults/views.py (added role query param filtering logic)
+  - PRD2.md (marked US-016 as complete)
+- Django check passed with no issues
+- Learnings for future iterations:
+  - Filter on vaultmembership__user and vaultmembership__role using double underscore notation for foreign key lookups
+  - Need .distinct() after role filtering to avoid duplicates when filtering on ManyToMany through model
+  - Query params accessed via self.request.query_params.get('role')
+  - Filter is optional - only applied if role param is present in request
+---
+

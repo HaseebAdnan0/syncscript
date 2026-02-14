@@ -3,6 +3,8 @@ Celery configuration for SyncScript.
 
 This module initializes the Celery application for background task processing.
 """
+from __future__ import absolute_import, unicode_literals
+
 import os
 from celery import Celery
 

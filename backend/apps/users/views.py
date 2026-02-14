@@ -7,11 +7,13 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.tokens import RefreshToken
 from django_ratelimit.decorators import ratelimit
 from django.utils.decorators import method_decorator
 from django.utils import timezone
 from django.core.mail import send_mail
 from django.conf import settings
+from django.contrib.auth import authenticate
 
 from .models import User
 from .serializers import (
@@ -268,5 +270,52 @@ class VerifyEmailView(APIView):
 
         return Response({
             'message': 'Email verified successfully. You can now log in.',
+            'user': UserSerializer(user).data
+        }, status=status.HTTP_200_OK)
+
+
+@method_decorator(ratelimit(key='ip', rate='5/m', method='POST', block=True), name='dispatch')
+class LoginView(APIView):
+    """
+    Login with email and password to receive JWT tokens (US-016).
+
+    POST /api/v1/auth/login/
+    Rate limited to 5 attempts per minute per IP.
+    Authenticates user and checks email_verified status before issuing tokens.
+    """
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        """Authenticate user and return JWT tokens."""
+        email = request.data.get('email')
+        password = request.data.get('password')
+
+        if not email or not password:
+            return Response({
+                'error': 'Email and password are required.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Authenticate using Django's authenticate()
+        user = authenticate(request, username=email, password=password)
+
+        if user is None:
+            return Response({
+                'error': 'Invalid email or password.'
+            }, status=status.HTTP_401_UNAUTHORIZED)
+
+        # Check email_verified status
+        if not user.email_verified:
+            return Response({
+                'error': 'Email not verified. Please check your email for the verification link.'
+            }, status=status.HTTP_403_FORBIDDEN)
+
+        # Generate access and refresh tokens using SimpleJWT
+        refresh = RefreshToken.for_user(user)
+        access = refresh.access_token
+
+        # Return tokens and user data
+        return Response({
+            'access': str(access),
+            'refresh': str(refresh),
             'user': UserSerializer(user).data
         }, status=status.HTTP_200_OK)

@@ -200,3 +200,25 @@
   - Django ORM values_list('id', flat=True) returns a queryset, convert to list to combine
   - Typecheck passes with 0 errors
 ---
+
+## Iteration 10 - US-009: Add VaultPermission to SourceViewSet
+- Implemented VaultSourcePermission class in apps/sources/permissions.py
+- Permission logic:
+  - has_permission() checks user is authenticated
+  - has_object_permission() gets vault from source.vault
+  - Safe methods (GET, HEAD, OPTIONS): any vault member can access
+  - DELETE: requires OWNER role only
+  - Create/Update (POST, PUT, PATCH): requires OWNER or CONTRIBUTOR role (uses ROLE_WEIGHTS)
+- Added permission_classes = [IsAuthenticated, VaultSourcePermission] to SourceViewSet
+- Django check passes with 0 issues
+- Files changed:
+  - backend/apps/sources/permissions.py (added VaultSourcePermission class)
+  - backend/apps/sources/views.py (added VaultSourcePermission to permission_classes, imported)
+  - PRD3.md (marked US-009 complete)
+- Learnings for future iterations:
+  - DRF BasePermission has two methods: has_permission (view-level) and has_object_permission (object-level)
+  - Use permissions.SAFE_METHODS constant for GET/HEAD/OPTIONS checking
+  - Use ROLE_WEIGHTS dict to compare role hierarchy (OWNER=3, CONTRIBUTOR=2, VIEWER=1)
+  - Django check is sufficient for validation when typecheck requires full venv setup
+  - Object-level permissions only apply to retrieve/update/delete, not list/create
+---

@@ -114,12 +114,12 @@ This PRD covers the full implementation: core infrastructure, event broadcasting
 **Description:** As a developer, I need to track active users per vault so clients can display who's online.
 
 **Acceptance Criteria:**
-- [ ] On connect, add user to Redis sorted set `vault_{id}:presence` with timestamp score
-- [ ] On disconnect, remove user from sorted set
-- [ ] Create helper function to fetch presence list with user details
-- [ ] Enrich presence data with username from database
-- [ ] Calculate status: `active` (<60s), `idle` (60-300s)
-- [ ] Typecheck passes
+- [x] On connect, add user to Redis sorted set `vault_{id}:presence` with timestamp score
+- [x] On disconnect, remove user from sorted set
+- [x] Create helper function to fetch presence list with user details
+- [x] Enrich presence data with username from database
+- [x] Calculate status: `active` (<60s), `idle` (60-300s)
+- [x] Typecheck passes
 
 ---
 

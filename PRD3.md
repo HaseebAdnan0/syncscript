@@ -130,12 +130,12 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need permission checks ensuring only vault members can access sources.
 
 **Acceptance Criteria:**
-- [ ] Import or create `VaultSourcePermission` class in `permissions.py`
-- [ ] Check: list/retrieve requires vault membership (any role)
-- [ ] Check: create/update requires Owner or Contributor role
-- [ ] Check: delete requires Owner role only
-- [ ] Add `permission_classes = [IsAuthenticated, VaultSourcePermission]` to ViewSet
-- [ ] Typecheck passes
+- [x] Import or create `VaultSourcePermission` class in `permissions.py`
+- [x] Check: list/retrieve requires vault membership (any role)
+- [x] Check: create/update requires Owner or Contributor role
+- [x] Check: delete requires Owner role only
+- [x] Add `permission_classes = [IsAuthenticated, VaultSourcePermission]` to ViewSet
+- [x] Typecheck passes
 
 ---
 

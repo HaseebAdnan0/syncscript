@@ -224,3 +224,24 @@ Learnings for future iterations:
 - Multiple Ralph processes can run in parallel causing git lock contention
 ---
 
+## Iteration 13 - Create VerifyEmailView endpoint (US-015)
+- Created VerifyEmailView as class-based APIView in apps/users/views.py
+- POST /api/v1/auth/verify-email/ accepts token in request body
+- Validates token using verify_token() from tokens.py module
+- Sets user.email_verified = True on successful validation
+- Returns success message with UserSerializer data or error message
+- Applied @method_decorator with @ratelimit(key='ip', rate='10/m', method='POST', block=True)
+- Django system check passes
+
+Files changed:
+- backend/apps/users/views.py (added VerifyEmailView class, imported verify_token)
+- PRD1.md (marked US-015 complete)
+
+Learnings for future iterations:
+- verify_token() handles token validation, expiration check, and deletion automatically
+- verify_token() returns User instance if valid, None if invalid/expired
+- Always check for None when token is invalid (not raise exception)
+- user.save(update_fields=['email_verified']) is efficient for single field update
+- Rate limit of 10/m matches acceptance criteria (higher than login to allow retries)
+---
+

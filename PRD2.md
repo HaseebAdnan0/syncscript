@@ -190,10 +190,10 @@ Create a secure, collaborative Knowledge Vault system where researchers can crea
 **Description:** As a system, I need to restrict update/delete to owners only.
 
 **Acceptance Criteria:**
-- [ ] `get_permissions` returns [IsVaultOwner()] for update, partial_update, destroy actions
-- [ ] Other actions use IsAuthenticated
-- [ ] Non-owners get 403 Forbidden on PATCH/DELETE
-- [ ] Typecheck passes
+- [x] `get_permissions` returns [IsVaultOwner()] for update, partial_update, destroy actions
+- [x] Other actions use IsAuthenticated
+- [x] Non-owners get 403 Forbidden on PATCH/DELETE
+- [x] Typecheck passes
 
 ### US-018: Add archive action to VaultViewSet
 **Description:** As a vault owner, I want to archive completed vaults for decluttering.
