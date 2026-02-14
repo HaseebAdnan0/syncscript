@@ -101,3 +101,43 @@ export interface VaultInsights {
   suggested_searches: string[];
   generated_at: string;
 }
+
+// Chat/Conversation types
+export interface ChatCitation {
+  source_id: number;
+  source_title: string;
+  excerpt: string;
+}
+
+export interface ChatMessage {
+  id: number;
+  role: 'user' | 'assistant';
+  content: string;
+  sources_cited: ChatCitation[];
+  created_at: string;
+}
+
+export interface Conversation {
+  id: number;
+  vault_id: number;
+  user_id: number;
+  created_at: string;
+  updated_at: string;
+  message_count: number;
+  preview: string;
+}
+
+export interface ConversationDetail extends Conversation {
+  messages: ChatMessage[];
+}
+
+export interface AskQuestionRequest {
+  question: string;
+  conversation_id?: number;
+}
+
+export interface AskQuestionResponse {
+  answer: string;
+  citations: ChatCitation[];
+  conversation_id: number;
+}

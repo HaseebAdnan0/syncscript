@@ -621,3 +621,31 @@ Learnings for future iterations:
 - max-w-[75%] prevents messages from spanning full width for better chat bubble aesthetics
 - whitespace-pre-wrap preserves line breaks in message content
 ---
+
+## Iteration 21 - US-020: Create ChatHistory sidebar
+- Created ChatHistory component for displaying conversation history
+- Implemented "New Chat" button at top with orange gradient styling and Plus icon
+- Conversation list showing preview text with line-clamp-2 truncation
+- Active conversation highlighted with orange gradient border and background
+- Relative timestamp function: "Just now", "Xm ago", "Xh ago", "Xd ago", or date
+- Empty state with MessageSquare icon and helpful guidance text
+- Full-height layout with flex-col, overflow-y-auto for scrolling
+- Bitcoin DeFi design: glass cards (bg-[#0F1115]), orange accents, border transitions on hover
+- All props fully typed: vaultId (unused until US-021), conversations[], activeId, onSelect, onNewChat
+- Typecheck passes successfully
+- Commit successful: c45e4d8
+
+Files changed:
+- frontend/src/components/features/ai/ChatHistory.tsx (created)
+- PRD15.md (marked US-020 complete)
+
+Learnings for future iterations:
+- Relative time calculation: compare timestamps and format based on elapsed time ranges
+- Active conversation highlight: gradient border + gradient background for emphasis
+- line-clamp-2 utility class truncates preview text to 2 lines with ellipsis
+- Empty state should encourage action: guide users to start new chat
+- Conversation list needs overflow-y-auto with flex-1 to scroll within fixed height container
+- New Chat button uses full gradient (from-[#EA580C] to-[#F7931A]) for prominence
+- Border transitions on hover improve interaction feedback (border-[#F7931A]/30)
+- TypeScript unused param: vaultId will be used in US-021 for API integration
+---

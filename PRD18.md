@@ -448,14 +448,14 @@ Implement a global full-text search system for SyncScript that enables researche
 **Description:** As a user, I want pagination on the search page so I can browse through many results.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/search/SearchPagination.tsx`
-- [ ] Shows current page / total pages
-- [ ] Previous/Next buttons
-- [ ] Page number buttons for nearby pages
-- [ ] Updates URL with page param
-- [ ] Scrolls to top on page change
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/features/search/SearchPagination.tsx`
+- [x] Shows current page / total pages
+- [x] Previous/Next buttons
+- [x] Page number buttons for nearby pages
+- [x] Updates URL with page param
+- [x] Scrolls to top on page change
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 

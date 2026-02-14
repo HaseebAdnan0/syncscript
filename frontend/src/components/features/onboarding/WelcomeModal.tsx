@@ -14,12 +14,12 @@ interface WelcomeModalProps {
 const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, userName, onGetStarted }) => {
   return (
     <Dialog open={isOpen} onOpenChange={() => {}}>
-      <DialogContent className="max-w-2xl bg-[#0F1115] border border-white/10 backdrop-blur-lg sm:max-w-[90vw]">
+      <DialogContent className="max-w-2xl bg-[#0F1115] border border-white/10 backdrop-blur-lg max-md:w-screen max-md:h-screen max-md:max-w-none max-md:rounded-none max-md:p-8">
         <DialogHeader>
-          <h2 className="text-4xl font-bold text-center mb-2 bg-gradient-to-r from-[#F7931A] to-[#FFD600] bg-clip-text text-transparent">
+          <h2 className="text-2xl md:text-4xl font-bold text-center mb-2 bg-gradient-to-r from-[#F7931A] to-[#FFD600] bg-clip-text text-transparent">
             Welcome to SyncScript, {userName}!
           </h2>
-          <p className="text-[#94A3B8] text-center text-lg mt-2">
+          <p className="text-[#94A3B8] text-center text-base md:text-lg mt-2">
             Your collaborative research & citation engine is ready
           </p>
         </DialogHeader>
@@ -30,7 +30,7 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, userName, onGetStar
             <div className="w-12 h-12 rounded-full bg-gradient-to-r from-[#EA580C] to-[#F7931A] flex items-center justify-center mb-4 shadow-[0_0_20px_-5px_rgba(234,88,12,0.5)]">
               <Database className="w-6 h-6 text-white" />
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">Knowledge Vaults</h3>
+            <h3 className="text-lg md:text-xl font-bold text-white mb-2">Knowledge Vaults</h3>
             <p className="text-[#94A3B8] text-sm">
               Organize your research in secure, shareable vaults with verified sources and cross-referenced citations.
             </p>
@@ -41,7 +41,7 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, userName, onGetStar
             <div className="w-12 h-12 rounded-full bg-gradient-to-r from-[#EA580C] to-[#F7931A] flex items-center justify-center mb-4 shadow-[0_0_20px_-5px_rgba(234,88,12,0.5)]">
               <Users className="w-6 h-6 text-white" />
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">Real-time Collaboration</h3>
+            <h3 className="text-lg md:text-xl font-bold text-white mb-2">Real-time Collaboration</h3>
             <p className="text-[#94A3B8] text-sm">
               Work together with your team in real-time. Share insights, discuss findings, and build knowledge together.
             </p>
@@ -52,7 +52,7 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, userName, onGetStar
             <div className="w-12 h-12 rounded-full bg-gradient-to-r from-[#EA580C] to-[#F7931A] flex items-center justify-center mb-4 shadow-[0_0_20px_-5px_rgba(234,88,12,0.5)]">
               <FileText className="w-6 h-6 text-white" />
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">Annotations & Citations</h3>
+            <h3 className="text-lg md:text-xl font-bold text-white mb-2">Annotations & Citations</h3>
             <p className="text-[#94A3B8] text-sm">
               Annotate PDFs, manage citations, and extract metadata automatically with AI-powered tools.
             </p>
@@ -60,7 +60,7 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, userName, onGetStar
         </div>
 
         <div className="flex justify-center mt-6">
-          <GradientButton onClick={onGetStarted} className="px-8 py-4 text-lg">
+          <GradientButton onClick={onGetStarted} className="px-8 py-4 text-base md:text-lg min-h-[44px]">
             Let's Get Started
           </GradientButton>
         </div>

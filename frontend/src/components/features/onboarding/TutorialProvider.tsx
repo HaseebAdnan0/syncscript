@@ -55,7 +55,7 @@ export function TutorialProvider({
       overlayColor: 'rgba(3, 3, 4, 0.8)', // True Void with opacity
       primaryColor: '#F7931A', // Bitcoin Orange
       textColor: '#FFFFFF', // Pure Light
-      width: 380,
+      width: typeof window !== 'undefined' && window.innerWidth < 768 ? 300 : 380,
       zIndex: 10000,
     },
     tooltip: {
@@ -64,7 +64,7 @@ export function TutorialProvider({
       border: '1px solid rgba(255, 255, 255, 0.1)',
       backdropFilter: 'blur(16px)',
       boxShadow: '0 0 30px -5px rgba(247, 147, 26, 0.3)',
-      padding: '1.5rem',
+      padding: typeof window !== 'undefined' && window.innerWidth < 768 ? '1rem' : '1.5rem',
     },
     tooltipContainer: {
       textAlign: 'left',

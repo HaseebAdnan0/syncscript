@@ -236,27 +236,27 @@ const GuidedVaultWizard: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-6">
+    <div className="w-full max-w-2xl mx-auto p-4 md:p-6">
       {/* Progress Indicator */}
-      <div className="mb-8">
-        <div className="flex items-center justify-center gap-2 mb-2">
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
+      <div className="mb-6 md:mb-8">
+        <div className="flex items-center justify-center gap-1.5 md:gap-2 mb-2">
+          <div className={`w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center font-bold text-xs md:text-sm ${
             currentStep >= 1
               ? 'bg-gradient-to-r from-[#EA580C] to-[#F7931A] text-white'
               : 'bg-white/10 text-[#94A3B8]'
           }`}>
             1
           </div>
-          <div className={`w-16 h-1 ${currentStep >= 2 ? 'bg-gradient-to-r from-[#EA580C] to-[#F7931A]' : 'bg-white/10'}`} />
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
+          <div className={`w-12 md:w-16 h-1 ${currentStep >= 2 ? 'bg-gradient-to-r from-[#EA580C] to-[#F7931A]' : 'bg-white/10'}`} />
+          <div className={`w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center font-bold text-xs md:text-sm ${
             currentStep >= 2
               ? 'bg-gradient-to-r from-[#EA580C] to-[#F7931A] text-white'
               : 'bg-white/10 text-[#94A3B8]'
           }`}>
             2
           </div>
-          <div className={`w-16 h-1 ${currentStep >= 3 ? 'bg-gradient-to-r from-[#EA580C] to-[#F7931A]' : 'bg-white/10'}`} />
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
+          <div className={`w-12 md:w-16 h-1 ${currentStep >= 3 ? 'bg-gradient-to-r from-[#EA580C] to-[#F7931A]' : 'bg-white/10'}`} />
+          <div className={`w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center font-bold text-xs md:text-sm ${
             currentStep >= 3
               ? 'bg-gradient-to-r from-[#EA580C] to-[#F7931A] text-white'
               : 'bg-white/10 text-[#94A3B8]'
@@ -269,9 +269,9 @@ const GuidedVaultWizard: React.FC = () => {
 
       {/* Step 1: Name Vault */}
       {currentStep === 1 && (
-        <div className="bg-[#0F1115] border border-white/10 rounded-2xl p-8">
-          <h2 className="text-3xl font-bold text-white mb-2">Name Your Vault</h2>
-          <p className="text-[#94A3B8] mb-8">
+        <div className="bg-[#0F1115] border border-white/10 rounded-2xl p-6 md:p-8">
+          <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">Name Your Vault</h2>
+          <p className="text-sm md:text-base text-[#94A3B8] mb-6 md:mb-8">
             Give your knowledge vault a descriptive name. You can always change this later.
           </p>
 
@@ -296,6 +296,7 @@ const GuidedVaultWizard: React.FC = () => {
               onClick={handleStep1Next}
               disabled={!vaultName.trim() || isSubmitting}
               isLoading={isSubmitting}
+              className="min-h-[44px]"
             >
               Next
             </GradientButton>
@@ -310,9 +311,9 @@ const GuidedVaultWizard: React.FC = () => {
 
       {/* Step 2: Add Source */}
       {currentStep === 2 && (
-        <div className="bg-[#0F1115] border border-white/10 rounded-2xl p-8">
-          <h2 className="text-3xl font-bold text-white mb-2">Add Your First Source</h2>
-          <p className="text-[#94A3B8] mb-8">
+        <div className="bg-[#0F1115] border border-white/10 rounded-2xl p-6 md:p-8">
+          <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">Add Your First Source</h2>
+          <p className="text-sm md:text-base text-[#94A3B8] mb-6 md:mb-8">
             Start building your knowledge vault by adding a research paper, article, or any URL you want to save.
           </p>
 
@@ -338,19 +339,19 @@ const GuidedVaultWizard: React.FC = () => {
             )}
           </div>
 
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-3">
             <button
               onClick={handleStep2Back}
               disabled={isSubmitting}
-              className="text-[#94A3B8] hover:text-white transition-colors px-4 py-2"
+              className="text-[#94A3B8] hover:text-white transition-colors px-4 py-2 min-h-[44px] order-2 md:order-1"
             >
               Back
             </button>
-            <div className="flex gap-4 items-center">
+            <div className="flex flex-col-reverse md:flex-row gap-3 md:gap-4 items-stretch md:items-center order-1 md:order-2">
               <button
                 onClick={handleStep2Skip}
                 disabled={isSubmitting}
-                className="text-[#94A3B8] hover:text-white transition-colors text-sm underline"
+                className="text-[#94A3B8] hover:text-white transition-colors text-sm underline py-2 min-h-[44px]"
               >
                 Skip this step
               </button>
@@ -358,6 +359,7 @@ const GuidedVaultWizard: React.FC = () => {
                 onClick={handleStep2Next}
                 disabled={isSubmitting}
                 isLoading={isSubmitting}
+                className="min-h-[44px]"
               >
                 Next
               </GradientButton>
@@ -373,9 +375,9 @@ const GuidedVaultWizard: React.FC = () => {
 
       {/* Step 3: Invite Collaborator */}
       {currentStep === 3 && (
-        <div className="bg-[#0F1115] border border-white/10 rounded-2xl p-8">
-          <h2 className="text-3xl font-bold text-white mb-2">Invite a Collaborator</h2>
-          <p className="text-[#94A3B8] mb-8">
+        <div className="bg-[#0F1115] border border-white/10 rounded-2xl p-6 md:p-8">
+          <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">Invite a Collaborator</h2>
+          <p className="text-sm md:text-base text-[#94A3B8] mb-6 md:mb-8">
             Research is better together! Invite a teammate to collaborate on your vault (optional).
           </p>
 
@@ -407,19 +409,19 @@ const GuidedVaultWizard: React.FC = () => {
             )}
           </div>
 
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-3">
             <button
               onClick={handleStep3Back}
               disabled={isSubmitting}
-              className="text-[#94A3B8] hover:text-white transition-colors px-4 py-2"
+              className="text-[#94A3B8] hover:text-white transition-colors px-4 py-2 min-h-[44px] order-2 md:order-1"
             >
               Back
             </button>
-            <div className="flex gap-4 items-center">
+            <div className="flex flex-col-reverse md:flex-row gap-3 md:gap-4 items-stretch md:items-center order-1 md:order-2">
               <button
                 onClick={handleStep3Skip}
                 disabled={isSubmitting}
-                className="text-[#94A3B8] hover:text-white transition-colors text-sm underline"
+                className="text-[#94A3B8] hover:text-white transition-colors text-sm underline py-2 min-h-[44px]"
               >
                 Skip
               </button>
@@ -427,6 +429,7 @@ const GuidedVaultWizard: React.FC = () => {
                 onClick={() => handleCreateVault()}
                 disabled={isSubmitting}
                 isLoading={isSubmitting}
+                className="min-h-[44px]"
               >
                 Create Vault
               </GradientButton>

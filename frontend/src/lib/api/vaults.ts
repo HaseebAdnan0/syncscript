@@ -10,6 +10,10 @@ import {
   InviteMemberRequest,
   UpdateMemberRoleRequest,
   VaultInsights,
+  Conversation,
+  ConversationDetail,
+  AskQuestionRequest,
+  AskQuestionResponse,
 } from '../types/vault';
 
 /**
@@ -109,5 +113,29 @@ export const removeMember = async (vaultId: number, memberId: number): Promise<v
  */
 export const getVaultInsights = async (vaultId: number): Promise<VaultInsights> => {
   const response = await api.get<VaultInsights>(`/vaults/${vaultId}/insights/`);
+  return response.data;
+};
+
+/**
+ * Get all conversations for a vault
+ */
+export const getConversations = async (vaultId: number): Promise<Conversation[]> => {
+  const response = await api.get<Conversation[]>(`/vaults/${vaultId}/conversations/`);
+  return response.data;
+};
+
+/**
+ * Get a specific conversation with full message history
+ */
+export const getConversation = async (vaultId: number, conversationId: number): Promise<ConversationDetail> => {
+  const response = await api.get<ConversationDetail>(`/vaults/${vaultId}/conversations/${conversationId}/`);
+  return response.data;
+};
+
+/**
+ * Ask a question about vault contents
+ */
+export const askQuestion = async (vaultId: number, data: AskQuestionRequest): Promise<AskQuestionResponse> => {
+  const response = await api.post<AskQuestionResponse>(`/vaults/${vaultId}/ask/`, data);
   return response.data;
 };

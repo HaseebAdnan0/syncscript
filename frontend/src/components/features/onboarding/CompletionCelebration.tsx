@@ -64,24 +64,24 @@ const CompletionCelebration: React.FC<CompletionCelebrationProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-lg">
-      <div className="bg-[#0F1115] border border-white/10 rounded-2xl p-12 max-w-2xl w-full mx-4 shadow-[0_0_50px_-10px_rgba(247,147,26,0.3)]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-lg p-4">
+      <div className="bg-[#0F1115] border border-white/10 rounded-2xl p-6 md:p-12 max-w-2xl w-full shadow-[0_0_50px_-10px_rgba(247,147,26,0.3)] max-h-[90vh] overflow-y-auto">
         {/* Celebration Heading */}
-        <div className="text-center mb-8">
-          <h2 className="text-5xl font-bold mb-4 bg-gradient-to-r from-[#F7931A] to-[#FFD600] bg-clip-text text-transparent font-heading">
+        <div className="text-center mb-6 md:mb-8">
+          <h2 className="text-3xl md:text-5xl font-bold mb-3 md:mb-4 bg-gradient-to-r from-[#F7931A] to-[#FFD600] bg-clip-text text-transparent font-heading">
             You&apos;re all set!
           </h2>
-          <p className="text-xl text-[#94A3B8] font-body">
+          <p className="text-base md:text-xl text-[#94A3B8] font-body">
             Thank you for taking the time to learn SyncScript. You&apos;re now ready to build your Knowledge Vaults and collaborate with your team.
           </p>
         </div>
 
         {/* Quick Action Buttons */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
           {/* Add Source */}
           <button
             onClick={() => handleActionClick(onAddSource)}
-            className="bg-[#0F1115] border border-white/10 rounded-xl p-6 hover:-translate-y-1 hover:border-[#F7931A]/50 hover:shadow-[0_0_20px_-5px_rgba(247,147,26,0.3)] transition-all duration-300 group"
+            className="bg-[#0F1115] border border-white/10 rounded-xl p-5 md:p-6 hover:-translate-y-1 hover:border-[#F7931A]/50 hover:shadow-[0_0_20px_-5px_rgba(247,147,26,0.3)] transition-all duration-300 group min-h-[120px] active:scale-95"
           >
             <div className="bg-gradient-to-br from-[#EA580C] to-[#F7931A] w-12 h-12 rounded-full flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform duration-300">
               <Plus className="w-6 h-6 text-white" />
@@ -97,7 +97,7 @@ const CompletionCelebration: React.FC<CompletionCelebrationProps> = ({
           {/* Invite Team */}
           <button
             onClick={() => handleActionClick(onInviteTeam)}
-            className="bg-[#0F1115] border border-white/10 rounded-xl p-6 hover:-translate-y-1 hover:border-[#F7931A]/50 hover:shadow-[0_0_20px_-5px_rgba(247,147,26,0.3)] transition-all duration-300 group"
+            className="bg-[#0F1115] border border-white/10 rounded-xl p-5 md:p-6 hover:-translate-y-1 hover:border-[#F7931A]/50 hover:shadow-[0_0_20px_-5px_rgba(247,147,26,0.3)] transition-all duration-300 group min-h-[120px] active:scale-95"
           >
             <div className="bg-gradient-to-br from-[#F7931A] to-[#FFD600] w-12 h-12 rounded-full flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform duration-300">
               <Users className="w-6 h-6 text-white" />
@@ -113,7 +113,7 @@ const CompletionCelebration: React.FC<CompletionCelebrationProps> = ({
           {/* Explore Features */}
           <button
             onClick={() => handleActionClick(onExploreFeatures)}
-            className="bg-[#0F1115] border border-white/10 rounded-xl p-6 hover:-translate-y-1 hover:border-[#F7931A]/50 hover:shadow-[0_0_20px_-5px_rgba(247,147,26,0.3)] transition-all duration-300 group"
+            className="bg-[#0F1115] border border-white/10 rounded-xl p-5 md:p-6 hover:-translate-y-1 hover:border-[#F7931A]/50 hover:shadow-[0_0_20px_-5px_rgba(247,147,26,0.3)] transition-all duration-300 group min-h-[120px] active:scale-95"
           >
             <div className="bg-gradient-to-br from-[#FFD600] to-[#F7931A] w-12 h-12 rounded-full flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform duration-300">
               <BookOpen className="w-6 h-6 text-white" />
@@ -129,7 +129,7 @@ const CompletionCelebration: React.FC<CompletionCelebrationProps> = ({
 
         {/* Get Started Button */}
         <div className="text-center">
-          <GradientButton onClick={onComplete} className="w-full md:w-auto px-12">
+          <GradientButton onClick={onComplete} className="w-full md:w-auto px-12 min-h-[44px]">
             Get Started
           </GradientButton>
         </div>
