@@ -1,6 +1,5 @@
 import { useState, useCallback, useRef } from 'react';
 import { api } from '@/lib/api';
-import { useAuthStore } from '@/stores/authStore';
 
 export type UploadStatus = 'uploading' | 'processing' | 'complete' | 'error';
 
@@ -19,7 +18,6 @@ const PART_SIZE = 5 * 1024 * 1024; // 5MB per part
 export function useFileUpload() {
   const [uploads, setUploads] = useState<Map<string, UploadState>>(new Map());
   const xhrRefs = useRef<Map<string, XMLHttpRequest>>(new Map());
-  const { accessToken } = useAuthStore();
 
   /**
    * Add or update an upload in state

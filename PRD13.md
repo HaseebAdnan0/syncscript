@@ -248,13 +248,13 @@ Enhance SyncScript's file storage system to production-ready status with Cloudfl
 **Description:** As a developer, I need a hook to manage file upload state and progress.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/hooks/useFileUpload.ts`
-- [ ] State: `uploads: Map<string, { file, progress, status, error }>`
-- [ ] Methods: `uploadFile(file, vaultId)`, `retryUpload(uploadId)`, `cancelUpload(uploadId)`
-- [ ] Get presigned URL from backend, then PUT file with XMLHttpRequest for progress
-- [ ] Update progress via `xhr.upload.onprogress`
-- [ ] Handle multipart for files > 20MB (call initiate, upload parts, complete)
-- [ ] Typecheck passes
+- [x] Create `frontend/src/hooks/useFileUpload.ts`
+- [x] State: `uploads: Map<string, { file, progress, status, error }>`
+- [x] Methods: `uploadFile(file, vaultId)`, `retryUpload(uploadId)`, `cancelUpload(uploadId)`
+- [x] Get presigned URL from backend, then PUT file with XMLHttpRequest for progress
+- [x] Update progress via `xhr.upload.onprogress`
+- [x] Handle multipart for files > 20MB (call initiate, upload parts, complete)
+- [x] Typecheck passes
 
 ---
 
