@@ -433,14 +433,14 @@ Implement a global full-text search system for SyncScript that enables researche
 **Description:** As a user, I want advanced filters on the search page so I can narrow down results precisely.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/search/SearchFiltersPanel.tsx`
-- [ ] Filter by vault (dropdown of user's vaults)
-- [ ] Filter by date range (created within)
-- [ ] Filter by contributor (for sources/annotations)
-- [ ] "Clear filters" button
-- [ ] Filters persist in URL params
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/features/search/SearchFiltersPanel.tsx`
+- [x] Filter by vault (dropdown of user's vaults)
+- [x] Filter by date range (created within)
+- [x] Filter by contributor (for sources/annotations)
+- [x] "Clear filters" button
+- [x] Filters persist in URL params
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 

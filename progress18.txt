@@ -607,3 +607,30 @@
   - Note: Pagination not implemented yet - displaying all results for now (US-032 will add pagination)
 ---
 
+## Iteration 29 - US-031: Create SearchFiltersPanel component
+- Created SearchFiltersPanel.tsx with advanced filtering UI for search page
+- Vault filter: dropdown of user's vaults fetched via React Query using getVaults API
+- Date range filter: dropdown with options (All time, Past week, Past month, Past year)
+- "Clear filters" button appears when any filter is active, removes all filters with one click
+- Filters interface: vault_id (string), date_range ('week' | 'month' | 'year' | 'all')
+- Dropdowns close when clicking outside via useEffect document event listener
+- Selected filter highlighted with orange (#F7931A) text and bg-white/5 background
+- Active filter badge displays in header with X icon
+- Bitcoin aesthetic: glass morphism card (bg-[#0F1115]), border-white/10, orange hover states
+- Files changed:
+  - frontend/src/components/features/search/SearchFiltersPanel.tsx (created)
+  - PRD18.md (marked US-031 complete)
+- Learnings for future iterations:
+  - React Query pattern: useQuery with queryKey ['vaults'] to fetch user's accessible vaults
+  - Dropdown state management: separate useState for each dropdown (isVaultDropdownOpen, isDateDropdownOpen)
+  - Close on outside click: useEffect with document.addEventListener('click') and cleanup
+  - e.stopPropagation() on dropdown button prevents immediate close from document listener
+  - Filter clearing pattern: delete specific keys from filters object to remove filters
+  - hasActiveFilters helper: check if any non-default filters applied to show clear button
+  - TypeScript useEffect return type: must return cleanup function OR undefined (not implicit undefined)
+  - Filter persistence in URL handled by parent component (search page) - panel only manages local state
+  - Contributor filter not implemented (would require additional backend API endpoint to list contributors)
+  - Typecheck passes after fixing useEffect return value (return undefined at end)
+  - Dev server starts successfully with no build errors
+---
+
