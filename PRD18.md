@@ -118,11 +118,11 @@ Implement a global full-text search system for SyncScript that enables researche
 **Description:** As a developer, I need serializers for search results and search history.
 
 **Acceptance Criteria:**
-- [ ] Create `SearchResultSerializer` with fields: `id`, `type`, `title`, `snippet`, `highlight`, `relevance`, `vault_id`, `vault_name`, `breadcrumb`
-- [ ] Create `SearchHistorySerializer` with fields: `id`, `query`, `result_count`, `created_at`
-- [ ] Create `SearchSuggestionSerializer` with fields: `text`, `type`, `count`
-- [ ] Serializers in `backend/apps/search/serializers.py`
-- [ ] Typecheck passes
+- [x] Create `SearchResultSerializer` with fields: `id`, `type`, `title`, `snippet`, `highlight`, `relevance`, `vault_id`, `vault_name`, `breadcrumb`
+- [x] Create `SearchHistorySerializer` with fields: `id`, `query`, `result_count`, `created_at`
+- [x] Create `SearchSuggestionSerializer` with fields: `text`, `type`, `count`
+- [x] Serializers in `backend/apps/search/serializers.py`
+- [x] Typecheck passes
 
 ---
 

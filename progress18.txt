@@ -134,3 +134,22 @@
   - Signal receivers should import tasks inside the function to avoid circular imports
   - update_fields parameter in post_save signal allows optimizing to only update on relevant field changes
 ---
+
+## Iteration 8 - US-008: Create search serializers
+- Created three serializers in backend/apps/search/serializers.py
+- SearchResultSerializer: Represents search results with highlighting, relevance, and breadcrumb context
+- SearchHistorySerializer: ModelSerializer for SearchHistory model with read-only fields
+- SearchSuggestionSerializer: Provides typeahead suggestions with text, type, and count
+- All serializers validated successfully with test data
+- Files changed:
+  - backend/apps/search/serializers.py (replaced placeholder with full implementation)
+  - PRD18.md (marked US-008 complete)
+- Learnings for future iterations:
+  - Serializer patterns: use serializers.Serializer for non-model data structures
+  - Use ChoiceField with choices list for enum-like fields (type field)
+  - allow_blank=True for optional string fields that can be empty
+  - allow_null=True for optional UUID/FK fields
+  - help_text improves API documentation and developer experience
+  - Django check command validates serializers even with Pyright warnings
+  - Test serializers by instantiating with data and calling is_valid()
+---
