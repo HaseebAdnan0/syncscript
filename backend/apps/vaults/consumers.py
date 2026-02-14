@@ -493,28 +493,35 @@ class VaultConsumer(AsyncWebsocketConsumer):
 
     async def close_connection(self, event: dict) -> None:
         """
-        Handle close_connection message from channel layer (triggered by rate limiting).
+        Handle close_connection message from channel layer (triggered by rate limiting or idle timeout).
 
         This is called when the user exceeds connection limits and their oldest
-        connection needs to be closed.
+        connection needs to be closed, or when the connection is idle for too long.
 
         Args:
-            event: Event dictionary containing close code
+            event: Event dictionary containing close code and optional reason
         """
         code = event.get('code', 1008)
+        reason = event.get('reason', 'Connection limit exceeded - closing oldest connection')
+
+        # Determine error code based on close code
+        if code == 1000:
+            error_code = 'IDLE_TIMEOUT'
+        else:
+            error_code = 'RATE_LIMIT_EXCEEDED'
 
         # Send error message before closing
         await self.send(text_data=json.dumps({
             'type': 'error',
             'error': {
-                'code': 'RATE_LIMIT_EXCEEDED',
-                'message': 'Connection limit exceeded - closing oldest connection'
+                'code': error_code,
+                'message': reason
             }
         }))
 
         # Close the connection
         await self.close(code=code)
-        logger.warning(f"Connection closed due to rate limiting: {self.channel_name}")
+        logger.warning(f"Connection closed: {self.channel_name}, reason: {reason}")
 
     async def _check_message_throttle(self) -> str:
         """

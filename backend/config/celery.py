@@ -33,6 +33,10 @@ app.conf.beat_schedule = {
         'task': 'apps.sources.tasks.cleanup_orphaned_multipart_uploads',
         'schedule': crontab(hour=3, minute=0),  # Daily at 3:00 AM
     },
+    'cleanup-stale-websocket-connections': {
+        'task': 'apps.vaults.tasks.cleanup_stale_connections',
+        'schedule': 60.0,  # Every 60 seconds
+    },
 }
 
 

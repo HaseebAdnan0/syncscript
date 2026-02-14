@@ -277,11 +277,11 @@ This PRD covers the full implementation: core infrastructure, event broadcasting
 **Description:** As a developer, I need to disconnect idle connections to free resources.
 
 **Acceptance Criteria:**
-- [ ] Create Celery periodic task to check presence timestamps
-- [ ] Remove users from presence if last heartbeat > 300 seconds ago
-- [ ] Send disconnect to stale connections
-- [ ] Run cleanup task every 60 seconds
-- [ ] Typecheck passes
+- [x] Create Celery periodic task to check presence timestamps
+- [x] Remove users from presence if last heartbeat > 300 seconds ago
+- [x] Send disconnect to stale connections
+- [x] Run cleanup task every 60 seconds
+- [x] Typecheck passes
 
 ---
 
