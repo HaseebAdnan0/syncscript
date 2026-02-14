@@ -535,12 +535,12 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a user, I want to see and manage which vaults I've muted.
 
 **Acceptance Criteria:**
-- [ ] List of muted vaults with vault name
-- [ ] Unmute button for each vault
-- [ ] Empty state: "No muted vaults"
-- [ ] Note: "Mute vaults from the vault settings page"
-- [ ] Refresh list after unmuting
-- [ ] Typecheck passes
+- [x] List of muted vaults with vault name
+- [x] Unmute button for each vault
+- [x] Empty state: "No muted vaults"
+- [x] Note: "Mute vaults from the vault settings page"
+- [x] Refresh list after unmuting
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---

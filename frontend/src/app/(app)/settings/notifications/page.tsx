@@ -1,10 +1,10 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Bell, Mail, VolumeX, ChevronLeft, Check, AlertCircle } from 'lucide-react';
+import { Bell, Mail, VolumeX, ChevronLeft, Check, AlertCircle, Volume2 } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { getMutedVaults, getPreferences, updatePreferences } from '@/lib/api';
+import { getMutedVaults, getPreferences, updatePreferences, unmuteVault } from '@/lib/api';
 import type { MutedVault, NotificationPreferences } from '@/types/notifications';
 import { requestNotificationPermission } from '@/lib/pusher';
 
@@ -59,6 +59,18 @@ export default function NotificationPreferencesPage() {
     onSettled: () => {
       // Refetch to ensure sync with server
       queryClient.invalidateQueries({ queryKey: ['notification-preferences'] });
+    },
+  });
+
+  // Unmute vault mutation
+  const unmuteMutation = useMutation({
+    mutationFn: (vaultId: string) => unmuteVault(vaultId),
+    onSuccess: () => {
+      // Refetch muted vaults list
+      queryClient.invalidateQueries({ queryKey: ['muted-vaults'] });
+      // Show saved confirmation
+      setShowSaved(true);
+      setTimeout(() => setShowSaved(false), 2000);
     },
   });
 
@@ -452,10 +464,20 @@ export default function NotificationPreferencesPage() {
                     {mutedVaults.map((muted) => (
                       <div
                         key={muted.vault_id}
-                        className="flex items-center justify-between p-4 bg-black/30 rounded-lg border border-white/5"
+                        className="flex items-center justify-between p-4 bg-black/30 rounded-lg border border-white/5 hover:border-[#F7931A]/20 transition-colors"
                       >
-                        <span className="text-white">{muted.vault_name}</span>
-                        <span className="text-[#94A3B8] text-sm">Unmute button will be added in US-040</span>
+                        <div className="flex items-center gap-3">
+                          <VolumeX className="h-5 w-5 text-[#94A3B8]" />
+                          <span className="text-white">{muted.vault_name}</span>
+                        </div>
+                        <button
+                          onClick={() => unmuteMutation.mutate(muted.vault_id)}
+                          disabled={unmuteMutation.isPending}
+                          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#EA580C] to-[#F7931A] text-white font-medium rounded-full hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          <Volume2 className="h-4 w-4" />
+                          {unmuteMutation.isPending ? 'Unmuting...' : 'Unmute'}
+                        </button>
                       </div>
                     ))}
                   </div>

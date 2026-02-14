@@ -1104,3 +1104,59 @@ In Progress - US-004 complete
   - pt-4 border-t border-white/10 separates frequency selector from toggles visually
 ---
 
+## Iteration 38 - US-039: Add Push Notification Controls to Preferences
+- Implemented master toggle for "Enable push notifications" (push_enabled field)
+- Implemented sub-toggles for "New sources" (push_sources) and "Annotation activity" (push_annotations)
+- Integrated requestNotificationPermission() from lib/pusher.ts to request browser permission when enabling
+- Added permission status tracking with useState (granted/denied/default)
+- Show permission status banner:
+  - Red banner when permission denied with instructions to update browser settings
+  - Orange banner when permission still at default/prompt but push enabled
+  - Green checkmark when permission granted and push enabled
+- Disabled sub-toggles when master toggle (push_enabled) is off
+- Used handlePushToggle async function to request permission before updating preferences
+- Reused updatePreferencesMutation from US-037 for optimistic updates and API calls
+- Permission status updates on mount and when preferences.push_enabled changes via useEffect
+- TypeScript typecheck passes with no errors
+- Files changed:
+  - frontend/src/app/(app)/settings/notifications/page.tsx (added push controls, permission logic)
+  - PRD19.md (marked US-039 complete except browser verification)
+- Learnings for future iterations:
+  - requestNotificationPermission() is async, use await in handler
+  - Check 'Notification' in window before accessing browser Notification API
+  - Permission states: 'granted', 'denied', 'default' (prompt)
+  - useEffect with empty dependency array runs on mount only
+  - AlertCircle icon from lucide-react for status banners
+  - Permission denied cannot be undone programmatically (user must update browser settings)
+  - Show helpful instructions when permission denied (user action required)
+  - Conditional banner rendering based on permission state and preferences
+  - flex-shrink-0 on icons prevents them from being compressed in flex layouts
+---
+
+## Iteration 39 - US-040: Add Muted Vaults Management to Preferences
+- Implemented unmute button for each muted vault in the list
+- Added Volume2 icon from lucide-react for unmute button
+- Created unmuteMutation using React Query's useMutation hook
+- Unmute button calls unmuteVault API function (already existed in @/lib/api)
+- Shows loading state "Unmuting..." during mutation with disabled button
+- Invalidates muted-vaults query cache on success to refresh list
+- Shows "Saved" confirmation indicator after successful unmute (reused from preferences)
+- Added VolumeX icon next to each vault name for visual clarity
+- Button styled with Bitcoin DeFi gradient (EA580C to F7931A)
+- Hover effect on vault items (border-[#F7931A]/20)
+- Empty state already existed with helpful hint: "Mute vaults from the vault settings page"
+- TypeScript typecheck passes with no errors
+- Files changed:
+  - frontend/src/app/(app)/settings/notifications/page.tsx (added unmute mutation, button UI)
+  - PRD19.md (marked US-040 complete except browser verification)
+- Learnings for future iterations:
+  - useMutation returns isPending state for showing loading UI
+  - invalidateQueries automatically refetches data after mutation
+  - Reuse existing mutation success handlers (setShowSaved) for consistent UX
+  - Volume2 icon represents "unmute" action (sound restored)
+  - VolumeX icon represents muted state (sound off)
+  - Disabled state on buttons prevents double-clicks during mutation
+  - unmuteVault(vaultId) API call already implemented in @/lib/api
+  - Mutation.mutate() accepts single parameter (vaultId in this case)
+---
+
