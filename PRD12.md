@@ -357,13 +357,13 @@ Add social authentication to SyncScript using Google and GitHub OAuth providers.
 **Description:** As a frontend developer, I need typed API methods for OAuth operations.
 
 **Acceptance Criteria:**
-- [ ] Add to `lib/api.ts`: `linkOAuthAccount(password, provider)`
-- [ ] Add to `lib/api.ts`: `completeOAuthEmail(email, tempToken)`
-- [ ] Add to `lib/api.ts`: `getConnectedAccounts()`
-- [ ] Add to `lib/api.ts`: `disconnectOAuthProvider(provider)`
-- [ ] Add TypeScript types for request/response shapes
-- [ ] Handle error responses consistently
-- [ ] Typecheck passes
+- [x] Add to `lib/api.ts`: `linkOAuthAccount(password, provider)`
+- [x] Add to `lib/api.ts`: `completeOAuthEmail(email, tempToken)`
+- [x] Add to `lib/api.ts`: `getConnectedAccounts()`
+- [x] Add to `lib/api.ts`: `disconnectOAuthProvider(provider)`
+- [x] Add TypeScript types for request/response shapes
+- [x] Handle error responses consistently
+- [x] Typecheck passes
 
 ---
 
