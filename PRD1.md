@@ -273,12 +273,12 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a developer, I need an HTML email template for password reset.
 
 **Acceptance Criteria:**
-- [ ] Create `templates/emails/password_reset.html`
-- [ ] Include reset link with uid and token
-- [ ] Include expiration notice (1 hour)
-- [ ] Simple, professional styling
-- [ ] Add send_password_reset_email function to emails.py
-- [ ] Typecheck passes
+- [x] Create `templates/emails/password_reset.html`
+- [x] Include reset link with uid and token
+- [x] Include expiration notice (1 hour)
+- [x] Simple, professional styling
+- [x] Add send_password_reset_email function to emails.py
+- [x] Typecheck passes
 
 ---
 

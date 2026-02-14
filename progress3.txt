@@ -306,3 +306,23 @@
   - Split and strip tags to handle whitespace in comma-separated values
   - Empty tag list should return unfiltered queryset (no filtering applied)
 ---
+## Iteration 15 - US-014: Add search filter to SourceFilter
+- Added search CharFilter with method='filter_search' to SourceFilter
+- Implemented filter_search() method:
+  - Uses Q objects for OR condition across title and description fields
+  - Case-insensitive search using icontains lookup
+  - Returns sources where title OR description contains search term
+  - Example: ?search=neural returns matching sources
+- Added Q import from django.db.models
+- Updated Meta.fields to include 'search'
+- Django check passes with 0 issues
+- Files changed:
+  - backend/apps/sources/filters.py (added search filter and filter_search method)
+  - PRD3.md (marked US-014 complete)
+- Learnings for future iterations:
+  - Q objects enable complex query logic (OR, AND, NOT)
+  - Q(field__icontains=value) | Q(other__icontains=value) creates OR search
+  - CharFilter with method parameter allows custom filtering on arbitrary fields
+  - Search filters should check for empty value and return unfiltered queryset
+  - Django check sufficient for validation when full typecheck requires venv
+---

@@ -29,7 +29,7 @@ from .serializers import (
     PasswordResetRequestSerializer,
 )
 from .tokens import generate_verification_token, verify_token
-from .emails import send_verification_email
+from .emails import send_verification_email, send_password_reset_email
 
 
 @api_view(['POST'])
@@ -437,9 +437,8 @@ class PasswordResetRequestView(APIView):
             # Encode user ID in base64
             uid = urlsafe_base64_encode(force_bytes(user.pk))
 
-            # TODO: Send password reset email (will be created in US-020)
-            # For now, just generate the token and uid
-            # send_password_reset_email(user, uid, token)
+            # Send password reset email
+            send_password_reset_email(user, uid, token)
 
         except User.DoesNotExist:
             # Don't reveal if email exists or not - just continue

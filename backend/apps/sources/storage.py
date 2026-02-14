@@ -124,3 +124,76 @@ def generate_presigned_download_url(
     )
 
     return presigned_url
+
+
+def initiate_multipart_upload(
+    vault_id: str,
+    filename: str,
+    file_size: int,
+    part_size: int,
+    content_type: str
+) -> Tuple[str, str, list]:
+    """
+    Initiate a multipart upload to S3 and generate presigned URLs for each part.
+
+    Args:
+        vault_id: UUID of the vault (used in S3 key path)
+        filename: Original filename (used to generate unique key)
+        file_size: Total file size in bytes
+        part_size: Size of each part in bytes (minimum 5MB except last part)
+        content_type: MIME type of the file (should be 'application/pdf')
+
+    Returns:
+        Tuple of (upload_id, file_key, part_urls):
+            - upload_id: S3 multipart upload ID (required for completion)
+            - file_key: S3 object key where file will be stored
+            - part_urls: List of dicts with {part_number, upload_url} for each part
+
+    Example:
+        >>> upload_id, key, parts = initiate_multipart_upload(
+        ...     vault_id='abc123',
+        ...     filename='large.pdf',
+        ...     file_size=30000000,  # 30MB
+        ...     part_size=10000000,  # 10MB per part
+        ...     content_type='application/pdf'
+        ... )
+        >>> # Client uploads each part to corresponding part_url
+        >>> # Then calls complete endpoint with upload_id and ETags
+    """
+    s3_client = get_s3_client()
+
+    # Generate unique file key using UUID to prevent collisions
+    file_extension = filename.split('.')[-1] if '.' in filename else 'pdf'
+    unique_filename = f"{uuid.uuid4()}.{file_extension}"
+    file_key = f"vaults/{vault_id}/pdfs/{unique_filename}"
+
+    # Initiate multipart upload
+    response = s3_client.create_multipart_upload(
+        Bucket=settings.AWS_STORAGE_BUCKET_NAME,
+        Key=file_key,
+        ContentType=content_type
+    )
+    upload_id = response['UploadId']
+
+    # Calculate number of parts needed
+    num_parts = (file_size + part_size - 1) // part_size  # Ceiling division
+
+    # Generate presigned URL for each part
+    part_urls = []
+    for part_number in range(1, num_parts + 1):
+        presigned_url = s3_client.generate_presigned_url(
+            'upload_part',
+            Params={
+                'Bucket': settings.AWS_STORAGE_BUCKET_NAME,
+                'Key': file_key,
+                'PartNumber': part_number,
+                'UploadId': upload_id,
+            },
+            ExpiresIn=3600,  # 1 hour expiration (same as regular upload)
+        )
+        part_urls.append({
+            'part_number': part_number,
+            'upload_url': presigned_url
+        })
+
+    return upload_id, file_key, part_urls
