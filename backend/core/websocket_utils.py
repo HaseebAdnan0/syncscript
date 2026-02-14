@@ -66,3 +66,16 @@ def broadcast_to_vault(
     }
 
     async_to_sync(channel_layer.group_send)(group_name, group_message)  # type: ignore[union-attr]
+
+    # Buffer event in Redis for replay
+    events_key = f"vault_{vault_id}:events"
+    event_json = json.dumps(message)
+
+    # Add event to list (newest at head)
+    redis_client.lpush(events_key, event_json)
+
+    # Keep only last 100 events
+    redis_client.ltrim(events_key, 0, 99)
+
+    # Set 1-hour TTL on events list
+    redis_client.expire(events_key, 3600)

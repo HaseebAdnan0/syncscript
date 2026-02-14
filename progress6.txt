@@ -438,3 +438,25 @@
   - Task is idempotent and safe to run repeatedly (S3 operations handle missing uploads)
   - Django system check passes (6 security warnings expected in dev mode)
 ---
+
+## Iteration 19 - US-019: Configure Celery Beat schedule for cleanup tasks
+- Added Celery Beat schedule configuration to backend/config/celery.py
+- Imported crontab from celery.schedules for scheduling
+- Configured two periodic tasks in app.conf.beat_schedule:
+  - cleanup-deleted-pdfs-daily: runs cleanup_deleted_pdfs task daily at 2:00 AM
+  - cleanup-orphaned-multipart-uploads-daily: runs cleanup_orphaned_multipart_uploads task daily at 3:00 AM
+- Used crontab(hour=2, minute=0) and crontab(hour=3, minute=0) for precise scheduling
+- Task paths use full dotted path: apps.sources.tasks.cleanup_deleted_pdfs
+- Files changed:
+  - backend/config/celery.py (added beat_schedule configuration)
+  - PRD6.md (marked US-019 complete)
+- Learnings for future iterations:
+  - Celery Beat requires celery.schedules.crontab import for cron-style scheduling
+  - app.conf.beat_schedule is a dict mapping schedule names to task configurations
+  - Each schedule entry has 'task' (dotted path to task) and 'schedule' (crontab object)
+  - Task path format: apps.appname.tasks.task_function_name (not @shared_task decorator name)
+  - crontab(hour=X, minute=Y) creates daily schedule at specific time
+  - Pyright typecheck passes with 0 errors (no type annotations needed for Celery config)
+  - Django system check passes (6 security warnings expected in dev mode)
+  - Celery Beat worker must be started separately: celery -A config beat -l info
+---

@@ -19,6 +19,7 @@ from PIL import Image
 from pypdf import PdfReader
 
 from apps.sources.models import PDFUpload
+from core.websocket_utils import broadcast_to_vault
 
 logger = logging.getLogger(__name__)
 
@@ -149,6 +150,27 @@ def process_uploaded_pdf(self, pdf_upload_id: str) -> dict[str, Any]:
             f"Successfully processed PDF {pdf_upload_id}: "
             f"title={pdf_upload.pdf_title}, pages={page_count}"
         )
+
+        # Send WebSocket notification to vault (US-020)
+        try:
+            broadcast_to_vault(
+                vault_id=pdf_upload.vault_id,
+                event_type='pdf.uploaded',
+                payload={
+                    'pdf_id': str(pdf_upload.id),
+                    'filename': pdf_upload.original_filename,
+                    'pdf_title': pdf_upload.pdf_title,
+                    'page_count': page_count,
+                    'thumbnail_url': thumbnail_url,
+                },
+                user=pdf_upload.uploaded_by,
+            )
+        except Exception as ws_exc:
+            # Log but don't fail the task if WebSocket broadcast fails
+            logger.warning(
+                f"Failed to send WebSocket notification for PDF {pdf_upload_id}: {ws_exc}",
+                exc_info=True,
+            )
 
         return {
             'pdf_id': str(pdf_upload.id),

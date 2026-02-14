@@ -216,11 +216,11 @@ This PRD covers the full implementation: core infrastructure, event broadcasting
 **Description:** As a developer, I need events stored in Redis so clients can replay missed events after reconnection.
 
 **Acceptance Criteria:**
-- [ ] Update `broadcast_to_vault` to also push event to Redis list `vault_{id}:events`
-- [ ] Use `lpush` to add event JSON to list
-- [ ] Use `ltrim` to keep only last 100 events
-- [ ] Set 1-hour TTL on events list with `expire`
-- [ ] Typecheck passes
+- [x] Update `broadcast_to_vault` to also push event to Redis list `vault_{id}:events`
+- [x] Use `lpush` to add event JSON to list
+- [x] Use `ltrim` to keep only last 100 events
+- [x] Set 1-hour TTL on events list with `expire`
+- [x] Typecheck passes
 
 ---
 

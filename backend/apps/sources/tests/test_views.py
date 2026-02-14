@@ -463,3 +463,276 @@ class SourcePermissionTest(TestCase):
         # Verify restore
         self.source.refresh_from_db()
         self.assertFalse(self.source.is_deleted)
+
+
+class SourceFilterTest(TestCase):
+    """Test suite for Source filtering functionality (US-020)."""
+
+    def setUp(self):
+        """Set up test fixtures."""
+        self.client = APIClient()
+
+        # Create test users
+        self.owner_user = User.objects.create(
+            username='owner',
+            email='owner@example.com'
+        )
+        self.owner_user.set_password('testpass123')
+        self.owner_user.save()
+
+        self.other_user = User.objects.create(
+            username='other',
+            email='other@example.com'
+        )
+        self.other_user.set_password('testpass123')
+        self.other_user.save()
+
+        # Create test vaults
+        self.vault1 = Vault.objects.create(
+            name='Vault 1',
+            description='First vault',
+            owner=self.owner_user
+        )
+
+        self.vault2 = Vault.objects.create(
+            name='Vault 2',
+            description='Second vault',
+            owner=self.owner_user
+        )
+
+        # Create test sources with various attributes for filtering
+        from datetime import date, timedelta
+
+        # Source 1: URL type, vault1, with tags
+        self.source1 = Source.objects.create(
+            vault=self.vault1,
+            url='https://example.com/source1',
+            title='Machine Learning Introduction',
+            description='A comprehensive guide to machine learning',
+            source_type=SourceType.URL,
+            metadata={'tags': ['ml', 'tutorial']},
+            created_by=self.owner_user,
+            created_at=date.today() - timedelta(days=10)
+        )
+
+        # Source 2: PDF type, vault1, different tags
+        self.source2 = Source.objects.create(
+            vault=self.vault1,
+            url='https://example.com/source2',
+            title='Deep Learning Research Paper',
+            description='Neural networks and their applications',
+            source_type=SourceType.PDF,
+            metadata={'tags': ['nlp', 'research']},
+            created_by=self.owner_user,
+            created_at=date.today() - timedelta(days=5)
+        )
+
+        # Source 3: JOURNAL type, vault2, overlapping tags
+        self.source3 = Source.objects.create(
+            vault=self.vault2,
+            url='https://example.com/source3',
+            title='AI Ethics Journal Article',
+            description='Exploring ethical considerations in artificial intelligence',
+            source_type=SourceType.JOURNAL,
+            metadata={'tags': ['ml', 'ethics']},
+            created_by=self.other_user,
+            created_at=date.today() - timedelta(days=3)
+        )
+
+        # Source 4: URL type, vault2, no tags
+        self.source4 = Source.objects.create(
+            vault=self.vault2,
+            url='https://example.com/source4',
+            title='Database Design Basics',
+            description='Relational database fundamentals',
+            source_type=SourceType.URL,
+            metadata={},
+            created_by=self.owner_user,
+            created_at=date.today()
+        )
+
+        # Authenticate as owner user for all tests
+        self.client.force_authenticate(user=self.owner_user)
+
+    def test_filter_by_vault_returns_only_that_vaults_sources(self):
+        """Test filter by vault returns only that vault's sources."""
+        # Filter by vault1
+        response = self.client.get(f'/api/v1/sources/?vault={self.vault1.id}')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 2)
+
+        returned_ids = [item['id'] for item in response.data['results']]
+        self.assertIn(str(self.source1.id), returned_ids)
+        self.assertIn(str(self.source2.id), returned_ids)
+        self.assertNotIn(str(self.source3.id), returned_ids)
+        self.assertNotIn(str(self.source4.id), returned_ids)
+
+        # Filter by vault2
+        response = self.client.get(f'/api/v1/sources/?vault={self.vault2.id}')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 2)
+
+        returned_ids = [item['id'] for item in response.data['results']]
+        self.assertNotIn(str(self.source1.id), returned_ids)
+        self.assertNotIn(str(self.source2.id), returned_ids)
+        self.assertIn(str(self.source3.id), returned_ids)
+        self.assertIn(str(self.source4.id), returned_ids)
+
+    def test_filter_by_source_type_returns_matching_types(self):
+        """Test filter by source_type returns matching types."""
+        # Filter by URL type
+        response = self.client.get(f'/api/v1/sources/?source_type={SourceType.URL}')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 2)
+
+        returned_ids = [item['id'] for item in response.data['results']]
+        self.assertIn(str(self.source1.id), returned_ids)
+        self.assertIn(str(self.source4.id), returned_ids)
+
+        # Filter by PDF type
+        response = self.client.get(f'/api/v1/sources/?source_type={SourceType.PDF}')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 1)
+        self.assertEqual(response.data['results'][0]['id'], str(self.source2.id))
+
+        # Filter by JOURNAL type
+        response = self.client.get(f'/api/v1/sources/?source_type={SourceType.JOURNAL}')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 1)
+        self.assertEqual(response.data['results'][0]['id'], str(self.source3.id))
+
+    def test_filter_by_date_from_date_to_returns_date_range(self):
+        """Test filter by date_from/date_to returns date range."""
+        from datetime import date, timedelta
+
+        # Filter sources from last 7 days
+        date_from = (date.today() - timedelta(days=7)).isoformat()
+        response = self.client.get(f'/api/v1/sources/?date_from={date_from}')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Should return source2 (5 days ago), source3 (3 days ago), source4 (today)
+        self.assertEqual(len(response.data['results']), 3)
+
+        returned_ids = [item['id'] for item in response.data['results']]
+        self.assertNotIn(str(self.source1.id), returned_ids)  # 10 days ago
+        self.assertIn(str(self.source2.id), returned_ids)
+        self.assertIn(str(self.source3.id), returned_ids)
+        self.assertIn(str(self.source4.id), returned_ids)
+
+        # Filter sources up to 4 days ago
+        date_to = (date.today() - timedelta(days=4)).isoformat()
+        response = self.client.get(f'/api/v1/sources/?date_to={date_to}')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Should return source1 (10 days ago) and source2 (5 days ago)
+        self.assertEqual(len(response.data['results']), 2)
+
+        returned_ids = [item['id'] for item in response.data['results']]
+        self.assertIn(str(self.source1.id), returned_ids)
+        self.assertIn(str(self.source2.id), returned_ids)
+
+        # Filter sources in specific range (6 days ago to 2 days ago)
+        date_from = (date.today() - timedelta(days=6)).isoformat()
+        date_to = (date.today() - timedelta(days=2)).isoformat()
+        response = self.client.get(f'/api/v1/sources/?date_from={date_from}&date_to={date_to}')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Should return source2 (5 days ago) and source3 (3 days ago)
+        self.assertEqual(len(response.data['results']), 2)
+
+        returned_ids = [item['id'] for item in response.data['results']]
+        self.assertIn(str(self.source2.id), returned_ids)
+        self.assertIn(str(self.source3.id), returned_ids)
+
+    def test_filter_by_tags_with_comma_separated_values(self):
+        """Test filter by tags with comma-separated values."""
+        # Filter by single tag 'ml'
+        response = self.client.get('/api/v1/sources/?tags=ml')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 2)
+
+        returned_ids = [item['id'] for item in response.data['results']]
+        self.assertIn(str(self.source1.id), returned_ids)  # has 'ml' tag
+        self.assertIn(str(self.source3.id), returned_ids)  # has 'ml' tag
+
+        # Filter by multiple tags 'ml,nlp' (OR logic - sources with either tag)
+        response = self.client.get('/api/v1/sources/?tags=ml,nlp')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 3)
+
+        returned_ids = [item['id'] for item in response.data['results']]
+        self.assertIn(str(self.source1.id), returned_ids)  # has 'ml'
+        self.assertIn(str(self.source2.id), returned_ids)  # has 'nlp'
+        self.assertIn(str(self.source3.id), returned_ids)  # has 'ml'
+
+        # Filter by tag that only one source has
+        response = self.client.get('/api/v1/sources/?tags=ethics')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 1)
+        self.assertEqual(response.data['results'][0]['id'], str(self.source3.id))
+
+    def test_search_filter_searches_title_and_description(self):
+        """Test search filter searches title and description."""
+        # Search in title
+        response = self.client.get('/api/v1/sources/?search=learning')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 2)
+
+        returned_ids = [item['id'] for item in response.data['results']]
+        self.assertIn(str(self.source1.id), returned_ids)  # "Machine Learning" in title
+        self.assertIn(str(self.source2.id), returned_ids)  # "Deep Learning" in title
+
+        # Search in description
+        response = self.client.get('/api/v1/sources/?search=neural')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 1)
+        self.assertEqual(response.data['results'][0]['id'], str(self.source2.id))  # "Neural networks" in description
+
+        # Search term appears in both title and description
+        response = self.client.get('/api/v1/sources/?search=database')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 1)
+        self.assertEqual(response.data['results'][0]['id'], str(self.source4.id))
+
+        # Case-insensitive search
+        response = self.client.get('/api/v1/sources/?search=MACHINE')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 1)
+        self.assertEqual(response.data['results'][0]['id'], str(self.source1.id))
+
+    def test_combined_filters_work_together(self):
+        """Test combined filters work together."""
+        # Combine vault filter + source_type filter
+        response = self.client.get(f'/api/v1/sources/?vault={self.vault1.id}&source_type={SourceType.URL}')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 1)
+        self.assertEqual(response.data['results'][0]['id'], str(self.source1.id))
+
+        # Combine tags filter + search filter
+        response = self.client.get('/api/v1/sources/?tags=ml&search=introduction')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 1)
+        self.assertEqual(response.data['results'][0]['id'], str(self.source1.id))
+
+        # Combine date filter + source_type filter
+        from datetime import date, timedelta
+        date_from = (date.today() - timedelta(days=7)).isoformat()
+        response = self.client.get(f'/api/v1/sources/?date_from={date_from}&source_type={SourceType.JOURNAL}')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 1)
+        self.assertEqual(response.data['results'][0]['id'], str(self.source3.id))
