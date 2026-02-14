@@ -35,8 +35,17 @@ def invalidate_cache_on_metadata_change(sender: Any, instance: Any, **kwargs: An
 
         # If metadata has changed, invalidate citation cache
         if 'metadata' in dirty_fields:
-            # We need to invalidate before save completes
-            # But we can't modify instance.metadata here without causing recursion
-            # So we'll check if citations exist and remove them
-            if instance.metadata and 'citations' in instance.metadata:
-                del instance.metadata['citations']
+            old_metadata = dirty_fields.get('metadata', {})
+            new_metadata = instance.metadata or {}
+
+            # Only invalidate if metadata changed in a way that affects citations
+            # (not just adding citations to the cache)
+            if old_metadata != new_metadata:
+                # Check if the only change is adding/updating citations
+                old_without_citations = {k: v for k, v in old_metadata.items() if k != 'citations'}
+                new_without_citations = {k: v for k, v in new_metadata.items() if k != 'citations'}
+
+                # If non-citation metadata changed, invalidate cache
+                if old_without_citations != new_without_citations:
+                    if 'citations' in new_metadata:
+                        del instance.metadata['citations']

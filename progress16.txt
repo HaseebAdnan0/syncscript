@@ -258,3 +258,26 @@
   - Outer glow ring (blur-xl) adds depth to gradient nodes
   - border-4 with background color creates clean separation between node and timeline line
 ---
+
+## Iteration 12 - US-012: Create Testimonial Card Component
+- Created `frontend/src/components/marketing/TestimonialCard.tsx` component
+- Implemented glass morphism styling with `backdrop-blur-lg bg-white/5 border border-white/10`
+- Created circular avatar (48px) with gradient border using nested divs with gradient padding trick
+- Added styled quotation marks using large orange serif text positioned absolutely
+- Name displayed in white font-semibold, title and institution in muted color (#94A3B8)
+- Hover effect: `-translate-y-2` with smooth transition-all duration-300
+- Component accepts props: avatar (image path), name, title, institution, quote
+- Flexible height card using flex flex-col with flex-1 on quote section
+- Border-top separator between quote and author info
+- Files changed:
+  - Created: `frontend/src/components/marketing/TestimonialCard.tsx`
+  - Modified: `PRD16.md` (marked US-012 complete)
+- Learnings for future iterations:
+  - Glass morphism creates premium floating card aesthetic
+  - Gradient border trick: outer div with gradient bg + padding, inner div covers it except border
+  - Quotation marks positioned absolutely with serif font and orange color add visual flair
+  - Using &ldquo; and &rdquo; entities provides proper typographic quotes
+  - flex-1 on quote section ensures cards of varying content heights align properly in grids
+  - pt-4 border-t provides visual separation between quote and author attribution
+  - Image component from next/image requires width/height props for optimization
+---

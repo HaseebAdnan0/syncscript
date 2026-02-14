@@ -233,3 +233,32 @@ Learnings for future iterations:
   - US-006 and US-008 were both completed in Iteration 6 (single adapter implementation)
 ---
 
+## Iteration 9 - US-009: Create account linking endpoint with password confirmation
+- Verified LinkOAuthAccountView already exists in apps/users/views.py (line 774)
+- Endpoint POST /api/v1/auth/oauth/link/ already implemented
+- Validates password before linking OAuth provider to existing account
+- Retrieves pending OAuth data from session (stored during callback in pre_social_login)
+- Creates SocialAccount linking provider to user with uid and extra_data
+- Clears session data (pending_oauth, oauth_needs_linking) after successful link
+- Generates JWT tokens and returns them with httpOnly cookies
+- Returns 401 if password incorrect, 400 if no pending OAuth data
+- URL routing already configured in apps/users/urls.py
+- Import and URL reverse tests pass
+- Task was already completed in previous iteration (commit af403ab)
+- PRD12.md already marked US-009 complete
+
+Files verified:
+  - backend/apps/users/views.py (LinkOAuthAccountView, lines 774-876)
+  - backend/apps/users/urls.py (oauth-link route)
+  - PRD12.md (US-009 marked complete)
+
+Learnings for future iterations:
+  - Always check if a task was already completed before reimplementing
+  - LinkOAuthAccountView follows same pattern as other auth endpoints
+  - Uses User.check_password() to verify password (secure hashing)
+  - SocialAccount.objects.create() links OAuth provider to existing user
+  - Session-based temporary storage is appropriate for OAuth linking flow
+  - JWT token generation uses RefreshToken.for_user() (same as login flow)
+  - httpOnly cookies ensure tokens can't be accessed by JavaScript (security)
+---
+

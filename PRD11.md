@@ -163,15 +163,15 @@ Replace stub email implementation with production-ready email system using Hosti
 **Description:** As a developer, I need to track user email preferences so users can unsubscribe from notifications.
 
 **Acceptance Criteria:**
-- [ ] Create `EmailPreference` model in `apps/users/models.py`:
+- [x] Create `EmailPreference` model in `apps/users/models.py`:
   - `user` (OneToOne FK to User)
   - `collaboration_notifications` (BooleanField, default=True)
   - `marketing_emails` (BooleanField, default=True)
   - `unsubscribe_token` (CharField, unique, auto-generated UUID)
   - `created_at`, `updated_at` timestamps
-- [ ] Add signal to create EmailPreference on User creation
-- [ ] Generate migration
-- [ ] Typecheck passes
+- [x] Add signal to create EmailPreference on User creation
+- [x] Generate migration
+- [x] Typecheck passes
 
 ---
 

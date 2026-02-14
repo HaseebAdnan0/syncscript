@@ -204,3 +204,22 @@ In Progress - US-004 complete
   - No need to refresh individual objects when using bulk update
   - Tests should verify count returned matches expected updates
 ---
+
+## Iteration 8 - US-008: Unread Count Endpoint (Verification)
+- Verified unread_count endpoint already implemented in NotificationViewSet
+- GET /api/v1/notifications/unread-count/ returns { "count": N }
+- Uses efficient COUNT query: .filter(user=user, read_at__isnull=True).count()
+- Comprehensive test suite already exists with 5 test cases:
+  - Empty state returns 0
+  - Counts unread notifications correctly
+  - Excludes read notifications
+  - Filters by authenticated user
+  - Requires authentication
+- All tests pass (5/5), mypy typecheck passes
+- Files changed: PRD19.md (marked US-008 complete)
+- Learnings for future iterations:
+  - Use .count() for efficient counting without fetching all objects
+  - Filter with read_at__isnull=True to identify unread notifications
+  - Always verify if endpoint already exists before implementing
+  - Comprehensive tests should cover edge cases: empty, partial, full, user isolation, auth
+---
