@@ -327,3 +327,23 @@
   - Django shell imports work with 'python manage.py shell -c "code"'
   - Pyright import errors for Django are normal without stubs installed
 ---
+## Iteration 15 - US-015: Add storage fields to Vault API
+- Added three SerializerMethodFields to VaultSerializer in backend/apps/vaults/serializers.py:
+  - storage_used_bytes: returns total_bytes from related VaultStorageUsage (0 if doesn't exist)
+  - storage_file_count: returns file_count from related VaultStorageUsage (0 if doesn't exist)
+  - storage_user_breakdown: returns user_breakdown JSON dict (empty dict if doesn't exist)
+- VaultStorageUsage has OneToOneField with related_name='storage_usage'
+- Access pattern: obj.storage_usage.total_bytes (raises exception if doesn't exist)
+- Error handling: try-except blocks return defaults (0, 0, {}) when VaultStorageUsage doesn't exist
+- Updated VaultSerializer.Meta.fields to include new storage fields
+- Files changed:
+  - backend/apps/vaults/serializers.py (added 3 SerializerMethodField methods)
+  - PRD6.md (marked US-015 complete)
+- Learnings for future iterations:
+  - OneToOneField with related_name='storage_usage' accessed as vault.storage_usage
+  - OneToOneField raises RelatedObjectDoesNotExist when related object missing
+  - SerializerMethodField pattern: get_<field_name>(self, obj) returns computed value
+  - Generic Exception catch handles both DoesNotExist and AttributeError gracefully
+  - Django system check passes validates all serializer configuration
+  - Testing with mock objects useful to verify error handling without database
+---

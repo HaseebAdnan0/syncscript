@@ -392,3 +392,17 @@
   - Action naming: 'membership.removed' follows 'entity.verb_past' convention
   - Signal registered with @receiver(post_delete, sender=VaultMembership)
 ---
+## Iteration 30 - US-029: Register signals in apps.py ready()
+- Implemented ready() method in VaultsConfig to connect signal handlers
+- Files changed:
+  - backend/apps/vaults/apps.py (added ready() method with signals import)
+  - PRD2.md (marked US-029 as complete)
+- Django check passed with no issues
+- Learnings for future iterations:
+  - ready() method is called once when Django initializes the app
+  - Import signals module with # noqa: F401 to suppress "unused import" linter warnings
+  - The import itself causes @receiver decorators to execute, registering signal handlers
+  - Django check validates signal registration without database connection
+  - Pyright warning about "could not be resolved" on relative import is false positive - works at runtime
+---
+

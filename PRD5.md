@@ -176,13 +176,13 @@ This PRD covers the full implementation: core infrastructure, event broadcasting
 **Description:** As a developer, I need Celery tasks to broadcast Source events asynchronously without blocking HTTP requests.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/sources/tasks.py`
-- [ ] Implement `broadcast_source_created(source_id)` task
-- [ ] Implement `broadcast_source_updated(source_id, changed_fields)` task
-- [ ] Implement `broadcast_source_deleted(source_id, vault_id, deleted_by_id)` task
-- [ ] Tasks use `broadcast_to_vault` helper
-- [ ] Payloads match event catalog (source object with id, url, title, created_by)
-- [ ] Typecheck passes
+- [x] Create `apps/sources/tasks.py`
+- [x] Implement `broadcast_source_created(source_id)` task
+- [x] Implement `broadcast_source_updated(source_id, changed_fields)` task
+- [x] Implement `broadcast_source_deleted(source_id, vault_id, deleted_by_id)` task
+- [x] Tasks use `broadcast_to_vault` helper
+- [x] Payloads match event catalog (source object with id, url, title, created_by)
+- [x] Typecheck passes
 
 ---
 

@@ -229,13 +229,13 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need an endpoint to bulk import sources with duplicate detection.
 
 **Acceptance Criteria:**
-- [ ] Add `@action(detail=False, methods=['post'])` named `bulk_import`
-- [ ] Accept `{"urls": [...]}` in request body
-- [ ] Check existing sources in vault to detect duplicates
-- [ ] For each new URL: create Source with auto metadata extraction
-- [ ] Return `{"created": [...], "skipped": [...], "errors": [...]}`
-- [ ] Wrap in database transaction for atomicity
-- [ ] Typecheck passes
+- [x] Add `@action(detail=False, methods=['post'])` named `bulk_import`
+- [x] Accept `{"urls": [...]}` in request body
+- [x] Check existing sources in vault to detect duplicates
+- [x] For each new URL: create Source with auto metadata extraction
+- [x] Return `{"created": [...], "skipped": [...], "errors": [...]}`
+- [x] Wrap in database transaction for atomicity
+- [x] Typecheck passes
 
 ---
 
