@@ -313,13 +313,13 @@ Add social authentication to SyncScript using Google and GitHub OAuth providers.
 **Description:** As a user, I want to disconnect an OAuth provider from my account.
 
 **Acceptance Criteria:**
-- [ ] Add disconnect handler to ConnectedAccounts component
-- [ ] Show confirmation dialog: "Disconnect {Provider}?"
-- [ ] Call `DELETE /api/v1/auth/oauth/connected/{provider}/`
-- [ ] Handle "last auth method" error: show message explaining they need password first
-- [ ] On success: remove provider from list, show success toast
-- [ ] Disable disconnect button while request is pending
-- [ ] Typecheck passes
+- [x] Add disconnect handler to ConnectedAccounts component
+- [x] Show confirmation dialog: "Disconnect {Provider}?"
+- [x] Call `DELETE /api/v1/auth/oauth/connected/{provider}/`
+- [x] Handle "last auth method" error: show message explaining they need password first
+- [x] On success: remove provider from list, show success toast
+- [x] Disable disconnect button while request is pending
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---

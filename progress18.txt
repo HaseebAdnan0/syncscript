@@ -332,3 +332,22 @@
   - All types should match backend serializer field names exactly
 ---
 
+## Iteration 16 - US-017: Create useSuggestionsQuery hook
+- Created frontend/src/hooks/useSuggestionsQuery.ts
+- Hook accepts query string parameter
+- Debounces API calls by 150ms (faster than full search for better UX)
+- Only fires query when length >= 2 characters
+- Returns SearchSuggestion[] array (top 5 from backend)
+- Uses React Query with queryKey ['search-suggestions', debouncedQuery]
+- Stale time: 60 seconds (suggestions change less frequently than full search)
+- Files changed:
+  - frontend/src/hooks/useSuggestionsQuery.ts (created)
+  - PRD18.md (marked US-017 complete)
+- Learnings for future iterations:
+  - Suggestions use 150ms debounce vs 200ms for full search (faster feedback loop)
+  - Longer stale time (60s) for suggestions since they're less dynamic than results
+  - getSuggestions API function returns SearchSuggestion[] directly (no wrapper object)
+  - Pattern matches useSearchQuery but with different debounce timing and return type
+  - Enabled condition (query.length >= 2) prevents unnecessary API calls
+---
+

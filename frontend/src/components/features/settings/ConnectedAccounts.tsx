@@ -169,12 +169,13 @@ export function ConnectedAccounts() {
                   </div>
                 </div>
 
-                {/* Disconnect Button - Placeholder for US-021 */}
+                {/* Disconnect Button */}
                 <button
-                  disabled
-                  className="px-4 py-2 text-sm font-medium text-[#94A3B8] border border-white/10 rounded-lg opacity-50 cursor-not-allowed"
+                  onClick={() => setConfirmDisconnect(account.provider)}
+                  disabled={disconnecting === account.provider}
+                  className="px-4 py-2 text-sm font-medium text-red-400 border border-red-500/20 rounded-lg hover:bg-red-500/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Disconnect
+                  {disconnecting === account.provider ? 'Disconnecting...' : 'Disconnect'}
                 </button>
               </div>
             );
@@ -233,6 +234,50 @@ export function ConnectedAccounts() {
       {accounts.length === 0 && availableProviders.length === 0 && (
         <div className="text-center py-12">
           <p className="text-[#94A3B8]">No OAuth providers available</p>
+        </div>
+      )}
+
+      {/* Confirmation Dialog */}
+      {confirmDisconnect && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-[#0F1115] border border-white/10 rounded-2xl p-6 max-w-md w-full mx-4 shadow-[0_0_40px_-10px_rgba(247,147,26,0.3)]">
+            <h3 className="text-xl font-bold text-white mb-2">
+              Disconnect {providerConfig[confirmDisconnect].name}?
+            </h3>
+            <p className="text-[#94A3B8] text-sm mb-6">
+              Are you sure you want to disconnect your {providerConfig[confirmDisconnect].name} account?
+              You can reconnect it at any time.
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setConfirmDisconnect(null)}
+                disabled={disconnecting !== null}
+                className="flex-1 px-4 py-2 text-sm font-medium text-white border border-white/10 rounded-lg hover:bg-white/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleDisconnect(confirmDisconnect)}
+                disabled={disconnecting !== null}
+                className="flex-1 px-4 py-2 text-sm font-medium bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {disconnecting === confirmDisconnect ? 'Disconnecting...' : 'Disconnect'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Success Toast */}
+      {successMessage && (
+        <div className="fixed bottom-4 right-4 bg-green-500/20 border border-green-500/50 text-green-400 px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in">
+          <div className="flex items-center gap-2">
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            <p className="text-sm font-medium">{successMessage}</p>
+          </div>
         </div>
       )}
     </div>

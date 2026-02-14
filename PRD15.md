@@ -133,10 +133,10 @@ This feature uses Claude as the AI backbone with a simple chunking strategy (no 
 **Description:** As a user, I want my vault Q&A conversations saved so I can continue where I left off.
 
 **Acceptance Criteria:**
-- [ ] If `conversation_id` provided in ask request, append to existing conversation
-- [ ] If not provided, create new ChatConversation
-- [ ] Save user message and assistant response as ChatMessage records
-- [ ] Store `sources_cited` in assistant message's JSONField
+- [x] If `conversation_id` provided in ask request, append to existing conversation
+- [x] If not provided, create new ChatConversation
+- [x] Save user message and assistant response as ChatMessage records
+- [x] Store `sources_cited` in assistant message's JSONField
 - [ ] Limit to 10 conversations per vault (delete oldest on overflow)
 - [ ] `GET /api/v1/vaults/{id}/conversations/` lists conversations with preview
 - [ ] `GET /api/v1/vaults/{id}/conversations/{conv_id}/` returns full message history

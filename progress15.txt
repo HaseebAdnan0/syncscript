@@ -244,3 +244,51 @@ Learnings for future iterations:
 - Type annotations on signal handlers: sender: Any, instance: Any, **kwargs: Any
 - Test fixture ordering matters: create Source BEFORE setting cache to avoid signal firing in setUp
 ---
+
+## Iteration 9 - US-009: Implement question answering endpoint
+- Created POST /api/v1/vaults/{id}/ask/ endpoint in apps/ai/views.py
+- Implemented comprehensive ask_question view function:
+  - Validates request with AskQuestionSerializer (question + optional conversation_id)
+  - Checks vault read permissions (owner or member)
+  - Gets or creates ChatConversation for the user
+  - Gathers text from all vault sources (PDF extracted text, AI summaries, descriptions/metadata)
+  - Chunks all source text using chunk_text() service
+  - Tracks source mapping (chunk_id -> source_id/title) for citations
+  - Uses get_relevant_chunks() to find top 5 relevant chunks for the question
+  - Calls Claude API with question and context chunks
+  - Maps chunk indices from API response to actual source citations with excerpts
+  - Saves user message and assistant message with citations to database
+  - Returns answer, citations array, and conversation_id
+- Updated AskQuestionSerializer with conversation_id as IntegerField
+- Added /vaults/<uuid:vault_id>/ask/ route to apps/ai/urls.py
+- Created 10 comprehensive tests in QuestionAnsweringTestCase:
+  - Successful Q&A with citations returned
+  - New conversation creation
+  - Existing conversation continuation
+  - Message persistence (user + assistant)
+  - Authentication requirement
+  - Permission checks
+  - Empty vault error handling
+  - Token usage logging
+  - Input validation (empty question)
+  - Claude API error handling
+- All 64 AI app tests pass
+- Typecheck passes
+
+Files changed:
+- backend/apps/ai/views.py (added ask_question function)
+- backend/apps/ai/serializers.py (added AskQuestionSerializer)
+- backend/apps/ai/urls.py (added ask route)
+- backend/apps/ai/tests.py (added QuestionAnsweringTestCase with 10 tests)
+- PRD15.md (marked US-009 complete)
+
+Learnings for future iterations:
+- ChatConversation uses default AutoField (integer), not UUID - serializer must match
+- Source text gathering strategy: PDF extracted_text > AI summary > description/metadata
+- Chunk-to-source mapping crucial for proper citations: track source info per chunk_id
+- Citation deduplication: avoid citing same source multiple times from different chunks
+- Conversation creation: if conversation_id provided, fetch existing; else create new
+- Message ordering important: save user message first, then assistant message
+- Citations should include excerpt (truncated to 200 chars) for context
+- get_object_or_404 for conversation ensures user owns the conversation being continued
+---

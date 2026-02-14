@@ -323,10 +323,23 @@ def ask_question(request, vault_id):
             user=request.user
         )
     else:
+        # Create new conversation
         conversation = ChatConversation.objects.create(
             vault=vault,
             user=request.user
         )
+
+        # Enforce 10 conversation limit per vault
+        vault_conversations = ChatConversation.objects.filter(
+            vault=vault
+        ).order_by('-updated_at')
+
+        if vault_conversations.count() > 10:
+            # Delete oldest conversations beyond limit
+            to_delete = vault_conversations[10:]
+            ChatConversation.objects.filter(
+                id__in=[c.id for c in to_delete]
+            ).delete()
 
     # Gather text from all sources in vault
     sources = Source.objects.filter(vault=vault, is_deleted=False).select_related('vault')
