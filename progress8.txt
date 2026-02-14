@@ -203,3 +203,29 @@ Learnings for future iterations:
 - Button variant="ghost" is good for filter triggers with custom backgrounds
 - Filter components should take optional props (like vaultMembers) with sensible defaults
 ---
+
+## Iteration 9 - US-008: Search input for vaults filtering
+- Verified that search input functionality was already implemented in commit 36ba4ff (2026-02-14)
+- Search functionality includes:
+  - Search input in vaults listing page header with bottom-border styling
+  - Search icon (Lucide Search) positioned on the left side
+  - Debounced input by 300ms using useEffect and setTimeout pattern
+  - Search query passed to useVaults(debouncedSearch) hook for server-side filtering
+  - Clear button (X icon) that appears when search has value
+  - Proper focus styling with orange border: `focus:border-[#F7931A]`
+- Implementation uses local state (searchInput, debouncedSearch) rather than Zustand store
+- Typecheck passes successfully
+- Updated PRD8.md to mark US-008 acceptance criteria complete
+
+Files changed:
+- PRD8.md (marked US-008 complete, code was already committed)
+- progress8.txt (this file)
+
+Learnings for future iterations:
+- Search functionality was already implemented - always check git history before implementing
+- Debouncing pattern: use local searchInput state + useEffect with setTimeout cleanup
+- Pass debounced value to React Query hook, not the raw input value
+- Clear button should use conditional rendering: `{searchInput && <button>...}`
+- Search input uses `bg-transparent border-0 border-b-2` for bottom-border-only style
+- The implementation in vaults page was in commit 36ba4ff but had misleading commit message
+---
