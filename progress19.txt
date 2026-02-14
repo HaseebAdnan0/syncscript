@@ -50,13 +50,28 @@ In Progress - US-004 complete
 - Learnings: Always check git history when task appears complete
 ---
 
+## Iteration 4 - US-004: Notification Serializers
+- Created `backend/apps/notifications/serializers.py` with three serializers
+- NotificationSerializer: includes all fields plus is_read computed property via SerializerMethodField
+- NotificationPreferencesSerializer: validates email_digest_frequency choices
+- MutedVaultSerializer: includes vault_id and vault_name from related Vault model
+- Followed established DRF patterns from vaults/serializers.py
+- Mypy typecheck passes (Pyright warnings are standard DRF Meta class issues)
+- Files changed: backend/apps/notifications/serializers.py, PRD19.md
+- Learnings for future iterations:
+  - SerializerMethodField naming: get_{field_name} method convention
+  - Use source= parameter to access related model fields for read-only display
+  - validate_{field_name} methods for field-level validation
+  - read_only_fields in Meta prevents modification of system-managed fields
+---
+
 ## Story Progress
 
 ### Backend Foundation
 - [x] US-001: Notification model
 - [x] US-002: NotificationPreferences model
 - [x] US-003: MutedVault model
-- [ ] US-004: Serializers
+- [x] US-004: Serializers
 
 ### Backend API
 - [ ] US-005: List endpoint
