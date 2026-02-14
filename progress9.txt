@@ -1,0 +1,25 @@
+# Progress Log
+
+## Feature: Frontend Sources & Annotations UI (PRD9)
+
+## Learnings
+(Patterns discovered during implementation)
+
+---
+
+## Implementation Notes
+
+### Dependencies to verify before starting:
+- [ ] Backend Sources API endpoints exist and return expected shape
+- [ ] Backend Annotations API endpoints exist with reply support
+- [ ] WebSocket channel includes source/annotation events
+- [ ] Vault detail page shell exists at /vaults/[id]
+
+### Design tokens reference:
+- Background: #030304 (True Void)
+- Surface: #0F1115 (Dark Matter)
+- Muted text: #94A3B8 (Stardust)
+- Primary: #F7931A (Bitcoin Orange)
+- Glass morphism: backdrop-blur-lg bg-white/5 border border-white/10
+
+---

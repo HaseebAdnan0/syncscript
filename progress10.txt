@@ -1,0 +1,35 @@
+# Progress Log - PRD10: Real-time Updates & Notifications Integration
+
+## Status: Not Started
+
+## User Stories
+- [ ] US-001: Create useVaultSocket hook for WebSocket connection management
+- [ ] US-002: Create ConnectionStatus indicator component
+- [ ] US-003: Create useRealtimeUpdates hook for optimistic updates with reconciliation
+- [ ] US-004: Integrate real-time source updates in vault detail page
+- [ ] US-005: Integrate real-time annotation updates
+- [ ] US-006: Create usePresence hook for tracking active vault members
+- [ ] US-007: Create PresenceIndicator component with animate-ping effect
+- [ ] US-008: Create notification API client and useNotifications hook
+- [ ] US-009: Create toast notification system for vault events
+- [ ] US-010: Create UnreadBadge component for header
+- [ ] US-011: Create NotificationPanel dropdown component
+- [ ] US-012: Create NotificationPreferences panel for user settings
+- [ ] US-013: Integrate Pusher for browser push notifications
+- [ ] US-014: Implement sound notification with global toggle
+- [ ] US-015: Integrate notification components into app header
+- [ ] US-016: Integrate PresenceIndicator into vault detail page
+- [ ] US-017: Add notification preferences to user settings page
+- [ ] US-018: Handle WebSocket reconnection with state recovery
+
+## Learnings
+(Patterns discovered during implementation)
+
+---
+
+## Implementation Notes
+- Frontend-only implementation (backend WebSocket/Pusher assumed working)
+- Notification history stored in backend database via API
+- Presence: member list with animate-ping for active users
+- Push notifications: high-priority only (new member, @mentions)
+- Sound: global on/off toggle with single notification sound
