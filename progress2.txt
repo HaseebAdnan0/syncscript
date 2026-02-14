@@ -224,3 +224,16 @@
   - Filter is optional - only applied if role param is present in request
 ---
 
+## Iteration 18 - US-017: Add owner-only permissions to vault mutations
+- Implemented get_permissions() method in VaultViewSet
+- Files changed:
+  - backend/apps/vaults/views.py (added IsVaultOwner import, added get_permissions() method)
+  - PRD2.md (marked US-017 as complete)
+- Django check passed with no issues
+- Learnings for future iterations:
+  - get_permissions() method is called per-request to dynamically set permissions based on action
+  - Check self.action in ['update', 'partial_update', 'destroy'] to apply owner-only permissions
+  - Must return list of permission instances: [IsVaultOwner()], [IsAuthenticated()]
+  - DRF will automatically return 403 Forbidden when permission check fails
+  - Import IsVaultOwner from .permissions module
+---
