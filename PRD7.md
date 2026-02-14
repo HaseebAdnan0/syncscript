@@ -260,14 +260,14 @@ SyncScript needs a complete frontend authentication system that enables users to
 **Description:** As a user, I want a profile page with tabs so that I can manage my account settings.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/app/(protected)/profile/page.tsx`
-- [ ] Wrap with ProtectedRoute
-- [ ] Two tabs: "Profile" and "Security"
-- [ ] Use Radix Tabs component
-- [ ] Tab styling matches Bitcoin DeFi aesthetic (orange active indicator)
-- [ ] Default to "Profile" tab
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/app/(protected)/profile/page.tsx`
+- [x] Wrap with ProtectedRoute
+- [x] Two tabs: "Profile" and "Security"
+- [x] Use Radix Tabs component
+- [x] Tab styling matches Bitcoin DeFi aesthetic (orange active indicator)
+- [x] Default to "Profile" tab
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 
