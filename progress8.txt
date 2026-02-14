@@ -265,3 +265,30 @@ Learnings for future iterations:
 - React.ChangeEvent<HTMLTextAreaElement> needed for typed onChange handlers
 - Always reset form state when closing modals (both success and cancel paths)
 ---
+
+## Iteration 11 - US-010: Vault detail page layout with tabs
+- Found that vault detail page already had tab implementation from previous work (commit 62f824f)
+- Page was rewritten from grid layout to Radix Tabs layout:
+  - Header with vault name, description, back button (ArrowLeft icon)
+  - Three tabs: Sources, Members, Settings with orange underline indicator on active tab
+  - Active tab state stored in Zustand store via useVaultsStore (activeTab, setActiveTab)
+  - Loading state: centered "Loading vault..." message while fetching
+  - 404 handling: "Vault not found" message with "Return to vaults" button
+- Tab content currently shows placeholder text (to be filled in subsequent user stories)
+- Fixed pre-existing build error in AddSourceModal.tsx (vaultId unused warning with eslint comment)
+- Build passes successfully
+
+Files changed:
+- frontend/src/app/vaults/[id]/page.tsx (already had correct implementation from commit 62f824f)
+- frontend/src/components/features/sources/AddSourceModal.tsx (already fixed in previous commit)
+- PRD8.md (marked US-010 complete except browser verification)
+
+Learnings for future iterations:
+- Radix Tabs pattern: Tabs.Root with value/onValueChange, Tabs.List for tab buttons, Tabs.Trigger with data-[state=active] selector
+- Tab indicator styling: absolute positioned div with `data-[state=active]:opacity-100` for underline effect
+- Orange active indicator: `bg-[#F7931A]` with 0.5 height (h-0.5)
+- Tabs should use semantic values: "sources", "members", "settings" (not numeric indices)
+- 404 state needs helpful CTA button to navigate back, not just error message
+- Back button pattern: ArrowLeft icon + "Back to vaults" text with router.push('/vaults')
+- Task US-010 was already complete from previous work on different PRD (PRD4), just needed PRD8 marked
+---
