@@ -53,12 +53,12 @@ Implement a global full-text search system for SyncScript that enables researche
 **Description:** As a developer, I need a new search app with a model to store user search history.
 
 **Acceptance Criteria:**
-- [ ] Create `backend/apps/search/` app with models.py, views.py, urls.py, serializers.py
-- [ ] Add `SearchHistory` model with fields: `user` (FK), `query` (CharField), `result_count` (IntegerField), `created_at` (DateTimeField)
-- [ ] Add index on `user` and `created_at` for efficient retrieval
-- [ ] Register app in settings.py INSTALLED_APPS
-- [ ] Migration runs successfully
-- [ ] Typecheck passes
+- [x] Create `backend/apps/search/` app with models.py, views.py, urls.py, serializers.py
+- [x] Add `SearchHistory` model with fields: `user` (FK), `query` (CharField), `result_count` (IntegerField), `created_at` (DateTimeField)
+- [x] Add index on `user` and `created_at` for efficient retrieval
+- [x] Register app in settings.py INSTALLED_APPS
+- [x] Migration runs successfully
+- [x] Typecheck passes
 
 ---
 
