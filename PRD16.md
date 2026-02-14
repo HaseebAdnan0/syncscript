@@ -42,14 +42,14 @@ Create SyncScript's production landing page following the Bitcoin DeFi aesthetic
 **Description:** As a user, I want to see an eye-catching animated orb so the hero section feels dynamic and futuristic.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/marketing/AnimatedOrb.tsx`
-- [ ] Orb is a gradient sphere (orange to gold: #F7931A to #FFD600)
-- [ ] Three orbital rings spinning at different speeds/angles using CSS keyframes
-- [ ] Subtle glow effect around orb (orange shadow)
-- [ ] Orb floats with gentle up/down animation (8s ease-in-out infinite)
-- [ ] Responsive sizing (smaller on mobile)
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/marketing/AnimatedOrb.tsx`
+- [x] Orb is a gradient sphere (orange to gold: #F7931A to #FFD600)
+- [x] Three orbital rings spinning at different speeds/angles using CSS keyframes
+- [x] Subtle glow effect around orb (orange shadow)
+- [x] Orb floats with gentle up/down animation (8s ease-in-out infinite)
+- [x] Responsive sizing (smaller on mobile)
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-004: Create Floating Stat Cards Around Orb
 **Description:** As a user, I want to see floating stat cards around the orb so I understand the platform's scale at a glance.

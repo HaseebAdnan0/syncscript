@@ -30,6 +30,23 @@
   - Management commands follow Django's BaseCommand pattern
 ---
 
+## Iteration 2 - US-002: Create Celery email tasks module (Already Complete)
+- Discovered tasks.py was already created in a previous session (commit 7c2d975)
+- Verified all 5 tasks are properly implemented:
+  - send_verification_email_task
+  - send_password_reset_email_task
+  - send_welcome_email_task
+  - send_vault_invite_email_task
+  - send_collaboration_notification_task
+- All tasks use exponential backoff with max 3 retries
+- Tasks log success/failure appropriately
+- Django system check passes
+- Learnings for future iterations:
+  - Always check git history before recreating files
+  - Task was completed correctly in previous iteration
+  - Celery autodiscovery requires Django context to find tasks
+---
+
 ## Story Progress
 
 ### Backend - Email Configuration

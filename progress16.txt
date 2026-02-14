@@ -39,3 +39,29 @@
   - Using absolute positioning with inset-0 allows full background coverage
   - z-index layering (relative z-10 on content) ensures text appears above background
 ---
+
+## Iteration 3 - US-003: Create Animated 3D Orb Component
+- Created `frontend/src/components/marketing/AnimatedOrb.tsx` with gradient sphere
+- Implemented gradient orb using `bg-gradient-to-br from-[#F7931A] to-[#FFD600]`
+- Added orange glow effect with custom shadow `shadow-[0_0_80px_-10px_rgba(247,147,26,0.8)]`
+- Created three orbital rings with different border opacities (20%, 15%, 10%)
+- Added CSS keyframes to globals.css for orbital animations:
+  - `orbit-slow`: 20s linear infinite rotation
+  - `orbit-medium`: 15s linear infinite rotation with 3D tilt
+  - `orbit-fast`: 10s linear infinite rotation
+- Orb uses existing `animate-float` animation (8s ease-in-out infinite)
+- Responsive sizing: 64 (mobile), 80 (tablet), 96 (desktop) using Tailwind breakpoints
+- Integrated AnimatedOrb into landing page with two-column grid layout
+- Content on left, orb on right (desktop); stacked with orb on top (mobile)
+- Files changed:
+  - Created: `frontend/src/components/marketing/AnimatedOrb.tsx`
+  - Modified: `frontend/src/app/globals.css` (added orbital keyframes)
+  - Modified: `frontend/src/app/(marketing)/page.tsx` (integrated orb with two-column layout)
+- Learnings for future iterations:
+  - CSS keyframes work well for continuous orbital animations
+  - Using perspective property on parent enables 3D transform effects
+  - Three rings at different speeds/angles create visual depth
+  - Gradient shadows (orange tint) match Bitcoin DeFi aesthetic better than pure black
+  - Grid layout with order classes enables mobile-first responsive design
+  - Container max-width with padding maintains consistent content width
+---

@@ -89,6 +89,11 @@ class VaultMembership(models.Model):
         null=True,
         related_name='memberships_created'
     )
+    last_accessed_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text='Timestamp when user last accessed this vault'
+    )
 
     class Meta:
         db_table = 'vault_memberships'

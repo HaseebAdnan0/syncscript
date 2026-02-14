@@ -35,13 +35,13 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a developer, I need to store user notification preferences for email and push settings.
 
 **Acceptance Criteria:**
-- [ ] Add NotificationPreferences model with OneToOne to User
-- [ ] Boolean fields: `email_vault_activity`, `email_mentions`, `push_enabled` (all default True)
-- [ ] `email_digest_frequency` CharField with choices: `immediate`, `daily`, `weekly`, `none` (default `daily`)
-- [ ] `push_sources`, `push_annotations` boolean fields (default True)
-- [ ] Auto-create preferences on user creation via signal
-- [ ] Generate and apply migration
-- [ ] Typecheck passes
+- [x] Add NotificationPreferences model with OneToOne to User
+- [x] Boolean fields: `email_vault_activity`, `email_mentions`, `push_enabled` (all default True)
+- [x] `email_digest_frequency` CharField with choices: `immediate`, `daily`, `weekly`, `none` (default `daily`)
+- [x] `push_sources`, `push_annotations` boolean fields (default True)
+- [x] Auto-create preferences on user creation via signal
+- [x] Generate and apply migration
+- [x] Typecheck passes
 
 ---
 

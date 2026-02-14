@@ -53,6 +53,45 @@ body {
     animation: float 8s ease-in-out infinite;
   }
 
+  @keyframes orbit-slow {
+    0% {
+      transform: translate(-50%, -50%) rotateZ(0deg);
+    }
+    100% {
+      transform: translate(-50%, -50%) rotateZ(360deg);
+    }
+  }
+
+  @keyframes orbit-medium {
+    0% {
+      transform: translate(-50%, -50%) rotateX(60deg) rotateY(20deg) rotateZ(0deg);
+    }
+    100% {
+      transform: translate(-50%, -50%) rotateX(60deg) rotateY(20deg) rotateZ(360deg);
+    }
+  }
+
+  @keyframes orbit-fast {
+    0% {
+      transform: translate(-50%, -50%) rotateY(90deg) rotateZ(0deg);
+    }
+    100% {
+      transform: translate(-50%, -50%) rotateY(90deg) rotateZ(360deg);
+    }
+  }
+
+  .animate-orbit-slow {
+    animation: orbit-slow 20s linear infinite;
+  }
+
+  .animate-orbit-medium {
+    animation: orbit-medium 15s linear infinite;
+  }
+
+  .animate-orbit-fast {
+    animation: orbit-fast 10s linear infinite;
+  }
+
   .text-balance {
     text-wrap: balance;
   }

@@ -83,7 +83,8 @@ class NotificationPreferences(models.Model):
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def create_notification_preferences(sender, instance, created, **kwargs) -> None:
+def create_notification_preferences(sender, instance, created, **kwargs) -> None:  # type: ignore[misc]
     """Auto-create notification preferences when user is created"""
+    del sender, kwargs  # Unused but required by signal
     if created:
         NotificationPreferences.objects.create(user=instance)

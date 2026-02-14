@@ -1,14 +1,15 @@
 from datetime import timedelta
 from django.utils import timezone
-from django.db.models import Q
+from django.db.models import Q, F, Case, When
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 
-from apps.vaults.models import Vault
+from apps.vaults.models import Vault, VaultMembership
 from apps.sources.models import Source
 from apps.annotations.models import Annotation
+from .serializers import RecentVaultSerializer
 
 
 @api_view(['GET'])
@@ -53,3 +54,51 @@ def dashboard_stats(request):
         'sources_count': sources_count,
         'annotations_this_week': annotations_this_week
     }, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def recent_vaults(request):
+    """
+    Returns the 3 most recently accessed vaults for the authenticated user.
+
+    GET /api/v1/dashboard/recent-vaults/
+
+    Returns array of vaults with fields:
+        - id: vault UUID
+        - name: vault name
+        - description: vault description
+        - last_accessed_at: timestamp of last access (or updated_at as fallback)
+        - sources_count: count of non-deleted sources
+        - role: user's role in the vault
+    """
+    user = request.user
+
+    # Get all accessible vaults (owned or member)
+    accessible_vaults = Vault.objects.filter(
+        Q(owner=user) | Q(members=user)
+    ).distinct()
+
+    # Annotate with last_accessed_at from membership, use updated_at as fallback
+    # Order by last_accessed_at (nulls last), then by updated_at
+    vaults_with_access = accessible_vaults.annotate(
+        membership_last_accessed=Case(
+            When(
+                memberships__user=user,
+                memberships__last_accessed_at__isnull=False,
+                then=F('memberships__last_accessed_at')
+            ),
+            default=None
+        )
+    ).order_by(
+        F('membership_last_accessed').desc(nulls_last=True),
+        '-updated_at'
+    )[:3]
+
+    serializer = RecentVaultSerializer(
+        vaults_with_access,
+        many=True,
+        context={'request': request}
+    )
+
+    return Response(serializer.data, status=status.HTTP_200_OK)
