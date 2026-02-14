@@ -146,3 +146,23 @@
   - _update_presence reuses same Redis zadd logic as _add_to_presence (updates score)
   - Windows console doesn't support Unicode checkmarks - use [OK] prefix instead
 ---
+## Iteration 10 - US-011: Create websocket_utils with broadcast helper
+- Created core/websocket_utils.py with broadcast_to_vault function
+- Function increments sequence number in Redis using redis_client.incr(vault_{id}:seq)
+- Builds message envelope with:
+  - type, seq, event: event_type
+  - payload: provided dict
+  - metadata: timestamp (timezone-aware), vault_id, optional user_id/username
+- Sends to channel layer via group_send with type="vault_event"
+- Files changed: backend/core/__init__.py (new), backend/core/websocket_utils.py (new), PRD5.md
+- Already committed in 8bd6247 (auto-commit hook)
+- Typecheck passes (0 errors, 0 warnings)
+- Learnings for future iterations:
+  - Created core/ directory structure - first shared utility module outside apps/
+  - Use datetime.now(timezone.utc) instead of deprecated datetime.utcnow()
+  - channel_layer.group_send requires 'type' field that maps to consumer method name (vault_event)
+  - Message envelope wraps actual event data in consistent format for all broadcasts
+  - async_to_sync wrapper needed when calling async channel layer from sync context (Celery tasks)
+  - Redis sequence numbers provide monotonically increasing event ordering
+  - Auto-commit hooks may commit files during edits - check git log to find commits
+---

@@ -359,3 +359,48 @@ Learnings for future iterations:
 - Reset URL format: /auth/reset-password?uid={uid}&token={token}
 - Email functions use same pattern: render_to_string + strip_tags + send_mail
 ---
+
+## Iteration 19 - Create PasswordResetConfirmView endpoint (US-021)
+- Created PasswordResetConfirmView as class-based APIView in apps/users/views.py
+- POST /api/v1/auth/password-reset-confirm/ accepts uid, token, new_password via PasswordResetConfirmSerializer
+- Decodes uid using force_str(urlsafe_base64_decode(uid)) to get user_id
+- Validates token using PasswordResetTokenGenerator().check_token(user, token)
+- Updates user password using user.set_password(new_password) to ensure hashing
+- Returns success message or error for invalid/expired tokens
+- Applied @method_decorator with @ratelimit(key='ip', rate='10/m', method='POST', block=True)
+- Django system check passes
+
+Files changed:
+- backend/apps/users/views.py (added PasswordResetConfirmView class, imported urlsafe_base64_decode and force_str)
+- PRD1.md (marked US-021 complete)
+
+Learnings for future iterations:
+- urlsafe_base64_decode() from django.utils.http decodes the base64-encoded uid
+- force_str() from django.utils.encoding converts bytes to string (Python 3 compatible)
+- PasswordResetTokenGenerator().check_token(user, token) validates the token (returns True/False)
+- Exception handling for (TypeError, ValueError, OverflowError, User.DoesNotExist) covers all decode/fetch errors
+- user.set_password() automatically hashes the password before saving
+- user.save(update_fields=['password']) efficiently updates only the password field
+- PasswordResetConfirmSerializer already validates password strength (min_length=8 + Django validators)
+---
+
+## Iteration 20 - Create ProfileView endpoint (US-022)
+- Created ProfileView as class-based APIView in apps/users/views.py
+- Implemented GET method to return current user's profile using UserSerializer
+- Implemented PATCH method to update avatar_url, bio, institution using ProfileUpdateSerializer
+- Added IsAuthenticated permission class to require authentication
+- Added explicit check to reject attempts to change email or password (returns 400 error)
+- Django system check passes
+
+Files changed:
+- backend/apps/users/views.py (added ProfileView class, imported ProfileUpdateSerializer)
+- PRD1.md (marked US-022 complete)
+
+Learnings for future iterations:
+- ProfileView requires IsAuthenticated permission to ensure only logged-in users can view/update their profile
+- GET method returns serializer.data directly (no wrapper needed)
+- PATCH method uses partial=True for partial updates (only fields in request.data are updated)
+- Explicit check for email/password in request.data provides clear error message to users
+- ProfileUpdateSerializer handles validation (length limits, URL format) automatically
+- request.user is the authenticated User instance (provided by DRF's authentication middleware)
+---

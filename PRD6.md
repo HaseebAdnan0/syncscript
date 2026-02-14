@@ -152,12 +152,12 @@ Implement cloud file storage for SyncScript using Cloudflare R2 (S3-compatible).
 **Description:** As a client, I need to finalize multipart upload after all parts are uploaded.
 
 **Acceptance Criteria:**
-- [ ] Add `POST /api/v1/sources/pdfs/multipart-upload/{upload_id}/complete/` endpoint
-- [ ] Request body: parts array with part_number and etag
-- [ ] Complete S3 multipart upload via boto3
-- [ ] Update PDFUpload status and trigger processing task
-- [ ] Return: pdf_id, status, message
-- [ ] Typecheck passes
+- [x] Add `POST /api/v1/sources/pdfs/multipart-upload/{upload_id}/complete/` endpoint
+- [x] Request body: parts array with part_number and etag
+- [x] Complete S3 multipart upload via boto3
+- [x] Update PDFUpload status and trigger processing task
+- [x] Return: pdf_id, status, message
+- [x] Typecheck passes
 
 ### US-014: Create storage usage calculation utility
 **Description:** As a developer, I need to recalculate vault storage usage when files change.

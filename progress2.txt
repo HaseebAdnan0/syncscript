@@ -320,3 +320,18 @@
   - Permission: IsVaultMember allows any vault member to view audit history
   - Pyright warnings about "not accessed" on imports are false positives when class uses them
 ---
+
+## Iteration 25 - US-024: Create vault creation signal for owner membership
+- Implemented post_save signal on Vault to auto-create owner membership
+- Files changed:
+  - backend/apps/vaults/signals.py (added create_owner_membership signal receiver)
+  - PRD2.md (marked US-024 as complete)
+- Django check passed with no issues
+- Learnings for future iterations:
+  - Use @receiver decorator with post_save signal and sender=Model to register signal handlers
+  - Check created=True in signal handler to only run on new object creation (not updates)
+  - VaultMembership.objects.create() auto-creates the owner membership with role=OWNER
+  - Signal handler signature requires sender, instance, created, **kwargs params
+  - Pyright warnings on unused 'sender' and 'kwargs' are expected - Django requires these in signal signature
+  - Signals will be connected in apps.py ready() method in upcoming US-029
+---

@@ -197,3 +197,53 @@ def initiate_multipart_upload(
         })
 
     return upload_id, file_key, part_urls
+
+
+def complete_multipart_upload(
+    file_key: str,
+    upload_id: str,
+    parts: list
+) -> None:
+    """
+    Complete a multipart upload to S3 by combining all uploaded parts.
+
+    Args:
+        file_key: S3 object key where file is being stored
+        upload_id: S3 multipart upload ID from initiate_multipart_upload
+        parts: List of dicts with {part_number, etag} for each uploaded part
+
+    Raises:
+        Exception: If S3 multipart upload completion fails
+
+    Example:
+        >>> complete_multipart_upload(
+        ...     file_key='vaults/abc123/pdfs/uuid.pdf',
+        ...     upload_id='xyz789',
+        ...     parts=[
+        ...         {'part_number': 1, 'etag': 'etag1'},
+        ...         {'part_number': 2, 'etag': 'etag2'}
+        ...     ]
+        ... )
+        >>> # File is now available at file_key in S3
+    """
+    s3_client = get_s3_client()
+
+    # Format parts for S3 API (expects 'PartNumber' and 'ETag' capitalized)
+    formatted_parts = [
+        {
+            'PartNumber': part['part_number'],
+            'ETag': part['etag']
+        }
+        for part in parts
+    ]
+
+    # Sort parts by part number (S3 requires this)
+    formatted_parts.sort(key=lambda x: x['PartNumber'])
+
+    # Complete the multipart upload
+    s3_client.complete_multipart_upload(
+        Bucket=settings.AWS_STORAGE_BUCKET_NAME,
+        Key=file_key,
+        UploadId=upload_id,
+        MultipartUpload={'Parts': formatted_parts}
+    )

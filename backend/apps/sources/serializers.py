@@ -99,6 +99,43 @@ class MultipartUploadResponseSerializer(serializers.Serializer):
     expires_in = serializers.IntegerField()
 
 
+class MultipartUploadCompleteRequestSerializer(serializers.Serializer):
+    """
+    Serializer for multipart upload completion request (US-013).
+    Validates the parts array with part_number and ETag for each uploaded part.
+    """
+    pdf_upload_id = serializers.UUIDField(
+        required=True,
+        help_text="PDFUpload record ID from initiate endpoint"
+    )
+    parts = serializers.ListField(
+        child=serializers.DictField(),
+        required=True,
+        min_length=1,
+        help_text="Array of objects with 'part_number' (int) and 'etag' (str)"
+    )
+
+    def validate_parts(self, value):
+        """Ensure each part has required fields."""
+        for part in value:
+            if 'part_number' not in part:
+                raise serializers.ValidationError("Each part must have 'part_number' field.")
+            if 'etag' not in part:
+                raise serializers.ValidationError("Each part must have 'etag' field.")
+
+            # Validate types
+            if not isinstance(part['part_number'], int):
+                raise serializers.ValidationError("'part_number' must be an integer.")
+            if not isinstance(part['etag'], str):
+                raise serializers.ValidationError("'etag' must be a string.")
+
+            # Validate range
+            if part['part_number'] < 1 or part['part_number'] > 10000:
+                raise serializers.ValidationError("'part_number' must be between 1 and 10,000.")
+
+        return value
+
+
 class SourceSerializer(serializers.ModelSerializer):
     """
     Serializer for Source model (US-007).
