@@ -33,13 +33,13 @@ Create a comprehensive user dashboard as the primary logged-in landing page for 
 **Description:** As a developer, I need an endpoint that returns the user's most recently accessed vaults so the dashboard can show "Continue Research" section.
 
 **Acceptance Criteria:**
-- [ ] Create `GET /api/v1/dashboard/recent-vaults/` endpoint
-- [ ] Returns last 3 vaults the user accessed (by last access timestamp)
-- [ ] Each vault includes: `id`, `name`, `description`, `last_accessed_at`, `sources_count`, `role`
-- [ ] If vault has no `last_accessed_at`, use `updated_at` as fallback
-- [ ] Consider adding `last_accessed_at` field to VaultMembership if not exists
-- [ ] Endpoint requires authentication
-- [ ] Typecheck passes
+- [x] Create `GET /api/v1/dashboard/recent-vaults/` endpoint
+- [x] Returns last 3 vaults the user accessed (by last access timestamp)
+- [x] Each vault includes: `id`, `name`, `description`, `last_accessed_at`, `sources_count`, `role`
+- [x] If vault has no `last_accessed_at`, use `updated_at` as fallback
+- [x] Consider adding `last_accessed_at` field to VaultMembership if not exists
+- [x] Endpoint requires authentication
+- [x] Typecheck passes
 
 ### US-003: Create activity feed API endpoint
 **Description:** As a developer, I need an endpoint that returns recent activity across all user's vaults using existing AuditLog data.

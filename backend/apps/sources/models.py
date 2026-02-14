@@ -135,6 +135,58 @@ class PDFUpload(models.Model):
         return f"{self.original_filename}"
 
 
+class FileUpload(models.Model):
+    """
+    Stores image and document file uploads within Knowledge Vaults.
+    Supports PNG and JPG images with thumbnail generation.
+    """
+    FILE_TYPE_CHOICES = [
+        ('image', 'Image'),
+        ('document', 'Document'),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    vault = models.ForeignKey(
+        'vaults.Vault',
+        on_delete=models.CASCADE,
+        related_name='file_uploads',
+        db_index=True
+    )
+    file = models.FileField(upload_to='vaults/%Y/%m/%d/', max_length=500)
+    original_filename = models.CharField(max_length=255)
+    file_size = models.BigIntegerField(help_text='File size in bytes')
+    mime_type = models.CharField(max_length=100)
+    file_type = models.CharField(
+        max_length=20,
+        choices=FILE_TYPE_CHOICES,
+        default='image'
+    )
+
+    uploaded_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='uploaded_files'
+    )
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    thumbnail_url = models.URLField(max_length=500, blank=True)
+
+    # Soft delete
+    deleted_at = models.DateTimeField(null=True, blank=True, db_index=True)
+
+    class Meta:
+        db_table = 'file_uploads'
+        indexes = [
+            models.Index(fields=['vault', 'deleted_at']),
+            models.Index(fields=['uploaded_by', 'deleted_at']),
+            models.Index(fields=['file_type']),
+        ]
+        ordering = ['-uploaded_at']
+
+    def __str__(self):
+        return f"{self.original_filename}"
+
+
 class VaultStorageUsage(models.Model):
     """
     Caches storage usage statistics per vault for fast retrieval.

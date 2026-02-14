@@ -23,3 +23,23 @@
   - Annotation model requires bulk_create for test data due to custom save validation
   - All 3 tests passing (auth required, success case, no data case)
 ---
+
+## Iteration 2 - US-002: Create recent vaults API endpoint
+- Implemented GET /api/v1/dashboard/recent-vaults/ endpoint
+- Added last_accessed_at field to VaultMembership model
+- Created RecentVaultSerializer with computed fields (last_accessed_at, sources_count, role)
+- Files changed:
+  - backend/apps/vaults/models.py (added last_accessed_at field)
+  - backend/apps/vaults/migrations/0005_vaultmembership_last_accessed_at.py (migration)
+  - backend/apps/dashboard/serializers.py (created with RecentVaultSerializer)
+  - backend/apps/dashboard/views.py (added recent_vaults view)
+  - backend/apps/dashboard/urls.py (added route)
+  - backend/apps/dashboard/tests.py (added RecentVaultsTests class with 4 tests)
+  - PRD17.md (marked US-002 complete)
+- Learnings for future iterations:
+  - Used Django ORM annotate() with Case/When to handle nullable last_accessed_at
+  - Order by with F() expressions and nulls_last=True for fallback ordering
+  - Serializer context={'request': request} needed to access user in SerializerMethodField
+  - Falls back to updated_at when last_accessed_at is None
+  - All 4 tests passing (auth, ordering by last_accessed_at, fallback to updated_at, empty case)
+---

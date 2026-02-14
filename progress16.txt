@@ -65,3 +65,30 @@
   - Grid layout with order classes enables mobile-first responsive design
   - Container max-width with padding maintains consistent content width
 ---
+
+## Iteration 4 - US-004: Create Floating Stat Cards Around Orb
+- Created `frontend/src/components/marketing/FloatingStatCard.tsx` component
+- Implemented glass morphism styling: `backdrop-blur-lg bg-white/5 border border-white/10`
+- Added three stat cards with Lucide icons:
+  - Database icon: "10K+ Active Vaults"
+  - FileText icon: "50K+ Sources Indexed"
+  - Users icon: "25K+ Researchers"
+- Each card displays icon with orange gradient background, number, and label
+- Added `bounce-slow` animation keyframe to globals.css (3s ease-in-out infinite, 10px vertical movement)
+- Implemented staggered animation delays: 0s, 0.2s, 0.4s
+- Desktop: Cards absolutely positioned around orb (top, left, right using translate positioning)
+- Mobile: Cards stack vertically in a column layout above the orb
+- Responsive design uses display classes (flex md:hidden / hidden md:block) to show different layouts
+- Integrated into landing page hero section
+- Files changed:
+  - Created: `frontend/src/components/marketing/FloatingStatCard.tsx`
+  - Modified: `frontend/src/app/globals.css` (added bounce-slow keyframes)
+  - Modified: `frontend/src/app/(marketing)/page.tsx` (integrated stat cards with conditional layouts)
+- Learnings for future iterations:
+  - Glass morphism with backdrop-blur creates premium floating card effect
+  - Staggered animation delays create visual interest and guide eye movement
+  - Using separate mobile/desktop layouts (not just responsive CSS) provides better control
+  - Absolute positioning with translate(-50%, -50%) centers elements around a reference point
+  - Combining multiple animation properties (bounce + hover scale) adds polish
+  - Icons in gradient circles create strong visual anchors for stat cards
+---

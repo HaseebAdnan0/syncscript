@@ -42,14 +42,14 @@ Create a comprehensive new user onboarding experience for SyncScript that guides
 **Description:** As a developer, I need a fixture/template with demo vault content so we can populate it for new users.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/users/fixtures/demo_vault.json` with:
+- [x] Create `apps/users/fixtures/demo_vault.json` with:
   - Vault: "AI Research Papers 2025"
   - 10 real sources (arXiv links, freely available papers)
   - 15+ annotations with threaded replies demonstrating features
-- [ ] Sources include mix: PDF links, arXiv, web articles
-- [ ] Annotations demonstrate: threading, citations, metadata extraction
-- [ ] Fixture is loadable via Django management command
-- [ ] Typecheck passes
+- [x] Sources include mix: PDF links, arXiv, web articles
+- [x] Annotations demonstrate: threading, citations, metadata extraction
+- [x] Fixture is loadable via Django management command
+- [x] Typecheck passes
 
 ### US-004: Create demo vault service
 **Description:** As a developer, I need a service to create the demo vault for a user on first login so they have content to explore.

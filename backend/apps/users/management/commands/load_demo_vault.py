@@ -13,7 +13,7 @@ User = get_user_model()
 class Command(BaseCommand):
     help = 'Test loading demo vault fixture data'
 
-    def handle(self, *args, **options):
+    def handle(self, *args, **options):  # type: ignore
         fixture_path = Path(__file__).parent.parent.parent / 'fixtures' / 'demo_vault.json'
 
         if not fixture_path.exists():
@@ -76,7 +76,7 @@ class Command(BaseCommand):
             # Count threading examples
             threaded_count = sum(1 for a in annotations if a.get('parent_index') is not None)
 
-            self.stdout.write(self.style.SUCCESS('✓ Fixture validation passed!'))
+            self.stdout.write(self.style.SUCCESS('Fixture validation passed!'))
             self.stdout.write(f'  Vault: {vault_data["name"]}')
             self.stdout.write(f'  Sources: {len(sources)}')
             self.stdout.write(f'  Annotations: {len(annotations)} ({threaded_count} threaded)')
