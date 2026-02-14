@@ -92,3 +92,18 @@
   - Font CSS variables were already set up in previous iteration
 ---
 
+## Iteration 7 - US-007: API Client with JWT Auto-Refresh
+- Created src/lib/types/api.ts with common API response types
+- Added PaginatedResponse, ApiErrorResponse, SuccessResponse interfaces
+- Added TokenResponse and LoginResponse for auth endpoints
+- API client (api.ts) was already implemented with JWT auto-refresh in previous work
+- Verified typecheck passes
+- Files changed: frontend/src/lib/types/api.ts
+- Learnings for future iterations:
+  - api.ts was created earlier and already has full JWT auto-refresh logic
+  - The api.ts references @/stores/auth which will be created in US-008
+  - Frontend is NOT a git submodule - it's a standalone repo in frontend/ directory
+  - Must commit frontend changes separately from parent repo
+  - Common API types should include generic types like PaginatedResponse for reusability
+---
+
