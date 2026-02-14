@@ -25,13 +25,13 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a developer, I need a custom User model that uses email as the primary identifier and includes profile fields.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/users/models.py` with User model extending AbstractUser
-- [ ] Add fields: email (unique), avatar_url (URLField), bio (TextField max 500), institution (CharField max 200), email_verified (BooleanField)
-- [ ] Add created_at and updated_at timestamp fields
-- [ ] Set USERNAME_FIELD = 'email' and REQUIRED_FIELDS = ['username']
-- [ ] Add database indexes on email and email_verified fields
-- [ ] Set db_table = 'users'
-- [ ] Typecheck passes
+- [x] Create `apps/users/models.py` with User model extending AbstractUser
+- [x] Add fields: email (unique), avatar_url (URLField), bio (TextField max 500), institution (CharField max 200), email_verified (BooleanField)
+- [x] Add created_at and updated_at timestamp fields
+- [x] Set USERNAME_FIELD = 'email' and REQUIRED_FIELDS = ['username']
+- [x] Add database indexes on email and email_verified fields
+- [x] Set db_table = 'users'
+- [x] Typecheck passes
 
 ---
 
@@ -39,10 +39,10 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a developer, I need to store email verification tokens with expiration.
 
 **Acceptance Criteria:**
-- [ ] Add EmailVerificationToken model to `apps/users/models.py`
-- [ ] Fields: user (ForeignKey to User), token (CharField max 64, unique), created_at, expires_at
-- [ ] Set db_table = 'email_verification_tokens'
-- [ ] Typecheck passes
+- [x] Add EmailVerificationToken model to `apps/users/models.py`
+- [x] Fields: user (ForeignKey to User), token (CharField max 64, unique), created_at, expires_at
+- [x] Set db_table = 'email_verification_tokens'
+- [x] Typecheck passes
 
 ---
 
