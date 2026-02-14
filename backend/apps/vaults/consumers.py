@@ -56,6 +56,11 @@ class VaultConsumer(AsyncWebsocketConsumer):
 
         self.user = user  # Store for later use
 
+        # Check if user is temporarily banned
+        if await self._is_user_banned(user.id):
+            await self._send_error_and_close('RATE_LIMIT_EXCEEDED', 'Temporarily banned due to rate limit violations')
+            return
+
         # Verify user has vault membership
         has_membership = await self._check_vault_membership(user.id, self.vault_id)
         if not has_membership:
@@ -144,6 +149,27 @@ class VaultConsumer(AsyncWebsocketConsumer):
         """
         if not text_data:
             return
+
+        # Layer 3 rate limiting: Check message throttling
+        throttle_result = await self._check_message_throttle()
+        if throttle_result == 'disconnect':
+            # Second offense: disconnect
+            await self._send_error_and_close('RATE_LIMIT_EXCEEDED', 'Message throttle limit exceeded')
+            return
+        elif throttle_result == 'ban':
+            # Third offense: temporary ban
+            await self._set_temporary_ban(self.user.id)
+            await self._send_error_and_close('RATE_LIMIT_EXCEEDED', 'Temporary ban due to repeated rate limit violations')
+            return
+        elif throttle_result == 'warning':
+            # First offense: send warning
+            await self.send(text_data=json.dumps({
+                'type': 'warning',
+                'warning': {
+                    'code': 'RATE_LIMIT_WARNING',
+                    'message': 'You are sending messages too quickly (max 60/minute)'
+                }
+            }))
 
         try:
             data = json.loads(text_data)
@@ -489,3 +515,89 @@ class VaultConsumer(AsyncWebsocketConsumer):
         # Close the connection
         await self.close(code=code)
         logger.warning(f"Connection closed due to rate limiting: {self.channel_name}")
+
+    async def _check_message_throttle(self) -> str:
+        """
+        Check message throttling to prevent spam.
+
+        Layer 3 rate limiting: Track message timestamps and enforce limits.
+
+        Returns:
+            'ok' if within limits
+            'warning' if first offense (>60 messages in 60s)
+            'disconnect' if second offense
+            'ban' if third offense within 1 hour
+        """
+        messages_key = f"conn_{self.channel_name}:messages"
+        offenses_key = f"user_{self.user.id}:throttle_offenses"
+        redis_conn = cache.client.get_client()  # type: ignore[attr-defined]
+
+        current_time = time.time()
+
+        # Add current message timestamp to sorted set
+        redis_conn.zadd(messages_key, {str(current_time): current_time})
+
+        # Set expiry on messages set (2 minutes to cover lookback window)
+        redis_conn.expire(messages_key, 120)
+
+        # Remove messages older than 60 seconds
+        cutoff_time = current_time - 60
+        redis_conn.zremrangebyscore(messages_key, '-inf', cutoff_time)
+
+        # Count messages in last 60 seconds
+        message_count = redis_conn.zcard(messages_key)
+
+        # If <= 60 messages, user is within limits
+        if message_count <= 60:
+            return 'ok'
+
+        # User exceeded limit - check offense count
+        offense_count = redis_conn.incr(offenses_key)
+
+        # Set 1 hour expiry on offense counter
+        redis_conn.expire(offenses_key, 3600)
+
+        logger.warning(f"User {self.user.id} exceeded message throttle: {message_count} messages in 60s (offense #{offense_count})")
+
+        if offense_count == 1:
+            # First offense: warning
+            return 'warning'
+        elif offense_count == 2:
+            # Second offense: disconnect
+            return 'disconnect'
+        else:
+            # Third+ offense: ban
+            return 'ban'
+
+    async def _set_temporary_ban(self, user_id: int) -> None:
+        """
+        Set temporary ban flag for user (1 hour duration).
+
+        Args:
+            user_id: User ID to ban
+        """
+        ban_key = f"user_{user_id}:banned"
+        redis_conn = cache.client.get_client()  # type: ignore[attr-defined]
+
+        # Set ban flag with 1 hour expiry
+        redis_conn.setex(ban_key, 3600, '1')
+
+        logger.warning(f"User {user_id} temporarily banned for 1 hour due to repeated rate limit violations")
+
+    async def _is_user_banned(self, user_id: int) -> bool:
+        """
+        Check if user is currently banned.
+
+        Args:
+            user_id: User ID to check
+
+        Returns:
+            True if user is banned, False otherwise
+        """
+        ban_key = f"user_{user_id}:banned"
+        redis_conn = cache.client.get_client()  # type: ignore[attr-defined]
+
+        # Check if ban flag exists
+        is_banned = redis_conn.exists(ban_key)
+
+        return bool(is_banned)

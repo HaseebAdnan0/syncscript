@@ -490,7 +490,7 @@ class PasswordResetFlowTests(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('error', response.data)
-        self.assertIn('Invalid reset link', response.data['error'])
+        self.assertIn('Invalid or expired reset token', response.data['error'])
 
     def test_new_password_must_meet_strength_requirements(self):
         """Test that new password must meet strength requirements (min 8 chars, not all numeric)."""

@@ -246,10 +246,10 @@ Implement cloud file storage for SyncScript using Cloudflare R2 (S3-compatible).
 **Description:** As a system, I need rate limiting to prevent abuse.
 
 **Acceptance Criteria:**
-- [ ] Add rate limit to upload-url endpoint: 10/minute per user
-- [ ] Add rate limit to download-url endpoint: 30/minute per user
-- [ ] Use django-ratelimit decorator
-- [ ] Typecheck passes
+- [x] Add rate limit to upload-url endpoint: 10/minute per user
+- [x] Add rate limit to download-url endpoint: 30/minute per user
+- [x] Use django-ratelimit decorator
+- [x] Typecheck passes
 
 ### US-023: Create PDF list endpoint for vault
 **Description:** As a vault member, I want to list all PDFs in my vault.

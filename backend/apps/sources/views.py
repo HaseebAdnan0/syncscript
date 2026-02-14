@@ -5,6 +5,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import serializers as drf_serializers
 from django.shortcuts import get_object_or_404
 from django.db import transaction
+from django_ratelimit.decorators import ratelimit
+from django.utils.decorators import method_decorator
 from .models import PDFUpload, Source
 from .serializers import (
     UploadURLRequestSerializer,
@@ -82,6 +84,7 @@ class PDFUploadViewSet(viewsets.ModelViewSet):
         return vault
 
     @action(detail=False, methods=['post'], url_path='upload-url')
+    @method_decorator(ratelimit(key='user', rate='10/m', method='POST'))
     def upload_url(self, request):
         """
         POST /api/v1/sources/pdfs/upload-url/
@@ -191,6 +194,7 @@ class PDFUploadViewSet(viewsets.ModelViewSet):
         }, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=['get'], url_path='download-url')
+    @method_decorator(ratelimit(key='user', rate='30/m', method='GET'))
     def download_url(self, request, pk=None):
         """
         GET /api/v1/sources/pdfs/{pdf_id}/download-url/
