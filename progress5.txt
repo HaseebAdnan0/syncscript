@@ -335,3 +335,27 @@
   - Connection limit enforced BEFORE accept() to prevent race conditions
   - Closing oldest connection allows new connection to succeed (user stays connected)
 ---
+
+## Iteration 18 - US-019: Implement room limit per vault (Layer 2)
+- Implemented Layer 2 rate limiting to prevent vault room overload
+- Added _check_room_limit method to check connection count via presence set
+  - Uses zcard to count members in vault_{vault_id}:presence sorted set
+  - Returns False if >= 100 connections, True if capacity available
+  - Logs warning when room is full
+- Updated connect method to enforce room limit before accepting connection
+  - Checks room limit AFTER user connection limit but BEFORE accept()
+  - Uses ROOM_FULL error code with descriptive message
+  - Error message: "Vault room is full (max 100 connections)"
+- Files changed: backend/apps/vaults/consumers.py, PRD5.md
+- Created test_us019_simple.py verification script - all tests pass
+- Typecheck passes (0 errors, 0 warnings)
+- Auto-committed in d8e1f7b
+- Learnings for future iterations:
+  - Room limit uses presence set (same as presence tracking) for accurate connection count
+  - zcard efficiently counts sorted set members without fetching all data
+  - Layer 2 (room limit) enforced after Layer 1 (user connection limit)
+  - Room limit check is simpler than connection limit - just count and reject (no eviction)
+  - ROOM_FULL error code distinguishes room capacity from other rate limit errors
+  - Verification tests can check code structure without requiring Redis connection
+  - Auto-commit hooks may commit changes during file editing
+---
