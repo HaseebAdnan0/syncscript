@@ -379,3 +379,25 @@
   - Positioned near vault title in header area per requirements
   - Typecheck passes without errors
 ---
+
+## Iteration 17 - US-017: Add notification preferences to user settings page
+- Implemented user settings page with notification preferences section
+- Files changed:
+  - Created `frontend/src/app/(app)/settings/page.tsx` (user settings page)
+  - Updated `PRD10.md` (marked US-017 acceptance criteria complete except browser verification)
+- Learnings for future iterations:
+  - Created settings page at `/settings` route within (app) route group
+  - Page uses consistent Bitcoin DeFi aesthetic: gradient headers, glass morphism cards
+  - Notifications section is first/primary section with Bell icon
+  - Section header structure: icon in gradient circle + title + description
+  - NotificationPreferences component embedded directly in section (no wrapper needed)
+  - Section styling: bg-[#0F1115] border border-white/10 rounded-2xl p-8
+  - Header has bottom border separator: border-b border-white/10 with pb-4 mb-6
+  - Icon container: h-10 w-10 rounded-full with gradient from-[#EA580C] to-[#F7931A]
+  - Added placeholder sections for Profile, Privacy & Security, Appearance (opacity-50, coming soon)
+  - All sections follow same structure for consistency
+  - Page header uses gradient text: from-[#F7931A] to-[#FFD600]
+  - Container max-w-4xl for comfortable reading width
+  - Space-y-8 between sections for clean vertical rhythm
+  - Typecheck passes without errors
+---
