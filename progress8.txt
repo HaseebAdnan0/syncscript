@@ -96,3 +96,27 @@ Learnings for future iterations:
 - Next.js requires building the app before typecheck to generate .next/types files
 ---
 
+## Iteration 5 - US-005: VaultCard component
+- Created `frontend/src/components/features/vaults/VaultCard.tsx` with complete vault card UI:
+  - Displays vault name, description (truncated to 100 chars), source count, member count, last updated
+  - Role badges with custom colors: Owner (orange), Contributor (blue), Viewer (gray)
+  - Bitcoin DeFi styling: `bg-[#0F1115] border border-white/10 rounded-2xl`
+  - Hover effects: `-translate-y-1` lift and `border-primary/50` orange glow
+  - Card wraps in Link component for navigation to `/vaults/[id]`
+  - Helper functions: getRoleBadgeStyles() for badge colors, formatDate() for human-readable timestamps
+  - Uses Lucide icons: FileText (sources), Users (members), Clock (last updated)
+- Typecheck passes successfully
+
+Files changed:
+- frontend/src/components/features/vaults/VaultCard.tsx (created)
+- PRD8.md (marked US-005 complete)
+
+Learnings for future iterations:
+- UI component imports must use lowercase: `@/components/ui/card` and `@/components/ui/badge` (not Card/Badge)
+- The existing Card component from shadcn already has hover effects built-in (from iteration 4 context)
+- Badge component uses CVA for variants, but can override with className for custom colors
+- formatDate helper creates human-readable relative timestamps (Today, Yesterday, X days ago, etc.)
+- Link from next/link should wrap the Card for proper navigation and accessibility
+- line-clamp-2 utility class for multi-line text truncation
+---
+
