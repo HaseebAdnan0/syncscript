@@ -496,10 +496,10 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a user, I want to toggle which email notifications I receive.
 
 **Acceptance Criteria:**
-- [ ] Toggle switches for: "Vault activity", "Mentions"
-- [ ] Each toggle updates API immediately (optimistic update)
-- [ ] Show saved confirmation
-- [ ] Typecheck passes
+- [x] Toggle switches for: "Vault activity", "Mentions"
+- [x] Each toggle updates API immediately (optimistic update)
+- [x] Show saved confirmation
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---

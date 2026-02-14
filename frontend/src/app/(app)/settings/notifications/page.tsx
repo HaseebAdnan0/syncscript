@@ -111,17 +111,75 @@ export default function NotificationPreferencesPage() {
           <div className="space-y-8">
             {/* Email Notifications Section */}
             <section className="bg-[#0F1115] border border-white/10 rounded-2xl p-8">
-              <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
-                <div className="h-10 w-10 rounded-full bg-gradient-to-r from-[#EA580C] to-[#F7931A] flex items-center justify-center">
-                  <Mail className="h-5 w-5 text-white" />
+              <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-gradient-to-r from-[#EA580C] to-[#F7931A] flex items-center justify-center">
+                    <Mail className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-heading font-bold text-white">Email Notifications</h2>
+                    <p className="text-[#94A3B8] text-sm">Configure your email notification settings</p>
+                  </div>
                 </div>
-                <div>
-                  <h2 className="text-2xl font-heading font-bold text-white">Email Notifications</h2>
-                  <p className="text-[#94A3B8] text-sm">Configure your email notification settings</p>
-                </div>
+                {showSaved && (
+                  <div className="flex items-center gap-2 text-[#F7931A] animate-fade-in">
+                    <Check className="h-4 w-4" />
+                    <span className="text-sm">Saved</span>
+                  </div>
+                )}
               </div>
-              <div className="space-y-4">
-                <p className="text-[#94A3B8]">Email preferences will be added in US-037 and US-038</p>
+              <div className="space-y-6">
+                {/* Vault Activity Toggle */}
+                <div className="flex items-center justify-between p-4 bg-black/30 rounded-lg border border-white/5 hover:border-[#F7931A]/20 transition-colors">
+                  <div className="flex-1">
+                    <h3 className="text-white font-medium mb-1">Vault activity</h3>
+                    <p className="text-[#94A3B8] text-sm">
+                      Receive notifications when members join or add sources to your vaults
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => handleToggle('email_vault_activity', !preferences?.email_vault_activity)}
+                    className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${
+                      preferences?.email_vault_activity
+                        ? 'bg-gradient-to-r from-[#EA580C] to-[#F7931A]'
+                        : 'bg-[#1E293B]'
+                    }`}
+                    disabled={!preferences}
+                  >
+                    <span
+                      className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${
+                        preferences?.email_vault_activity ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                </div>
+
+                {/* Mentions Toggle */}
+                <div className="flex items-center justify-between p-4 bg-black/30 rounded-lg border border-white/5 hover:border-[#F7931A]/20 transition-colors">
+                  <div className="flex-1">
+                    <h3 className="text-white font-medium mb-1">Mentions</h3>
+                    <p className="text-[#94A3B8] text-sm">
+                      Receive notifications when someone @mentions you in an annotation or replies to your comment
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => handleToggle('email_mentions', !preferences?.email_mentions)}
+                    className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${
+                      preferences?.email_mentions
+                        ? 'bg-gradient-to-r from-[#EA580C] to-[#F7931A]'
+                        : 'bg-[#1E293B]'
+                    }`}
+                    disabled={!preferences}
+                  >
+                    <span
+                      className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${
+                        preferences?.email_mentions ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                </div>
+
+                <p className="text-[#94A3B8] text-sm">Email frequency selector will be added in US-038</p>
               </div>
             </section>
 
