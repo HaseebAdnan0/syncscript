@@ -6,9 +6,11 @@ import { useUpdateVault, useArchiveVault, useDeleteVault } from '@/hooks/useVaul
 import { Vault, VaultRole } from '@/lib/types/vault';
 import { useToast } from '@/hooks/useToast';
 import GradientButton from '@/components/ui/GradientButton';
-import { AlertTriangle, Trash2, CheckCircle2, XCircle } from 'lucide-react';
+import { AlertTriangle, Trash2, CheckCircle2, XCircle, BellOff, Bell } from 'lucide-react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { StorageUsageIndicator } from './StorageUsageIndicator';
+import { muteVault, unmuteVault, getMutedVaults } from '@/lib/api';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface VaultSettingsProps {
   vault: Vault;
@@ -38,11 +40,63 @@ export function VaultSettings({ vault, userRole }: VaultSettingsProps) {
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
   const { toast } = useToast();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const isOwner = userRole === VaultRole.OWNER;
   const updateVault = useUpdateVault(vault.id);
   const archiveVault = useArchiveVault(vault.id);
   const deleteVault = useDeleteVault();
+
+  // Fetch muted vaults to check if this vault is muted
+  const { data: mutedVaults = [] } = useQuery({
+    queryKey: ['notifications', 'muted-vaults'],
+    queryFn: getMutedVaults,
+  });
+
+  const isVaultMuted = mutedVaults.some((mv) => mv.vault_id === vault.id.toString());
+
+  // Mute/unmute mutations
+  const muteMutation = useMutation({
+    mutationFn: () => muteVault(vault.id.toString()),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notifications', 'muted-vaults'] });
+      toast({
+        title: 'Vault muted',
+        description: 'You will no longer receive notifications from this vault.',
+      });
+    },
+    onError: () => {
+      toast({
+        title: 'Error',
+        description: 'Failed to mute vault. Please try again.',
+      });
+    },
+  });
+
+  const unmuteMutation = useMutation({
+    mutationFn: () => unmuteVault(vault.id.toString()),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notifications', 'muted-vaults'] });
+      toast({
+        title: 'Vault unmuted',
+        description: 'You will now receive notifications from this vault.',
+      });
+    },
+    onError: () => {
+      toast({
+        title: 'Error',
+        description: 'Failed to unmute vault. Please try again.',
+      });
+    },
+  });
+
+  const handleToggleMute = () => {
+    if (isVaultMuted) {
+      unmuteMutation.mutate();
+    } else {
+      muteMutation.mutate();
+    }
+  };
 
   // Update local state when vault prop changes
   useEffect(() => {
@@ -224,6 +278,61 @@ export function VaultSettings({ vault, userRole }: VaultSettingsProps) {
               </GradientButton>
             </div>
           )}
+        </div>
+      </div>
+
+      {/* Notification Settings Section */}
+      <div className="bg-[#0F1115] border border-white/10 rounded-2xl p-8">
+        <h2 className="text-2xl font-bold text-white mb-6">Notification Settings</h2>
+
+        <div className="flex items-start justify-between gap-6">
+          <div className="flex-1">
+            <div className="flex items-center gap-3 mb-2">
+              {isVaultMuted ? (
+                <BellOff className="w-5 h-5 text-[#94A3B8]" />
+              ) : (
+                <Bell className="w-5 h-5 text-[#F7931A]" />
+              )}
+              <h3 className="text-lg font-semibold text-white">
+                {isVaultMuted ? 'Notifications Muted' : 'Notifications Enabled'}
+              </h3>
+            </div>
+            <p className="text-[#94A3B8] text-sm">
+              {isVaultMuted
+                ? 'You are not receiving notifications from this vault. Toggle to enable notifications for new sources, annotations, and mentions.'
+                : 'You are receiving notifications from this vault. Toggle to mute all notifications from this vault.'}
+            </p>
+          </div>
+
+          {/* Toggle Switch */}
+          <button
+            onClick={handleToggleMute}
+            disabled={muteMutation.isPending || unmuteMutation.isPending}
+            className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#F7931A] focus:ring-offset-2 focus:ring-offset-[#0F1115] disabled:opacity-50 disabled:cursor-not-allowed ${
+              isVaultMuted
+                ? 'bg-[#1E293B]'
+                : 'bg-gradient-to-r from-[#EA580C] to-[#F7931A]'
+            }`}
+          >
+            <span
+              className={`inline-block h-6 w-6 transform rounded-full bg-white shadow-lg transition-transform ${
+                isVaultMuted ? 'translate-x-1' : 'translate-x-7'
+              }`}
+            />
+          </button>
+        </div>
+
+        {/* Additional info */}
+        <div className="mt-6 bg-white/5 border border-white/10 rounded-lg p-4">
+          <p className="text-[#94A3B8] text-sm">
+            <strong className="text-white">Note:</strong> Muting a vault only affects your personal notifications.
+            Other vault members will continue to receive notifications normally.
+            You can manage global notification preferences from{' '}
+            <a href="/settings/notifications" className="text-[#F7931A] hover:text-[#FFD600] underline">
+              Settings → Notifications
+            </a>
+            .
+          </p>
         </div>
       </div>
 

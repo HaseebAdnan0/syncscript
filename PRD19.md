@@ -549,11 +549,11 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a user, I want to mute a vault from its settings page.
 
 **Acceptance Criteria:**
-- [ ] Add "Mute notifications" toggle to vault settings
-- [ ] Show current mute status
-- [ ] Toggle calls mute/unmute API
-- [ ] Show confirmation toast
-- [ ] Typecheck passes
+- [x] Add "Mute notifications" toggle to vault settings
+- [x] Show current mute status
+- [x] Toggle calls mute/unmute API
+- [x] Show confirmation toast
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---
