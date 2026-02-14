@@ -243,10 +243,18 @@ class CitationViewSet(viewsets.ViewSet):
 
         source.save()
 
-    @action(detail=False, methods=['get'], url_path=r'vaults/(?P<vault_id>\d+)/export')
-    def export_citations(self, request, vault_id=None):
+
+class VaultCitationExportViewSet(viewsets.ViewSet):
+    """
+    ViewSet for vault-level citation export operations.
+    Provides endpoint to export all citations from a vault.
+    """
+    permission_classes = [IsAuthenticated]
+
+    @action(detail=False, methods=['get'])
+    def export(self, request, vault_pk=None):
         """
-        GET /api/v1/citations/vaults/{vault_id}/export/?format=<format>
+        GET /api/v1/vaults/{vault_pk}/citations/export/?format=<format>
 
         Export all citations from a vault in the specified format.
 
@@ -260,7 +268,7 @@ class CitationViewSet(viewsets.ViewSet):
         Permission: User must have vault access (viewer+)
         """
         # Get vault and verify it exists
-        vault = get_object_or_404(Vault, id=vault_id, is_deleted=False)
+        vault = get_object_or_404(Vault, id=vault_pk, is_deleted=False)
 
         # Check user has permission to access vault
         self._check_vault_permission(vault, request.user)
@@ -328,3 +336,75 @@ class CitationViewSet(viewsets.ViewSet):
         response = HttpResponse(content, content_type=content_type)
         response['Content-Disposition'] = f'attachment; filename="{filename}"'
         return response
+
+    def _check_vault_permission(self, vault, user):
+        """
+        Check if user has permission to access vault (viewer+).
+
+        Args:
+            vault: Vault instance
+            user: User instance
+
+        Raises:
+            PermissionDenied if user doesn't have permission
+        """
+        # Check if user is owner
+        if vault.owner == user:
+            return
+
+        # Check if user has membership with any role (viewer, contributor, owner)
+        membership = VaultMembership.objects.filter(
+            vault=vault,
+            user=user,
+            role__in=[RoleChoices.VIEWER, RoleChoices.CONTRIBUTOR, RoleChoices.OWNER]
+        ).first()
+
+        if not membership:
+            raise PermissionDenied("You do not have permission to access this vault.")
+
+    def _get_cached_citation(self, source, citation_format):
+        """
+        Get cached citation from source metadata if available.
+
+        Args:
+            source: Source instance
+            citation_format: Citation format string
+
+        Returns:
+            Cached citation dict or None if not cached
+        """
+        if not source.metadata:
+            return None
+
+        citations_cache = source.metadata.get('citations', {})
+        return citations_cache.get(citation_format)
+
+    def _cache_citation(self, source, citation_format, text, html, generation_source):
+        """
+        Cache generated citation in source metadata.
+
+        Args:
+            source: Source instance
+            citation_format: Citation format string
+            text: Plain text citation
+            html: HTML citation
+            generation_source: 'structured' or 'ai'
+        """
+        from datetime import datetime
+
+        # Initialize citations cache if not exists
+        if not source.metadata:
+            source.metadata = {}
+
+        if 'citations' not in source.metadata:
+            source.metadata['citations'] = {}
+
+        # Store citation
+        source.metadata['citations'][citation_format] = {
+            'text': text,
+            'html': html,
+            'generated_at': datetime.now().isoformat(),
+            'source': generation_source
+        }
+
+        source.save()

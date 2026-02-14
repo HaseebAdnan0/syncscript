@@ -1,0 +1,22 @@
+Hi {{ user.username }},
+
+You have {{ notification_count }} new notification{% if notification_count != 1 %}s{% endif %} in SyncScript:
+
+{% for notification in notifications %}
+---
+{{ notification.title }}
+{{ notification.body }}
+Created: {{ notification.created_at|date:"F j, Y g:i A" }}
+
+{% endfor %}
+---
+
+View all notifications: {{ site_url }}/notifications
+
+You can manage your notification preferences at: {{ site_url }}/settings/notifications
+
+Best regards,
+The SyncScript Team
+
+---
+If you'd like to stop receiving these emails, you can adjust your notification preferences in your account settings.

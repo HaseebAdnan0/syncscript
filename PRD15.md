@@ -288,10 +288,10 @@ This feature uses Claude as the AI backbone with a simple chunking strategy (no 
 **Description:** As a user, I need an endpoint to fetch my current AI usage stats.
 
 **Acceptance Criteria:**
-- [ ] `GET /api/v1/ai/usage/` endpoint
-- [ ] Returns `{requests_today, requests_limit, tokens_today, resets_at}`
-- [ ] Requires authentication
-- [ ] Typecheck passes
+- [x] `GET /api/v1/ai/usage/` endpoint
+- [x] Returns `{requests_today, requests_limit, tokens_today, resets_at}`
+- [x] Requires authentication
+- [x] Typecheck passes
 
 ### US-024: Integrate TokenUsageDisplay into user settings
 **Description:** As a user, I want to see my AI usage in my account settings.

@@ -492,3 +492,37 @@ In Progress - US-004 complete
   - SerializerMethodField and serializer.data work seamlessly for Pusher payloads
   - Private channel format: `private-user-{user_id}` (will require auth endpoint later)
 ---
+
+## Iteration 19 - US-019: Create Pusher Authentication Endpoint
+- Implemented POST /api/v1/notifications/pusher/auth/ endpoint in NotificationViewSet
+- Validates channel_name and socket_id are provided (400 if missing)
+- Validates channel_name matches expected format: private-user-{user_id} (403 if mismatch)
+- Uses get_pusher_client() to retrieve Pusher client instance
+- Handles Pusher not configured gracefully (503 Service Unavailable)
+- Calls pusher_client.authenticate(channel, socket_id) to generate auth signature
+- Returns Pusher auth response directly (includes 'auth' and 'channel_data' fields)
+- Wraps authentication in try/except for exception handling (500 on error)
+- Created comprehensive test suite with 8 test cases in test_pusher_auth.py:
+  - Successful authentication with correct channel
+  - Reject wrong channel (different user)
+  - Require channel_name parameter
+  - Require socket_id parameter
+  - Handle Pusher not configured
+  - Handle Pusher authentication exception
+  - Require authentication (401 for anonymous)
+  - Reject public channels
+- All tests pass (8/8), mypy typecheck passes
+- Commit 4b5d095
+- Files changed:
+  - backend/apps/notifications/views.py (added pusher_auth action)
+  - backend/apps/notifications/test_pusher_auth.py (new test file)
+  - PRD19.md (marked US-019 complete)
+- Learnings for future iterations:
+  - Pusher private channels require POST to auth endpoint with channel_name and socket_id
+  - pusher_client.authenticate() returns dict with 'auth' signature and 'channel_data'
+  - Channel validation prevents users from subscribing to other users' channels
+  - Service unavailable (503) is appropriate for missing external service configuration
+  - Internal server error (500) for unexpected exceptions during external API calls
+  - Mock get_pusher_client in tests to avoid requiring actual Pusher credentials
+  - @action(detail=False, methods=['post']) for non-resource-specific POST endpoints
+---

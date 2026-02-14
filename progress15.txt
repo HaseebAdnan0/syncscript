@@ -717,3 +717,36 @@ Learnings for future iterations:
 - Always fix pre-existing type errors when encountered to keep codebase clean
 - ISO timestamp from API can be parsed directly with new Date(resets_at)
 ---
+
+## Iteration 24 - US-023: Add AI usage endpoint
+- Created GET /api/v1/ai/usage/ endpoint in apps/ai/views.py
+- Endpoint returns usage stats: requests_today, requests_limit, tokens_today, resets_at
+- Uses get_daily_usage service to fetch current user's usage
+- Gets daily limit from AI_DAILY_LIMIT setting
+- Calculates resets_at as tomorrow midnight UTC using timezone.now()
+- Requires authentication via @permission_classes([IsAuthenticated])
+- Added URL route to apps/ai/urls.py: path('ai/usage/', views.get_ai_usage, name='ai-usage')
+- Created comprehensive test suite with 5 tests in AIUsageEndpointTestCase:
+  - Response structure validation
+  - No usage (zero values)
+  - With usage logs (correct counts)
+  - resets_at format validation
+  - Authentication requirement
+- All 77 AI app tests pass
+- Typecheck passes with no errors for new function
+- Fixed timezone.utcnow() deprecation by using timezone.now() instead
+
+Files changed:
+- backend/apps/ai/views.py (added get_ai_usage function)
+- backend/apps/ai/urls.py (added ai/usage route)
+- backend/apps/ai/tests.py (added AIUsageEndpointTestCase with 5 tests)
+- PRD15.md (marked US-023 complete)
+
+Learnings for future iterations:
+- datetime.utcnow() is deprecated, use timezone.now() for timezone-aware datetimes
+- Django's getattr(settings, 'KEY', default) pattern works well for optional settings
+- ISO timestamp format: use .isoformat() on timezone-aware datetime (includes timezone automatically)
+- Test database can be reused with --keepdb flag to speed up test runs
+- Response data structure validation in tests: assertIn for all required keys
+- Tomorrow midnight calculation: (now + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+---

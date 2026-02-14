@@ -2011,7 +2011,7 @@ class BatchExportTests(TestCase):
 
         # Export citations
         response = self.client.get(
-            f'/api/v1/citations/vaults/{self.vault.id}/export/',
+            f'/api/v1/vaults/{self.vault.id}/citations/export/',
             {'format': 'bibtex'}
         )
 
@@ -2033,7 +2033,7 @@ class BatchExportTests(TestCase):
 
         # Export citations
         response = self.client.get(
-            f'/api/v1/citations/vaults/{self.vault.id}/export/',
+            f'/api/v1/vaults/{self.vault.id}/citations/export/',
             {'format': 'apa7'}
         )
 
@@ -2074,7 +2074,7 @@ class BatchExportTests(TestCase):
 
         # Export citations
         response = self.client.get(
-            f'/api/v1/citations/vaults/{self.vault.id}/export/',
+            f'/api/v1/vaults/{self.vault.id}/citations/export/',
             {'format': 'apa7'}
         )
 
@@ -2105,7 +2105,7 @@ class BatchExportTests(TestCase):
 
         # Export with invalid format
         response = self.client.get(
-            f'/api/v1/citations/vaults/{self.vault.id}/export/',
+            f'/api/v1/vaults/{self.vault.id}/citations/export/',
             {'format': 'invalid'}
         )
 
@@ -2128,7 +2128,7 @@ class BatchExportTests(TestCase):
 
         # Export from empty vault
         response = self.client.get(
-            f'/api/v1/citations/vaults/{empty_vault.id}/export/',
+            f'/api/v1/vaults/{empty_vault.id}/citations/export/',
             {'format': 'apa7'}
         )
 
@@ -2151,7 +2151,7 @@ class BatchExportTests(TestCase):
 
         # Export citations
         response = self.client.get(
-            f'/api/v1/citations/vaults/{self.vault.id}/export/',
+            f'/api/v1/vaults/{self.vault.id}/citations/export/',
             {'format': 'apa7'}
         )
 
@@ -2181,7 +2181,7 @@ class BatchExportTests(TestCase):
 
         # Export citations
         response = self.client.get(
-            f'/api/v1/citations/vaults/{self.vault.id}/export/',
+            f'/api/v1/vaults/{self.vault.id}/citations/export/',
             {'format': 'bibtex'}
         )
 

@@ -1734,12 +1734,12 @@ class AIUsageEndpointTestCase(APITestCase):
         self.assertEqual(response.status_code, 200)
         # Verify resets_at can be parsed as ISO datetime
         resets_at = response.data['resets_at']
-        parsed = datetime.fromisoformat(resets_at.replace('Z', '+00:00'))
+        parsed = datetime.fromisoformat(resets_at)
         self.assertIsNotNone(parsed)
 
         # Verify it's in the future (tomorrow midnight)
         now = timezone.now()
-        self.assertGreater(parsed.replace(tzinfo=timezone.utc), now)
+        self.assertGreater(parsed, now)
 
     def test_get_usage_requires_authentication(self):
         """Test that endpoint requires authentication."""
