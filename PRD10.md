@@ -33,13 +33,13 @@ Integrate SyncScript's frontend with the existing backend WebSocket system and n
 **Description:** As a user, I want to see my connection status so I know if real-time updates are working.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/notifications/ConnectionStatus.tsx`
-- [ ] Displays colored dot: green (connected), yellow (reconnecting), red (disconnected)
-- [ ] Shows tooltip with status text on hover
-- [ ] Uses Bitcoin DeFi design tokens (primary orange for reconnecting state)
-- [ ] Compact design suitable for header placement
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/features/notifications/ConnectionStatus.tsx`
+- [x] Displays colored dot: green (connected), yellow (reconnecting), red (disconnected)
+- [x] Shows tooltip with status text on hover
+- [x] Uses Bitcoin DeFi design tokens (primary orange for reconnecting state)
+- [x] Compact design suitable for header placement
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-003: Create useRealtimeUpdates hook for optimistic updates with reconciliation
 **Description:** As a developer, I need a hook that handles optimistic UI updates and reconciles with server state so that the UI feels instant while staying consistent.
