@@ -251,3 +251,16 @@
   - Response({'status': 'archived'}) returns simple JSON response
   - Must import both action decorator and Response class from rest_framework
 ---
+
+## Iteration 20 - US-019: Add restore action to VaultViewSet
+- Implemented @action decorator for POST /vaults/{id}/restore/
+- Files changed:
+  - backend/apps/vaults/views.py (added restore() method)
+  - PRD2.md (marked US-019 as complete)
+- Django check passed with no issues
+- Learnings for future iterations:
+  - Restore action mirrors archive action pattern exactly
+  - Sets is_archived = False instead of True
+  - Same decorator configuration: detail=True, methods=['post'], permission_classes=[IsVaultOwner]
+  - Returns {'status': 'restored'} for consistency with archive endpoint
+---

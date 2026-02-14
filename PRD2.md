@@ -208,10 +208,10 @@ Create a secure, collaborative Knowledge Vault system where researchers can crea
 **Description:** As a vault owner, I want to restore archived vaults.
 
 **Acceptance Criteria:**
-- [ ] @action(detail=True, methods=['post'], permission_classes=[IsVaultOwner])
-- [ ] Sets vault.is_archived = False and saves
-- [ ] Returns {'status': 'restored'}
-- [ ] Typecheck passes
+- [x] @action(detail=True, methods=['post'], permission_classes=[IsVaultOwner])
+- [x] Sets vault.is_archived = False and saves
+- [x] Returns {'status': 'restored'}
+- [x] Typecheck passes
 
 ### US-020: Create VaultMembershipViewSet
 **Description:** As a developer, I need member management API endpoints.

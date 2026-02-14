@@ -255,3 +255,56 @@ class SourceViewSet(viewsets.ModelViewSet):
         instance.is_deleted = True
         instance.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=True, methods=['post'])
+    def restore(self, request, pk=None):
+        """
+        POST /api/v1/sources/{id}/restore/
+
+        Restore a soft-deleted source (US-011).
+        Only vault OWNER role can restore sources.
+        """
+        # Override get_queryset to include soft-deleted sources
+        # We need to fetch from all sources, including is_deleted=True
+        user = request.user
+
+        # Get vaults where user is owner
+        owned_vault_ids = Vault.objects.filter(owner=user).values_list('id', flat=True)
+
+        # Get vaults where user is a member (through VaultMembership)
+        member_vault_ids = VaultMembership.objects.filter(user=user).values_list('vault_id', flat=True)
+
+        # Combine both sets of vault IDs
+        accessible_vault_ids = list(owned_vault_ids) + list(member_vault_ids)
+
+        # Get the source including soft-deleted ones
+        instance = get_object_or_404(
+            Source,
+            pk=pk,
+            vault_id__in=accessible_vault_ids,
+            is_deleted=True  # Only allow restoring soft-deleted sources
+        )
+
+        # Check permission: Only OWNER can restore
+        # Use VaultSourcePermission's logic manually since get_object() not used
+        try:
+            membership = VaultMembership.objects.get(
+                vault=instance.vault,
+                user=user
+            )
+            if membership.role != RoleChoices.OWNER:
+                from rest_framework.exceptions import PermissionDenied
+                raise PermissionDenied("Only vault owners can restore sources.")
+        except VaultMembership.DoesNotExist:
+            # Check if user is vault owner directly
+            if instance.vault.owner != user:
+                from rest_framework.exceptions import PermissionDenied
+                raise PermissionDenied("Only vault owners can restore sources.")
+
+        # Restore the source
+        instance.is_deleted = False
+        instance.save()
+
+        # Return serialized source
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data, status=status.HTTP_200_OK)

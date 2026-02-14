@@ -3,11 +3,12 @@ Views for user authentication and management.
 """
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.exceptions import TokenError
 from django_ratelimit.decorators import ratelimit
 from django.utils.decorators import method_decorator
 from django.utils import timezone
@@ -319,3 +320,37 @@ class LoginView(APIView):
             'refresh': str(refresh),
             'user': UserSerializer(user).data
         }, status=status.HTTP_200_OK)
+
+
+class LogoutView(APIView):
+    """
+    Logout user by blacklisting refresh token (US-017).
+
+    POST /api/v1/auth/logout/
+    Requires authentication.
+    Accepts refresh token in request body and blacklists it.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        """Blacklist the refresh token to invalidate it."""
+        refresh_token = request.data.get('refresh')
+
+        if not refresh_token:
+            return Response({
+                'error': 'Refresh token is required.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # Blacklist the refresh token using SimpleJWT
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+
+            return Response({
+                'message': 'Logout successful.'
+            }, status=status.HTTP_200_OK)
+
+        except TokenError as e:
+            return Response({
+                'error': f'Invalid token: {str(e)}'
+            }, status=status.HTTP_400_BAD_REQUEST)

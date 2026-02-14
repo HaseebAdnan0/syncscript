@@ -67,3 +67,11 @@ class VaultViewSet(viewsets.ModelViewSet):
         vault.is_archived = True
         vault.save()
         return Response({'status': 'archived'})
+
+    @action(detail=True, methods=['post'], permission_classes=[IsVaultOwner])
+    def restore(self, request, pk=None):
+        """Restore an archived vault (owner only)."""
+        vault = self.get_object()
+        vault.is_archived = False
+        vault.save()
+        return Response({'status': 'restored'})

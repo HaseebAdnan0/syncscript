@@ -232,12 +232,12 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a user, I want to logout to invalidate my refresh token.
 
 **Acceptance Criteria:**
-- [ ] Add LogoutView to `apps/users/views.py`
-- [ ] POST /api/v1/auth/logout/ requires authentication
-- [ ] Accept refresh token in request body
-- [ ] Blacklist the refresh token using SimpleJWT
-- [ ] Return success message
-- [ ] Typecheck passes
+- [x] Add LogoutView to `apps/users/views.py`
+- [x] POST /api/v1/auth/logout/ requires authentication
+- [x] Accept refresh token in request body
+- [x] Blacklist the refresh token using SimpleJWT
+- [x] Return success message
+- [x] Typecheck passes
 
 ---
 

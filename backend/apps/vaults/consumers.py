@@ -84,6 +84,9 @@ class VaultConsumer(AsyncWebsocketConsumer):
             'vault_id': self.vault_id
         }))
 
+        # Broadcast presence update to all room members
+        await self._broadcast_presence_update()
+
         logger.info(f"User {user.id} connected to vault {self.vault_id}")
 
     async def disconnect(self, code: int) -> None:
@@ -103,6 +106,10 @@ class VaultConsumer(AsyncWebsocketConsumer):
                 self.room_group_name,
                 self.channel_name
             )
+
+            # Broadcast updated presence to remaining members
+            if hasattr(self, 'vault_id'):
+                await self._broadcast_presence_update()
 
         if hasattr(self, 'user') and hasattr(self, 'vault_id'):
             logger.info(f"User {self.user.id} disconnected from vault {self.vault_id} (code: {code})")
@@ -225,7 +232,7 @@ class VaultConsumer(AsyncWebsocketConsumer):
                 user = User.objects.get(id=user_id)
                 presence_list.append({
                     'user_id': user_id,
-                    'username': user.username,
+                    'username': user.username,  # type: ignore[attr-defined]
                     'joined_at': int(timestamp),
                     'status': status
                 })
@@ -234,3 +241,27 @@ class VaultConsumer(AsyncWebsocketConsumer):
                 redis_conn.zrem(presence_key, str(user_id))
 
         return presence_list
+
+    async def _broadcast_presence_update(self) -> None:
+        """
+        Broadcast presence update to all vault room members.
+
+        Sends a presence.update event with the current list of active users.
+        """
+        # Get current presence list
+        presence_list = await self._get_presence_list(self.vault_id)
+
+        # Broadcast to all room members
+        await self.channel_layer.group_send(  # type: ignore[union-attr]
+            self.room_group_name,
+            {
+                'type': 'vault_event',
+                'event_type': 'presence.update',
+                'payload': {
+                    'active_users': presence_list
+                },
+                'metadata': {
+                    'timestamp': int(time.time())
+                }
+            }
+        )

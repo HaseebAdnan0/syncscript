@@ -155,12 +155,12 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need an endpoint to restore soft-deleted sources.
 
 **Acceptance Criteria:**
-- [ ] Add `@action(detail=True, methods=['post'])` named `restore`
-- [ ] Override `get_queryset()` in restore action to include `is_deleted=True`
-- [ ] Set `instance.is_deleted = False` and save
-- [ ] Return serialized source with status 200
-- [ ] Only Owner role can restore (check permission)
-- [ ] Typecheck passes
+- [x] Add `@action(detail=True, methods=['post'])` named `restore`
+- [x] Override `get_queryset()` in restore action to include `is_deleted=True`
+- [x] Set `instance.is_deleted = False` and save
+- [x] Return serialized source with status 200
+- [x] Only Owner role can restore (check permission)
+- [x] Typecheck passes
 
 ---
 
