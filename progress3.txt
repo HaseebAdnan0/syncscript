@@ -544,3 +544,29 @@
   - Minimal skeleton files allow typecheck to pass without implementing actual code
   - Will implement actual models, views, serializers in subsequent user stories
 ---
+
+## Iteration 23 - US-022: Create Annotation model
+- Implemented Annotation model in backend/apps/annotations/models.py
+- Added all required fields:
+  - source (FK to sources.Source, CASCADE, related_name='annotations')
+  - user (FK to users.User, CASCADE, related_name='annotations')
+  - content (TextField)
+  - page_number (IntegerField, null=True, blank=True)
+  - position (JSONField, default=dict)
+  - parent (self-FK, CASCADE, null=True, blank=True, related_name='replies')
+  - created_at, updated_at (auto timestamps)
+- Added Meta class with:
+  - ordering = ['created_at']
+  - indexes on ['source', 'parent'] and ['user']
+- Added __str__ method for admin display
+- Django check passes with 0 issues
+- Files changed:
+  - backend/apps/annotations/models.py (implemented Annotation model)
+  - PRD3.md (marked US-022 complete)
+- Learnings for future iterations:
+  - Self-referencing FK with related_name='replies' enables threaded annotations
+  - JSONField default must be callable (dict) not dict instance (same as Source model)
+  - Composite index on ['source', 'parent'] optimizes queries for annotations on sources
+  - Single field index on ['user'] optimizes queries for user's annotations
+  - Django check passes even with pyright warnings about missing imports
+---
