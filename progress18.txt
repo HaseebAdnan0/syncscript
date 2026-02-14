@@ -207,3 +207,28 @@
   - Response time is fast (<100ms) even without full-text search for typeahead use case
 ---
 
+## Iteration 11 - US-011: Create recent searches endpoint
+- Created recent_searches_view in backend/apps/search/views.py
+- GET /api/v1/search/recent/ returns last 10 searches for authenticated user, ordered by -created_at
+- DELETE /api/v1/search/recent/ clears all search history for user
+- Created delete_recent_search_view for single entry deletion
+- DELETE /api/v1/search/recent/{id}/ removes single search entry with permission check
+- Added URL routes in apps/search/urls.py for both endpoints
+- Created RecentSearchesViewTest with 10 comprehensive tests
+- All tests pass (authentication, GET structure, DELETE all, DELETE single, permissions, max 10 limit)
+- Files changed:
+  - backend/apps/search/views.py (added recent_searches_view and delete_recent_search_view)
+  - backend/apps/search/urls.py (added recent/ and recent/<int:search_id>/ routes)
+  - backend/apps/search/test_views.py (added RecentSearchesViewTest class)
+  - PRD18.md (marked US-011 complete)
+- Learnings for future iterations:
+  - Single view function can handle multiple HTTP methods with if/elif (GET/DELETE)
+  - SearchHistory model already has ordering = ['-created_at'] in Meta, so order_by in query follows that
+  - [:10] slice on queryset limits results efficiently at database level
+  - DoesNotExist exception for get() requires try/except, returns 404
+  - Permission check: filter by user in get() ensures users can only access their own data
+  - delete() method on queryset returns (deleted_count, {model: count}) tuple
+  - Tests should verify user isolation: create other users/data to ensure filtering works
+  - URL with <int:id> parameter maps to function parameter name (search_id)
+---
+
