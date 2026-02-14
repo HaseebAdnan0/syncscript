@@ -433,3 +433,16 @@
   - Task verification completed - existing implementation meets all requirements
 ---
 
+## Iteration 33 - US-032: Include vaults URLs in main config
+- Verified vaults URLs already included in config/urls.py at line 10
+- Files verified:
+  - backend/config/urls.py (path('api/v1/', include('apps.vaults.urls')) exists)
+  - PRD2.md (marked US-032 as complete)
+- Django check passed with no issues
+- Learnings for future iterations:
+  - Main config URLs were already configured in previous work
+  - Endpoints accessible at /api/v1/vaults/ as required
+  - Task verification: existing implementation meets all acceptance criteria
+  - No code changes needed - just verification and documentation
+---
+
