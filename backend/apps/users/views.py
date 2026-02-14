@@ -633,6 +633,82 @@ class DemoVaultResetView(APIView):
         }, status=status.HTTP_200_OK)
 
 
+class DemoVaultStatusView(APIView):
+    """
+    Check demo vault status (US-006).
+
+    GET /api/v1/users/me/demo-vault/status/
+    Returns whether demo vault exists and its ID if present.
+    Requires authentication.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        """Return demo vault existence status."""
+        from apps.vaults.models import Vault
+
+        user = request.user
+
+        # Check if demo vault exists
+        demo_vault = Vault.objects.filter(
+            owner=user,
+            name="AI Research Papers 2025"
+        ).first()
+
+        if demo_vault:
+            return Response({
+                'exists': True,
+                'vault_id': str(demo_vault.id)
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response({
+                'exists': False,
+                'vault_id': None
+            }, status=status.HTTP_200_OK)
+
+
+class DemoVaultCreateView(APIView):
+    """
+    Create demo vault if it doesn't exist (US-006).
+
+    POST /api/v1/users/me/demo-vault/create/
+    Creates demo vault from template if it doesn't already exist.
+    Returns error if demo vault already exists.
+    Requires authentication.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        """Create demo vault if it doesn't exist."""
+        from apps.vaults.models import Vault
+        from apps.vaults.serializers import VaultSerializer
+        from .services.onboarding import create_demo_vault
+
+        user = request.user
+
+        # Check if demo vault already exists
+        existing_vault = Vault.objects.filter(
+            owner=user,
+            name="AI Research Papers 2025"
+        ).first()
+
+        if existing_vault:
+            return Response({
+                'error': 'Demo vault already exists.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Create demo vault from template
+        new_vault = create_demo_vault(user)
+
+        # Serialize and return vault data
+        serializer = VaultSerializer(new_vault, context={'request': request})
+
+        return Response({
+            'message': 'Demo vault created successfully.',
+            'vault': serializer.data
+        }, status=status.HTTP_201_CREATED)
+
+
 # OAuth Views (PRD12)
 
 class GoogleOAuthRedirectView(APIView):
