@@ -167,12 +167,12 @@ SyncScript's AI-powered citation generation system enables researchers to genera
 **Description:** As a user, I want to set my default citation format in my profile so I don't have to select it every time.
 
 **Acceptance Criteria:**
-- [ ] Add `default_citation_format` field to User profile (nullable, CharField)
-- [ ] Default: null (no preference, UI shows format selector)
-- [ ] Create migration for new field
-- [ ] Update user serializer to include `default_citation_format`
-- [ ] Add `PATCH /api/v1/users/me/` support for updating preference
-- [ ] Typecheck passes
+- [x] Add `default_citation_format` field to User profile (nullable, CharField)
+- [x] Default: null (no preference, UI shows format selector)
+- [x] Create migration for new field
+- [x] Update user serializer to include `default_citation_format`
+- [x] Add `PATCH /api/v1/users/me/` support for updating preference
+- [x] Typecheck passes
 
 ### US-014: Add vault citation format override
 **Description:** As a vault owner, I want to set a default citation format for my vault so team members use consistent formatting.

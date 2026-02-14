@@ -5,15 +5,16 @@ This module contains background tasks for generating citations using Claude AI.
 """
 import logging
 from typing import Any
+from datetime import timedelta
 
 from celery import shared_task
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 
-from apps.sources.models import Source
-from apps.citations.models import CitationFormat
-from apps.citations.services.ai_citation import generate_ai_citation
-from apps.citations.utils import log_ai_citation_usage
+from apps.sources.models import Source  # type: ignore[import-untyped]
+from apps.citations.models import CitationFormat  # type: ignore[import-untyped]
+from apps.citations.services.ai_citation import generate_ai_citation  # type: ignore[import-untyped]
+from apps.citations.utils import log_ai_citation_usage  # type: ignore[import-untyped]
 
 logger = logging.getLogger(__name__)
 
@@ -88,7 +89,7 @@ def generate_ai_citation_task(self, source_id: int, citation_format: str, user_i
 
 
 @shared_task(bind=True, max_retries=0, time_limit=600)
-def export_vault_citations_task(self, vault_id: str, citation_format: str, user_id: int) -> dict[str, Any]:
+def export_vault_citations_task(self, vault_id: str, citation_format: str, user_id: int) -> dict[str, Any]:  # noqa: ARG001
     """
     Export all citations from a vault asynchronously (for large vaults).
 
@@ -112,14 +113,11 @@ def export_vault_citations_task(self, vault_id: str, citation_format: str, user_
     Raises:
         Exception: On task failure
     """
-    import tempfile
-    import os
-    from django.conf import settings
     from django.core.cache import cache
-    from apps.vaults.models import Vault
-    from apps.citations.models import CitationFormat
-    from apps.citations.services.structured_citation import has_complete_metadata, generate_structured_citation
-    from apps.citations.services.ai_citation import generate_ai_citation
+    from apps.vaults.models import Vault  # type: ignore[import-untyped]
+    from apps.citations.models import CitationFormat  # type: ignore[import-untyped]
+    from apps.citations.services.structured_citation import has_complete_metadata, generate_structured_citation  # type: ignore[import-untyped]
+    from apps.citations.services.ai_citation import generate_ai_citation  # type: ignore[import-untyped]
 
     try:
         logger.info(f"Starting batch export for vault {vault_id} in format {citation_format}")
@@ -171,7 +169,7 @@ def export_vault_citations_task(self, vault_id: str, citation_format: str, user_
 
         # Store file in temporary directory (managed by Django cache)
         cache_key = f'export_file:{vault_id}:{citation_format}:{user_id}'
-        expires_at = timezone.now() + timezone.timedelta(hours=24)
+        expires_at = timezone.now() + timedelta(hours=24)
 
         # Store content in cache (24h expiry)
         cache.set(cache_key, {

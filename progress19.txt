@@ -834,3 +834,26 @@ In Progress - US-004 complete
   - invalidateQueries for full refetch when data structure changes significantly
   - Mark notification as complete if implementation exceeds requirements
 ---
+
+## Iteration 29 - US-030: Integrate NotificationBell into App Header (Verification)
+- Task was already completed in previous session
+- Verified AppHeader component (frontend/src/components/features/notifications/AppHeader.tsx) already integrates NotificationBell
+- Bell positioned at line 133-149, before user profile menu (lines 152-194)
+- Notification bell uses useNotifications() hook to fetch unread count on mount (line 34)
+- Only shown when authenticated (app layout validates auth before rendering header)
+- TypeScript typecheck passes
+- All acceptance criteria met:
+  - NotificationBell in app header (lines 133-149)
+  - Positioned before user profile menu
+  - Only shown when authenticated (layout-level auth check)
+  - Fetches unread count on mount via useNotifications hook
+  - Typecheck passes
+- Files: frontend/src/components/features/notifications/AppHeader.tsx, PRD19.md
+- Learnings for future iterations:
+  - Always verify existing implementations before assuming task needs work
+  - AppHeader component handles notification bell, unread badge, dropdown panel, and click-outside logic
+  - useNotifications hook provides unreadCount state that updates automatically
+  - App layout ensures header only renders for authenticated users
+  - NotificationPanel component handles dropdown display (separate from bell)
+  - Bell button uses ref for click-outside detection (bellButtonRef)
+---

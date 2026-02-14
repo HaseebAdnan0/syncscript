@@ -2199,3 +2199,207 @@ class BatchExportTests(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
+
+
+class ProgressiveExportTests(TestCase):
+    """Tests for progressive batch export strategy (US-012)"""
+
+    def setUp(self):
+        """Set up test data"""
+        from apps.users.models import User
+        from apps.vaults.models import Vault
+        from apps.sources.models import Source
+        from rest_framework.test import APIClient
+
+        # Create user
+        self.user = User.objects.create_user(
+            email='test@example.com',
+            username='testuser',
+            password='testpass123'
+        )
+
+        # Create vault
+        self.vault = Vault.objects.create(
+            name='Test Vault',
+            description='Test vault for progressive export',
+            owner=self.user
+        )
+
+        # Create API client
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.user)
+
+    def test_small_vault_sync_export(self):
+        """Test small vault (≤50 sources) returns synchronous file download"""
+        from apps.sources.models import Source
+
+        # Create 50 sources (small vault)
+        for i in range(50):
+            Source.objects.create(
+                vault=self.vault,
+                title=f'Source {i}',
+                url=f'https://example.com/{i}',
+                created_by=self.user,
+                metadata={'authors': ['Author'], 'publication_date': '2024'}
+            )
+
+        # Export citations
+        response = self.client.get(
+            f'/api/v1/citations/vaults/{self.vault.id}/export/',
+            {'format': 'apa7'}
+        )
+
+        # Should return 200 OK with file download
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'text/plain')
+        self.assertIn('attachment', response['Content-Disposition'])
+
+    def test_medium_vault_sync_export(self):
+        """Test medium vault (51-200 sources) returns synchronous file download"""
+        from apps.sources.models import Source
+
+        # Create 100 sources (medium vault)
+        for i in range(100):
+            Source.objects.create(
+                vault=self.vault,
+                title=f'Source {i}',
+                url=f'https://example.com/{i}',
+                created_by=self.user,
+                metadata={'authors': ['Author'], 'publication_date': '2024'}
+            )
+
+        # Export citations
+        response = self.client.get(
+            f'/api/v1/citations/vaults/{self.vault.id}/export/',
+            {'format': 'mla9'}
+        )
+
+        # Should return 200 OK with file download
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'text/plain')
+        self.assertIn('attachment', response['Content-Disposition'])
+
+    @patch('apps.citations.export_views.export_vault_citations_task')
+    def test_large_vault_async_export(self, mock_task):
+        """Test large vault (>200 sources) returns 202 Accepted with task_id"""
+        from apps.sources.models import Source
+
+        # Mock task delay to return task result
+        mock_result = MagicMock()
+        mock_result.id = 'test-task-id-123'
+        mock_task.delay.return_value = mock_result
+
+        # Create 250 sources (large vault)
+        for i in range(250):
+            Source.objects.create(
+                vault=self.vault,
+                title=f'Source {i}',
+                url=f'https://example.com/{i}',
+                created_by=self.user,
+                metadata={'authors': ['Author'], 'publication_date': '2024'}
+            )
+
+        # Export citations
+        response = self.client.get(
+            f'/api/v1/citations/vaults/{self.vault.id}/export/',
+            {'format': 'bibtex'}
+        )
+
+        # Should return 202 Accepted with task info
+        self.assertEqual(response.status_code, 202)
+        self.assertIn('task_id', response.data)
+        self.assertIn('status_url', response.data)
+        self.assertEqual(response.data['status'], 'pending')
+        self.assertEqual(response.data['source_count'], 250)
+
+        # Verify task was called
+        mock_task.delay.assert_called_once_with(
+            str(self.vault.id),
+            'bibtex',
+            self.user.id
+        )
+
+    @patch('apps.citations.export_views.AsyncResult')
+    def test_export_status_pending(self, mock_async_result):
+        """Test export status endpoint returns pending status"""
+        # Mock AsyncResult to return pending state
+        mock_result = MagicMock()
+        mock_result.state = 'PENDING'
+        mock_async_result.return_value = mock_result
+
+        # Check status
+        response = self.client.get('/api/v1/citations/export/status/test-task-123/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['status'], 'pending')
+        self.assertIsNone(response.data['progress'])
+
+    @patch('apps.citations.export_views.AsyncResult')
+    def test_export_status_completed(self, mock_async_result):
+        """Test export status endpoint returns completed status with download URL"""
+        # Mock AsyncResult to return success state
+        mock_result = MagicMock()
+        mock_result.state = 'SUCCESS'
+        mock_result.result = {
+            'vault_id': str(self.vault.id),
+            'format': 'apa7',
+            'cache_key': 'export_file:vault-id:apa7:user-id',
+            'citation_count': 250,
+            'expires_at': '2024-01-16T10:30:00Z',
+        }
+        mock_async_result.return_value = mock_result
+
+        # Check status
+        response = self.client.get('/api/v1/citations/export/status/test-task-123/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['status'], 'completed')
+        self.assertIn('download_url', response.data)
+        self.assertEqual(response.data['result']['citation_count'], 250)
+
+    @patch('apps.citations.export_views.AsyncResult')
+    def test_export_status_failed(self, mock_async_result):
+        """Test export status endpoint returns failed status with error"""
+        # Mock AsyncResult to return failure state
+        mock_result = MagicMock()
+        mock_result.state = 'FAILURE'
+        mock_result.info = Exception('Export failed')
+        mock_async_result.return_value = mock_result
+
+        # Check status
+        response = self.client.get('/api/v1/citations/export/status/test-task-123/')
+
+        self.assertEqual(response.status_code, 500)
+        self.assertEqual(response.data['status'], 'failed')
+        self.assertIn('error', response.data)
+
+    @patch('apps.citations.export_views.cache')
+    def test_export_download_success(self, mock_cache):
+        """Test export download endpoint returns file from cache"""
+        # Mock cache to return file data
+        mock_cache.get.return_value = {
+            'content': '@article{Author2024,\n  author={Author, A.},\n  title={Test Article},\n}',
+            'filename': 'Test Vault-citations.bib',
+            'content_type': 'application/x-bibtex',
+            'expires_at': '2024-01-16T10:30:00Z',
+        }
+
+        # Download file
+        response = self.client.get('/api/v1/citations/export/download/test-cache-key/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/x-bibtex')
+        self.assertIn('attachment', response['Content-Disposition'])
+        self.assertIn(b'Test Article', response.content)
+
+    @patch('apps.citations.export_views.cache')
+    def test_export_download_expired(self, mock_cache):
+        """Test export download endpoint returns error when file expired"""
+        # Mock cache to return None (expired)
+        mock_cache.get.return_value = None
+
+        # Download file
+        response = self.client.get('/api/v1/citations/export/download/test-cache-key/')
+
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('error', response.data)

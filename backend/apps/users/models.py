@@ -19,6 +19,22 @@ class User(AbstractUser):
     institution = models.CharField(max_length=200, blank=True)
     email_verified = models.BooleanField(default=False, db_index=True)
 
+    # Citation preferences
+    default_citation_format = models.CharField(
+        max_length=20,
+        blank=True,
+        null=True,
+        choices=[
+            ('apa7', 'APA 7th Edition'),
+            ('mla9', 'MLA 9th Edition'),
+            ('chicago17', 'Chicago 17th Edition'),
+            ('bibtex', 'BibTeX'),
+            ('ieee', 'IEEE'),
+            ('harvard', 'Harvard'),
+        ],
+        help_text="Default citation format for all vaults"
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
