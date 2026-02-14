@@ -1,0 +1,609 @@
+{
+  "metadata": {
+    "prd_title": "Sources & Annotations System",
+    "version": "1.0",
+    "generated_date": "2026-02-14",
+    "total_user_stories": 14,
+    "total_tasks": 42
+  },
+  "user_stories": [
+    {
+      "id": "US-1.1",
+      "title": "Create Source with Auto-Metadata Extraction",
+      "description": "As a researcher, I want to add a source to my vault by providing a URL so that metadata (title, authors, abstract) is automatically extracted",
+      "acceptance_criteria": [
+        "POST /api/v1/vaults/{vault_id}/sources/ creates source",
+        "Required fields: url, source_type",
+        "Optional: title, description, metadata",
+        "If title not provided, auto-extract from URL using newspaper3k/beautifulsoup",
+        "Extract metadata: authors, publication_date, abstract (best effort)",
+        "Vault permission check: user must be Owner or Contributor",
+        "Audit log created: source.created",
+        "Returns 201 with full source object"
+      ],
+      "dependencies": [],
+      "tasks": [
+        {
+          "id": "TASK-1.1.1",
+          "title": "Define Source model with SourceType enum",
+          "description": "Create Source model in apps/sources/models.py with fields: vault FK, url, title, description, source_type (enum: URL/PDF/BOOK/JOURNAL/DATASET), metadata JSON, created_by FK, is_deleted, timestamps. Add indexes and unique constraint.",
+          "estimated_hours": 3,
+          "dependencies": []
+        },
+        {
+          "id": "TASK-1.1.2",
+          "title": "Implement extract_metadata() service",
+          "description": "Create apps/sources/services.py with extract_metadata(url) function using newspaper3k or beautifulsoup4. Extract title, authors, publication_date, abstract. Handle timeouts (10s max), HTTP errors, parse failures with graceful fallbacks.",
+          "estimated_hours": 4,
+          "dependencies": []
+        },
+        {
+          "id": "TASK-1.1.3",
+          "title": "Create SourceSerializer with auto-metadata",
+          "description": "Implement SourceSerializer in apps/sources/serializers.py. Override create() to call extract_metadata() if title not provided. Validate metadata JSON schema.",
+          "estimated_hours": 3,
+          "dependencies": ["TASK-1.1.1", "TASK-1.1.2"]
+        },
+        {
+          "id": "TASK-1.1.4",
+          "title": "Implement SourceViewSet with create endpoint",
+          "description": "Create SourceViewSet in apps/sources/views.py with create action. Add VaultPermission check (Owner/Contributor). Integrate SourceSerializer. Return 201 on success.",
+          "estimated_hours": 3,
+          "dependencies": ["TASK-1.1.3"]
+        },
+        {
+          "id": "TASK-1.1.5",
+          "title": "Write tests for source creation and metadata extraction",
+          "description": "Create test_models.py, test_views.py, test_services.py. Test source creation, metadata extraction with mocked HTTP responses, permission checks, validation errors.",
+          "estimated_hours": 4,
+          "dependencies": ["TASK-1.1.4"]
+        }
+      ]
+    },
+    {
+      "id": "US-1.2",
+      "title": "Bulk Source Import",
+      "description": "As a researcher, I want to import multiple sources at once via URL array so that I can quickly populate my vault from a reference list",
+      "acceptance_criteria": [
+        "POST /api/v1/vaults/{vault_id}/sources/bulk_import/ accepts {\"urls\": [...]}",
+        "Max batch size: 50 URLs",
+        "Validates all URLs before processing (duplicate check within vault)",
+        "Checks URL reachability (HTTP HEAD request, 5s timeout)",
+        "Skips duplicates, returns {\"created\": [...], \"skipped\": [...], \"errors\": [...]}",
+        "Each source gets metadata auto-extracted",
+        "Vault permission: Owner/Contributor only",
+        "Single audit log entry: source.bulk_imported with count"
+      ],
+      "dependencies": ["US-1.1"],
+      "tasks": [
+        {
+          "id": "TASK-1.2.1",
+          "title": "Create BulkSourceSerializer",
+          "description": "Implement BulkSourceSerializer in apps/sources/serializers.py. Accept {\"urls\": []} field. Validate max 50 URLs, URL format, duplicates within vault using database query.",
+          "estimated_hours": 3,
+          "dependencies": ["TASK-1.1.3"]
+        },
+        {
+          "id": "TASK-1.2.2",
+          "title": "Implement bulk_import custom action",
+          "description": "Add @action(methods=['post']) bulk_import() to SourceViewSet. Check URL reachability with HTTP HEAD (5s timeout). Call extract_metadata() for each URL. Use Django transaction for atomicity. Return created/skipped/errors breakdown.",
+          "estimated_hours": 5,
+          "dependencies": ["TASK-1.2.1"]
+        },
+        {
+          "id": "TASK-1.2.3",
+          "title": "Write bulk import tests",
+          "description": "Test bulk import with valid URLs, duplicates, unreachable URLs, max batch size validation, permission checks. Mock HTTP requests.",
+          "estimated_hours": 3,
+          "dependencies": ["TASK-1.2.2"]
+        }
+      ]
+    },
+    {
+      "id": "US-1.3",
+      "title": "List & Filter Sources",
+      "description": "As a researcher, I want to filter sources by vault, type, date range, creator, tags, and search text so that I can quickly find relevant sources",
+      "acceptance_criteria": [
+        "GET /api/v1/sources/?vault={id}&source_type=PDF&created_by={user_id}&tags=ml,nlp&search=neural&date_from=2025-01-01&date_to=2025-12-31",
+        "Filtering via django-filter.FilterSet",
+        "search query searches title + description (case-insensitive)",
+        "tags filter searches metadata.tags array (PostgreSQL JSON query)",
+        "Only returns non-deleted sources (is_deleted=False)",
+        "Pagination: 20 items per page",
+        "Vault permission: any vault member can list sources"
+      ],
+      "dependencies": ["US-1.1"],
+      "tasks": [
+        {
+          "id": "TASK-1.3.1",
+          "title": "Create SourceFilter with django-filter",
+          "description": "Implement SourceFilter in apps/sources/filters.py. Add filters: vault, source_type, created_by, tags (custom method using JSON overlap), date_from/date_to (created_at range), search (title/description icontains).",
+          "estimated_hours": 4,
+          "dependencies": ["TASK-1.1.1"]
+        },
+        {
+          "id": "TASK-1.3.2",
+          "title": "Add filterset_class to SourceViewSet",
+          "description": "Integrate SourceFilter into SourceViewSet. Configure pagination (20 per page). Add default filter: is_deleted=False. Ensure vault permission check.",
+          "estimated_hours": 2,
+          "dependencies": ["TASK-1.3.1", "TASK-1.1.4"]
+        },
+        {
+          "id": "TASK-1.3.3",
+          "title": "Write filter tests",
+          "description": "Test all filter combinations: vault, source_type, created_by, tags (JSON query), date range, search. Test pagination. Verify soft-deleted sources excluded.",
+          "estimated_hours": 3,
+          "dependencies": ["TASK-1.3.2"]
+        }
+      ]
+    },
+    {
+      "id": "US-1.4",
+      "title": "Update Source",
+      "description": "As a researcher, I want to edit source title, description, metadata, and type so that I can correct or enrich source information",
+      "acceptance_criteria": [
+        "PATCH /api/v1/sources/{id}/ updates mutable fields",
+        "Mutable: title, description, source_type, metadata",
+        "Immutable: url, vault, created_by",
+        "Vault permission: Owner/Contributor only",
+        "Audit log: source.updated with JSON diff of changes",
+        "Returns 200 with updated source"
+      ],
+      "dependencies": ["US-1.1"],
+      "tasks": [
+        {
+          "id": "TASK-1.4.1",
+          "title": "Configure SourceSerializer for partial updates",
+          "description": "Set read_only_fields for url, vault, created_by in SourceSerializer. Ensure partial=True works for PATCH requests.",
+          "estimated_hours": 1,
+          "dependencies": ["TASK-1.1.3"]
+        },
+        {
+          "id": "TASK-1.4.2",
+          "title": "Add update endpoint to SourceViewSet",
+          "description": "Implement update/partial_update in SourceViewSet. Verify VaultPermission (Owner/Contributor). Return 200 with updated object.",
+          "estimated_hours": 2,
+          "dependencies": ["TASK-1.4.1"]
+        },
+        {
+          "id": "TASK-1.4.3",
+          "title": "Write update tests",
+          "description": "Test PATCH with valid data, immutable field attempts, permission checks (non-member, Viewer role). Verify audit log creation.",
+          "estimated_hours": 2,
+          "dependencies": ["TASK-1.4.2"]
+        }
+      ]
+    },
+    {
+      "id": "US-1.5",
+      "title": "Soft Delete Source",
+      "description": "As a researcher, I want to delete a source without permanently removing it so that I can restore it later if needed",
+      "acceptance_criteria": [
+        "DELETE /api/v1/sources/{id}/ sets is_deleted=True",
+        "Vault permission: Owner only",
+        "Audit log: source.deleted (soft)",
+        "Deleted sources excluded from list views by default",
+        "Returns 204 No Content"
+      ],
+      "dependencies": ["US-1.1"],
+      "tasks": [
+        {
+          "id": "TASK-1.5.1",
+          "title": "Override destroy() for soft delete",
+          "description": "Override destroy() method in SourceViewSet to set is_deleted=True instead of hard delete. Check VaultPermission (Owner only). Return 204.",
+          "estimated_hours": 2,
+          "dependencies": ["TASK-1.1.4"]
+        },
+        {
+          "id": "TASK-1.5.2",
+          "title": "Write soft delete tests",
+          "description": "Test DELETE sets is_deleted=True, source excluded from list, Owner-only permission, audit log creation.",
+          "estimated_hours": 2,
+          "dependencies": ["TASK-1.5.1"]
+        }
+      ]
+    },
+    {
+      "id": "US-1.6",
+      "title": "Restore Deleted Source",
+      "description": "As a vault owner, I want to restore a soft-deleted source so that I can recover accidentally deleted sources",
+      "acceptance_criteria": [
+        "POST /api/v1/sources/{id}/restore/ sets is_deleted=False",
+        "Vault permission: Owner only",
+        "Audit log: source.restored",
+        "Returns 200 with restored source"
+      ],
+      "dependencies": ["US-1.5"],
+      "tasks": [
+        {
+          "id": "TASK-1.6.1",
+          "title": "Implement restore custom action",
+          "description": "Add @action(methods=['post'], detail=True) restore() to SourceViewSet. Set is_deleted=False. Check VaultPermission (Owner). Return 200 with source.",
+          "estimated_hours": 2,
+          "dependencies": ["TASK-1.5.1"]
+        },
+        {
+          "id": "TASK-1.6.2",
+          "title": "Write restore tests",
+          "description": "Test restore sets is_deleted=False, source reappears in list, Owner-only permission, audit log creation.",
+          "estimated_hours": 2,
+          "dependencies": ["TASK-1.6.1"]
+        }
+      ]
+    },
+    {
+      "id": "US-2.1",
+      "title": "Create Top-Level Annotation",
+      "description": "As a researcher, I want to add an annotation to a source with flexible positioning so that I can highlight and comment on specific parts",
+      "acceptance_criteria": [
+        "POST /api/v1/sources/{source_id}/annotations/ creates annotation",
+        "Required: content, position JSON",
+        "Optional: page_number, parent (must be null for top-level)",
+        "Vault permission: any vault member can annotate",
+        "Audit log: annotation.created",
+        "Returns 201 with annotation object"
+      ],
+      "dependencies": ["US-1.1"],
+      "tasks": [
+        {
+          "id": "TASK-2.1.1",
+          "title": "Define Annotation model with threading",
+          "description": "Create Annotation model in apps/annotations/models.py with fields: source FK, user FK, content, page_number, position JSON, parent self-FK, timestamps. Add clean() method to validate 2-level max threading. Add indexes.",
+          "estimated_hours": 3,
+          "dependencies": []
+        },
+        {
+          "id": "TASK-2.1.2",
+          "title": "Create AnnotationSerializer with position validation",
+          "description": "Implement AnnotationSerializer in apps/annotations/serializers.py. Validate position JSON has at least one of: page, x, y, selector. Include user as read-only StringRelatedField.",
+          "estimated_hours": 3,
+          "dependencies": ["TASK-2.1.1"]
+        },
+        {
+          "id": "TASK-2.1.3",
+          "title": "Implement AnnotationViewSet with create endpoint",
+          "description": "Create AnnotationViewSet in apps/annotations/views.py. Add create action with vault member permission check. Auto-set user from request. Return 201.",
+          "estimated_hours": 3,
+          "dependencies": ["TASK-2.1.2"]
+        },
+        {
+          "id": "TASK-2.1.4",
+          "title": "Write annotation creation tests",
+          "description": "Test top-level annotation creation, position validation, permission checks, audit log creation. Test various position schemas (PDF, web selector).",
+          "estimated_hours": 3,
+          "dependencies": ["TASK-2.1.3"]
+        }
+      ]
+    },
+    {
+      "id": "US-2.2",
+      "title": "Reply to Annotation (One Level Deep)",
+      "description": "As a researcher, I want to reply to an existing annotation so that I can engage in threaded discussions",
+      "acceptance_criteria": [
+        "POST /api/v1/annotations/ with parent={annotation_id} creates reply",
+        "Validates: parent must not have a parent (2-level max)",
+        "Required: content, source (inherited from parent), parent",
+        "position optional for replies (defaults to parent's position)",
+        "Vault permission: any vault member",
+        "Audit log: annotation.replied",
+        "Returns 201 with reply object"
+      ],
+      "dependencies": ["US-2.1"],
+      "tasks": [
+        {
+          "id": "TASK-2.2.1",
+          "title": "Add threading validation to AnnotationSerializer",
+          "description": "Add validate() method to AnnotationSerializer to check if parent.parent exists. Raise ValidationError if attempting to reply to a reply.",
+          "estimated_hours": 2,
+          "dependencies": ["TASK-2.1.2"]
+        },
+        {
+          "id": "TASK-2.2.2",
+          "title": "Write annotation reply tests",
+          "description": "Test creating reply to top-level annotation, attempt to reply to reply (should fail), verify parent set correctly, audit log creation.",
+          "estimated_hours": 3,
+          "dependencies": ["TASK-2.2.1"]
+        }
+      ]
+    },
+    {
+      "id": "US-2.3",
+      "title": "List Annotations for Source",
+      "description": "As a researcher, I want to view all annotations for a source grouped by thread so that I can see discussions in context",
+      "acceptance_criteria": [
+        "GET /api/v1/sources/{source_id}/annotations/ returns nested structure",
+        "Top-level annotations include replies array",
+        "Ordered by created_at (oldest first)",
+        "Vault permission: any vault member",
+        "Filter by user, page_number",
+        "Pagination: 50 top-level annotations per page"
+      ],
+      "dependencies": ["US-2.2"],
+      "tasks": [
+        {
+          "id": "TASK-2.3.1",
+          "title": "Add nested replies to AnnotationSerializer",
+          "description": "Add get_replies() SerializerMethodField to AnnotationSerializer. Use prefetch_related('replies') for performance. Only include replies for top-level annotations (parent=None).",
+          "estimated_hours": 3,
+          "dependencies": ["TASK-2.2.1"]
+        },
+        {
+          "id": "TASK-2.3.2",
+          "title": "Implement list endpoint with filtering",
+          "description": "Override list() in AnnotationViewSet to filter by source, order by created_at. Add filterset for user, page_number. Configure pagination (50 per page). Use prefetch_related.",
+          "estimated_hours": 3,
+          "dependencies": ["TASK-2.3.1"]
+        },
+        {
+          "id": "TASK-2.3.3",
+          "title": "Write annotation list tests",
+          "description": "Test nested structure returned, filters work (user, page_number), pagination, ordering, permission checks. Verify prefetch_related reduces queries.",
+          "estimated_hours": 3,
+          "dependencies": ["TASK-2.3.2"]
+        }
+      ]
+    },
+    {
+      "id": "US-2.4",
+      "title": "Update Annotation",
+      "description": "As a researcher, I want to edit my own annotation content so that I can correct or clarify my notes",
+      "acceptance_criteria": [
+        "PATCH /api/v1/annotations/{id}/ updates content only",
+        "Permission: only annotation author can edit",
+        "Immutable: position, page_number, parent, source",
+        "Audit log: annotation.updated with diff",
+        "Returns 200 with updated annotation"
+      ],
+      "dependencies": ["US-2.1"],
+      "tasks": [
+        {
+          "id": "TASK-2.4.1",
+          "title": "Create IsAuthorOrReadOnly permission",
+          "description": "Implement IsAuthorOrReadOnly permission class in apps/annotations/permissions.py. Allow safe methods for all, write methods only for author.",
+          "estimated_hours": 2,
+          "dependencies": []
+        },
+        {
+          "id": "TASK-2.4.2",
+          "title": "Configure AnnotationSerializer for updates",
+          "description": "Set read_only_fields: position, page_number, parent, source, user in AnnotationSerializer. Only content is mutable.",
+          "estimated_hours": 1,
+          "dependencies": ["TASK-2.1.2"]
+        },
+        {
+          "id": "TASK-2.4.3",
+          "title": "Add IsAuthorOrReadOnly to AnnotationViewSet",
+          "description": "Add IsAuthorOrReadOnly to permission_classes in AnnotationViewSet. Implement update/partial_update.",
+          "estimated_hours": 2,
+          "dependencies": ["TASK-2.4.1", "TASK-2.4.2"]
+        },
+        {
+          "id": "TASK-2.4.4",
+          "title": "Write annotation update tests",
+          "description": "Test PATCH as author succeeds, non-author fails (403), immutable field attempts rejected, audit log with diff created.",
+          "estimated_hours": 2,
+          "dependencies": ["TASK-2.4.3"]
+        }
+      ]
+    },
+    {
+      "id": "US-2.5",
+      "title": "Delete Annotation",
+      "description": "As a researcher, I want to delete my own annotation so that I can remove outdated or incorrect notes",
+      "acceptance_criteria": [
+        "DELETE /api/v1/annotations/{id}/ hard deletes annotation",
+        "Permission: only annotation author can delete",
+        "If annotation has replies, cascade delete all replies (warning in response)",
+        "Audit log: annotation.deleted",
+        "Returns 204 No Content"
+      ],
+      "dependencies": ["US-2.1"],
+      "tasks": [
+        {
+          "id": "TASK-2.5.1",
+          "title": "Implement delete with cascade warning",
+          "description": "Override destroy() in AnnotationViewSet. Check if replies exist, include warning in response headers. Hard delete (cascade via FK on_delete). Check IsAuthorOrReadOnly permission. Return 204.",
+          "estimated_hours": 3,
+          "dependencies": ["TASK-2.4.1"]
+        },
+        {
+          "id": "TASK-2.5.2",
+          "title": "Write annotation delete tests",
+          "description": "Test DELETE as author succeeds, non-author fails, cascade delete of replies verified, audit log created.",
+          "estimated_hours": 2,
+          "dependencies": ["TASK-2.5.1"]
+        }
+      ]
+    },
+    {
+      "id": "US-3.1",
+      "title": "Log All Source & Annotation Changes",
+      "description": "As a system administrator, I want to track all changes to sources and annotations so that research integrity is maintained",
+      "acceptance_criteria": [
+        "Every create/update/delete action creates an AuditLog entry",
+        "Fields: action, user, timestamp, object_type, object_id, changes (JSON diff)",
+        "Changes JSON: {\"before\": {...}, \"after\": {...}}",
+        "Immutable records (no updates allowed)",
+        "Queryable via admin interface or API endpoint"
+      ],
+      "dependencies": ["US-1.1", "US-2.1"],
+      "tasks": [
+        {
+          "id": "TASK-3.1.1",
+          "title": "Extend AuditLog model with changes field",
+          "description": "Add changes JSONField to AuditLog model in core/models.py (or create if not exists). Add Meta to prevent updates. Register in admin.",
+          "estimated_hours": 2,
+          "dependencies": []
+        },
+        {
+          "id": "TASK-3.1.2",
+          "title": "Create source signals for audit logging",
+          "description": "Implement post_save, pre_delete signals in apps/sources/signals.py. Use django-dirtyfields to capture before/after. Create AuditLog entries for source.created, source.updated, source.deleted, source.restored.",
+          "estimated_hours": 4,
+          "dependencies": ["TASK-3.1.1", "TASK-1.1.1"]
+        },
+        {
+          "id": "TASK-3.1.3",
+          "title": "Create annotation signals for audit logging",
+          "description": "Implement post_save, pre_delete signals in apps/annotations/signals.py. Create AuditLog entries for annotation.created, annotation.replied, annotation.updated, annotation.deleted with changes diff.",
+          "estimated_hours": 4,
+          "dependencies": ["TASK-3.1.1", "TASK-2.1.1"]
+        },
+        {
+          "id": "TASK-3.1.4",
+          "title": "Write audit log tests",
+          "description": "Test all CRUD operations trigger correct audit log entries with proper action names, user, changes JSON. Verify immutability of logs.",
+          "estimated_hours": 3,
+          "dependencies": ["TASK-3.1.2", "TASK-3.1.3"]
+        }
+      ]
+    },
+    {
+      "id": "INTEGRATION-1",
+      "title": "URL Routing & App Registration",
+      "description": "Register apps and configure URL routing for all source and annotation endpoints",
+      "acceptance_criteria": [
+        "Apps registered in INSTALLED_APPS",
+        "URLs configured in config/urls.py",
+        "All endpoints accessible via API router",
+        "CORS configured for frontend access"
+      ],
+      "dependencies": ["US-1.1", "US-2.1"],
+      "tasks": [
+        {
+          "id": "TASK-INT-1.1",
+          "title": "Register apps in settings",
+          "description": "Add 'apps.sources' and 'apps.annotations' to INSTALLED_APPS in config/settings.py.",
+          "estimated_hours": 0.5,
+          "dependencies": []
+        },
+        {
+          "id": "TASK-INT-1.2",
+          "title": "Configure URL routing",
+          "description": "Create apps/sources/urls.py and apps/annotations/urls.py with DRF router. Include in config/urls.py under /api/v1/. Configure nested routing for /vaults/{id}/sources/.",
+          "estimated_hours": 2,
+          "dependencies": ["TASK-1.1.4", "TASK-2.1.3"]
+        },
+        {
+          "id": "TASK-INT-1.3",
+          "title": "Update CORS settings",
+          "description": "Ensure CORS_ALLOWED_ORIGINS includes frontend URL in config/settings.py.",
+          "estimated_hours": 0.5,
+          "dependencies": []
+        }
+      ]
+    },
+    {
+      "id": "INTEGRATION-2",
+      "title": "Database Migrations & Admin Setup",
+      "description": "Generate migrations for all models and configure Django admin interface",
+      "acceptance_criteria": [
+        "All migrations generated and applied",
+        "Models registered in admin with list_display, filters",
+        "AuditLog readable in admin (read-only)",
+        "Database indexes created"
+      ],
+      "dependencies": ["US-1.1", "US-2.1", "US-3.1"],
+      "tasks": [
+        {
+          "id": "TASK-INT-2.1",
+          "title": "Generate and apply migrations",
+          "description": "Run makemigrations and migrate for apps.sources, apps.annotations, core (AuditLog). Verify indexes created in PostgreSQL.",
+          "estimated_hours": 1,
+          "dependencies": ["TASK-1.1.1", "TASK-2.1.1", "TASK-3.1.1"]
+        },
+        {
+          "id": "TASK-INT-2.2",
+          "title": "Configure Django admin",
+          "description": "Register Source, Annotation, AuditLog in admin.py files. Add list_display, list_filter, search_fields. Make AuditLog read-only.",
+          "estimated_hours": 2,
+          "dependencies": ["TASK-INT-2.1"]
+        }
+      ]
+    },
+    {
+      "id": "TESTING-1",
+      "title": "Full Integration Testing",
+      "description": "Run complete test suite and perform manual API testing",
+      "acceptance_criteria": [
+        "All unit tests pass",
+        "Integration tests for full CRUD flows pass",
+        "Manual testing scenarios completed (see MANUAL_VERIFICATION.md)",
+        "No regressions in existing vault/user tests"
+      ],
+      "dependencies": ["US-1.6", "US-2.5", "US-3.1", "INTEGRATION-1", "INTEGRATION-2"],
+      "tasks": [
+        {
+          "id": "TASK-TEST-1.1",
+          "title": "Run full test suite",
+          "description": "Execute: python manage.py test apps.sources apps.annotations. Ensure all tests pass. Verify test coverage >80%.",
+          "estimated_hours": 2,
+          "dependencies": ["TASK-1.1.5", "TASK-1.2.3", "TASK-1.3.3", "TASK-1.4.3", "TASK-1.5.2", "TASK-1.6.2", "TASK-2.1.4", "TASK-2.2.2", "TASK-2.3.3", "TASK-2.4.4", "TASK-2.5.2", "TASK-3.1.4"]
+        },
+        {
+          "id": "TASK-TEST-1.2",
+          "title": "Manual API testing",
+          "description": "Follow scenarios in .planning/MANUAL_VERIFICATION.md. Test all endpoints with Postman/Thunder Client. Verify responses, permissions, audit logs.",
+          "estimated_hours": 3,
+          "dependencies": ["TASK-INT-1.2"]
+        },
+        {
+          "id": "TASK-TEST-1.3",
+          "title": "Update MANUAL_VERIFICATION.md",
+          "description": "Append all test scenarios from Appendix A of PRD to .planning/MANUAL_VERIFICATION.md with checkboxes.",
+          "estimated_hours": 1,
+          "dependencies": []
+        }
+      ]
+    }
+  ],
+  "dependencies_graph": {
+    "US-1.1": [],
+    "US-1.2": ["US-1.1"],
+    "US-1.3": ["US-1.1"],
+    "US-1.4": ["US-1.1"],
+    "US-1.5": ["US-1.1"],
+    "US-1.6": ["US-1.5"],
+    "US-2.1": ["US-1.1"],
+    "US-2.2": ["US-2.1"],
+    "US-2.3": ["US-2.2"],
+    "US-2.4": ["US-2.1"],
+    "US-2.5": ["US-2.1"],
+    "US-3.1": ["US-1.1", "US-2.1"],
+    "INTEGRATION-1": ["US-1.1", "US-2.1"],
+    "INTEGRATION-2": ["US-1.1", "US-2.1", "US-3.1"],
+    "TESTING-1": ["US-1.6", "US-2.5", "US-3.1", "INTEGRATION-1", "INTEGRATION-2"]
+  },
+  "execution_plan": {
+    "phase_1": {
+      "name": "Core Models & Migrations",
+      "duration_estimate": "1 day",
+      "user_stories": ["US-1.1", "US-2.1"],
+      "key_tasks": ["TASK-1.1.1", "TASK-1.1.2", "TASK-2.1.1", "TASK-INT-2.1"]
+    },
+    "phase_2": {
+      "name": "Source Management API",
+      "duration_estimate": "2 days",
+      "user_stories": ["US-1.2", "US-1.3", "US-1.4", "US-1.5", "US-1.6"],
+      "key_tasks": ["TASK-1.2.1", "TASK-1.3.1", "TASK-1.4.2", "TASK-1.5.1", "TASK-1.6.1"]
+    },
+    "phase_3": {
+      "name": "Annotation Management API",
+      "duration_estimate": "1.5 days",
+      "user_stories": ["US-2.2", "US-2.3", "US-2.4", "US-2.5"],
+      "key_tasks": ["TASK-2.2.1", "TASK-2.3.1", "TASK-2.4.3", "TASK-2.5.1"]
+    },
+    "phase_4": {
+      "name": "Audit Logging & Integration",
+      "duration_estimate": "1 day",
+      "user_stories": ["US-3.1", "INTEGRATION-1", "INTEGRATION-2"],
+      "key_tasks": ["TASK-3.1.2", "TASK-3.1.3", "TASK-INT-1.2", "TASK-INT-2.2"]
+    },
+    "phase_5": {
+      "name": "Testing & Documentation",
+      "duration_estimate": "1 day",
+      "user_stories": ["TESTING-1"],
+      "key_tasks": ["TASK-TEST-1.1", "TASK-TEST-1.2", "TASK-TEST-1.3"]
+    }
+  }
+}

@@ -1,0 +1,19 @@
+Welcome to SyncScript!
+
+Hi {{ user.username }},
+
+Thank you for registering with SyncScript - your collaborative research and citation engine.
+
+Please verify your email address by clicking the link below:
+
+{{ verification_url }}
+
+This link will expire in 24 hours.
+
+If you didn't create an account, you can safely ignore this email.
+
+Best regards,
+The SyncScript Team
+
+---
+Questions? Visit our support page or reply to this email.

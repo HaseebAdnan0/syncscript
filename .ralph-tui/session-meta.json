@@ -1,0 +1,15 @@
+{
+  "id": "4cc65d69-bf7e-473c-88d2-4ce2a2065941",
+  "status": "failed",
+  "startedAt": "2026-02-14T10:29:41.662Z",
+  "updatedAt": "2026-02-14T10:29:41.896Z",
+  "agentPlugin": "claude",
+  "trackerPlugin": "json",
+  "prdPath": ".\\tasks\\vault-rbac-prd.json",
+  "currentIteration": 0,
+  "maxIterations": 20,
+  "totalTasks": 0,
+  "tasksCompleted": 0,
+  "cwd": "E:\\projects\\syncscript",
+  "endedAt": "2026-02-14T10:29:41.896Z"
+}

@@ -1,0 +1,11 @@
+configVersion = "2.1"
+maxIterations = 20
+agent = "claude"
+tracker = "json"
+autoCommit = true
+defaultAgent = "claude"
+
+[agentOptions]
+[trackerOptions]
+[notifications]
+sound = "ralph"

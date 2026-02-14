@@ -1,0 +1,257 @@
+{
+  "name": "SyncScript Frontend Foundation",
+  "branchName": "feature/frontend-foundation",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Project Scaffold & TypeScript Setup",
+      "description": "As a developer, I want a Next.js 14 App Router project with TypeScript so that I have type safety and modern React patterns",
+      "acceptanceCriteria": [
+        "Next.js 14 initialized with App Router (npx create-next-app@latest)",
+        "TypeScript configured with strict mode enabled",
+        "Folder structure matches CLAUDE.md specification with src/app/, src/components/, src/lib/, src/hooks/, src/styles/",
+        ".gitignore excludes node_modules/, .next/, .env.local"
+      ],
+      "priority": 1,
+      "passes": true,
+      "dependsOn": [],
+      "labels": [
+        "setup",
+        "typescript",
+        "nextjs"
+      ],
+      "completionNotes": "Completed by agent"
+    },
+    {
+      "id": "US-002",
+      "title": "Design System Configuration",
+      "description": "As a frontend developer, I want Tailwind CSS configured with Bitcoin DeFi design tokens so that all components follow the brand aesthetic consistently",
+      "acceptanceCriteria": [
+        "Tailwind CSS 4.1+ installed and configured",
+        "tailwind.config.ts extends theme with Bitcoin DeFi colors (background: #030304, surface: #0F1115, primary: #F7931A, secondary: #EA580C, accent: #FFD600)",
+        "Custom fontFamily tokens: heading (Space Grotesk), body (Inter), mono (JetBrains Mono)",
+        "Custom boxShadow tokens: glow-orange, glow-gold",
+        "Google Fonts loaded in app/layout.tsx: Space Grotesk (400,700), Inter (400,500,600), JetBrains Mono (400,500)",
+        "src/styles/globals.css includes Tailwind directives, grid pattern background, glass morphism utilities, float animation keyframes"
+      ],
+      "priority": 1,
+      "passes": true,
+      "dependsOn": [
+        "US-001"
+      ],
+      "labels": [
+        "design-system",
+        "tailwind",
+        "styling"
+      ],
+      "completionNotes": "Completed by agent"
+    },
+    {
+      "id": "US-003",
+      "title": "ShadCN UI Integration",
+      "description": "As a developer, I want ShadCN UI installed and customized so that I can use accessible, headless components with our design system",
+      "acceptanceCriteria": [
+        "ShadCN UI initialized (npx shadcn@latest init)",
+        "components.json configured with style: default, component path: src/components/ui, utilities path: src/lib/utils.ts",
+        "Radix UI dependencies installed: @radix-ui/react-dialog, @radix-ui/react-dropdown-menu, @radix-ui/react-tabs, @radix-ui/react-toast",
+        "src/lib/utils.ts exports cn() function (clsx + tailwind-merge)"
+      ],
+      "priority": 2,
+      "passes": false,
+      "dependsOn": [
+        "US-002"
+      ],
+      "labels": [
+        "shadcn",
+        "component-library",
+        "radix-ui"
+      ]
+    },
+    {
+      "id": "US-004",
+      "title": "Base Component Library - Button",
+      "description": "As a UI developer, I want a Button component styled with Bitcoin DeFi aesthetic so that I can build consistent interfaces quickly",
+      "acceptanceCriteria": [
+        "Button component at src/components/ui/button.tsx uses CVA (class-variance-authority) for variants",
+        "Variants: primary (gradient orange shadow), outline (border primary), ghost (transparent hover)",
+        "Sizes: sm, md, lg",
+        "Primary variant: bg-gradient-to-r from-[#EA580C] to-[#F7931A] rounded-full shadow-glow-orange hover:scale-105",
+        "TypeScript props extend React.ButtonHTMLAttributes<HTMLButtonElement>"
+      ],
+      "priority": 2,
+      "passes": false,
+      "dependsOn": [
+        "US-003"
+      ],
+      "labels": [
+        "components",
+        "ui",
+        "button"
+      ]
+    },
+    {
+      "id": "US-005",
+      "title": "Base Component Library - Card",
+      "description": "As a UI developer, I want a Card component styled with Bitcoin DeFi aesthetic so that I can build consistent interfaces quickly",
+      "acceptanceCriteria": [
+        "Card component at src/components/ui/card.tsx",
+        "Base: bg-surface border border-white/10 rounded-2xl p-8",
+        "Hover lift effect: hover:-translate-y-1 hover:border-primary/50 transition-all duration-300",
+        "Exports: Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter"
+      ],
+      "priority": 2,
+      "passes": false,
+      "dependsOn": [
+        "US-003"
+      ],
+      "labels": [
+        "components",
+        "ui",
+        "card"
+      ]
+    },
+    {
+      "id": "US-006",
+      "title": "Base Component Library - Input",
+      "description": "As a UI developer, I want an Input component styled with Bitcoin DeFi aesthetic so that I can build consistent interfaces quickly",
+      "acceptanceCriteria": [
+        "Input component at src/components/ui/input.tsx",
+        "Base: bg-black/50 border-b-2 border-white/20 h-12 px-4 text-foreground",
+        "Focus: focus:border-primary focus:outline-none transition-colors",
+        "Supports type, placeholder, disabled props"
+      ],
+      "priority": 2,
+      "passes": false,
+      "dependsOn": [
+        "US-003"
+      ],
+      "labels": [
+        "components",
+        "ui",
+        "input"
+      ]
+    },
+    {
+      "id": "US-007",
+      "title": "Base Component Library - Badge",
+      "description": "As a UI developer, I want a Badge component styled with Bitcoin DeFi aesthetic so that I can build consistent interfaces quickly",
+      "acceptanceCriteria": [
+        "Badge component at src/components/ui/badge.tsx",
+        "Variants: default, success, warning, error",
+        "Default: bg-primary/20 text-primary border border-primary/30 rounded-full px-3 py-1 text-xs font-mono uppercase",
+        "Success: bg-green-500/20 text-green-400 border-green-500/30",
+        "Warning: bg-accent/20 text-accent border-accent/30",
+        "Error: bg-red-500/20 text-red-400 border-red-500/30"
+      ],
+      "priority": 2,
+      "passes": false,
+      "dependsOn": [
+        "US-003"
+      ],
+      "labels": [
+        "components",
+        "ui",
+        "badge"
+      ]
+    },
+    {
+      "id": "US-008",
+      "title": "Layout & Theme Infrastructure",
+      "description": "As a developer, I want a responsive layout component and theme provider so that pages have consistent structure and dark mode enforced",
+      "acceptanceCriteria": [
+        "Layout component at src/components/layout.tsx exports Container (max-w-7xl mx-auto px-4 sm:px-6 lg:px-8)",
+        "Exports Section component with py-24",
+        "Exports PageLayout wrapper with optional header/footer slots",
+        "Theme Provider at src/components/theme-provider.tsx forces dark mode (no toggle)",
+        "Sets <html> class to 'dark' on mount",
+        "Root Layout at src/app/layout.tsx wraps children in ThemeProvider",
+        "Applies font classes and sets metadata (title, description)"
+      ],
+      "priority": 2,
+      "passes": false,
+      "dependsOn": [
+        "US-002"
+      ],
+      "labels": [
+        "layout",
+        "theme",
+        "infrastructure"
+      ]
+    },
+    {
+      "id": "US-009",
+      "title": "API Client with JWT Auto-Refresh",
+      "description": "As a developer, I want an Axios client that automatically refreshes expired tokens so that API requests never fail due to auth expiry",
+      "acceptanceCriteria": [
+        "API Client at src/lib/api.ts with Axios instance baseURL from NEXT_PUBLIC_API_URL",
+        "Request interceptor attaches Authorization: Bearer {accessToken} from auth store",
+        "Response interceptor on 401 error attempts token refresh via /api/v1/auth/refresh/",
+        "Retries original request with new token on successful refresh",
+        "On refresh failure, clears auth state and redirects to /login",
+        "Exports api instance and ApiError type",
+        ".env.local.example includes NEXT_PUBLIC_API_URL and NEXT_PUBLIC_WS_URL"
+      ],
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [
+        "US-001"
+      ],
+      "labels": [
+        "api",
+        "auth",
+        "jwt",
+        "axios"
+      ]
+    },
+    {
+      "id": "US-010",
+      "title": "State Management Setup",
+      "description": "As a developer, I want Zustand store for auth with localStorage persistence so that users stay logged in across sessions",
+      "acceptanceCriteria": [
+        "Auth Store at src/lib/stores/auth.ts with state: user, accessToken, refreshToken, isAuthenticated",
+        "Actions: login(accessToken, refreshToken, user), logout(), setAccessToken(token)",
+        "Persisted to localStorage via Zustand persist middleware",
+        "Exports useAuthStore hook",
+        "React Query Provider at src/lib/providers/query-provider.tsx wraps QueryClientProvider",
+        "Default config: queries retry: 1, staleTime: 5 minutes",
+        "Imported in app/layout.tsx"
+      ],
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [
+        "US-001"
+      ],
+      "labels": [
+        "state-management",
+        "zustand",
+        "react-query",
+        "auth"
+      ]
+    },
+    {
+      "id": "US-011",
+      "title": "Code Quality Tooling",
+      "description": "As a developer, I want ESLint and Prettier configured so that code style is consistent across the team",
+      "acceptanceCriteria": [
+        "ESLint .eslintrc.json extends next/core-web-vitals, next/typescript",
+        "ESLint rules: @typescript-eslint/no-unused-vars: warn, @typescript-eslint/no-explicit-any: warn, react/no-unescaped-entities: off",
+        "Prettier .prettierrc with semi: true, singleQuote: true, tabWidth: 2, trailingComma: es5, printWidth: 100",
+        "Package scripts: lint (next lint), format (prettier --write src/**/*.{ts,tsx,css}), type-check (tsc --noEmit)"
+      ],
+      "priority": 3,
+      "passes": false,
+      "dependsOn": [
+        "US-001"
+      ],
+      "labels": [
+        "tooling",
+        "eslint",
+        "prettier",
+        "code-quality"
+      ]
+    }
+  ],
+  "metadata": {
+    "updatedAt": "2026-02-14T10:29:05.601Z"
+  }
+}

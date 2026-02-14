@@ -1,0 +1,386 @@
+{
+  "name": "SyncScript Django Backend User Authentication System",
+  "branchName": "feature/user-authentication",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "User Registration with Email Verification",
+      "description": "As a new researcher, I want to register an account with email verification so that I can securely access SyncScript's knowledge vaults",
+      "acceptanceCriteria": [
+        "User submits email, password, optional profile fields (bio, institution)",
+        "System validates email uniqueness and password strength",
+        "Verification email sent via Django's email backend",
+        "User clicks verification link to activate account",
+        "Unverified users cannot access protected endpoints",
+        "Registration rate-limited to 5 attempts/minute per IP"
+      ],
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [],
+      "labels": [
+        "authentication",
+        "email",
+        "security"
+      ]
+    },
+    {
+      "id": "US-002",
+      "title": "JWT-Based Login and Token Management",
+      "description": "As a registered user, I want to login with email/password and receive JWT tokens so that I can authenticate subsequent API requests securely",
+      "acceptanceCriteria": [
+        "Login endpoint accepts email + password",
+        "Returns access token (15min expiry) + refresh token (7 day expiry)",
+        "Access token stored in response body for mobile clients",
+        "Refresh token optionally stored in httpOnly cookie",
+        "Failed login attempts rate-limited (5/minute)",
+        "Tokens include user ID and email claims",
+        "Login rate-limited to 5 attempts/minute per IP"
+      ],
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [
+        "US-001"
+      ],
+      "labels": [
+        "authentication",
+        "jwt",
+        "security"
+      ]
+    },
+    {
+      "id": "US-003",
+      "title": "Token Refresh and Logout",
+      "description": "As an authenticated user, I want to refresh my access token without re-login and logout securely so that my session remains valid and I can terminate sessions cleanly",
+      "acceptanceCriteria": [
+        "Refresh endpoint accepts refresh token, returns new access token",
+        "Blacklist tracks revoked refresh tokens (djangorestframework-simplejwt)",
+        "Logout endpoint blacklists current refresh token",
+        "Blacklist stored in database (SimpleJWT default) with expiry cleanup",
+        "Refresh token rotation: old token invalidated when new one issued"
+      ],
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [
+        "US-002"
+      ],
+      "labels": [
+        "authentication",
+        "jwt",
+        "security"
+      ]
+    },
+    {
+      "id": "US-004",
+      "title": "Password Reset Flow",
+      "description": "As a user who forgot their password, I want to request a password reset via email so that I can regain access to my account",
+      "acceptanceCriteria": [
+        "Forgot Password endpoint accepts email address",
+        "System generates secure reset token using Django's PasswordResetTokenGenerator",
+        "Email sent with reset link containing token and user ID (base64 encoded)",
+        "Reset link valid for 1 hour",
+        "Reset Password endpoint validates token and updates password",
+        "Rate-limited to 3 reset requests per email per hour",
+        "No user enumeration (always return success message)"
+      ],
+      "priority": 2,
+      "passes": false,
+      "dependsOn": [
+        "US-001"
+      ],
+      "labels": [
+        "authentication",
+        "email",
+        "security"
+      ]
+    },
+    {
+      "id": "US-005",
+      "title": "User Profile Management",
+      "description": "As an authenticated user, I want to view and update my profile (avatar URL, bio, institution) so that I can personalize my researcher identity",
+      "acceptanceCriteria": [
+        "GET /api/v1/users/profile/ returns own profile",
+        "PATCH /api/v1/users/profile/ updates avatar_url, bio, institution",
+        "Cannot update email or password via this endpoint (separate flows)",
+        "Avatar URL validated as proper URL format",
+        "Bio limited to 500 characters",
+        "Institution limited to 200 characters"
+      ],
+      "priority": 2,
+      "passes": false,
+      "dependsOn": [
+        "US-002"
+      ],
+      "labels": [
+        "profile",
+        "user-management"
+      ]
+    },
+    {
+      "id": "TASK-001",
+      "title": "Create Custom User Model and EmailVerificationToken Model",
+      "description": "Create custom User model extending AbstractUser with profile fields and EmailVerificationToken model for email verification",
+      "acceptanceCriteria": [
+        "User model created with email, avatar_url, bio, institution, email_verified fields",
+        "EmailVerificationToken model created with user FK, token, created_at, expires_at",
+        "Models include proper indexes (email, email_verified)",
+        "USERNAME_FIELD set to email",
+        "Database migrations generated and applied"
+      ],
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [],
+      "labels": [
+        "models",
+        "database",
+        "phase-1"
+      ],
+      "notes": "Implementation Phase 1: Models & Migrations (Day 1)"
+    },
+    {
+      "id": "TASK-002",
+      "title": "Configure Django Settings for Authentication",
+      "description": "Update settings.py with AUTH_USER_MODEL, SimpleJWT configuration, and Redis cache backend",
+      "acceptanceCriteria": [
+        "AUTH_USER_MODEL set to 'users.User'",
+        "SimpleJWT settings configured (15min access, 7 day refresh, rotation enabled)",
+        "BLACKLIST_AFTER_ROTATION enabled",
+        "Redis cache backend configured",
+        "Email backend configured with environment variables"
+      ],
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [
+        "TASK-001"
+      ],
+      "labels": [
+        "configuration",
+        "settings",
+        "phase-1"
+      ]
+    },
+    {
+      "id": "TASK-003",
+      "title": "Create Serializers for Authentication",
+      "description": "Create RegisterSerializer, UserSerializer, ProfileUpdateSerializer, PasswordResetRequestSerializer, PasswordResetConfirmSerializer",
+      "acceptanceCriteria": [
+        "RegisterSerializer validates email uniqueness and password strength",
+        "UserSerializer for profile responses",
+        "ProfileUpdateSerializer for PATCH operations",
+        "Password validators enforce minimum 8 chars, uppercase, lowercase, digit",
+        "Custom validators for bio length (500 chars), avatar URL format"
+      ],
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [
+        "TASK-001"
+      ],
+      "labels": [
+        "serializers",
+        "validation",
+        "phase-2"
+      ],
+      "notes": "Implementation Phase 2: Serializers & Validators (Day 1-2)"
+    },
+    {
+      "id": "TASK-004",
+      "title": "Implement Email Verification System",
+      "description": "Create token generation, verification email templates, and VerifyEmailView endpoint",
+      "acceptanceCriteria": [
+        "Token generation uses cryptographically secure secrets.token_urlsafe",
+        "Verification email template created (HTML + plain text)",
+        "send_verification_email() helper function in emails.py",
+        "VerifyEmailView validates token and activates account",
+        "Tokens expire after 24 hours",
+        "Expired tokens rejected with appropriate error"
+      ],
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [
+        "TASK-002",
+        "TASK-003"
+      ],
+      "labels": [
+        "email",
+        "verification",
+        "phase-3"
+      ],
+      "notes": "Implementation Phase 3: Email Verification System (Day 2)"
+    },
+    {
+      "id": "TASK-005",
+      "title": "Create Registration and Login Views",
+      "description": "Implement RegisterView, LoginView, LogoutView, and RefreshTokenView with rate limiting",
+      "acceptanceCriteria": [
+        "RegisterView creates user and sends verification email",
+        "LoginView returns JWT tokens and user data",
+        "LogoutView blacklists refresh token",
+        "RefreshTokenView issues new access token",
+        "Rate limiting applied (5/min for register, 5/min for login, 20/min for refresh)",
+        "Rate limits enforced via Redis backend"
+      ],
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [
+        "TASK-004"
+      ],
+      "labels": [
+        "views",
+        "authentication",
+        "rate-limiting",
+        "phase-4"
+      ],
+      "notes": "Implementation Phase 4: Registration & Login Views (Day 2-3)"
+    },
+    {
+      "id": "TASK-006",
+      "title": "Implement Password Reset Flow",
+      "description": "Create PasswordResetRequestView and PasswordResetConfirmView with email templates",
+      "acceptanceCriteria": [
+        "PasswordResetRequestView generates secure token using Django's PasswordResetTokenGenerator",
+        "Password reset email sent with token link (1 hour expiry)",
+        "PasswordResetConfirmView validates token and updates password",
+        "Rate-limited to 3 requests/hour per email",
+        "No user enumeration (always return success)",
+        "Expired tokens rejected"
+      ],
+      "priority": 2,
+      "passes": false,
+      "dependsOn": [
+        "TASK-004"
+      ],
+      "labels": [
+        "password-reset",
+        "email",
+        "security",
+        "phase-5"
+      ],
+      "notes": "Implementation Phase 5: Password Reset Flow (Day 3)"
+    },
+    {
+      "id": "TASK-007",
+      "title": "Create Profile Management Endpoint",
+      "description": "Implement ProfileView (GET/PATCH) for user profile management",
+      "acceptanceCriteria": [
+        "GET /api/v1/users/profile/ returns authenticated user's profile",
+        "PATCH updates avatar_url, bio, institution fields only",
+        "Email and password updates blocked via this endpoint",
+        "IsAuthenticated permission enforced",
+        "Unauthorized users receive 401 response"
+      ],
+      "priority": 2,
+      "passes": false,
+      "dependsOn": [
+        "TASK-003",
+        "TASK-005"
+      ],
+      "labels": [
+        "profile",
+        "views",
+        "phase-6"
+      ],
+      "notes": "Implementation Phase 6: Profile Management (Day 3)"
+    },
+    {
+      "id": "TASK-008",
+      "title": "Configure URL Routing",
+      "description": "Create apps/users/urls.py and include in config/urls.py",
+      "acceptanceCriteria": [
+        "All auth endpoints mapped to correct paths (/api/v1/auth/*, /api/v1/users/*)",
+        "URL patterns properly named for reverse lookups",
+        "OPTIONS requests return allowed methods",
+        "URLs included in main config/urls.py"
+      ],
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [
+        "TASK-005",
+        "TASK-006",
+        "TASK-007"
+      ],
+      "labels": [
+        "routing",
+        "urls",
+        "phase-7"
+      ],
+      "notes": "Implementation Phase 7: URL Routing (Day 3-4)"
+    },
+    {
+      "id": "TASK-009",
+      "title": "Configure Rate Limiting with Redis",
+      "description": "Configure Redis cache backend and apply @ratelimit decorators to auth views",
+      "acceptanceCriteria": [
+        "Redis connection configured in settings.py CACHES",
+        "@ratelimit decorators applied to all auth views",
+        "Rate limits stored in Redis",
+        "429 status returned when limit exceeded",
+        "Limits reset after time window expires"
+      ],
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [
+        "TASK-002",
+        "TASK-005"
+      ],
+      "labels": [
+        "rate-limiting",
+        "redis",
+        "security",
+        "phase-8"
+      ],
+      "notes": "Implementation Phase 8: Rate Limiting Configuration (Day 4)"
+    },
+    {
+      "id": "TASK-010",
+      "title": "Write Comprehensive Test Suite",
+      "description": "Create unit and integration tests for models, serializers, views, and rate limiting",
+      "acceptanceCriteria": [
+        "Model tests: User creation, email uniqueness",
+        "Serializer tests: validation rules, password strength",
+        "Auth flow tests: register → verify → login → refresh → logout",
+        "Rate limiting tests with mocked Redis",
+        "Password reset end-to-end tests",
+        "Profile CRUD tests",
+        "Test coverage >90%"
+      ],
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [
+        "TASK-008",
+        "TASK-009"
+      ],
+      "labels": [
+        "testing",
+        "quality-assurance",
+        "phase-9"
+      ],
+      "notes": "Implementation Phase 9: Testing Suite (Day 4-5)"
+    },
+    {
+      "id": "TASK-011",
+      "title": "Documentation and Deployment Preparation",
+      "description": "Create API documentation, update environment variable examples, and manual verification checklist",
+      "acceptanceCriteria": [
+        "OpenAPI/Swagger schema documented",
+        "Environment variables added to .env.example",
+        "MANUAL_VERIFICATION.md updated with email testing steps",
+        "USER_SETUP.md updated with email backend configuration",
+        "Django admin interface configured for User model",
+        "All 9 API endpoints documented with request/response examples"
+      ],
+      "priority": 2,
+      "passes": false,
+      "dependsOn": [
+        "TASK-010"
+      ],
+      "labels": [
+        "documentation",
+        "deployment",
+        "phase-10"
+      ],
+      "notes": "Implementation Phase 10: Documentation & Deployment Prep (Day 5)"
+    }
+  ],
+  "metadata": {
+    "updatedAt": "2026-02-14T10:08:26.860Z"
+  }
+}

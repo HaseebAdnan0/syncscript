@@ -1,0 +1,524 @@
+{
+  "name": "SyncScript Knowledge Vault RBAC System",
+  "branchName": "feature/vault-rbac",
+  "userStories": [
+    {
+      "id": "US-V01",
+      "title": "Vault Creation",
+      "description": "As a researcher, I want to create a new Knowledge Vault with a name and description so that I can organize sources around a specific research topic",
+      "acceptanceCriteria": [
+        "User can create vault via POST /api/v1/vaults/",
+        "Required fields: name (max 255 chars)",
+        "Optional fields: description (text)",
+        "Creator is automatically assigned OWNER role",
+        "Response includes vault ID, timestamps, and creator info",
+        "Audit log entry created: vault.created"
+      ],
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [],
+      "labels": [
+        "vaults",
+        "core",
+        "crud"
+      ]
+    },
+    {
+      "id": "US-V02",
+      "title": "Vault Ownership Transfer",
+      "description": "As a vault owner, I want to transfer ownership to another existing member so that I can delegate vault management responsibilities",
+      "acceptanceCriteria": [
+        "Owner can PATCH /api/v1/vaults/{id}/members/{user_id}/ with role: 'OWNER'",
+        "System validates target user is already a vault member",
+        "Previous owner's role automatically downgraded to CONTRIBUTOR",
+        "Only one OWNER allowed per vault (enforced by signal)",
+        "Audit log entry created: membership.role_changed"
+      ],
+      "priority": 2,
+      "passes": false,
+      "dependsOn": [
+        "US-V01",
+        "US-V03"
+      ],
+      "labels": [
+        "vaults",
+        "membership",
+        "ownership"
+      ]
+    },
+    {
+      "id": "US-V03",
+      "title": "Member Invitation (Hybrid Flow)",
+      "description": "As a vault owner, I want to add existing platform users directly or invite external users via email so that I can quickly onboard collaborators",
+      "acceptanceCriteria": [
+        "POST /api/v1/vaults/{id}/members/ with user_id or email",
+        "If user_id provided: immediate membership creation (no confirmation)",
+        "If email provided and user exists: immediate membership creation + notification",
+        "If email provided and user not found: create pending invitation (future phase)",
+        "Default role: CONTRIBUTOR (can override with role param)",
+        "Audit log entry created: membership.added"
+      ],
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [
+        "US-V01"
+      ],
+      "labels": [
+        "vaults",
+        "membership",
+        "invitations"
+      ]
+    },
+    {
+      "id": "US-V04",
+      "title": "Role Management",
+      "description": "As a vault owner, I want to update member roles between OWNER/CONTRIBUTOR/VIEWER so that I can adjust permissions as project needs evolve",
+      "acceptanceCriteria": [
+        "PATCH /api/v1/vaults/{id}/members/{user_id}/ with new role",
+        "Only owners can change roles",
+        "Cannot downgrade last owner (validation error)",
+        "Role weights enforced: OWNER=3, CONTRIBUTOR=2, VIEWER=1",
+        "Audit log entry created: membership.role_changed"
+      ],
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [
+        "US-V03"
+      ],
+      "labels": [
+        "vaults",
+        "membership",
+        "rbac"
+      ]
+    },
+    {
+      "id": "US-V05",
+      "title": "Member Removal",
+      "description": "As a vault owner, I want to remove members from the vault so that I can revoke access when collaborations end",
+      "acceptanceCriteria": [
+        "DELETE /api/v1/vaults/{id}/members/{user_id}/",
+        "Only owners can remove members",
+        "Cannot remove last owner (validation error)",
+        "Member loses all vault access immediately",
+        "Audit log entry created: membership.removed"
+      ],
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [
+        "US-V03"
+      ],
+      "labels": [
+        "vaults",
+        "membership",
+        "access-control"
+      ]
+    },
+    {
+      "id": "US-V06",
+      "title": "Vault Listing with Role Filtering",
+      "description": "As a researcher, I want to see all vaults I own or am a member of, filtered by my role, so that I can quickly navigate to relevant projects",
+      "acceptanceCriteria": [
+        "GET /api/v1/vaults/?role=OWNER&is_archived=false",
+        "Pagination: page and page_size (default 20)",
+        "Filters: role (OWNER/CONTRIBUTOR/VIEWER), is_archived (true/false)",
+        "Response includes vault metadata + user's role + member count",
+        "Excludes vaults where user has no membership"
+      ],
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [
+        "US-V01"
+      ],
+      "labels": [
+        "vaults",
+        "listing",
+        "filtering"
+      ]
+    },
+    {
+      "id": "US-V07",
+      "title": "Vault Archive & Restore",
+      "description": "As a vault owner, I want to archive completed vaults and restore them later so that I can declutter active projects without losing data",
+      "acceptanceCriteria": [
+        "POST /api/v1/vaults/{id}/archive/ sets is_archived=True",
+        "Archived vaults enter read-only mode: all members can view, no create/update/delete",
+        "POST /api/v1/vaults/{id}/restore/ sets is_archived=False",
+        "Only owners can archive/restore",
+        "Audit log entries: vault.archived, vault.restored"
+      ],
+      "priority": 2,
+      "passes": false,
+      "dependsOn": [
+        "US-V01"
+      ],
+      "labels": [
+        "vaults",
+        "lifecycle",
+        "archive"
+      ]
+    },
+    {
+      "id": "US-V08",
+      "title": "Permission-Based Access Control",
+      "description": "As a system, I want to enforce role-based permissions on all vault operations so that users can only perform actions appropriate to their role",
+      "acceptanceCriteria": [
+        "Custom DRF permissions: IsVaultOwner, IsVaultContributor, IsVaultMember",
+        "Permissions applied: Create vault (Authenticated), Update/Delete/Archive (IsVaultOwner), Add/Remove members (IsVaultOwner), View vault (IsVaultMember)",
+        "403 Forbidden returned for unauthorized actions",
+        "Failed permission checks logged in audit trail (optional)"
+      ],
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [],
+      "labels": [
+        "vaults",
+        "permissions",
+        "security"
+      ]
+    },
+    {
+      "id": "US-V09",
+      "title": "Audit Trail for Research Integrity",
+      "description": "As a researcher, I want to view a complete history of vault changes so that I can verify research integrity and collaboration history",
+      "acceptanceCriteria": [
+        "GET /api/v1/vaults/{id}/audit-logs/",
+        "Logged events: vault.created, vault.updated, vault.archived, vault.restored, membership.added, membership.role_changed, membership.removed",
+        "Each entry includes: timestamp, actor (user), action, vault_id, metadata (JSON)",
+        "Audit logs are immutable (no update/delete endpoints)",
+        "Ordered by created_at DESC"
+      ],
+      "priority": 2,
+      "passes": false,
+      "dependsOn": [
+        "US-V01"
+      ],
+      "labels": [
+        "vaults",
+        "audit",
+        "integrity"
+      ]
+    },
+    {
+      "id": "TASK-V01",
+      "title": "Create Vault, VaultMembership, and AuditLog Models",
+      "description": "Define Django models for Vault, VaultMembership (with role enum), and AuditLog with proper constraints and indexes",
+      "acceptanceCriteria": [
+        "Vault model created with name, description, owner FK, is_archived, timestamps",
+        "VaultMembership model with vault FK, user FK, role (OWNER/CONTRIBUTOR/VIEWER), added_at, added_by",
+        "RoleChoices enum with OWNER=3, CONTRIBUTOR=2, VIEWER=1 weights",
+        "AuditLog model with vault FK, actor FK, action, metadata (JSON), created_at",
+        "Unique constraint: (vault, user) in VaultMembership",
+        "CHECK constraint: at least one OWNER per vault",
+        "Indexes: vault.owner+is_archived, membership.vault+role, auditlog.vault+created_at",
+        "Database migrations generated and applied"
+      ],
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [],
+      "labels": [
+        "models",
+        "database",
+        "phase-1"
+      ],
+      "notes": "Implementation Phase 1: Models & Migrations (Day 1)"
+    },
+    {
+      "id": "TASK-V02",
+      "title": "Create Serializers for Vaults and Memberships",
+      "description": "Implement VaultSerializer, VaultMembershipSerializer, and AuditLogSerializer with computed fields",
+      "acceptanceCriteria": [
+        "VaultSerializer includes owner_username, member_count, user_role computed fields",
+        "VaultMembershipSerializer includes username, email from user",
+        "AuditLogSerializer for read-only audit log responses",
+        "Validation: name max 255 chars, description optional",
+        "Serializers properly handle nested relationships"
+      ],
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [
+        "TASK-V01"
+      ],
+      "labels": [
+        "serializers",
+        "validation",
+        "phase-2"
+      ],
+      "notes": "Implementation Phase 2: Serializers & Permissions (Day 1)"
+    },
+    {
+      "id": "TASK-V03",
+      "title": "Implement Custom DRF Permissions",
+      "description": "Create IsVaultOwner, IsVaultContributor, IsVaultMember permission classes with role weight checks",
+      "acceptanceCriteria": [
+        "IsVaultOwner checks user has OWNER role (weight=3)",
+        "IsVaultContributor checks user has CONTRIBUTOR or higher (weight≥2)",
+        "IsVaultMember checks user has any vault membership (weight≥1)",
+        "Permissions use get_role_weight() method from VaultMembership",
+        "has_object_permission() implemented for all classes"
+      ],
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [
+        "TASK-V01"
+      ],
+      "labels": [
+        "permissions",
+        "security",
+        "phase-2"
+      ]
+    },
+    {
+      "id": "TASK-V04",
+      "title": "Create VaultViewSet with CRUD Operations",
+      "description": "Implement VaultViewSet with create, retrieve, update, destroy, list, archive, and restore actions",
+      "acceptanceCriteria": [
+        "VaultViewSet extends ModelViewSet",
+        "create: auto-assign owner to request.user",
+        "list: filter by user's memberships, support role and is_archived query params",
+        "retrieve/update/destroy: enforce permissions (IsVaultOwner for mutations, IsVaultMember for read)",
+        "Custom actions: archive (POST), restore (POST) with IsVaultOwner permission",
+        "Pagination: PageNumberPagination with page_size=20",
+        "Filtering: DjangoFilterBackend for is_archived"
+      ],
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [
+        "TASK-V02",
+        "TASK-V03"
+      ],
+      "labels": [
+        "views",
+        "api",
+        "phase-3"
+      ],
+      "notes": "Implementation Phase 3: API Views (Day 2)"
+    },
+    {
+      "id": "TASK-V05",
+      "title": "Create VaultMembershipViewSet for Member Management",
+      "description": "Implement nested VaultMembershipViewSet under /vaults/{id}/members/ with add, update role, remove actions",
+      "acceptanceCriteria": [
+        "Nested under VaultViewSet using drf-nested-routers or manual routing",
+        "list: IsVaultMember permission",
+        "create: IsVaultOwner permission, accepts user_id or email",
+        "update/partial_update: IsVaultOwner permission, validates role changes",
+        "destroy: IsVaultOwner permission, validates not removing last owner",
+        "perform_create: set added_by to request.user"
+      ],
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [
+        "TASK-V02",
+        "TASK-V03"
+      ],
+      "labels": [
+        "views",
+        "api",
+        "membership",
+        "phase-3"
+      ]
+    },
+    {
+      "id": "TASK-V06",
+      "title": "Implement Django Signals for Audit Logging",
+      "description": "Create signal handlers for vault and membership mutations to auto-generate audit log entries",
+      "acceptanceCriteria": [
+        "post_save signal on Vault: log vault.created and vault.updated",
+        "post_save signal on VaultMembership: log membership.added",
+        "pre_save signal on VaultMembership: log membership.role_changed (compare old vs new role)",
+        "post_delete signal on VaultMembership: log membership.removed",
+        "Archive/restore actions manually create audit logs in views",
+        "Signals registered in apps.py ready() method",
+        "Metadata includes relevant changeset details (user_id, role, etc.)"
+      ],
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [
+        "TASK-V01"
+      ],
+      "labels": [
+        "signals",
+        "audit",
+        "phase-4"
+      ],
+      "notes": "Implementation Phase 4: Signals & Audit Logging (Day 2)"
+    },
+    {
+      "id": "TASK-V07",
+      "title": "Create AuditLogViewSet (Read-Only)",
+      "description": "Implement read-only viewset for viewing vault audit logs",
+      "acceptanceCriteria": [
+        "GET /api/v1/vaults/{id}/audit-logs/",
+        "Nested under VaultViewSet",
+        "IsVaultMember permission",
+        "Ordered by created_at DESC",
+        "Pagination enabled (default page_size=50)",
+        "No create/update/delete actions (read-only)"
+      ],
+      "priority": 2,
+      "passes": false,
+      "dependsOn": [
+        "TASK-V01",
+        "TASK-V06"
+      ],
+      "labels": [
+        "views",
+        "api",
+        "audit",
+        "phase-4"
+      ]
+    },
+    {
+      "id": "TASK-V08",
+      "title": "Configure URL Routing for Vaults",
+      "description": "Create apps/vaults/urls.py with DRF router and nested routes for memberships and audit logs",
+      "acceptanceCriteria": [
+        "DefaultRouter for VaultViewSet at /api/v1/vaults/",
+        "Nested routes for memberships at /api/v1/vaults/{id}/members/",
+        "Nested route for audit logs at /api/v1/vaults/{id}/audit-logs/",
+        "Custom actions (archive, restore) properly routed",
+        "URLs included in config/urls.py",
+        "URL patterns properly named for reverse lookups"
+      ],
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [
+        "TASK-V04",
+        "TASK-V05",
+        "TASK-V07"
+      ],
+      "labels": [
+        "routing",
+        "urls",
+        "phase-5"
+      ],
+      "notes": "Implementation Phase 5: URL Routing (Day 2)"
+    },
+    {
+      "id": "TASK-V09",
+      "title": "Add Auto-Owner Membership Creation Signal",
+      "description": "Create signal to automatically add vault creator as OWNER in VaultMembership on vault creation",
+      "acceptanceCriteria": [
+        "post_save signal on Vault model",
+        "Only triggers on created=True",
+        "Creates VaultMembership with user=vault.owner, role=OWNER, added_by=vault.owner",
+        "Signal registered in apps.py ready() method",
+        "Prevents duplicate memberships (use get_or_create)"
+      ],
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [
+        "TASK-V01"
+      ],
+      "labels": [
+        "signals",
+        "membership",
+        "automation",
+        "phase-6"
+      ],
+      "notes": "Implementation Phase 6: Auto-Membership Signal (Day 2)"
+    },
+    {
+      "id": "TASK-V10",
+      "title": "Implement Ownership Transfer Logic",
+      "description": "Add validation and automatic role downgrade when transferring vault ownership",
+      "acceptanceCriteria": [
+        "When VaultMembership role changed to OWNER, find existing owner",
+        "Downgrade previous owner to CONTRIBUTOR automatically",
+        "Implemented in VaultMembership.save() override or pre_save signal",
+        "Ensure only one OWNER exists per vault at all times",
+        "Transaction wrapped to prevent race conditions"
+      ],
+      "priority": 2,
+      "passes": false,
+      "dependsOn": [
+        "TASK-V01",
+        "TASK-V05"
+      ],
+      "labels": [
+        "business-logic",
+        "ownership",
+        "phase-6"
+      ]
+    },
+    {
+      "id": "TASK-V11",
+      "title": "Add Archive Read-Only Enforcement Middleware",
+      "description": "Create middleware or permission mixin to enforce read-only mode on archived vaults",
+      "acceptanceCriteria": [
+        "Check vault.is_archived in permission classes",
+        "Allow GET/HEAD/OPTIONS on archived vaults",
+        "Block POST/PUT/PATCH/DELETE on archived vaults (except restore action)",
+        "Return 403 Forbidden with message 'Vault is archived (read-only)'",
+        "Applied to all vault-related views (sources, annotations, etc. in future)"
+      ],
+      "priority": 2,
+      "passes": false,
+      "dependsOn": [
+        "TASK-V03",
+        "TASK-V04"
+      ],
+      "labels": [
+        "permissions",
+        "archive",
+        "middleware",
+        "phase-7"
+      ],
+      "notes": "Implementation Phase 7: Archive Enforcement (Day 3)"
+    },
+    {
+      "id": "TASK-V12",
+      "title": "Write Comprehensive Test Suite for Vaults",
+      "description": "Create unit and integration tests for vault models, permissions, views, and signals",
+      "acceptanceCriteria": [
+        "Model tests: unique constraint (vault, user), CHECK constraint (at least one owner), role weights",
+        "Permission tests: IsVaultOwner, IsVaultContributor, IsVaultMember with various roles",
+        "View tests: vault CRUD, member add/update/remove, archive/restore, role filtering",
+        "Signal tests: auto-owner creation, audit log generation, ownership transfer",
+        "Edge cases: last owner deletion blocked, archived vault write blocked, non-member access denied",
+        "Test coverage >90% for apps/vaults/"
+      ],
+      "priority": 1,
+      "passes": false,
+      "dependsOn": [
+        "TASK-V08",
+        "TASK-V09",
+        "TASK-V10",
+        "TASK-V11"
+      ],
+      "labels": [
+        "testing",
+        "quality-assurance",
+        "phase-8"
+      ],
+      "notes": "Implementation Phase 8: Testing Suite (Day 3)"
+    },
+    {
+      "id": "TASK-V13",
+      "title": "Update Documentation and Manual Verification Checklists",
+      "description": "Document vault API endpoints and add manual verification tasks to .planning/",
+      "acceptanceCriteria": [
+        "API documentation with request/response examples for all 10 endpoints",
+        "OpenAPI/Swagger schema updated",
+        "MANUAL_VERIFICATION.md updated with vault testing checklist",
+        "USER_SETUP.md updated (no new env vars needed)",
+        "Django admin interface configured for Vault, VaultMembership, AuditLog",
+        "README.md updated with vault system overview"
+      ],
+      "priority": 2,
+      "passes": false,
+      "dependsOn": [
+        "TASK-V12"
+      ],
+      "labels": [
+        "documentation",
+        "manual-verification",
+        "phase-9"
+      ],
+      "notes": "Implementation Phase 9: Documentation (Day 3)"
+    }
+  ],
+  "metadata": {
+    "updatedAt": "2026-02-14T12:00:00.000Z"
+  }
+}
