@@ -190,3 +190,23 @@
   - Windows console Unicode errors: use [OK] instead of checkmarks
   - Changed fields tracking can be added via model save() override or middleware
 ---
+
+## Iteration 12 - US-013: Implement Source broadcast Celery tasks
+- Implemented three Celery tasks for broadcasting Source model events:
+  - broadcast_source_created(source_id): Fetches source with select_related, builds payload with id/url/title/created_by, broadcasts source.created event
+  - broadcast_source_updated(source_id, changed_fields): Similar to created, includes changed_fields list, broadcasts source.updated event
+  - broadcast_source_deleted(source_id, vault_id, deleted_by_id): Uses vault_id directly (source already deleted), fetches deleted_by user if provided
+- All tasks use broadcast_to_vault helper from core.websocket_utils
+- Payloads match event catalog: id, url, title, source_type, description, created_by{id, username}, timestamps
+- Error handling: try/except for Source.DoesNotExist and User.DoesNotExist with logging
+- Files changed: backend/apps/sources/tasks.py, PRD5.md
+- Typecheck passes (only pre-existing pdf2image errors remain)
+- Learnings for future iterations:
+  - Import models inside task functions to avoid circular imports
+  - Use select_related('created_by', 'vault') for efficient database queries
+  - Type annotations: payload: dict[str, Any] prevents Pyright dict assignment errors
+  - type: ignore[import-not-found] for local app imports, type: ignore[attr-defined] for Django model attributes
+  - For deleted objects, pass vault_id as parameter since source no longer exists in database
+  - User.DoesNotExist should be caught separately when fetching deleted_by user
+  - Consistent logging: logger.info for success, logger.error for not found
+---
