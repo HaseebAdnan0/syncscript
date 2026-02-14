@@ -146,11 +146,23 @@ class MarkNotificationReadTestCase(TestCase):
             data={}
         )
 
-    def test_mark_notification_as_read(self) -> None:
-        """Test PATCH /api/v1/notifications/{id}/read/ marks notification as read."""
+    def test_mark_notification_as_read_patch(self) -> None:
+        """Test PATCH /api/v1/notifications/{id}/mark-read/ marks notification as read."""
         self.assertIsNone(self.notification.read_at)
 
-        response = self.client.patch(f'/api/v1/notifications/{self.notification.id}/read/')  # type: ignore[attr-defined]
+        response = self.client.patch(f'/api/v1/notifications/{self.notification.id}/mark-read/')  # type: ignore[attr-defined]
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Verify notification was marked as read
+        self.notification.refresh_from_db()
+        self.assertIsNotNone(self.notification.read_at)
+        self.assertTrue(response.data['is_read'])  # type: ignore[attr-defined]
+
+    def test_mark_notification_as_read_post(self) -> None:
+        """Test POST /api/v1/notifications/{id}/mark-read/ marks notification as read."""
+        self.assertIsNone(self.notification.read_at)
+
+        response = self.client.post(f'/api/v1/notifications/{self.notification.id}/mark-read/')  # type: ignore[attr-defined]
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Verify notification was marked as read
@@ -190,7 +202,7 @@ class MarkNotificationReadTestCase(TestCase):
 
     def test_mark_read_returns_updated_notification(self) -> None:
         """Test endpoint returns updated notification data."""
-        response = self.client.patch(f'/api/v1/notifications/{self.notification.id}/read/')  # type: ignore[attr-defined]
+        response = self.client.patch(f'/api/v1/notifications/{self.notification.id}/mark-read/')  # type: ignore[attr-defined]
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Verify response includes notification data
@@ -202,4 +214,198 @@ class MarkNotificationReadTestCase(TestCase):
         """Test endpoint requires authentication."""
         client = APIClient()
         response = client.patch(f'/api/v1/notifications/{self.notification.id}/read/')  # type: ignore[attr-defined]
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+class UnreadCountTestCase(TestCase):
+    """Test unread notification count endpoint (US-005)."""
+
+    def setUp(self) -> None:
+        """Create test user and notifications."""
+        self.user = User.objects.create_user(  # type: ignore[attr-defined]
+            username='testuser',
+            email='test@example.com',
+            password='testpass123'
+        )
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.user)
+
+    def test_unread_count_with_no_notifications(self) -> None:
+        """Test GET /api/v1/notifications/unread-count/ returns 0 when no notifications."""
+        response = self.client.get('/api/v1/notifications/unread-count/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, {'count': 0})  # type: ignore[attr-defined]
+
+    def test_unread_count_with_unread_notifications(self) -> None:
+        """Test unread count returns correct number of unread notifications."""
+        # Create 3 unread notifications
+        for i in range(3):
+            Notification.objects.create(
+                user=self.user,
+                type='vault_invite',
+                title=f'Notification {i}',
+                body='Test',
+                data={}
+            )
+
+        response = self.client.get('/api/v1/notifications/unread-count/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, {'count': 3})  # type: ignore[attr-defined]
+
+    def test_unread_count_excludes_read_notifications(self) -> None:
+        """Test unread count only counts notifications with read_at=NULL."""
+        # Create 5 notifications
+        for i in range(5):
+            notif = Notification.objects.create(
+                user=self.user,
+                type='vault_invite',
+                title=f'Notification {i}',
+                body='Test',
+                data={}
+            )
+            # Mark first 2 as read
+            if i < 2:
+                notif.mark_as_read()
+
+        response = self.client.get('/api/v1/notifications/unread-count/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, {'count': 3})  # type: ignore[attr-defined] # 5 total - 2 read = 3 unread
+
+    def test_unread_count_filters_by_user(self) -> None:
+        """Test unread count only includes current user's notifications."""
+        other_user = User.objects.create_user(  # type: ignore[attr-defined]
+            username='otheruser',
+            email='other@example.com',
+            password='testpass123'
+        )
+
+        # Create notifications for both users
+        Notification.objects.create(
+            user=self.user,
+            type='vault_invite',
+            title='User notification',
+            body='Test',
+            data={}
+        )
+        Notification.objects.create(
+            user=other_user,
+            type='vault_invite',
+            title='Other user notification',
+            body='Test',
+            data={}
+        )
+
+        response = self.client.get('/api/v1/notifications/unread-count/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, {'count': 1})  # type: ignore[attr-defined] # Only current user's notification
+
+    def test_requires_authentication(self) -> None:
+        """Test endpoint requires authentication."""
+        client = APIClient()
+        response = client.get('/api/v1/notifications/unread-count/')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+class MarkAllReadTestCase(TestCase):
+    """Test mark all notifications as read endpoint (US-005)."""
+
+    def setUp(self) -> None:
+        """Create test user and notifications."""
+        self.user = User.objects.create_user(  # type: ignore[attr-defined]
+            username='testuser',
+            email='test@example.com',
+            password='testpass123'
+        )
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.user)
+
+    def test_mark_all_read_with_no_notifications(self) -> None:
+        """Test POST /api/v1/notifications/mark-all-read/ returns 0 when no notifications."""
+        response = self.client.post('/api/v1/notifications/mark-all-read/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, {'updated': 0})  # type: ignore[attr-defined]
+
+    def test_mark_all_read_updates_all_unread(self) -> None:
+        """Test mark all read updates all unread notifications for user."""
+        # Create 5 unread notifications
+        notifications = []
+        for i in range(5):
+            notif = Notification.objects.create(
+                user=self.user,
+                type='vault_invite',
+                title=f'Notification {i}',
+                body='Test',
+                data={}
+            )
+            notifications.append(notif)
+
+        response = self.client.post('/api/v1/notifications/mark-all-read/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, {'updated': 5})  # type: ignore[attr-defined]
+
+        # Verify all notifications are now read
+        for notif in notifications:
+            notif.refresh_from_db()
+            self.assertIsNotNone(notif.read_at)
+            self.assertTrue(notif.is_read)
+
+    def test_mark_all_read_only_updates_unread(self) -> None:
+        """Test mark all read only updates unread notifications, not already read ones."""
+        # Create 5 notifications, mark 2 as read
+        for i in range(5):
+            notif = Notification.objects.create(
+                user=self.user,
+                type='vault_invite',
+                title=f'Notification {i}',
+                body='Test',
+                data={}
+            )
+            if i < 2:
+                notif.mark_as_read()
+
+        response = self.client.post('/api/v1/notifications/mark-all-read/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, {'updated': 3})  # type: ignore[attr-defined] # Only 3 were unread
+
+        # Verify all 5 are now read
+        unread_count = Notification.objects.filter(user=self.user, read_at__isnull=True).count()
+        self.assertEqual(unread_count, 0)
+
+    def test_mark_all_read_filters_by_user(self) -> None:
+        """Test mark all read only affects current user's notifications."""
+        other_user = User.objects.create_user(  # type: ignore[attr-defined]
+            username='otheruser',
+            email='other@example.com',
+            password='testpass123'
+        )
+
+        # Create notifications for both users
+        Notification.objects.create(
+            user=self.user,
+            type='vault_invite',
+            title='User notification',
+            body='Test',
+            data={}
+        )
+        other_notif = Notification.objects.create(
+            user=other_user,
+            type='vault_invite',
+            title='Other user notification',
+            body='Test',
+            data={}
+        )
+
+        response = self.client.post('/api/v1/notifications/mark-all-read/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, {'updated': 1})  # type: ignore[attr-defined]
+
+        # Verify other user's notification is still unread
+        other_notif.refresh_from_db()
+        self.assertIsNone(other_notif.read_at)
+        self.assertFalse(other_notif.is_read)
+
+    def test_requires_authentication(self) -> None:
+        """Test endpoint requires authentication."""
+        client = APIClient()
+        response = client.post('/api/v1/notifications/mark-all-read/')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)

@@ -117,11 +117,11 @@ Enhance SyncScript's file storage system to production-ready status with Cloudfl
 **Description:** As a developer, I want uploads to pass through virus scanning before storage.
 
 **Acceptance Criteria:**
-- [ ] Import VirusScanner in upload view/serializer
-- [ ] Call `virus_scanner.scan_file()` before saving file
-- [ ] If `is_clean=False`, reject upload with 400 error
-- [ ] Log scan results (clean/threat) with file info
-- [ ] Typecheck passes
+- [x] Import VirusScanner in upload view/serializer
+- [x] Call `virus_scanner.scan_file()` before saving file
+- [x] If `is_clean=False`, reject upload with 400 error
+- [x] Log scan results (clean/threat) with file info
+- [x] Typecheck passes
 
 ---
 

@@ -177,3 +177,34 @@ vaults/{vault_id}/thumbnails/{uuid}.jpg
 
 ---
 
+
+## Iteration 7 - Integrate virus scanner into upload flow (US-007)
+- Integrated VirusScanner into both PDF and image processing tasks
+- Added virus scanning after file download from S3 but before processing
+- Implementation in backend/apps/sources/tasks.py:
+  - Imported VirusScanner from apps.sources.services.virus_scanner
+  - Added scan call after downloading PDF bytes (line ~77)
+  - Added scan call after downloading image bytes (line ~407)
+  - Checks settings.CLAMAV_ENABLED flag to determine if real scanning is active
+  - If scan returns is_clean=False:
+    - Marks PDFUpload as failed (for PDFs)
+    - Deletes infected file from S3
+    - Creates audit log with pdf.virus_detected or file.virus_detected action
+    - Returns error response with threat name
+  - If CLAMAV_ENABLED=False (current state):
+    - Calls stub scanner that always returns is_clean=True
+    - Logs stub message for debugging
+- Logging added for all scan results (clean and infected)
+- Error handling for S3 deletion and audit log creation
+- Files changed:
+  - backend/apps/sources/tasks.py
+  - PRD13.md
+  - progress13.txt
+- Learnings for future iterations:
+  - Virus scanning integrated at task level (not view level) because files go direct to S3
+  - Files are downloaded into memory for scanning before processing
+  - Stub scanner works even when CLAMAV_ENABLED=False for testing
+  - Import verified successful in Django shell
+  - Typecheck passes (no new errors in tasks.py)
+
+---

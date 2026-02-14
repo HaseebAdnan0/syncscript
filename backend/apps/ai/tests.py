@@ -714,6 +714,8 @@ class SourceSummarizationTestCase(APITestCase):
 
     def test_summarize_handles_missing_content(self):
         """Test error when source has no content."""
+        from apps.sources.models import Source
+
         # Create source without description
         empty_source = Source.objects.create(
             vault=self.vault,
@@ -731,6 +733,8 @@ class SourceSummarizationTestCase(APITestCase):
 
     def test_summarize_handles_pdf_not_processed(self):
         """Test error when PDF is not yet processed."""
+        from apps.sources.models import Source, PDFUpload
+
         # Create PDF without extracted text
         unprocessed_pdf = Source.objects.create(
             vault=self.vault,

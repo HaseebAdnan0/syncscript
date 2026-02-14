@@ -158,3 +158,28 @@ In Progress - US-004 complete
   - Query param filtering: self.request.query_params.get('param') == 'value'
 ---
 
+
+## Iteration 6 - US-006: Mark Notification as Read Endpoint
+- Implemented mark_read custom action in NotificationViewSet
+- Added PATCH /api/v1/notifications/{id}/read/ endpoint
+- Idempotent: only sets read_at on first call, subsequent calls preserve timestamp
+- Security: only allows marking own notifications (404 for others via get_object())
+- Returns updated notification with serializer
+- Created comprehensive test suite with 5 test cases:
+  - Test marking notification as read
+  - Test idempotency (timestamp preservation)
+  - Test ownership validation (404 for other user's notifications)
+  - Test response includes updated data
+  - Test authentication required
+- All tests pass (5/5), mypy typecheck passes
+- Files changed:
+  - backend/apps/notifications/views.py (added mark_read action)
+  - backend/apps/notifications/tests.py (added MarkNotificationReadTestCase)
+  - PRD19.md (marked US-006 complete)
+- Learnings for future iterations:
+  - Use @action(detail=True) for single resource actions
+  - get_object() automatically enforces queryset filtering (user ownership)
+  - Idempotency pattern: check if field is None before updating
+  - PATCH is semantic for partial updates like marking read
+  - 404 is correct response when object doesn't exist in user's queryset (not 403)
+---

@@ -23,7 +23,7 @@ class CitationResponseSerializer(serializers.Serializer):
         choices=CitationFormat.choices,
         help_text="Citation format used"
     )
-    source = serializers.ChoiceField(
+    source = serializers.ChoiceField(  # type: ignore[assignment]
         choices=[('structured', 'structured'), ('ai', 'ai')],
         help_text="Generation method: structured (citeproc-py) or ai (Claude)"
     )

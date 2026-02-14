@@ -203,3 +203,31 @@
   - overflow-hidden on watermark container prevents icon from extending beyond card bounds
   - inline-flex for icon container provides proper sizing without full-width stretch
 ---
+
+## Iteration 10 - US-010: Create Features Grid Section
+- Created `frontend/src/components/marketing/FeaturesSection.tsx` component
+- Implemented section heading with gradient text accent on "Collaborate"
+- Created 3x2 grid layout using Tailwind grid classes (lg:grid-cols-3)
+- Added 6 feature cards with Lucide icons:
+  - GitMerge: Real-time Collaboration
+  - FileText: Smart Citations
+  - Highlighter: PDF Annotations
+  - Shield: Knowledge Vaults
+  - Users: Team Permissions
+  - Sparkles: AI Insights
+- Implemented Framer Motion stagger animation on scroll using container/item variants
+- Responsive design: grid-cols-1 (mobile), md:grid-cols-2 (tablet), lg:grid-cols-3 (desktop)
+- Fixed import: FeatureCard uses default export, not named export
+- Integrated FeaturesSection into landing page below StatsTicker
+- Files changed:
+  - Created: `frontend/src/components/marketing/FeaturesSection.tsx`
+  - Modified: `frontend/src/app/(marketing)/page.tsx` (added FeaturesSection import)
+  - Modified: `PRD16.md` (marked US-010 complete)
+- Learnings for future iterations:
+  - Framer Motion container/item pattern enables stagger animations on grids
+  - viewport={{ once: true, margin: '-100px' }} triggers animation slightly before section enters view
+  - Stagger delay (staggerChildren: 0.1) creates cascading reveal effect
+  - Check existing component exports before importing (default vs named)
+  - Using semantic section IDs (id="features") enables smooth scroll anchor navigation
+  - Text gradient pattern: bg-gradient-to-r from-[#F7931A] to-[#FFD600] bg-clip-text text-transparent
+---

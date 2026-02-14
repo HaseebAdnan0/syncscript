@@ -594,9 +594,10 @@ class DemoVaultResetView(APIView):
 
     def post(self, request):
         """Delete existing demo vault and create fresh one."""
-        from apps.vaults.models import Vault
+        from apps.vaults.models import Vault, AuditLog
         from apps.vaults.serializers import VaultSerializer
         from .services.onboarding import create_demo_vault
+        from django.db.models.signals import post_delete
 
         user = request.user
 
@@ -608,6 +609,10 @@ class DemoVaultResetView(APIView):
         ).first()
 
         if demo_vault:
+            # Manually delete audit logs first to avoid FK constraint violations
+            # when membership deletion signals try to create audit logs
+            AuditLog.objects.filter(vault=demo_vault).delete()
+
             # Delete vault (cascade will delete sources, annotations, memberships)
             demo_vault.delete()
 
