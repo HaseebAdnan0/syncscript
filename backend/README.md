@@ -152,3 +152,68 @@ python manage.py shell
 redis-cli ping
 # Should return: PONG
 ```
+
+## Real-Time WebSocket
+
+SyncScript supports real-time collaboration through WebSocket connections powered by Django Channels.
+
+### Connection Endpoint
+
+Connect to vault rooms using WebSocket:
+```
+ws://localhost:8000/ws/vault/{vault_id}/?token={jwt_access_token}
+```
+
+**Parameters:**
+- `vault_id`: UUID of the vault to connect to
+- `token`: JWT access token from `/api/v1/auth/login/`
+
+### Required Services
+
+To run the WebSocket system, you need the following services running:
+
+1. **Redis** (channel layer backend)
+   ```bash
+   redis-server
+   ```
+
+2. **Daphne** (ASGI server for WebSocket support)
+   ```bash
+   daphne -b 0.0.0.0 -p 8000 config.asgi:application
+   ```
+
+3. **Celery Worker** (for broadcasting events)
+   ```bash
+   celery -A config worker -l info -Q websocket_events
+   ```
+
+4. **Celery Beat** (for periodic cleanup tasks)
+   ```bash
+   celery -A config beat -l info
+   ```
+
+### Event Types
+
+The WebSocket connection broadcasts the following real-time events:
+
+- `source.created` - New source added to vault
+- `source.updated` - Source metadata modified
+- `source.deleted` - Source removed from vault
+- `annotation.created` - New annotation added to source
+- `member.added` - New member added to vault
+- `presence.update` - User joined/left vault room
+
+### Client Messages
+
+Clients can send the following message types:
+
+- `{"type": "heartbeat"}` - Keep connection alive (send every 30-60 seconds)
+- `{"type": "replay_request", "since_seq": N}` - Request missed events after reconnection
+
+### Rate Limiting
+
+WebSocket connections have 4 layers of rate limiting:
+- **Layer 1**: Max 5 connections per user
+- **Layer 2**: Max 100 connections per vault
+- **Layer 3**: Max 60 messages per minute per connection
+- **Layer 4**: Automatic disconnect after 5 minutes without heartbeat

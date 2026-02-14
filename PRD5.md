@@ -371,13 +371,13 @@ This PRD covers the full implementation: core infrastructure, event broadcasting
 **Description:** As a developer, I need minimal documentation so others can run and test the WebSocket system.
 
 **Acceptance Criteria:**
-- [ ] Add "Real-Time WebSocket" section to README.md
-- [ ] Document connection endpoint: `ws://localhost:8000/ws/vault/{id}/?token={jwt}`
-- [ ] List required services: Redis, Celery worker
-- [ ] Add command to run Daphne: `daphne -b 0.0.0.0 -p 8000 config.asgi:application`
-- [ ] Add command to run Celery: `celery -A config worker -l info -Q websocket_events`
-- [ ] Brief list of event types: source.created, source.updated, source.deleted, annotation.created, member.added, presence.update
-- [ ] Typecheck passes
+- [x] Add "Real-Time WebSocket" section to README.md
+- [x] Document connection endpoint: `ws://localhost:8000/ws/vault/{id}/?token={jwt}`
+- [x] List required services: Redis, Celery worker
+- [x] Add command to run Daphne: `daphne -b 0.0.0.0 -p 8000 config.asgi:application`
+- [x] Add command to run Celery: `celery -A config worker -l info -Q websocket_events`
+- [x] Brief list of event types: source.created, source.updated, source.deleted, annotation.created, member.added, presence.update
+- [x] Typecheck passes
 
 ---
 
