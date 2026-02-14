@@ -303,8 +303,8 @@ class CompleteOAuthEmailTests(OAuthFlowTestCase):
         response = self.client.post(self.complete_email_url, data, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertIn('access', response.data)
-        self.assertIn('refresh', response.data)
+        self.assertIn('access_token', response.data)
+        self.assertIn('refresh_token', response.data)
 
         # Verify user and SocialAccount were created
         user = User.objects.get(email='newemail@example.com')

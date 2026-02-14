@@ -463,6 +463,31 @@ vaults/{vault_id}/thumbnails/{uuid}.jpg
   - Next.js build generates .next/types files - these are needed for typecheck
   - Pre-existing ESLint warnings about 'any' types are acceptable (not blocking)
   - Build succeeded with zero errors, only warnings
-  
+
+---
+
+## Iteration 16 - Create FileTypeIcon component (US-016)
+- Found that US-016 was already completed in previous iteration (commit 4527999)
+- Verified component exists at frontend/src/components/features/uploads/FileTypeIcon.tsx
+- Verified implementation meets all acceptance criteria:
+  - Props: mimeType (string), size ('sm' | 'md' | 'lg'), active (boolean)
+  - Returns FileText icon for PDF (application/pdf)
+  - Returns Image icon for PNG/JPG (image/png, image/jpeg)
+  - Returns generic File icon for other types
+  - Size mapping: sm=16px, md=24px, lg=32px
+  - Color: muted gray (#94A3B8) default, Bitcoin orange (#F7931A) when active
+- Typecheck passes (npm run type-check successful)
+- Dev server starts successfully on port 3002
+- PRD13.md already marked complete
+- Files verified:
+  - frontend/src/components/features/uploads/FileTypeIcon.tsx (exists, committed)
+  - PRD13.md (US-016 marked [x])
+- Learnings for future iterations:
+  - Always check git history before starting a task - may already be complete
+  - FileTypeIcon uses lucide-react icons: FileText, Image, File
+  - Size prop maps to pixel values via sizeMap object
+  - Active prop controls color state (orange vs gray)
+  - Component committed in previous work but not logged in progress13.txt
+
 ---
 

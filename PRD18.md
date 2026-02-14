@@ -321,14 +321,14 @@ Implement a global full-text search system for SyncScript that enables researche
 **Description:** As a user, I want search results grouped by type so I can scan results efficiently.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/search/SearchResultsList.tsx`
-- [ ] Groups results by type with section headers
-- [ ] Shows max 5 results per type in quick view
-- [ ] "See all X results" link per section when more exist
-- [ ] Scrollable with max height
-- [ ] Empty sections hidden
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/features/search/SearchResultsList.tsx`
+- [x] Groups results by type with section headers
+- [x] Shows max 5 results per type in quick view
+- [x] "See all X results" link per section when more exist
+- [x] Scrollable with max height
+- [x] Empty sections hidden
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 
