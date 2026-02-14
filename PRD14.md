@@ -121,13 +121,13 @@ SyncScript's AI-powered citation generation system enables researchers to genera
 **Description:** As a platform operator, I need to rate limit AI citation generation to control costs and prevent abuse.
 
 **Acceptance Criteria:**
-- [ ] Rate limit: 50 AI citations per user per day
-- [ ] Rate limit: 200 AI citations per vault per day
-- [ ] Store counters in Redis with daily expiry
-- [ ] Return 429 Too Many Requests when limit exceeded
-- [ ] Response includes `Retry-After` header and remaining quota
-- [ ] Add `get_ai_citation_quota(user, vault) -> dict` utility
-- [ ] Typecheck passes
+- [x] Rate limit: 50 AI citations per user per day
+- [x] Rate limit: 200 AI citations per vault per day
+- [x] Store counters in Redis with daily expiry
+- [x] Return 429 Too Many Requests when limit exceeded
+- [x] Response includes `Retry-After` header and remaining quota
+- [x] Add `get_ai_citation_quota(user, vault) -> dict` utility
+- [x] Typecheck passes
 
 ### US-010: Track AI citation usage in AuditLog
 **Description:** As a platform operator, I need AI citation usage tracked in the audit log for billing and analytics.
