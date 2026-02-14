@@ -736,3 +736,279 @@ class SourceFilterTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data['results']), 1)
         self.assertEqual(response.data['results'][0]['id'], str(self.source3.id))
+
+
+class PDFUploadFlowTest(TestCase):
+    """Integration tests for PDF upload workflow (US-026)."""
+
+    def setUp(self):
+        """Set up test fixtures."""
+        self.client = APIClient()
+
+        # Create test users
+        self.owner_user = User.objects.create(
+            username='owner',
+            email='owner@example.com'
+        )
+        self.owner_user.set_password('testpass123')
+        self.owner_user.save()
+
+        self.contributor_user = User.objects.create(
+            username='contributor',
+            email='contributor@example.com'
+        )
+        self.contributor_user.set_password('testpass123')
+        self.contributor_user.save()
+
+        self.viewer_user = User.objects.create(
+            username='viewer',
+            email='viewer@example.com'
+        )
+        self.viewer_user.set_password('testpass123')
+        self.viewer_user.save()
+
+        self.non_member_user = User.objects.create(
+            username='nonmember',
+            email='nonmember@example.com'
+        )
+        self.non_member_user.set_password('testpass123')
+        self.non_member_user.save()
+
+        # Create test vault
+        self.vault = Vault.objects.create(
+            name='Test Vault',
+            description='A test vault',
+            owner=self.owner_user
+        )
+
+        # Add vault memberships
+        VaultMembership.objects.create(
+            vault=self.vault,
+            user=self.contributor_user,
+            role=RoleChoices.CONTRIBUTOR
+        )
+
+        VaultMembership.objects.create(
+            vault=self.vault,
+            user=self.viewer_user,
+            role=RoleChoices.VIEWER
+        )
+
+    @patch('apps.sources.storage.get_s3_client')
+    def test_upload_url_endpoint_returns_presigned_url_for_authorized_user(self, mock_get_s3_client):
+        """Test upload-url endpoint returns presigned URL for authorized user."""
+        # Mock S3 client
+        mock_s3 = mock_get_s3_client.return_value
+        mock_s3.generate_presigned_url.return_value = 'https://s3.example.com/presigned-upload-url'
+
+        # Authenticate as contributor (authorized)
+        self.client.force_authenticate(user=self.contributor_user)
+
+        url = '/api/v1/sources/pdfs/upload-url/'
+        data = {
+            'vault_id': str(self.vault.id),
+            'filename': 'research-paper.pdf',
+            'file_size': 1024 * 1024 * 5,  # 5 MB
+            'content_type': 'application/pdf'
+        }
+
+        response = self.client.post(url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('upload_id', response.data)
+        self.assertIn('upload_url', response.data)
+        self.assertIn('expires_in', response.data)
+        self.assertIn('callback_url', response.data)
+        self.assertEqual(response.data['expires_in'], 3600)  # 1 hour
+
+        # Verify presigned URL was generated
+        mock_s3.generate_presigned_url.assert_called_once()
+
+    @patch('apps.sources.storage.get_s3_client')
+    def test_upload_url_endpoint_rejects_unauthorized_user(self, mock_get_s3_client):
+        """Test upload-url endpoint rejects unauthorized user."""
+        # Authenticate as viewer (not authorized for upload)
+        self.client.force_authenticate(user=self.viewer_user)
+
+        url = '/api/v1/sources/pdfs/upload-url/'
+        data = {
+            'vault_id': str(self.vault.id),
+            'filename': 'research-paper.pdf',
+            'file_size': 1024 * 1024 * 5,
+            'content_type': 'application/pdf'
+        }
+
+        response = self.client.post(url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        # Verify presigned URL was NOT generated
+        mock_get_s3_client.assert_not_called()
+
+    @patch('apps.sources.storage.get_s3_client')
+    def test_upload_url_endpoint_rejects_non_member(self, mock_get_s3_client):
+        """Test upload-url endpoint rejects non-member."""
+        # Authenticate as non-member (no vault access)
+        self.client.force_authenticate(user=self.non_member_user)
+
+        url = '/api/v1/sources/pdfs/upload-url/'
+        data = {
+            'vault_id': str(self.vault.id),
+            'filename': 'research-paper.pdf',
+            'file_size': 1024 * 1024 * 5,
+            'content_type': 'application/pdf'
+        }
+
+        response = self.client.post(url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        # Verify presigned URL was NOT generated
+        mock_get_s3_client.assert_not_called()
+
+    @patch('apps.sources.tasks.process_uploaded_pdf.delay')
+    @patch('apps.sources.storage.get_s3_client')
+    def test_completion_endpoint_triggers_processing(self, mock_get_s3_client, mock_task_delay):
+        """Test completion endpoint triggers processing."""
+        from apps.sources.models import PDFUpload
+
+        # Create a pending PDFUpload record
+        pdf_upload = PDFUpload.objects.create(
+            vault=self.vault,
+            original_filename='test.pdf',
+            file_size=1024 * 1024,
+            mime_type='application/pdf',
+            uploaded_by=self.contributor_user,
+            processing_status='pending'
+        )
+
+        # Manually set the file field to simulate S3 upload
+        pdf_upload.file.name = f'vaults/{self.vault.id}/pdfs/test-uuid.pdf'
+        pdf_upload.save()
+
+        # Authenticate as contributor
+        self.client.force_authenticate(user=self.contributor_user)
+
+        url = f'/api/v1/sources/pdfs/{pdf_upload.id}/complete/'
+        data = {
+            'file_key': pdf_upload.file.name
+        }
+
+        response = self.client.post(url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['status'], 'processing')
+        self.assertIn('pdf_id', response.data)
+
+        # Verify processing task was triggered
+        mock_task_delay.assert_called_once_with(str(pdf_upload.id))
+
+        # Verify database record was updated
+        pdf_upload.refresh_from_db()
+        self.assertEqual(pdf_upload.processing_status, 'processing')
+
+    @patch('apps.sources.storage.get_s3_client')
+    def test_download_url_endpoint_works_for_vault_members(self, mock_get_s3_client):
+        """Test download-url endpoint works for vault members."""
+        from apps.sources.models import PDFUpload
+
+        # Mock S3 client
+        mock_s3 = mock_get_s3_client.return_value
+        mock_s3.generate_presigned_url.return_value = 'https://s3.example.com/presigned-download-url'
+
+        # Create a completed PDFUpload record
+        pdf_upload = PDFUpload.objects.create(
+            vault=self.vault,
+            original_filename='test.pdf',
+            file_size=1024 * 1024,
+            mime_type='application/pdf',
+            uploaded_by=self.contributor_user,
+            processing_status='completed'
+        )
+        pdf_upload.file.name = f'vaults/{self.vault.id}/pdfs/test-uuid.pdf'
+        pdf_upload.save()
+
+        # Test as viewer (authorized to download)
+        self.client.force_authenticate(user=self.viewer_user)
+
+        url = f'/api/v1/sources/pdfs/{pdf_upload.id}/download-url/'
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('download_url', response.data)
+        self.assertIn('expires_in', response.data)
+        self.assertIn('filename', response.data)
+        self.assertIn('file_size', response.data)
+        self.assertEqual(response.data['expires_in'], 900)  # 15 minutes
+        self.assertEqual(response.data['filename'], 'test.pdf')
+
+        # Verify presigned URL was generated
+        mock_s3.generate_presigned_url.assert_called_once()
+
+    @patch('apps.sources.storage.get_s3_client')
+    def test_download_url_endpoint_rejects_non_member(self, mock_get_s3_client):
+        """Test download-url endpoint rejects non-member."""
+        from apps.sources.models import PDFUpload
+
+        # Create a completed PDFUpload record
+        pdf_upload = PDFUpload.objects.create(
+            vault=self.vault,
+            original_filename='test.pdf',
+            file_size=1024 * 1024,
+            mime_type='application/pdf',
+            uploaded_by=self.contributor_user,
+            processing_status='completed'
+        )
+        pdf_upload.file.name = f'vaults/{self.vault.id}/pdfs/test-uuid.pdf'
+        pdf_upload.save()
+
+        # Test as non-member (not authorized)
+        self.client.force_authenticate(user=self.non_member_user)
+
+        url = f'/api/v1/sources/pdfs/{pdf_upload.id}/download-url/'
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        # Verify presigned URL was NOT generated
+        mock_get_s3_client.assert_not_called()
+
+    @patch('apps.sources.utils.update_vault_storage_usage')
+    def test_delete_endpoint_soft_deletes_and_updates_storage(self, mock_update_storage):
+        """Test delete endpoint soft-deletes and updates storage."""
+        from apps.sources.models import PDFUpload
+        from django.utils import timezone
+
+        # Create a completed PDFUpload record
+        pdf_upload = PDFUpload.objects.create(
+            vault=self.vault,
+            original_filename='test.pdf',
+            file_size=1024 * 1024,
+            mime_type='application/pdf',
+            uploaded_by=self.contributor_user,
+            processing_status='completed'
+        )
+        pdf_upload.file.name = f'vaults/{self.vault.id}/pdfs/test-uuid.pdf'
+        pdf_upload.save()
+
+        # Authenticate as owner (authorized to delete)
+        self.client.force_authenticate(user=self.owner_user)
+
+        url = f'/api/v1/sources/pdfs/{pdf_upload.id}/'
+
+        response = self.client.delete(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('message', response.data)
+        self.assertIn('pdf_id', response.data)
+        self.assertIn('permanent_deletion_date', response.data)
+
+        # Verify soft-delete: deleted_at is set
+        pdf_upload.refresh_from_db()
+        self.assertIsNotNone(pdf_upload.deleted_at)
+        self.assertLessEqual(pdf_upload.deleted_at, timezone.now())
+
+        # Verify storage usage update was called
+        mock_update_storage.assert_called_once_with(self.vault.id)

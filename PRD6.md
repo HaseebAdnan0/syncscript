@@ -288,13 +288,13 @@ Implement cloud file storage for SyncScript using Cloudflare R2 (S3-compatible).
 **Description:** As a developer, I need end-to-end tests for the upload workflow.
 
 **Acceptance Criteria:**
-- [ ] Create `backend/apps/sources/tests/test_views.py`
-- [ ] Test: upload-url endpoint returns presigned URL for authorized user
-- [ ] Test: upload-url endpoint rejects unauthorized user
-- [ ] Test: completion endpoint triggers processing
-- [ ] Test: download-url endpoint works for vault members
-- [ ] Test: delete endpoint soft-deletes and updates storage
-- [ ] All tests pass
+- [x] Create `backend/apps/sources/tests/test_views.py`
+- [x] Test: upload-url endpoint returns presigned URL for authorized user
+- [x] Test: upload-url endpoint rejects unauthorized user
+- [x] Test: completion endpoint triggers processing
+- [x] Test: download-url endpoint works for vault members
+- [x] Test: delete endpoint soft-deletes and updates storage
+- [x] All tests pass
 
 ## Non-Goals
 

@@ -37,18 +37,15 @@ class VaultConsumer(AsyncWebsocketConsumer):
         5. On success: accept connection and join room
         6. On failure: send error JSON and close with code 1008
         """
-        # Extract vault_id from URL kwargs
+        # Extract vault_id from URL kwargs (UUID string)
         url_route = self.scope.get('url_route', {})  # type: ignore[typeddict-item]
         vault_id_str = url_route.get('kwargs', {}).get('vault_id')
         if not vault_id_str:
             await self._send_error_and_close('VAULT_NOT_FOUND', 'Vault ID not provided')
             return
 
-        try:
-            self.vault_id = int(vault_id_str)  # type: ignore[arg-type]
-        except (ValueError, TypeError):
-            await self._send_error_and_close('VAULT_NOT_FOUND', 'Invalid vault ID format')
-            return
+        # Store vault_id as string (UUID format)
+        self.vault_id = vault_id_str  # type: ignore[assignment]
 
         # Check user is authenticated
         user = self.scope.get('user')

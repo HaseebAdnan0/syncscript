@@ -786,3 +786,51 @@ Learnings for future iterations:
 - Group related variables with section comments for clarity
 ---
 
+## Iteration 36 - Create manual verification checklist (US-039)
+- Updated .planning/MANUAL_VERIFICATION.md with comprehensive auth system testing section
+- Added date header: "Authentication System (US-039) - 2026-02-14"
+- Included all required flow tests: register, verify email, login, refresh, logout
+- Added password reset flow steps with uid/token validation
+- Added profile update steps with field validation (bio max 500, institution max 200)
+- Added rate limiting test steps for login (5/min), registration (5/min), password reset (3/hour)
+- Included prerequisites: PostgreSQL, Redis, email backend, migrations
+- Django system check passes
+
+Files changed:
+- .planning/MANUAL_VERIFICATION.md (added auth system section)
+- PRD1.md (marked US-039 complete)
+
+Learnings for future iterations:
+- MANUAL_VERIFICATION.md format: section header with feature name and date
+- Each flow (register, login, reset, etc.) should have detailed step-by-step checklist
+- Include both happy path and error cases (wrong password, expired token, validation errors)
+- Rate limiting tests should note both 429 (production) and 403 (test mode) are valid responses
+- Prerequisites section helps developers set up environment before testing
+- Manual verification complements automated tests - focuses on end-to-end user experience
+---
+
+## Iteration 37 - Update user setup documentation (US-040)
+- Updated .planning/USER_SETUP.md with comprehensive JWT configuration section
+- Added JWT token lifetime settings (access 15min, refresh 7 days)
+- Added token rotation and blacklisting explanation
+- Added optional JWT environment variables for customization
+- Verified existing sections already complete:
+  - Email Configuration with SMTP setup steps (lines 70-96)
+  - Redis Configuration with installation steps (lines 31-67)
+  - Django Secret Key generation instructions (lines 134-146)
+  - All required environment variables documented throughout
+- Django system check passes
+
+Files changed:
+- .planning/USER_SETUP.md (added JWT Configuration section)
+- PRD1.md (marked US-040 complete)
+
+Learnings for future iterations:
+- USER_SETUP.md already had most required sections from previous work
+- JWT configuration doesn't require separate secret key (uses Django's SECRET_KEY)
+- JWT settings are pre-configured in settings.py via SIMPLE_JWT config
+- Token lifetime defaults: ACCESS_TOKEN_LIFETIME = 15 minutes, REFRESH_TOKEN_LIFETIME = 7 days
+- Token rotation and blacklisting enabled by default in SIMPLE_JWT config
+- All setup documentation now complete for authentication system
+---
+

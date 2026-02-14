@@ -4,7 +4,8 @@ E2E WebSocket tests for vault collaboration - connection and authentication.
 Tests verify full WebSocket connection flow with authentication and permissions.
 """
 
-from django.test import TestCase, override_settings
+from django.test import TransactionTestCase, override_settings
+from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
 from channels.testing import WebsocketCommunicator
 from rest_framework_simplejwt.tokens import AccessToken
@@ -14,8 +15,15 @@ from config.asgi import application  # type: ignore[import-not-found]
 User = get_user_model()
 
 
-@override_settings(CELERY_TASK_ALWAYS_EAGER=True)
-class WebSocketConnectionAuthTests(TestCase):
+@override_settings(
+    CELERY_TASK_ALWAYS_EAGER=True,
+    CHANNEL_LAYERS={
+        'default': {
+            'BACKEND': 'channels.layers.InMemoryChannelLayer',
+        },
+    },
+)
+class WebSocketConnectionAuthTests(TransactionTestCase):
     """
     E2E tests for WebSocket connection and authentication.
     """
@@ -39,19 +47,11 @@ class WebSocketConnectionAuthTests(TestCase):
             password='testpass123'
         )
 
-        # Create vault
+        # Create vault (owner membership created automatically by signal)
         self.vault = Vault.objects.create(
             name='Test Vault',
             description='Test vault for WebSocket tests',
             owner=self.user1
-        )
-
-        # Add user1 as owner (via VaultMembership)
-        VaultMembership.objects.create(
-            vault=self.vault,
-            user=self.user1,
-            role=RoleChoices.OWNER,
-            added_by=self.user1
         )
 
         # Add user2 as contributor

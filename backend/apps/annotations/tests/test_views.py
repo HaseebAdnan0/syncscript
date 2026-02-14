@@ -267,3 +267,144 @@ class AnnotationCRUDTest(TestCase):
 
         # Verify all annotations deleted (cascade)
         self.assertEqual(Annotation.objects.count(), 0)
+
+
+class AnnotationPermissionTest(TestCase):
+    """Test Annotation API permission checks."""
+
+    def setUp(self):
+        """Set up test data for permission tests."""
+        # Create test users
+        self.owner = User.objects.create(username='owner', email='owner@test.com')
+        self.owner.set_password('password123')
+        self.owner.save()
+
+        self.member = User.objects.create(username='member', email='member@test.com')
+        self.member.set_password('password123')
+        self.member.save()
+
+        self.non_member = User.objects.create(username='nonmember', email='nonmember@test.com')
+        self.non_member.set_password('password123')
+        self.non_member.save()
+
+        # Create vault with owner
+        self.vault = Vault.objects.create(
+            name='Test Vault',
+            description='Test vault for permissions',
+            owner=self.owner
+        )
+
+        # Add member to vault as viewer
+        VaultMembership.objects.create(
+            vault=self.vault,
+            user=self.member,
+            role=RoleChoices.VIEWER
+        )
+
+        # Create source for annotations
+        self.source = Source.objects.create(
+            vault=self.vault,
+            url='https://example.com/article1',
+            title='Test Article',
+            source_type=SourceType.URL,
+            created_by=self.owner
+        )
+
+        # Create API client
+        self.client = APIClient()
+
+    def test_non_vault_member_cannot_list_annotations(self):
+        """Test non-vault-member cannot list annotations (403)."""
+        # Create annotation as owner
+        Annotation.objects.create(
+            source=self.source,
+            user=self.owner,
+            content='Owner annotation',
+            page_number=1
+        )
+
+        # Try to list as non-member (should get 403 or empty list based on filtering)
+        self.client.force_authenticate(user=self.non_member)
+        url = f'/api/v1/sources/{self.source.id}/annotations/'
+        response = self.client.post(url, {'content': 'Should fail'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_any_vault_member_can_create_annotation(self):
+        """Test any vault member (including Viewer) can create annotation."""
+        self.client.force_authenticate(user=self.member)  # member is VIEWER role
+        url = f'/api/v1/sources/{self.source.id}/annotations/'
+        data = {
+            'content': 'Viewer annotation',
+            'page_number': 1
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['content'], 'Viewer annotation')
+        self.assertEqual(Annotation.objects.count(), 1)
+
+    def test_author_can_update_own_annotation(self):
+        """Test author can update their own annotation."""
+        annotation = Annotation.objects.create(
+            source=self.source,
+            user=self.member,
+            content='Original content',
+            page_number=1
+        )
+
+        self.client.force_authenticate(user=self.member)
+        url = f'/api/v1/annotations/{annotation.id}/'
+        data = {'content': 'Updated content'}
+        response = self.client.patch(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['content'], 'Updated content')
+        annotation.refresh_from_db()
+        self.assertEqual(annotation.content, 'Updated content')
+
+    def test_non_author_cannot_update_annotation(self):
+        """Test non-author cannot update annotation (403)."""
+        annotation = Annotation.objects.create(
+            source=self.source,
+            user=self.owner,
+            content='Owner annotation',
+            page_number=1
+        )
+
+        # Try to update as member (not author)
+        self.client.force_authenticate(user=self.member)
+        url = f'/api/v1/annotations/{annotation.id}/'
+        data = {'content': 'Trying to update'}
+        response = self.client.patch(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        annotation.refresh_from_db()
+        self.assertEqual(annotation.content, 'Owner annotation')  # Content unchanged
+
+    def test_author_can_delete_own_annotation(self):
+        """Test author can delete their own annotation."""
+        annotation = Annotation.objects.create(
+            source=self.source,
+            user=self.member,
+            content='Member annotation',
+            page_number=1
+        )
+
+        self.client.force_authenticate(user=self.member)
+        url = f'/api/v1/annotations/{annotation.id}/'
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(Annotation.objects.count(), 0)
+
+    def test_non_author_cannot_delete_annotation(self):
+        """Test non-author cannot delete annotation (403)."""
+        annotation = Annotation.objects.create(
+            source=self.source,
+            user=self.owner,
+            content='Owner annotation',
+            page_number=1
+        )
+
+        # Try to delete as member (not author)
+        self.client.force_authenticate(user=self.member)
+        url = f'/api/v1/annotations/{annotation.id}/'
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(Annotation.objects.count(), 1)  # Annotation still exists
