@@ -326,3 +326,32 @@ Learnings for future iterations:
 - Tab badges should conditionally render: `{count > 0 && <span>(count)</span>}`
 - Build cache corruption can be fixed with `rm -rf .next` before rebuild
 ---
+
+## Iteration 13 - US-012: Empty state for no sources
+- Found that EmptySourcesState component was already created in commit d4f4342 (US-015)
+- Component implementation matches requirements:
+  - FileText icon from Lucide in circular glass morphism container
+  - Heading: "No sources yet"
+  - Subtext: "Add URLs, PDFs, or citations to build your knowledge base"
+  - GradientButton CTA that triggers onAddSource callback
+  - canAddSource prop conditionally shows CTA (only for OWNER/CONTRIBUTOR roles)
+- SourcesList component already updated to integrate EmptySourcesState:
+  - Shows empty state when sources.length === 0
+  - Passes userRole prop to determine canAddSource
+  - Placeholder console.log for Add Source action (AddSourceModal not yet implemented)
+- Vault detail page already updated to pass vault.user_role to SourcesList
+- Typecheck passes successfully
+- All code was already committed in d4f4342, just verified implementation
+
+Files changed:
+- All files were already committed in previous iteration (d4f4342)
+- PRD8.md (already marked US-012 complete except browser verification)
+
+Learnings for future iterations:
+- EmptySourcesState follows same pattern as EmptyVaultsState (friendly message + actionable CTA)
+- Role-based conditional rendering: canAddSource = userRole === 'OWNER' || userRole === 'CONTRIBUTOR'
+- VaultRole is a string type ('OWNER', 'CONTRIBUTOR', 'VIEWER'), not an enum value in TypeScript comparisons
+- Empty state components should take callback props for flexibility (onAddSource)
+- Vault interface has user_role field with current user's role in that vault
+- Browser verification tasks are left unchecked per Ralph protocol (manual user verification)
+---
