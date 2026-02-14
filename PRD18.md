@@ -159,12 +159,12 @@ Implement a global full-text search system for SyncScript that enables researche
 **Description:** As a user, I want to see my recent searches so I can quickly re-run previous queries.
 
 **Acceptance Criteria:**
-- [ ] Create `GET /api/v1/search/recent/` endpoint
-- [ ] Return last 10 searches for authenticated user
-- [ ] Ordered by most recent first
-- [ ] Create `DELETE /api/v1/search/recent/` to clear history
-- [ ] Create `DELETE /api/v1/search/recent/{id}/` to remove single entry
-- [ ] Typecheck passes
+- [x] Create `GET /api/v1/search/recent/` endpoint
+- [x] Return last 10 searches for authenticated user
+- [x] Ordered by most recent first
+- [x] Create `DELETE /api/v1/search/recent/` to clear history
+- [x] Create `DELETE /api/v1/search/recent/{id}/` to remove single entry
+- [x] Typecheck passes
 
 ---
 
