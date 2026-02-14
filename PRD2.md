@@ -317,10 +317,10 @@ Create a secure, collaborative Knowledge Vault system where researchers can crea
 **Description:** As a developer, I need nested endpoints under each vault.
 
 **Acceptance Criteria:**
-- [ ] Add path for members: `vaults/<uuid:vault_pk>/members/`
-- [ ] Add path for audit-logs: `vaults/<uuid:vault_pk>/audit-logs/`
-- [ ] Both use appropriate ViewSets
-- [ ] Typecheck passes
+- [x] Add path for members: `vaults/<uuid:vault_pk>/members/`
+- [x] Add path for audit-logs: `vaults/<uuid:vault_pk>/audit-logs/`
+- [x] Both use appropriate ViewSets
+- [x] Typecheck passes
 
 ### US-032: Include vaults URLs in main config
 **Description:** As a developer, I need vaults API accessible at /api/v1/vaults/.
