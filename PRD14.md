@@ -31,14 +31,14 @@ SyncScript's AI-powered citation generation system enables researchers to genera
 **Description:** As a researcher, I want DOI URLs to automatically fetch metadata from CrossRef so citations are accurate without manual entry.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/citations/services/doi_lookup.py`
-- [ ] Function `fetch_doi_metadata(doi: str) -> dict` calls CrossRef API
-- [ ] Extract: title, authors (list), publication_date, journal, volume, issue, pages, publisher, DOI
-- [ ] Handle DOI formats: `10.xxxx/yyyy`, `doi.org/10.xxxx/yyyy`, `https://doi.org/10.xxxx/yyyy`
-- [ ] Return `None` on API failure or invalid DOI (don't raise)
-- [ ] Add `crossref-commons` to requirements.txt
-- [ ] Unit tests for DOI parsing and metadata extraction
-- [ ] Typecheck passes
+- [x] Create `apps/citations/services/doi_lookup.py`
+- [x] Function `fetch_doi_metadata(doi: str) -> dict` calls CrossRef API
+- [x] Extract: title, authors (list), publication_date, journal, volume, issue, pages, publisher, DOI
+- [x] Handle DOI formats: `10.xxxx/yyyy`, `doi.org/10.xxxx/yyyy`, `https://doi.org/10.xxxx/yyyy`
+- [x] Return `None` on API failure or invalid DOI (don't raise)
+- [x] Add `crossref-commons` to requirements.txt
+- [x] Unit tests for DOI parsing and metadata extraction
+- [x] Typecheck passes
 
 ### US-003: Implement ISBN metadata lookup service
 **Description:** As a researcher, I want book sources with ISBNs to automatically fetch metadata from OpenLibrary so I don't need to manually enter book details.

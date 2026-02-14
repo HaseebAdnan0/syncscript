@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'apps.notifications',
     'apps.ai',
     'apps.citations',
+    'apps.search',
 ]
 
 MIDDLEWARE = [

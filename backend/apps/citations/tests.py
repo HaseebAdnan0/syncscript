@@ -151,6 +151,7 @@ class DOILookupTests(TestCase):
         result = fetch_doi_metadata("10.1234/test")
 
         self.assertIsNotNone(result)
+        assert result is not None  # Type narrowing
         self.assertEqual(result['authors'], ['Doe', 'Smith, Jane'])
 
     @patch('apps.citations.services.doi_lookup.get_publication_as_json')
@@ -167,6 +168,7 @@ class DOILookupTests(TestCase):
         result = fetch_doi_metadata("10.1234/test")
 
         self.assertIsNotNone(result)
+        assert result is not None  # Type narrowing
         self.assertEqual(result['publication_date'], '2023-05-20')
 
     @patch('apps.citations.services.doi_lookup.get_publication_as_json')
@@ -182,4 +184,5 @@ class DOILookupTests(TestCase):
         result = fetch_doi_metadata("10.1234/test")
 
         self.assertIsNotNone(result)
+        assert result is not None  # Type narrowing
         self.assertEqual(result['publication_date'], '2024-01-01')
