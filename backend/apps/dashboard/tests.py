@@ -470,3 +470,446 @@ class ActivityFeedTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['action'], 'accessible_action')
+
+
+class AnalyticsTests(TestCase):
+    """Test suite for analytics endpoints."""
+
+    def setUp(self):
+        """Set up test fixtures."""
+        self.client = APIClient()
+        self.user = User.objects.create_user(
+            username='testuser',
+            email='test@example.com',
+            password='testpass123',
+            first_name='Test',
+            last_name='User'
+        )
+        self.other_user = User.objects.create_user(
+            username='collaborator',
+            email='collab@example.com',
+            password='testpass123',
+            first_name='Collab',
+            last_name='User'
+        )
+
+    def test_sources_timeline_requires_auth(self):
+        """Test that sources timeline endpoint requires authentication."""
+        url = reverse('dashboard:sources_timeline')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_sources_timeline_success(self):
+        """Test successful retrieval of sources timeline."""
+        # Create vault
+        vault = Vault.objects.create(name='Test Vault', owner=self.user)
+
+        # Create sources at different dates
+        today = timezone.now()
+        yesterday = today - timedelta(days=1)
+        two_days_ago = today - timedelta(days=2)
+
+        # Create sources
+        source1 = Source.objects.create(
+            vault=vault,
+            url='https://example.com/1',
+            title='Source 1',
+            created_by=self.user
+        )
+        source2 = Source.objects.create(
+            vault=vault,
+            url='https://example.com/2',
+            title='Source 2',
+            created_by=self.user
+        )
+        source3 = Source.objects.create(
+            vault=vault,
+            url='https://example.com/3',
+            title='Source 3',
+            created_by=self.user
+        )
+
+        # Update created_at to different dates (bypass validation)
+        Source.objects.filter(id=source1.id).update(created_at=today)
+        Source.objects.filter(id=source2.id).update(created_at=yesterday)
+        Source.objects.filter(id=source3.id).update(created_at=two_days_ago)
+
+        # Authenticate and make request
+        self.client.force_authenticate(user=self.user)
+        url = reverse('dashboard:sources_timeline')
+        response = self.client.get(url)
+
+        # Assert response
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIsInstance(response.data, list)
+        self.assertGreaterEqual(len(response.data), 3)  # At least 3 date entries
+
+        # Check data structure
+        for item in response.data:
+            self.assertIn('date', item)
+            self.assertIn('count', item)
+            self.assertIsInstance(item['date'], str)  # Date should be string
+            self.assertIsInstance(item['count'], int)
+
+        # Verify dates are in format YYYY-MM-DD
+        import re
+        date_pattern = re.compile(r'^\d{4}-\d{2}-\d{2}$')
+        for item in response.data:
+            self.assertTrue(date_pattern.match(item['date']))
+
+    def test_sources_timeline_excludes_deleted(self):
+        """Test that deleted sources are excluded from timeline."""
+        vault = Vault.objects.create(name='Test Vault', owner=self.user)
+
+        # Create active and deleted sources
+        active_source = Source.objects.create(
+            vault=vault,
+            url='https://example.com/active',
+            title='Active Source',
+            created_by=self.user,
+            is_deleted=False
+        )
+        deleted_source = Source.objects.create(
+            vault=vault,
+            url='https://example.com/deleted',
+            title='Deleted Source',
+            created_by=self.user,
+            is_deleted=True
+        )
+
+        # Authenticate and make request
+        self.client.force_authenticate(user=self.user)
+        url = reverse('dashboard:sources_timeline')
+        response = self.client.get(url)
+
+        # Assert response includes only active sources
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        total_count = sum(item['count'] for item in response.data)
+        self.assertEqual(total_count, 1)  # Only active source counted
+
+    def test_sources_timeline_only_last_30_days(self):
+        """Test that timeline only includes sources from last 30 days."""
+        vault = Vault.objects.create(name='Test Vault', owner=self.user)
+
+        # Create recent and old sources
+        recent_source = Source.objects.create(
+            vault=vault,
+            url='https://example.com/recent',
+            title='Recent Source',
+            created_by=self.user
+        )
+        old_source = Source.objects.create(
+            vault=vault,
+            url='https://example.com/old',
+            title='Old Source',
+            created_by=self.user
+        )
+
+        # Update old source to 40 days ago
+        Source.objects.filter(id=old_source.id).update(
+            created_at=timezone.now() - timedelta(days=40)
+        )
+
+        # Authenticate and make request
+        self.client.force_authenticate(user=self.user)
+        url = reverse('dashboard:sources_timeline')
+        response = self.client.get(url)
+
+        # Assert response includes only recent sources
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        total_count = sum(item['count'] for item in response.data)
+        self.assertEqual(total_count, 1)  # Only recent source counted
+
+    def test_sources_timeline_empty(self):
+        """Test timeline with no sources."""
+        self.client.force_authenticate(user=self.user)
+        url = reverse('dashboard:sources_timeline')
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 0)
+
+    def test_source_types_requires_auth(self):
+        """Test that source types endpoint requires authentication."""
+        url = reverse('dashboard:source_types')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_source_types_success(self):
+        """Test successful retrieval of source type breakdown."""
+        vault = Vault.objects.create(name='Test Vault', owner=self.user)
+
+        # Create sources of different types
+        Source.objects.create(
+            vault=vault,
+            url='https://example.com/1',
+            title='PDF 1',
+            source_type='PDF',
+            created_by=self.user
+        )
+        Source.objects.create(
+            vault=vault,
+            url='https://example.com/2',
+            title='PDF 2',
+            source_type='PDF',
+            created_by=self.user
+        )
+        Source.objects.create(
+            vault=vault,
+            url='https://example.com/3',
+            title='URL 1',
+            source_type='URL',
+            created_by=self.user
+        )
+        Source.objects.create(
+            vault=vault,
+            url='https://example.com/4',
+            title='Book 1',
+            source_type='BOOK',
+            created_by=self.user
+        )
+
+        # Authenticate and make request
+        self.client.force_authenticate(user=self.user)
+        url = reverse('dashboard:source_types')
+        response = self.client.get(url)
+
+        # Assert response
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIsInstance(response.data, list)
+        self.assertEqual(len(response.data), 3)  # 3 different types
+
+        # Check data structure
+        for item in response.data:
+            self.assertIn('type', item)
+            self.assertIn('count', item)
+            self.assertIn('percentage', item)
+
+        # Verify percentages add up to 100 (with rounding tolerance)
+        total_percentage = sum(item['percentage'] for item in response.data)
+        self.assertAlmostEqual(total_percentage, 100.0, delta=0.5)
+
+        # Check PDF type (should be highest count)
+        pdf_item = next(item for item in response.data if item['type'] == 'PDF')
+        self.assertEqual(pdf_item['count'], 2)
+        self.assertEqual(pdf_item['percentage'], 50.0)
+
+    def test_source_types_excludes_deleted(self):
+        """Test that deleted sources are excluded from type breakdown."""
+        vault = Vault.objects.create(name='Test Vault', owner=self.user)
+
+        # Create active and deleted sources
+        Source.objects.create(
+            vault=vault,
+            url='https://example.com/active',
+            title='Active PDF',
+            source_type='PDF',
+            created_by=self.user,
+            is_deleted=False
+        )
+        Source.objects.create(
+            vault=vault,
+            url='https://example.com/deleted',
+            title='Deleted PDF',
+            source_type='PDF',
+            created_by=self.user,
+            is_deleted=True
+        )
+
+        # Authenticate and make request
+        self.client.force_authenticate(user=self.user)
+        url = reverse('dashboard:source_types')
+        response = self.client.get(url)
+
+        # Assert response includes only active sources
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        total_count = sum(item['count'] for item in response.data)
+        self.assertEqual(total_count, 1)  # Only active source counted
+
+    def test_source_types_empty(self):
+        """Test source types with no sources."""
+        self.client.force_authenticate(user=self.user)
+        url = reverse('dashboard:source_types')
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 0)
+
+    def test_top_collaborators_requires_auth(self):
+        """Test that top collaborators endpoint requires authentication."""
+        url = reverse('dashboard:top_collaborators')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_top_collaborators_success(self):
+        """Test successful retrieval of top collaborators."""
+        # Create vault with collaborator
+        vault = Vault.objects.create(name='Shared Vault', owner=self.user)
+        VaultMembership.objects.create(vault=vault, user=self.other_user, role='CONTRIBUTOR')
+
+        # Clear auto-generated audit logs
+        AuditLog.objects.all().delete()
+
+        # Create sources by collaborator
+        Source.objects.create(
+            vault=vault,
+            url='https://example.com/1',
+            title='Source 1',
+            created_by=self.other_user
+        )
+        Source.objects.create(
+            vault=vault,
+            url='https://example.com/2',
+            title='Source 2',
+            created_by=self.other_user
+        )
+
+        # Create annotations by collaborator
+        source1 = Source.objects.filter(created_by=self.other_user).first()
+        annotation = Annotation(
+            source=source1,
+            user=self.other_user,
+            content='Great insight',
+            position={'x': 0, 'y': 0}
+        )
+        Annotation.objects.bulk_create([annotation])
+
+        # Create audit log by collaborator
+        AuditLog.objects.create(
+            vault=vault,
+            actor=self.other_user,
+            action='vault_updated',
+            metadata={}
+        )
+
+        # Authenticate and make request
+        self.client.force_authenticate(user=self.user)
+        url = reverse('dashboard:top_collaborators')
+        response = self.client.get(url)
+
+        # Assert response
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIsInstance(response.data, list)
+        self.assertEqual(len(response.data), 1)  # One collaborator
+
+        # Check data structure
+        collaborator = response.data[0]
+        self.assertIn('user_id', collaborator)
+        self.assertIn('name', collaborator)
+        self.assertIn('avatar_url', collaborator)
+        self.assertIn('contributions_count', collaborator)
+
+        # Verify collaborator data
+        self.assertEqual(collaborator['user_id'], self.other_user.id)
+        self.assertEqual(collaborator['name'], 'Collab User')
+        self.assertEqual(collaborator['contributions_count'], 4)  # 2 sources + 1 annotation + 1 audit
+
+    def test_top_collaborators_excludes_current_user(self):
+        """Test that current user is excluded from collaborators list."""
+        vault = Vault.objects.create(name='Test Vault', owner=self.user)
+
+        # Create source by current user
+        Source.objects.create(
+            vault=vault,
+            url='https://example.com/1',
+            title='My Source',
+            created_by=self.user
+        )
+
+        # Authenticate and make request
+        self.client.force_authenticate(user=self.user)
+        url = reverse('dashboard:top_collaborators')
+        response = self.client.get(url)
+
+        # Assert current user is excluded
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 0)
+
+    def test_top_collaborators_returns_top_5(self):
+        """Test that only top 5 collaborators are returned."""
+        vault = Vault.objects.create(name='Test Vault', owner=self.user)
+
+        # Create 7 collaborators
+        collaborators = []
+        for i in range(7):
+            user = User.objects.create_user(
+                username=f'user{i}',
+                email=f'user{i}@example.com',
+                password='testpass123',
+                first_name=f'User{i}',
+                last_name='Test'
+            )
+            collaborators.append(user)
+            VaultMembership.objects.create(vault=vault, user=user, role='CONTRIBUTOR')
+
+            # Create varying numbers of sources (user0 has most)
+            for j in range(7 - i):
+                Source.objects.create(
+                    vault=vault,
+                    url=f'https://example.com/user{i}-{j}',
+                    title=f'Source {i}-{j}',
+                    created_by=user
+                )
+
+        # Authenticate and make request
+        self.client.force_authenticate(user=self.user)
+        url = reverse('dashboard:top_collaborators')
+        response = self.client.get(url)
+
+        # Assert only top 5 returned
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 5)
+
+        # Verify ordering (user0 should be first with most contributions)
+        self.assertEqual(response.data[0]['name'], 'User0 Test')
+        self.assertGreater(
+            response.data[0]['contributions_count'],
+            response.data[1]['contributions_count']
+        )
+
+    def test_top_collaborators_empty(self):
+        """Test top collaborators with no collaborators."""
+        self.client.force_authenticate(user=self.user)
+        url = reverse('dashboard:top_collaborators')
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 0)
+
+    def test_top_collaborators_only_accessible_vaults(self):
+        """Test that collaborators are only from accessible vaults."""
+        # Create accessible vault with collaborator
+        accessible_vault = Vault.objects.create(name='Accessible', owner=self.user)
+        VaultMembership.objects.create(vault=accessible_vault, user=self.other_user, role='CONTRIBUTOR')
+
+        # Create inaccessible vault with different collaborator
+        third_user = User.objects.create_user(
+            username='thirduser',
+            email='third@example.com',
+            password='testpass123'
+        )
+        inaccessible_vault = Vault.objects.create(name='Inaccessible', owner=third_user)
+
+        # Create sources
+        Source.objects.create(
+            vault=accessible_vault,
+            url='https://example.com/1',
+            title='Accessible Source',
+            created_by=self.other_user
+        )
+        Source.objects.create(
+            vault=inaccessible_vault,
+            url='https://example.com/2',
+            title='Inaccessible Source',
+            created_by=third_user
+        )
+
+        # Authenticate and make request
+        self.client.force_authenticate(user=self.user)
+        url = reverse('dashboard:top_collaborators')
+        response = self.client.get(url)
+
+        # Assert only collaborator from accessible vault is included
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['user_id'], self.other_user.id)

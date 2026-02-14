@@ -181,3 +181,24 @@
   - Security info (IP/timestamp) adds trust and transparency to password reset flow
   - Django system check passes (only allauth deprecation warnings)
 ---
+
+## Iteration 7 - US-007: Create welcome email template
+- Created templates/emails/welcome.html extending base.html
+- Implemented all acceptance criteria:
+  - Preheader: "Your SyncScript account is ready!"
+  - Celebratory heading with orange gradient: "You're all set!"
+  - Three feature bullet points: Knowledge Vaults, Annotate PDFs, Track Citations
+  - Orange gradient CTA button "Go to Dashboard"
+  - Fallback text link below button
+- Created templates/emails/welcome.txt plaintext version
+- Tested both templates render successfully with Django shell
+- Files changed:
+  - backend/templates/emails/welcome.html (new)
+  - backend/templates/emails/welcome.txt (new)
+  - PRD11.md (marked US-007 complete)
+- Learnings for future iterations:
+  - Welcome email sent after verification in US-014
+  - Template context includes: user, site_url
+  - Used bullet points with orange circle markers for features list
+  - Pre-existing import error in sources app (unrelated to email work)
+---

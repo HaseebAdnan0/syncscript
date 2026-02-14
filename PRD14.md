@@ -70,15 +70,15 @@ SyncScript's AI-powered citation generation system enables researchers to genera
 **Description:** As a developer, I need a service that uses Claude to generate citations when metadata is incomplete, ensuring academic accuracy.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/citations/services/ai_citation.py`
-- [ ] Add `anthropic` SDK to requirements.txt (if not present)
-- [ ] Function `generate_ai_citation(source_data: dict, format: CitationFormat) -> str`
-- [ ] Prompt engineering for academic citation accuracy (include format rules in system prompt)
-- [ ] Handle missing fields gracefully: author="Unknown", date="n.d."
-- [ ] Include access date for web sources
-- [ ] Return both plain text and HTML versions (for italicization)
-- [ ] Unit tests with mocked Claude responses
-- [ ] Typecheck passes
+- [x] Create `apps/citations/services/ai_citation.py`
+- [x] Add `anthropic` SDK to requirements.txt (if not present)
+- [x] Function `generate_ai_citation(source_data: dict, format: CitationFormat) -> str`
+- [x] Prompt engineering for academic citation accuracy (include format rules in system prompt)
+- [x] Handle missing fields gracefully: author="Unknown", date="n.d."
+- [x] Include access date for web sources
+- [x] Return both plain text and HTML versions (for italicization)
+- [x] Unit tests with mocked Claude responses
+- [x] Typecheck passes
 
 ### US-006: Create citation generation endpoint
 **Description:** As a frontend developer, I need an API endpoint to generate citations for a single source so users can cite sources in their preferred format.

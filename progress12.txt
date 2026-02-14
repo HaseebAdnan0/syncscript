@@ -154,3 +154,32 @@ Learnings for future iterations:
   - Same pattern applies to all OAuth providers (Google, GitHub, etc.)
   - URL reverse() can verify routes are configured correctly: reverse('users:google-oauth')
 ---
+
+## Iteration 6 - US-006: Create Google OAuth callback handler
+- Enhanced JWTSocialAccountAdapter in apps/users/adapters.py with account linking logic
+- Implemented pre_social_login() to detect existing accounts and handle linking scenarios
+- OAuth callback handled automatically by allauth (via /api/v1/auth/accounts/google/login/callback/)
+- Adapter logic:
+  - If email exists with OAuth already linked: proceed with login, generate JWT
+  - If email exists with password only: store OAuth data in session, redirect with link_required=true
+  - If email is new: let allauth auto-create user, generate JWT, redirect with success=true
+  - If no email provided (GitHub private): store data in session, redirect with email_required=true
+- Used ImmediateHttpResponse exception to abort allauth flow when linking/email required
+- Added allauth.urls to config/urls.py for OAuth callback routing
+- JWT tokens set in httpOnly cookies on successful login
+- Typecheck passes (pre-existing model errors not related to OAuth)
+
+Files changed:
+  - backend/apps/users/adapters.py (enhanced pre_social_login and get_login_redirect_url)
+  - backend/config/urls.py (added allauth.urls for OAuth callbacks)
+  - PRD12.md (marked US-006 complete)
+
+Learnings for future iterations:
+  - allauth handles OAuth callbacks automatically at /accounts/{provider}/login/callback/
+  - Use ImmediateHttpResponse exception to abort allauth flow and redirect early
+  - pre_social_login() is called BEFORE user creation, perfect for account linking checks
+  - get_login_redirect_url() is called AFTER successful auth, perfect for JWT generation
+  - Session storage appropriate for temporary OAuth data during linking flow
+  - sociallogin.is_existing checks if SocialAccount already exists (not if email exists)
+  - SOCIALACCOUNT_AUTO_SIGNUP=True makes allauth create users automatically when email is new
+---

@@ -105,12 +105,12 @@ Implement a global full-text search system for SyncScript that enables researche
 **Description:** As a developer, I need Django signals to automatically queue search vector updates when models change.
 
 **Acceptance Criteria:**
-- [ ] Create `backend/apps/search/signals.py`
-- [ ] Post-save signal on Source triggers `update_source_search_vector.delay()`
-- [ ] Post-save signal on Annotation triggers `update_annotation_search_vector.delay()`
-- [ ] Signals connected in search app's `ready()` method
-- [ ] Only trigger on relevant field changes (title, description, content)
-- [ ] Typecheck passes
+- [x] Create `backend/apps/search/signals.py`
+- [x] Post-save signal on Source triggers `update_source_search_vector.delay()`
+- [x] Post-save signal on Annotation triggers `update_annotation_search_vector.delay()`
+- [x] Signals connected in search app's `ready()` method
+- [x] Only trigger on relevant field changes (title, description, content)
+- [x] Typecheck passes
 
 ---
 

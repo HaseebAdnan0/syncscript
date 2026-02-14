@@ -88,3 +88,31 @@ Learnings for future iterations:
 - DRF decorators should use Request type hint, not HttpRequest
 - Timezone-aware datetimes: use timezone.now() and .replace() for midnight calculation
 ---
+
+## Iteration 4 - US-004: Implement Claude client service
+- Created ClaudeClient class in apps/ai/services/claude_client.py with three core methods
+- Implemented summarize(text, source_type): Returns structured academic summary with abstract, key_findings, methodology, limitations, keywords, language, quality_flags
+- Implemented analyze_sources(sources_data): Returns vault insights with themes (weighted), research_gaps, cross_references, suggested_searches
+- Implemented answer_question(question, context_chunks): Returns answer with citations (chunk indices) and confidence level
+- All methods parse JSON responses (including from markdown code blocks) and return tokens_used
+- Graceful error handling: All methods return {"error": "...", "tokens_used": 0} on failures
+- Added ANTHROPIC_API_KEY setting to config/settings.py
+- Added anthropic>=0.40.0 to requirements.txt and installed package
+- Created comprehensive test suite with 8 tests using mock to avoid actual API calls
+- Fixed type safety issues with content blocks by checking hasattr before accessing .text
+
+Files changed:
+- backend/apps/ai/services/claude_client.py (created)
+- backend/config/settings.py (added ANTHROPIC_API_KEY)
+- backend/requirements.txt (added anthropic>=0.40.0)
+- backend/apps/ai/tests.py (added ClaudeClientTestCase with 8 tests)
+- PRD15.md (marked US-004 complete)
+
+Learnings for future iterations:
+- Anthropic SDK returns content blocks as union types - must check hasattr(block, 'text') before accessing
+- Mock API calls in tests to avoid requiring actual API keys and incurring costs
+- JSON responses may be wrapped in markdown code blocks - use regex to extract
+- Token counting is straightforward: usage.input_tokens + usage.output_tokens
+- Use __new__ pattern in tests to bypass __init__ when mocking dependencies
+- Keep context limits in mind: truncate text to ~40-50k chars before sending to API
+---
