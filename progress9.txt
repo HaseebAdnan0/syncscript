@@ -834,3 +834,31 @@ Learnings for future iterations:
 - Query invalidation pattern: queryClient.invalidateQueries({ queryKey: [...] })
 - Status returned from hook allows parent to show connection state indicators if needed
 ---
+
+## Iteration 27 - US-028: Create useAnnotationsWebSocket hook
+- Created useAnnotationsWebSocket hook at frontend/src/hooks/useAnnotationsWebSocket.ts
+- Reuses existing vault WebSocket connection via useVaultSocket (no duplicate connections)
+- Listens for events: annotation.created, annotation.deleted, reply.created
+- Invalidates annotations query cache on all events using queryClient.invalidateQueries()
+- Shows subtle toast notifications when other users add annotations or replies
+- Toast shows author username: "New annotation - {username} added an annotation"
+- Optional sourceId parameter - only listens to events when sourceId is provided
+- Auto-reconnect and cleanup handled by underlying useVaultSocket hook
+- Returns { status } for connection state monitoring
+- Typecheck passes ✓
+
+Files changed:
+- frontend/src/hooks/useAnnotationsWebSocket.ts (new)
+- PRD9.md (marked US-028 complete)
+
+Learnings for future iterations:
+- Annotations WebSocket follows same pattern as useSourcesWebSocket (Iteration 26)
+- Hook accepts both vaultId and sourceId - vaultId for connection, sourceId for query invalidation
+- useEffect early return (if !sourceId) prevents event listeners when sourceId not available
+- All event listeners stored in cleanup functions for proper cleanup
+- Toast shows author username from event data: data.annotation?.author?.username
+- reply.created event includes reply object with author info in data.reply
+- Multiple event listeners need multiple cleanup function calls in useEffect return
+- Query invalidation uses only sourceId in queryKey: ['annotations', sourceId]
+- Hook pattern: early return in useEffect, multiple addEventListener calls, return cleanup functions
+---

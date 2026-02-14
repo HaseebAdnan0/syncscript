@@ -309,14 +309,14 @@ SyncScript needs a complete frontend authentication system that enables users to
 **Description:** As a user, I want a logout button so that I can securely end my session.
 
 **Acceptance Criteria:**
-- [ ] Add user dropdown/menu to app header (or create minimal header if none exists)
-- [ ] Show user name/avatar when authenticated
-- [ ] Dropdown includes "Logout" option
-- [ ] On click, call `useAuth().logout()`
-- [ ] Show loading state briefly
-- [ ] On success, redirect to `/login` and show toast "Logged out successfully"
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Add user dropdown/menu to app header (or create minimal header if none exists)
+- [x] Show user name/avatar when authenticated
+- [x] Dropdown includes "Logout" option
+- [x] On click, call `useAuth().logout()`
+- [x] Show loading state briefly
+- [x] On success, redirect to `/login` and show toast "Logged out successfully"
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 

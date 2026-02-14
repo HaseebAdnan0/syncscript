@@ -5,11 +5,12 @@ import { useParams, useRouter } from 'next/navigation';
 import { useVault } from '@/hooks/useVaults';
 import { useSourcesQuery } from '@/hooks/useSourcesQuery';
 import { useSourcesViewPreference } from '@/hooks/useSourcesViewPreference';
+import { useSourcesWebSocket } from '@/hooks/useSourcesWebSocket';
 import { SourcesListHeader } from '@/components/features/sources/SourcesListHeader';
 import { SourcesFilterBar } from '@/components/features/sources/SourcesFilterBar';
 import { SourcesList } from '@/components/features/sources/SourcesList';
 import { AddSourceModal } from '@/components/features/sources/AddSourceModal';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Wifi, WifiOff } from 'lucide-react';
 
 export default function SourcesPage() {
   const params = useParams();
@@ -29,6 +30,9 @@ export default function SourcesPage() {
 
   // Add source modal state
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  // Real-time updates via WebSocket
+  const { status } = useSourcesWebSocket({ vaultId });
 
   // Update page title
   useEffect(() => {
@@ -75,10 +79,32 @@ export default function SourcesPage() {
             <span>Back to {vault.name}</span>
           </button>
 
-          {/* Page title */}
-          <h1 className="text-3xl font-bold font-heading text-white">
-            {vault.name} / Sources
-          </h1>
+          {/* Page title with connection status */}
+          <div className="flex items-center gap-4">
+            <h1 className="text-3xl font-bold font-heading text-white">
+              {vault.name} / Sources
+            </h1>
+
+            {/* Subtle connection status indicator */}
+            {status === 'connected' && (
+              <div className="flex items-center gap-2 px-3 py-1 bg-green-500/10 border border-green-500/30 rounded-full">
+                <Wifi className="w-3.5 h-3.5 text-green-400" />
+                <span className="text-xs text-green-400">Live</span>
+              </div>
+            )}
+            {status === 'connecting' && (
+              <div className="flex items-center gap-2 px-3 py-1 bg-[#F7931A]/10 border border-[#F7931A]/30 rounded-full">
+                <Wifi className="w-3.5 h-3.5 text-[#F7931A] animate-pulse" />
+                <span className="text-xs text-[#F7931A]">Connecting...</span>
+              </div>
+            )}
+            {status === 'disconnected' && (
+              <div className="flex items-center gap-2 px-3 py-1 bg-red-500/10 border border-red-500/30 rounded-full">
+                <WifiOff className="w-3.5 h-3.5 text-red-400" />
+                <span className="text-xs text-red-400">Offline</span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

@@ -13,6 +13,7 @@ import { MembersList } from '@/components/features/vaults/MembersList';
 import { VaultSettings } from '@/components/features/vaults/VaultSettings';
 import { VaultDetailSkeleton } from '@/components/features/vaults/VaultDetailSkeleton';
 import { PresenceIndicator } from '@/components/features/notifications/PresenceIndicator';
+import { VaultRole } from '@/lib/types/vault';
 import * as Tabs from '@radix-ui/react-tabs';
 import { ArrowLeft } from 'lucide-react';
 
@@ -39,8 +40,8 @@ export default function VaultDetailPage() {
   const { data: membersResponse } = useVaultMembers(vaultId);
   const members = membersResponse?.results || [];
 
-  // Check user permissions
-  const permissions = vault ? useVaultPermissions(vault.user_role) : null;
+  // Check user permissions (always call hook - conditionally use result)
+  const permissions = useVaultPermissions(vault?.user_role || VaultRole.VIEWER);
 
   // Active tab from Zustand store
   const { activeTab, setActiveTab } = useVaultsStore();

@@ -672,3 +672,49 @@ Learnings for future iterations:
 - Settings tab read-only for Contributors already handled by VaultSettings component (isOwner check)
 - Role-based permissions prevent UI clutter and guide users to allowed actions
 ---
+
+## Iteration 23 - US-022: Loading skeletons for vault pages
+- Created VaultCardSkeleton component (frontend/src/components/features/vaults/VaultCardSkeleton.tsx):
+  - Matches VaultCard layout dimensions exactly
+  - Header section: title placeholder (w-2/3) + badge placeholder (w-20)
+  - Description section: 2 lines (w-full, w-3/4) with spacing
+  - Footer section: 3 stat placeholders (source count, member count, last updated)
+  - Uses bg-[#0F1115] border border-white/10 rounded-2xl for consistent card styling
+  - All placeholders use bg-white/5 for subtle contrast
+  - Component has animate-pulse class for pulsing animation
+- Created VaultDetailSkeleton component (frontend/src/components/features/vaults/VaultDetailSkeleton.tsx):
+  - Full page skeleton matching vault detail page layout
+  - Header section: back button placeholder + title (w-2/3) + description (2 lines) + presence indicator
+  - Tab list section: 3 tab placeholders (w-24 each)
+  - Content section: 3 card placeholders with title + description + metadata
+  - Uses consistent spacing and styling (py-12, px-6, max-w-7xl)
+  - Entire page has animate-pulse for cohesive loading experience
+- Integrated VaultCardSkeleton into vaults listing page:
+  - Replaced inline skeleton with VaultCardSkeleton component
+  - Shows 6 skeleton cards in responsive grid (same layout as actual cards)
+  - Header skeleton also animates (title + Create Vault button)
+- Integrated VaultDetailSkeleton into vault detail page:
+  - Replaced simple "Loading vault..." text with full page skeleton
+  - Provides much better visual feedback and perceived performance
+- Typecheck passes successfully
+- Committed changes with feat: commit message
+
+Files changed:
+- frontend/src/components/features/vaults/VaultCardSkeleton.tsx (created)
+- frontend/src/components/features/vaults/VaultDetailSkeleton.tsx (created)
+- frontend/src/app/(app)/vaults/page.tsx (integrated VaultCardSkeleton)
+- frontend/src/app/(app)/vaults/[id]/page.tsx (integrated VaultDetailSkeleton)
+- PRD8.md (marked US-022 complete except browser verification)
+
+Learnings for future iterations:
+- Loading skeletons should match exact layout of actual components (same grid, spacing, heights)
+- Use [...Array(6)].map() pattern to render multiple skeleton cards
+- Placeholder widths should vary (w-2/3, w-full, w-3/4) to look more realistic
+- animate-pulse can be on parent container or individual elements (both work)
+- Skeletons prevent layout shift and improve perceived performance significantly
+- bg-white/5 provides subtle contrast against bg-[#0F1115] background
+- Replace simple "Loading..." text with full skeleton for better UX
+- Skeleton components are reusable (e.g., VaultCardSkeleton used 6 times in grid)
+- Detail page skeletons should include all major sections (header, tabs, content)
+- Consistent styling (rounded-2xl, border-white/10) maintains design system integrity
+---
