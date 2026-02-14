@@ -250,12 +250,12 @@ Implement a global full-text search system for SyncScript that enables researche
 **Description:** As a developer, I need a hook to manage recent searches state.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/hooks/useRecentSearches.ts`
-- [ ] Fetches recent searches on mount
-- [ ] Provides `clearAll` and `removeOne` mutation functions
-- [ ] Optimistic updates for delete operations
-- [ ] Refetches on window focus
-- [ ] Typecheck passes
+- [x] Create `frontend/src/hooks/useRecentSearches.ts`
+- [x] Fetches recent searches on mount
+- [x] Provides `clearAll` and `removeOne` mutation functions
+- [x] Optimistic updates for delete operations
+- [x] Refetches on window focus
+- [x] Typecheck passes
 
 ---
 
