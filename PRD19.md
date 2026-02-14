@@ -120,11 +120,11 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a user, I want to view and update my notification preferences.
 
 **Acceptance Criteria:**
-- [ ] GET `/api/v1/notifications/preferences/` returns user's preferences
-- [ ] PATCH `/api/v1/notifications/preferences/` updates preferences
-- [ ] Auto-create preferences if missing on GET
-- [ ] Validate email_digest_frequency choices
-- [ ] Typecheck passes
+- [x] GET `/api/v1/notifications/preferences/` returns user's preferences
+- [x] PATCH `/api/v1/notifications/preferences/` updates preferences
+- [x] Auto-create preferences if missing on GET
+- [x] Validate email_digest_frequency choices
+- [x] Typecheck passes
 
 ---
 
