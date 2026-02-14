@@ -213,14 +213,14 @@ Create the complete vault management interface for SyncScript, enabling research
 **Description:** As a vault owner, I want to change a member's role so I can adjust their permissions.
 
 **Acceptance Criteria:**
-- [ ] Add role dropdown to each member row (except Owner)
-- [ ] Dropdown options: Contributor, Viewer
-- [ ] Dropdown triggers useUpdateRole mutation on change
-- [ ] Show loading state on dropdown while updating
-- [ ] On success: update UI optimistically
-- [ ] Only visible to Owner role
-- [ ] Cannot change own role or other Owner's role
-- [ ] Typecheck passes
+- [x] Add role dropdown to each member row (except Owner)
+- [x] Dropdown options: Contributor, Viewer
+- [x] Dropdown triggers useUpdateRole mutation on change
+- [x] Show loading state on dropdown while updating
+- [x] On success: update UI optimistically
+- [x] Only visible to Owner role
+- [x] Cannot change own role or other Owner's role
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-017: Remove member from vault

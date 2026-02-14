@@ -139,7 +139,7 @@ export default function VaultDetailPage() {
           </Tabs.Content>
 
           <Tabs.Content value="members">
-            <MembersList vaultId={vaultId} userRole={vault.user_role} />
+            <MembersList vaultId={vaultId} userRole={vault.user_role} currentUserId={user?.id} />
           </Tabs.Content>
 
           <Tabs.Content value="settings">

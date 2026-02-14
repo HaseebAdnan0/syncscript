@@ -298,12 +298,12 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 **Description:** As a user, I want to see replies indented under their parent annotation so I can follow the conversation.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/sources/AnnotationReplyCard.tsx`
-- [ ] Indented with left border accent (orange gradient)
-- [ ] Smaller text size than parent annotation
-- [ ] Shows author, timestamp in muted style
-- [ ] Delete button for own replies
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/sources/AnnotationReplyCard.tsx`
+- [x] Indented with left border accent (orange gradient)
+- [x] Smaller text size than parent annotation
+- [x] Shows author, timestamp in muted style
+- [x] Delete button for own replies
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---

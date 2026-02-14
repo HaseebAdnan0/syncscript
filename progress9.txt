@@ -503,3 +503,41 @@ Learnings for future iterations:
 - lucide-react icons: ZoomIn, ZoomOut, Download, Maximize, Minimize
 - Fixed positioning at top-20 accounts for app header height
 ---
+
+## Iteration 18 - US-019: Create AnnotationCard component
+- Created AnnotationCard component at frontend/src/components/features/sources/AnnotationCard.tsx
+- Implemented glass morphism style: backdrop-blur-lg bg-white/5 border border-white/10 rounded-xl
+- Card displays annotation text, author avatar (gradient circle with first letter), timestamp in muted style
+- Author info shows username and formatted date/time: "MMM d, yyyy • h:mm a"
+- Optional page number badge shows when annotation.pageNumber exists (orange themed pill)
+- Reply count indicator with expand/collapse toggle shows "N replies • Show/Hide"
+- Expanded replies section uses left border accent (border-l-2 border-[#F7931A]/30) for visual nesting
+- Replies displayed inline within expanded section with smaller avatars and text
+- Hover state (tracked via useState) shows quick action buttons: reply, edit, delete
+- Action buttons use glass morphism pill style with icon-only design
+- Reply and Edit buttons use white/5 bg, Delete button uses red-themed styling (bg-red-500/10)
+- All buttons conditional on props: onReply, canEdit+onEdit, canDelete+onDelete for parent control
+- Card hover effect: border-[#F7931A]/50 transition
+- Reply formatting uses smaller text (text-xs) and lighter opacity (text-white/80) vs parent annotation
+- Typecheck passes ✓
+
+Files changed:
+- frontend/src/components/features/sources/AnnotationCard.tsx (new)
+- PRD9.md (marked US-019 complete except browser verification)
+
+Learnings for future iterations:
+- Glass morphism cards use backdrop-blur-lg for blur effect on backgrounds
+- Hover state managed via useState with onMouseEnter/onMouseLeave for precise control
+- Action buttons only appear when isHovered is true - provides clean UI until interaction
+- Reply expansion uses border-left accent for visual nesting rather than full indentation
+- Inline replies displayed within parent card's expansion - no separate AnnotationReplyCard needed yet
+- Author avatar uses gradient circle (from-[#EA580C] to-[#F7931A]) with first letter
+- Timestamp format includes both date and time for annotation context: 'MMM d, yyyy • h:mm a'
+- Page number badge uses same orange theming as other badges for consistency
+- Reply count toggle shows current state (Show/Hide) for clear user feedback
+- Delete button gets destructive red styling (bg-red-500/10 border-red-500/30 text-red-400)
+- Optional callbacks pattern allows parent to control which actions are available
+- lucide-react icons: MessageCircle (replies), Edit2 (edit), Trash2 (delete)
+- Annotation type has author property with nested user object: { id, username, email }
+- Annotation type has optional replies array with AnnotationReply objects
+---

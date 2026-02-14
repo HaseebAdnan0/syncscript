@@ -1,17 +1,24 @@
 'use client';
 
 import { useState } from 'react';
-import { useVaultMembers } from '@/hooks/useVaultMembers';
+import { useVaultMembers, useUpdateRole } from '@/hooks/useVaultMembers';
 import { VaultRole } from '@/lib/types/vault';
 import { Badge } from '@/components/ui/badge';
-import { Users, UserPlus } from 'lucide-react';
+import { Users, UserPlus, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import GradientButton from '@/components/ui/GradientButton';
 import AddMemberModal from './AddMemberModal';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface MembersListProps {
   vaultId: number;
   userRole?: VaultRole;
+  currentUserId?: number;
 }
 
 // Get role badge colors
@@ -48,9 +55,11 @@ function sortMembers(members: any[]) {
   });
 }
 
-export function MembersList({ vaultId, userRole }: MembersListProps) {
+export function MembersList({ vaultId, userRole, currentUserId }: MembersListProps) {
   const { data: membersResponse, isLoading, error } = useVaultMembers(vaultId);
+  const updateRoleMutation = useUpdateRole(vaultId);
   const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
+  const [updatingMemberId, setUpdatingMemberId] = useState<number | null>(null);
 
   // Extract members from paginated response
   const members = membersResponse?.results || [];
@@ -58,6 +67,21 @@ export function MembersList({ vaultId, userRole }: MembersListProps) {
 
   // Check if user is owner
   const isOwner = userRole === VaultRole.OWNER;
+
+  // Handle role change
+  const handleRoleChange = async (memberId: number, newRole: VaultRole) => {
+    setUpdatingMemberId(memberId);
+    try {
+      await updateRoleMutation.mutateAsync({
+        memberId,
+        data: { role: newRole },
+      });
+    } catch (error) {
+      console.error('Failed to update member role:', error);
+    } finally {
+      setUpdatingMemberId(null);
+    }
+  };
 
   // Loading state
   if (isLoading) {
@@ -117,43 +141,86 @@ export function MembersList({ vaultId, userRole }: MembersListProps) {
       )}
 
       <div className="space-y-4">
-        {sortedMembers.map((member) => (
-        <div
-          key={member.id}
-          className="bg-[#0F1115] border border-white/10 rounded-2xl p-6 hover:-translate-y-1 hover:border-[#F7931A]/50 transition-all"
-        >
-          <div className="flex items-center gap-4">
-            {/* Avatar with initials */}
-            <div className="w-12 h-12 bg-gradient-to-br from-[#F7931A] to-[#EA580C] rounded-full flex items-center justify-center shrink-0">
-              <span className="text-white font-bold text-lg">
-                {getInitials(member.user_name)}
-              </span>
+        {sortedMembers.map((member) => {
+          const isCurrentUser = currentUserId === member.user_id;
+          const isMemberOwner = member.role === VaultRole.OWNER;
+          const canChangeRole = isOwner && !isMemberOwner && !isCurrentUser;
+          const isUpdating = updatingMemberId === member.id;
+
+          return (
+            <div
+              key={member.id}
+              className="bg-[#0F1115] border border-white/10 rounded-2xl p-6 hover:-translate-y-1 hover:border-[#F7931A]/50 transition-all"
+            >
+              <div className="flex items-center gap-4">
+                {/* Avatar with initials */}
+                <div className="w-12 h-12 bg-gradient-to-br from-[#F7931A] to-[#EA580C] rounded-full flex items-center justify-center shrink-0">
+                  <span className="text-white font-bold text-lg">
+                    {getInitials(member.user_name)}
+                  </span>
+                </div>
+
+                {/* Member info */}
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-white font-semibold text-lg truncate">
+                    {member.user_name}
+                  </h3>
+                  <p className="text-[#94A3B8] text-sm truncate">
+                    {member.user_email}
+                  </p>
+                </div>
+
+                {/* Role dropdown or badge */}
+                {canChangeRole ? (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger
+                      disabled={isUpdating}
+                      className={cn(
+                        'flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all',
+                        getRoleBadgeStyles(member.role),
+                        isUpdating && 'opacity-50 cursor-not-allowed'
+                      )}
+                    >
+                      <span className="text-sm font-medium">
+                        {isUpdating ? 'Updating...' : member.role}
+                      </span>
+                      <ChevronDown className="w-4 h-4" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        onClick={() => handleRoleChange(member.id, VaultRole.CONTRIBUTOR)}
+                        className={cn(
+                          member.role === VaultRole.CONTRIBUTOR && 'bg-white/10'
+                        )}
+                      >
+                        Contributor
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => handleRoleChange(member.id, VaultRole.VIEWER)}
+                        className={cn(
+                          member.role === VaultRole.VIEWER && 'bg-white/10'
+                        )}
+                      >
+                        Viewer
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                ) : (
+                  <Badge className={cn('shrink-0', getRoleBadgeStyles(member.role))}>
+                    {member.role}
+                  </Badge>
+                )}
+
+                {/* Pending status badge (if applicable) */}
+                {member.is_pending && (
+                  <Badge className="shrink-0 bg-yellow-500/20 text-yellow-400 border-yellow-500/30">
+                    Pending
+                  </Badge>
+                )}
+              </div>
             </div>
-
-            {/* Member info */}
-            <div className="flex-1 min-w-0">
-              <h3 className="text-white font-semibold text-lg truncate">
-                {member.user_name}
-              </h3>
-              <p className="text-[#94A3B8] text-sm truncate">
-                {member.user_email}
-              </p>
-            </div>
-
-            {/* Role badge */}
-            <Badge className={cn('shrink-0', getRoleBadgeStyles(member.role))}>
-              {member.role}
-            </Badge>
-
-            {/* Pending status badge (if applicable) */}
-            {member.is_pending && (
-              <Badge className="shrink-0 bg-yellow-500/20 text-yellow-400 border-yellow-500/30">
-                Pending
-              </Badge>
-            )}
-          </div>
-        </div>
-      ))}
+          );
+        })}
       </div>
 
       {/* Add Member Modal */}
