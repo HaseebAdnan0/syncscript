@@ -282,15 +282,15 @@ Add social authentication to SyncScript using Google and GitHub OAuth providers.
 **Description:** As a GitHub user with a private email, I need to provide my email to complete registration.
 
 **Acceptance Criteria:**
-- [ ] Create `components/features/auth/EmailPromptModal.tsx`
-- [ ] Display: "GitHub couldn't provide your email"
-- [ ] Email input field with validation
-- [ ] "Complete Registration" button, "Cancel" button
-- [ ] Call `POST /api/v1/auth/oauth/complete-email/` on submit
-- [ ] Handle `link_required` response: show linking modal instead
-- [ ] On success: close modal, redirect to dashboard
-- [ ] On validation error: show inline message
-- [ ] Typecheck passes
+- [x] Create `components/features/auth/EmailPromptModal.tsx`
+- [x] Display: "GitHub couldn't provide your email"
+- [x] Email input field with validation
+- [x] "Complete Registration" button, "Cancel" button
+- [x] Call `POST /api/v1/auth/oauth/complete-email/` on submit
+- [x] Handle `link_required` response: show linking modal instead
+- [x] On success: close modal, redirect to dashboard
+- [x] On validation error: show inline message
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---

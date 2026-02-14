@@ -277,3 +277,35 @@ In Progress - US-004 complete
   - Custom URL path patterns: @action(detail=False, url_path='muted-vaults/(?P<vault_id>[^/.]+)')
   - DELETE endpoints should be idempotent (204 even if resource doesn't exist)
 ---
+
+## Iteration 11 - US-011: Create Notification Helper Service
+- Created apps/notifications/services.py with create_notification() function
+- Implements vault muting check: skip notification if vault_id in data and vault is muted
+- Implements user preference checks:
+  - vault_invite: always sent (no preference to disable)
+  - member_joined, source_added: check email_vault_activity
+  - annotation_reply, mention: check email_mentions
+- Auto-creates NotificationPreferences using get_or_create if missing
+- Returns created Notification or None if skipped due to mute/preferences
+- Added comprehensive test suite with 7 test cases:
+  - Successful notification creation
+  - Muted vault skipping
+  - Preference-based filtering (vault_activity, mentions)
+  - Vault invites always sent regardless of preferences
+  - Notifications without vault_id
+  - Auto-creation of preferences
+- Fixed unrelated import error: added missing AskQuestionSerializer to apps.ai.serializers
+- All tests pass (46/46), commit dd3eed8
+- Files changed:
+  - backend/apps/notifications/services.py (new)
+  - backend/apps/notifications/tests.py (added NotificationServiceTestCase)
+  - backend/apps/ai/serializers.py (fixed import error)
+  - PRD19.md (marked US-011 complete)
+- Learnings for future iterations:
+  - Service functions should be stateless and pure (no side effects beyond creating notification)
+  - Use get_or_create() to handle missing related objects gracefully
+  - Preference checking logic should be explicit per notification type
+  - Return None for skipped notifications to allow callers to track skip reasons
+  - Test both positive and negative cases (create vs skip) for each condition
+  - Always fix blocking import errors before running tests
+---
