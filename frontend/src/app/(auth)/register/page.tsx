@@ -2,15 +2,119 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { FormInput } from '@/components/ui/FormInput';
 import GradientButton from '@/components/ui/GradientButton';
 import GlassCard from '@/components/ui/GlassCard';
+import { PasswordStrength } from '@/components/ui/PasswordStrength';
+import { useAuth } from '@/hooks/useAuth';
+import { toast } from '@/hooks/useToast';
 
 export default function RegisterPage() {
+  const router = useRouter();
+  const { register } = useAuth();
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [errors, setErrors] = useState<{
+    name?: string;
+    email?: string;
+    password?: string;
+    confirmPassword?: string;
+  }>({});
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Validate email format
+  const validateEmail = (email: string): boolean => {
+    if (!email) {
+      return false;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  // Validate form
+  const validate = (): boolean => {
+    const newErrors: {
+      name?: string;
+      email?: string;
+      password?: string;
+      confirmPassword?: string;
+    } = {};
+
+    // Name validation
+    if (!name) {
+      newErrors.name = 'Name is required';
+    } else if (name.length < 2) {
+      newErrors.name = 'Name must be at least 2 characters';
+    }
+
+    // Email validation
+    if (!email) {
+      newErrors.email = 'Email is required';
+    } else if (!validateEmail(email)) {
+      newErrors.email = 'Please enter a valid email address';
+    }
+
+    // Password validation
+    if (!password) {
+      newErrors.password = 'Password is required';
+    } else if (password.length < 8) {
+      newErrors.password = 'Password must be at least 8 characters';
+    }
+
+    // Confirm password validation
+    if (!confirmPassword) {
+      newErrors.confirmPassword = 'Please confirm your password';
+    } else if (confirmPassword !== password) {
+      newErrors.confirmPassword = 'Passwords do not match';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Validate form
+    if (!validate()) {
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const result = await register({
+        email,
+        password,
+        username: email, // Use email as username for now
+        first_name: name,
+      });
+
+      if (result.success) {
+        // Show success toast
+        toast({
+          title: 'Account Created',
+          description: 'Welcome to SyncScript! Redirecting to dashboard...',
+        });
+
+        // Auto-login and redirect to dashboard
+        router.push('/dashboard');
+      } else {
+        // Show error toast
+        toast({
+          title: 'Registration Failed',
+          description: result.error || 'Failed to create account. Please try again.',
+        });
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <GlassCard className="w-full max-w-md p-8">
@@ -25,7 +129,7 @@ export default function RegisterPage() {
       </div>
 
       {/* Registration Form */}
-      <form className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6">
         {/* Name Input */}
         <FormInput
           label="Name"
@@ -34,6 +138,7 @@ export default function RegisterPage() {
           autoComplete="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          error={errors.name}
         />
 
         {/* Email Input */}
@@ -44,17 +149,22 @@ export default function RegisterPage() {
           autoComplete="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          error={errors.email}
         />
 
-        {/* Password Input */}
-        <FormInput
-          label="Password"
-          type="password"
-          placeholder="Create a password"
-          autoComplete="new-password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        {/* Password Input with Strength Indicator */}
+        <div>
+          <FormInput
+            label="Password"
+            type="password"
+            placeholder="Create a password"
+            autoComplete="new-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            error={errors.password}
+          />
+          <PasswordStrength password={password} />
+        </div>
 
         {/* Confirm Password Input */}
         <FormInput
@@ -64,10 +174,11 @@ export default function RegisterPage() {
           autoComplete="new-password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
+          error={errors.confirmPassword}
         />
 
         {/* Submit Button */}
-        <GradientButton type="submit" className="w-full">
+        <GradientButton type="submit" className="w-full" isLoading={isLoading}>
           Create Account
         </GradientButton>
       </form>
