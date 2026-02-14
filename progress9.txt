@@ -47,3 +47,29 @@ Learnings for future iterations:
 - Glass morphism: backdrop-blur-lg bg-white/5 border border-white/10
 
 ---
+## Iteration 2 - US-002: Create SourceCard component
+- Created SourceCard component at frontend/src/components/features/sources/SourceCard.tsx
+- Implemented glass morphism styling: bg-[#0F1115] border border-white/10 rounded-2xl
+- Displays source title, type badge (using default Badge variant), contributor avatar (gradient circle), and created date
+- Shows truncated URL or citation preview (80 char limit with ellipsis)
+- Hover effect: -translate-y-1 and border-[#F7931A]/50 with transition-all duration-300
+- Links to /vaults/{vaultId}/sources/{source.id} for detail page navigation
+- Installed date-fns package for date formatting (format function)
+- Typecheck passes ✓
+
+Files changed:
+- frontend/src/components/features/sources/SourceCard.tsx (new)
+- frontend/package.json (added date-fns dependency)
+- frontend/package-lock.json (updated with date-fns)
+- PRD9.md (marked US-002 complete except browser verification)
+
+Learnings for future iterations:
+- Source type uses camelCase properties: source.type, source.createdAt (not snake_case)
+- Badge component supports variants: default, success, warning, error (no outline variant)
+- date-fns format() function used for date display: format(new Date(source.createdAt), 'MMM d, yyyy')
+- Contributor avatar rendered as gradient circle with first letter of username
+- Muted text color is #94A3B8 (Stardust) from design tokens
+- Glass morphism cards use specific hover transitions matching design system
+- SourceMetadata can have unknown keys via index signature, need type assertion for citation
+---
+

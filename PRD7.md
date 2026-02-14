@@ -60,12 +60,12 @@ SyncScript needs a complete frontend authentication system that enables users to
 **Description:** As a developer, I need an auth provider component so that user state is hydrated on app load.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/providers/AuthProvider.tsx`
-- [ ] On mount, call `refreshUser()` to check existing session
-- [ ] Show loading spinner while checking auth
-- [ ] Wrap children once auth check completes
-- [ ] Add to root layout
-- [ ] Typecheck passes
+- [x] Create `frontend/src/providers/AuthProvider.tsx`
+- [x] On mount, call `refreshUser()` to check existing session
+- [x] Show loading spinner while checking auth
+- [x] Wrap children once auth check completes
+- [x] Add to root layout
+- [x] Typecheck passes
 
 ---
 
