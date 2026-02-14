@@ -1,10 +1,21 @@
 """Views for annotations app"""
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.pagination import PageNumberPagination
 from apps.annotations.models import Annotation
 from apps.annotations.serializers import AnnotationSerializer
 from apps.annotations.permissions import IsAuthorOrReadOnly
 from apps.vaults.models import Vault, VaultMembership
+
+
+class AnnotationPagination(PageNumberPagination):
+    """
+    Custom pagination for annotations (US-030).
+    50 top-level annotations per page.
+    """
+    page_size = 50
+    page_size_query_param = 'page_size'
+    max_page_size = 100
 
 
 class AnnotationViewSet(viewsets.ModelViewSet):
@@ -15,16 +26,24 @@ class AnnotationViewSet(viewsets.ModelViewSet):
     queryset = Annotation.objects.all()
     serializer_class = AnnotationSerializer
     permission_classes = [IsAuthenticated, IsAuthorOrReadOnly]
+    pagination_class = AnnotationPagination
 
     def perform_create(self, serializer):
         """
         Override perform_create to set user from request.user automatically (US-029).
+        For nested routes, also sets source from URL source_pk (US-031).
         """
-        serializer.save(user=self.request.user)
+        # Check if this is a nested route (sources/{source_pk}/annotations/)
+        source_pk = self.kwargs.get('source_pk')
+        if source_pk:
+            serializer.save(user=self.request.user, source_id=source_pk)
+        else:
+            serializer.save(user=self.request.user)
 
     def get_queryset(self):
         """
         Override get_queryset to filter by sources in user's vaults (US-029).
+        For nested routes, also filters by source_pk and parent=None (US-030).
         Returns only annotations from sources in vaults where user is owner or member.
         """
         user = self.request.user
@@ -38,7 +57,17 @@ class AnnotationViewSet(viewsets.ModelViewSet):
         # Combine both sets of vault IDs
         accessible_vault_ids = list(owned_vault_ids) + list(member_vault_ids)
 
-        # Filter annotations by sources in accessible vaults
-        return Annotation.objects.filter(
+        # Base queryset: annotations from accessible vaults
+        queryset = Annotation.objects.filter(
             source__vault_id__in=accessible_vault_ids
         )
+
+        # If this is a nested route (sources/{source_pk}/annotations/), filter by source and parent=None
+        source_pk = self.kwargs.get('source_pk')
+        if source_pk:
+            # For nested routes, return only top-level annotations (parent=None) for this source
+            queryset = queryset.filter(source_id=source_pk, parent=None)
+            # Add prefetch_related for performance (US-030)
+            queryset = queryset.prefetch_related('replies')
+
+        return queryset

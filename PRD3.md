@@ -401,12 +401,12 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need GET `/api/v1/sources/{source_id}/annotations/` with threaded structure.
 
 **Acceptance Criteria:**
-- [ ] Add nested route: `sources/{source_id}/annotations/`
-- [ ] Override `get_queryset()` to filter by source_id and parent=None (top-level only)
-- [ ] Use `prefetch_related('replies')` for performance
-- [ ] Return nested structure with replies included
-- [ ] Pagination: 50 top-level annotations per page
-- [ ] Typecheck passes
+- [x] Add nested route: `sources/{source_id}/annotations/`
+- [x] Override `get_queryset()` to filter by source_id and parent=None (top-level only)
+- [x] Use `prefetch_related('replies')` for performance
+- [x] Return nested structure with replies included
+- [x] Pagination: 50 top-level annotations per page
+- [x] Typecheck passes
 
 ---
 
