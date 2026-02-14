@@ -1,10 +1,11 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from dirtyfields import DirtyFieldsMixin
 from apps.sources.models import Source
 from apps.users.models import User
 
 
-class Annotation(models.Model):
+class Annotation(DirtyFieldsMixin, models.Model):
     source = models.ForeignKey(Source, on_delete=models.CASCADE, related_name='annotations')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='annotations')
     content = models.TextField()

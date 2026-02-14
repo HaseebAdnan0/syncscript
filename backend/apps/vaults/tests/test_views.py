@@ -50,15 +50,17 @@ class VaultViewSetTest(TestCase):
 
         vault = Vault.objects.get(id=response.data['id'])
         self.assertEqual(vault.owner, self.owner)
+        # Verify owner membership was auto-created by signal
+        self.assertTrue(
+            VaultMembership.objects.filter(
+                vault=vault, user=self.owner, role=RoleChoices.OWNER
+            ).exists()
+        )
 
     def test_list_vaults_shows_owned_vaults(self):
         """Test that list returns vaults owned by user."""
         vault = Vault.objects.create(name='Owner Vault', owner=self.owner)
-        VaultMembership.objects.create(
-            vault=vault,
-            user=self.owner,
-            role=RoleChoices.OWNER
-        )
+        # Owner membership auto-created by signal
 
         self.client.force_authenticate(user=self.owner)
         response = self.client.get('/api/v1/vaults/')
@@ -67,10 +69,9 @@ class VaultViewSetTest(TestCase):
 
     def test_list_vaults_filter_by_archived(self):
         """Test filtering vaults by archived status."""
-        vault1 = Vault.objects.create(name='Active', owner=self.owner, is_archived=False)
-        vault2 = Vault.objects.create(name='Archived', owner=self.owner, is_archived=True)
-        VaultMembership.objects.create(vault=vault1, user=self.owner, role=RoleChoices.OWNER)
-        VaultMembership.objects.create(vault=vault2, user=self.owner, role=RoleChoices.OWNER)
+        Vault.objects.create(name='Active', owner=self.owner, is_archived=False)
+        Vault.objects.create(name='Archived', owner=self.owner, is_archived=True)
+        # Owner memberships auto-created by signal
 
         self.client.force_authenticate(user=self.owner)
 
@@ -86,10 +87,11 @@ class VaultViewSetTest(TestCase):
 
     def test_list_vaults_filter_by_role(self):
         """Test filtering vaults by user role."""
-        vault1 = Vault.objects.create(name='Owned', owner=self.owner)
-        vault2 = Vault.objects.create(name='Contributed', owner=self.contributor)
+        Vault.objects.create(name='Owned', owner=self.owner)
+        # Owner membership auto-created by signal for vault1
 
-        VaultMembership.objects.create(vault=vault1, user=self.owner, role=RoleChoices.OWNER)
+        vault2 = Vault.objects.create(name='Contributed', owner=self.contributor)
+        # Add self.owner as contributor to vault2
         VaultMembership.objects.create(vault=vault2, user=self.owner, role=RoleChoices.CONTRIBUTOR)
 
         self.client.force_authenticate(user=self.owner)
@@ -102,7 +104,7 @@ class VaultViewSetTest(TestCase):
     def test_non_owner_cannot_update_vault(self):
         """Test that non-owners get 403 on update."""
         vault = Vault.objects.create(name='Test', owner=self.owner)
-        VaultMembership.objects.create(vault=vault, user=self.owner, role=RoleChoices.OWNER)
+        # Owner membership auto-created by signal
         VaultMembership.objects.create(vault=vault, user=self.contributor, role=RoleChoices.CONTRIBUTOR)
 
         self.client.force_authenticate(user=self.contributor)
@@ -112,7 +114,7 @@ class VaultViewSetTest(TestCase):
     def test_non_owner_cannot_delete_vault(self):
         """Test that non-owners get 403 on delete."""
         vault = Vault.objects.create(name='Test', owner=self.owner)
-        VaultMembership.objects.create(vault=vault, user=self.owner, role=RoleChoices.OWNER)
+        # Owner membership auto-created by signal
         VaultMembership.objects.create(vault=vault, user=self.contributor, role=RoleChoices.CONTRIBUTOR)
 
         self.client.force_authenticate(user=self.contributor)
@@ -122,7 +124,7 @@ class VaultViewSetTest(TestCase):
     def test_archive_action(self):
         """Test archive action sets is_archived to True."""
         vault = Vault.objects.create(name='Test', owner=self.owner)
-        VaultMembership.objects.create(vault=vault, user=self.owner, role=RoleChoices.OWNER)
+        # Owner membership auto-created by signal
 
         self.client.force_authenticate(user=self.owner)
         response = self.client.post(f'/api/v1/vaults/{vault.id}/archive/')
@@ -135,7 +137,7 @@ class VaultViewSetTest(TestCase):
     def test_restore_action(self):
         """Test restore action sets is_archived to False."""
         vault = Vault.objects.create(name='Test', owner=self.owner, is_archived=True)
-        VaultMembership.objects.create(vault=vault, user=self.owner, role=RoleChoices.OWNER)
+        # Owner membership auto-created by signal
 
         self.client.force_authenticate(user=self.owner)
         response = self.client.post(f'/api/v1/vaults/{vault.id}/restore/')
@@ -167,10 +169,10 @@ class VaultMembershipViewSetTest(TestCase):
             password='testpass123'
         )
         self.vault = Vault.objects.create(name='Test Vault', owner=self.owner)
-        self.owner_membership = VaultMembership.objects.create(
+        # Owner membership auto-created by signal - get it for reference
+        self.owner_membership = VaultMembership.objects.get(
             vault=self.vault,
-            user=self.owner,
-            role=RoleChoices.OWNER
+            user=self.owner
         )
 
     def test_add_member_creates_membership(self):

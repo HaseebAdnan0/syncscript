@@ -1,6 +1,7 @@
 import uuid
 from django.db import models
 from django.contrib.auth import get_user_model
+from dirtyfields import DirtyFieldsMixin
 
 User = get_user_model()
 
@@ -13,7 +14,7 @@ class SourceType(models.TextChoices):
     DATASET = 'DATASET', 'Dataset'
 
 
-class Source(models.Model):
+class Source(DirtyFieldsMixin, models.Model):
     id: int  # Auto-generated primary key
     vault = models.ForeignKey(
         'vaults.Vault',

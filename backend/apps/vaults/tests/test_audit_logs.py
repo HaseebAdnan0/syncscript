@@ -118,11 +118,7 @@ class AuditLogViewSetTest(TestCase):
             password='testpass123'
         )
         self.vault = Vault.objects.create(name='Test Vault', owner=self.owner)
-        VaultMembership.objects.create(
-            vault=self.vault,
-            user=self.owner,
-            role=RoleChoices.OWNER
-        )
+        # Owner membership is auto-created by signal
 
     def test_member_can_view_audit_logs(self):
         """Test vault members can view audit logs."""

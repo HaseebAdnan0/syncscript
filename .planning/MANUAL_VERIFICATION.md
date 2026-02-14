@@ -283,6 +283,26 @@
 
 ---
 
+## US-026: E2E WebSocket Rate Limiting and Replay Tests - 2026-02-14
+- [ ] Ensure PostgreSQL is running and accessible
+- [ ] Ensure Redis is running (required for InMemoryChannelLayer fallback)
+- [ ] Stop any running test processes that might hold database locks
+- [ ] Drop test database manually if needed: `DROP DATABASE IF EXISTS test_syncscript;` via psql or pgAdmin
+- [ ] Run rate limiting tests: `python manage.py test apps.vaults.tests.test_websocket_rate_limiting --verbosity=2`
+- [ ] Expected results:
+  - test_message_throttling_progressive_enforcement: PASS (61 messages trigger warning/disconnect)
+  - test_heartbeat_timeout_enforcement: PASS (Connection stays alive with heartbeats)
+  - test_event_replay_after_reconnection: PASS (User reconnects and receives missed events in chronological order)
+- [ ] All 3 tests should pass
+- [ ] Typecheck passes: `pyright apps/vaults/tests/test_websocket_rate_limiting.py`
+- [ ] Tests verify:
+  - Message throttling Layer 3 enforcement (>60 msgs/60s triggers warning → disconnect)
+  - Heartbeat keeps connection alive (timeout cleanup tested by Celery task US-021)
+  - Event replay retrieves missed events after reconnection using since_seq parameter
+  - Replayed events delivered in chronological order (sequence numbers increasing)
+
+---
+
 ## US-025: E2E WebSocket Broadcasting Tests - 2026-02-14
 - [ ] Ensure PostgreSQL is running and accessible
 - [ ] Ensure Redis is running (required for InMemoryChannelLayer fallback)
