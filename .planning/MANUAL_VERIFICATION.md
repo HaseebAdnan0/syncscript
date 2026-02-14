@@ -345,3 +345,145 @@
   - Multiple concurrent users can all receive broadcasts reliably
   - CELERY_TASK_ALWAYS_EAGER=True ensures synchronous execution in tests
 
+
+## PRD10: Real-time Updates & Notifications Integration - 2026-02-14
+
+### US-009: Toast notification system for vault events
+- [ ] Open two browser tabs/windows logged in as different users
+- [ ] Navigate both to the same vault
+- [ ] User A: Add a new source
+- [ ] User B: Verify toast appears bottom-right: "[Username] added a new source"
+- [ ] User A: Add a member to the vault
+- [ ] User B: Verify toast appears: "[Username] joined the vault"
+- [ ] Verify toast auto-dismisses after 5 seconds
+- [ ] Verify toast has Bitcoin DeFi styling (dark bg, orange accent border)
+- [ ] Verify dismiss button works (X icon)
+
+### US-010: UnreadBadge component for header
+- [ ] Login as User A
+- [ ] Navigate to vault detail page
+- [ ] Observe bell icon in header (should show unread count badge if notifications exist)
+- [ ] Badge displays "9+" for counts > 9
+- [ ] Badge hidden when count is 0
+- [ ] Verify subtle pulse animation when count increases (trigger by having another user create activity)
+- [ ] Badge positioned top-right of bell icon
+- [ ] Orange pill badge with Bitcoin primary color (#F7931A)
+
+### US-011: NotificationPanel dropdown component
+- [ ] Login as user
+- [ ] Click bell icon in header
+- [ ] Verify dropdown panel appears below bell icon
+- [ ] Panel shows list of notifications with icon, message, timestamp
+- [ ] Unread notifications have left orange accent border
+- [ ] Click "Mark all as read" button - verify all notifications marked read
+- [ ] Click individual notification - verify it marks as read
+- [ ] Verify empty state message when no notifications
+- [ ] Panel max height with scroll, shows last 20 notifications
+- [ ] Verify glass morphism styling (backdrop-blur, white/5 bg)
+- [ ] Click outside panel - verify it closes
+- [ ] Press Escape key - verify it closes
+
+### US-012: NotificationPreferences panel for user settings
+- [ ] Navigate to /settings page
+- [ ] Locate "Notifications" section
+- [ ] Toggle "Enable notifications" switch - verify it saves to backend
+- [ ] Toggle "Browser push notifications" - verify browser permission request appears
+- [ ] Grant browser permission - verify toggle stays on
+- [ ] Toggle "Sound notifications" - verify sound preference saved to localStorage
+- [ ] Verify sound and push toggles disabled when main notifications toggle is off
+- [ ] Verify switches use Bitcoin DeFi styling (gradient orange when checked)
+- [ ] Reload page - verify preferences persist
+
+### US-013: Integrate Pusher for browser push notifications
+- [ ] Enable browser push notifications in user settings
+- [ ] Grant browser notification permission
+- [ ] Open second browser tab as different user
+- [ ] User B: Add User A to a vault (member.joined event)
+- [ ] User A: Verify native browser notification appears (even if tab not focused)
+- [ ] Click notification - verify app tab focuses and navigates to vault
+- [ ] User B: Mention @UserA in an annotation (mention.created event)
+- [ ] User A: Verify browser push notification appears
+- [ ] Verify notification has vault name and event details
+
+### US-014: Implement sound notification with global toggle
+- [ ] Ensure notification sound file exists at /sounds/notification.mp3
+- [ ] Enable sound in notification preferences
+- [ ] Trigger a vault event (source added, member joined)
+- [ ] Verify notification sound plays when toast appears
+- [ ] Disable sound in preferences
+- [ ] Trigger another event - verify no sound plays
+- [ ] Focus a different tab (app tab in background)
+- [ ] Trigger event - verify no sound plays when tab not visible
+- [ ] Return to app tab - verify sound plays for new events
+
+### US-015: Integrate notification components into app header
+- [ ] Navigate to any authenticated page (/vaults, /settings, etc.)
+- [ ] Verify app header visible at top with:
+  - SyncScript logo/brand (left)
+  - Bell icon with unread badge (right)
+  - ConnectionStatus indicator (right, when in vault)
+- [ ] Click bell icon - verify NotificationPanel dropdown opens
+- [ ] Click outside - verify panel closes
+- [ ] Press Escape - verify panel closes
+- [ ] Verify header is sticky (stays visible when scrolling)
+- [ ] Verify glass morphism styling (backdrop-blur, dark bg)
+
+### US-016: Integrate PresenceIndicator into vault detail page
+- [ ] Open vault detail page as User A
+- [ ] Open same vault in second tab/window as User B
+- [ ] Verify PresenceIndicator shows both users (2 avatars)
+- [ ] Verify active members have green dot with animate-ping effect
+- [ ] Hover over avatar - verify tooltip shows member name
+- [ ] Close User B's tab - wait 60 seconds
+- [ ] User A: Verify User B's avatar disappears (marked inactive)
+- [ ] Verify max 5 avatars shown, overflow as "+N"
+- [ ] Verify responsive: collapses to count-only on mobile screens
+- [ ] Verify glass morphism container styling
+
+### US-017: Add notification preferences to user settings page
+- [ ] Navigate to /settings page
+- [ ] Verify "Notifications" section exists with bell icon header
+- [ ] Verify NotificationPreferences component embedded
+- [ ] Verify section styling consistent with other settings sections
+- [ ] Verify section has description text explaining notification preferences
+- [ ] Verify all three toggle switches render properly
+- [ ] Test all preference toggles (same as US-012)
+
+### US-018: Handle WebSocket reconnection with state recovery
+- [ ] Open vault detail page as User A
+- [ ] Note current sources count and active members
+- [ ] Simulate network interruption:
+  - Open browser DevTools > Network tab
+  - Set throttling to "Offline"
+  - Wait 5 seconds
+  - Verify ConnectionStatus shows red/yellow (disconnected/reconnecting)
+- [ ] Have User B add a new source while User A offline
+- [ ] User A: Set throttling back to "No throttling"
+- [ ] Verify toast appears: "Reconnected - Syncing latest changes..."
+- [ ] Verify sources list refreshes with User B's new source
+- [ ] Verify ConnectionStatus shows green (connected)
+- [ ] Verify User A's presence heartbeat re-sent (User B sees User A online)
+- [ ] Verify no duplicate data or stale state
+
+### Expected Behavior
+- Real-time updates appear instantly without page refresh
+- Toast notifications styled with Bitcoin DeFi aesthetic (dark, orange accents)
+- Unread badge shows accurate count, updates in real-time
+- Notification panel shows history, mark-as-read functionality works
+- Browser push works for high-priority events (member.joined, mention.created)
+- Sound plays only when enabled and tab is visible
+- Presence indicators show active collaborators with animate-ping effect
+- Reconnection recovers state gracefully, syncs latest data, re-establishes presence
+- All components keyboard accessible (Escape to close dropdowns)
+
+### Prerequisites
+1. Backend WebSocket server running (Daphne or uvicorn)
+2. Redis running for channel layer
+3. Pusher account configured with valid credentials in .env
+4. Notification sound file placed at frontend/public/sounds/notification.mp3
+5. Two user accounts and at least one shared vault for testing
+6. Environment variables set:
+   - NEXT_PUBLIC_WS_URL (WebSocket endpoint)
+   - NEXT_PUBLIC_PUSHER_KEY
+   - NEXT_PUBLIC_PUSHER_CLUSTER
+
