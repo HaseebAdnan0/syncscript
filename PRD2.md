@@ -326,9 +326,9 @@ Create a secure, collaborative Knowledge Vault system where researchers can crea
 **Description:** As a developer, I need vaults API accessible at /api/v1/vaults/.
 
 **Acceptance Criteria:**
-- [ ] Add to config/urls.py: `path('api/v1/', include('apps.vaults.urls'))`
-- [ ] Endpoints accessible at /api/v1/vaults/
-- [ ] Typecheck passes
+- [x] Add to config/urls.py: `path('api/v1/', include('apps.vaults.urls'))`
+- [x] Endpoints accessible at /api/v1/vaults/
+- [x] Typecheck passes
 
 ### US-033: Add last owner validation to membership
 **Description:** As a system, I need to prevent removing/downgrading the last owner.
