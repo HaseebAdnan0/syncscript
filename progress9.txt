@@ -73,3 +73,16 @@ Learnings for future iterations:
 - SourceMetadata can have unknown keys via index signature, need type assertion for citation
 ---
 
+## Iteration 3 - US-003: SourceTypeBadge already implemented
+- US-003 (SourceTypeBadge component) was already completed in a previous iteration
+- Component exists at frontend/src/components/features/sources/SourceTypeBadge.tsx
+- PRD9.md already correctly marked as complete
+- No new work needed - moving to next task
+
+Learnings for future iterations:
+- Always check git history before implementing - avoid duplicate work
+- SourceTypeBadge uses lucide-react icons: Globe (URL), FileText (PDF), Quote (Citation), Newspaper (Article)
+- Badge colors use semantic mapping: blue=URL, red=PDF, purple=Citation, green=Article
+- Badge styling follows pattern: bg-{color}/20 text-{color} border-{color}/30
+---
+
