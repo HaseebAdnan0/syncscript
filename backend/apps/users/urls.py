@@ -23,6 +23,9 @@ urlpatterns = [
     path('auth/logout/', LogoutView.as_view(), name='logout'),
     path('auth/refresh/', RefreshTokenView.as_view(), name='refresh'),
 
+    # Current user endpoint (alias for profile)
+    path('auth/me/', ProfileView.as_view(), name='me'),
+
     # Password reset endpoints
     path('auth/password-reset/', PasswordResetRequestView.as_view(), name='password-reset'),
     path('auth/password-reset-confirm/', PasswordResetConfirmView.as_view(), name='password-reset-confirm'),

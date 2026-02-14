@@ -283,13 +283,13 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 **Description:** As a user, I want to see annotations displayed as elegant glass morphism cards so they're visually distinct from the document.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/sources/AnnotationCard.tsx`
-- [ ] Glass morphism style: `backdrop-blur-lg bg-white/5 border border-white/10 rounded-xl`
-- [ ] Shows annotation text, author avatar, timestamp in muted text
-- [ ] Optional page number badge if annotation linked to specific page
-- [ ] Reply count indicator with expand/collapse toggle
-- [ ] Hover shows quick action buttons (reply, edit, delete)
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/sources/AnnotationCard.tsx`
+- [x] Glass morphism style: `backdrop-blur-lg bg-white/5 border border-white/10 rounded-xl`
+- [x] Shows annotation text, author avatar, timestamp in muted text
+- [x] Optional page number badge if annotation linked to specific page
+- [x] Reply count indicator with expand/collapse toggle
+- [x] Hover shows quick action buttons (reply, edit, delete)
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---
