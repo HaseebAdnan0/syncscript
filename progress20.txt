@@ -371,3 +371,36 @@
   - GradientButton accepts className for width control: w-full md:w-auto
   - lucide-react icons: Plus, Users, BookOpen for semantic actions
 ---
+
+## Iteration 18 - Create OnboardingFlow orchestrator (US-018)
+- Created OnboardingFlow.tsx orchestrator component to manage onboarding state machine
+- Implemented switch statement to render appropriate component based on step:
+  - 'welcome' → WelcomeModal (with isOpen, userName props)
+  - 'path' → PathSelection (with onPathSelected callback)
+  - 'guided-1/2/3' → GuidedVaultWizard (handles all 3 steps internally)
+  - 'demo' → handleDemoPath() function that creates/fetches demo vault and redirects
+  - 'tutorial' → InteractiveTutorial (with onComplete, onSkip callbacks)
+  - 'complete' → CompletionCelebration (with onComplete callback)
+- Added default case to initialize onboarding with 'welcome' step if step is null
+- Implemented handleDemoPath() async function:
+  - Calls getDemoVaultStatus() to check if demo vault exists
+  - Creates demo vault if needed via createDemoVault()
+  - Navigates to demo vault via router.push()
+  - Transitions to 'tutorial' step
+- Component only renders if completed === false and user is loaded
+- Retrieves user display name from authStore: user.first_name || user.username || 'there'
+- Files changed: OnboardingFlow.tsx (new), PRD20.md, progress20.txt
+- Commit: d0e097b
+- Typecheck passes
+- Learnings for future iterations:
+  - Orchestrator pattern: single component with switch statement on step state
+  - Pass all required props to child components (WelcomeModal needs isOpen, userName)
+  - PathSelection needs onPathSelected callback even if it's a no-op
+  - GuidedVaultWizard component reads step from onboarding context (no props needed)
+  - Demo path requires async navigation: check status → create if needed → navigate → update step
+  - Type vaultId as string | number | null to handle both Django integer IDs and potential string UUIDs
+  - Early return null if completed === true or user not loaded yet
+  - Default case useful for initializing onboarding on first render
+  - Import getDemoVaultStatus and createDemoVault dynamically to avoid circular deps
+  - Error handling: fallback to tutorial step if demo vault creation fails
+---
