@@ -172,10 +172,10 @@ class RateLimitDecoratorTestCase(APITestCase):
             log_usage(self.user, 'summary', 100)
 
         # Try blocked request
-        from rest_framework.test import APIRequestFactory
+        from rest_framework.test import APIRequestFactory, force_authenticate
         factory = APIRequestFactory()
         request = factory.get('/test/')
-        request.user = self.user
+        force_authenticate(request, user=self.user)
 
         response = self.test_view(request)
         resets_at_str = response.data['resets_at']

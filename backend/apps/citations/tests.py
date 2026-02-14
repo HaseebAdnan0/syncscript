@@ -187,3 +187,209 @@ class DOILookupTests(TestCase):
         self.assertIsNotNone(result)
         assert result is not None  # Type narrowing
         self.assertEqual(result['publication_date'], '2024-01-01')
+
+
+class ISBNLookupTests(TestCase):
+    """Tests for ISBN metadata lookup service"""
+
+    def test_normalize_isbn_10_plain(self):
+        """Test normalizing plain ISBN-10"""
+        isbn = "0123456789"
+        result = normalize_isbn(isbn)
+        self.assertEqual(result, "0123456789")
+
+    def test_normalize_isbn_10_with_hyphens(self):
+        """Test normalizing ISBN-10 with hyphens"""
+        isbn = "0-123-45678-9"
+        result = normalize_isbn(isbn)
+        self.assertEqual(result, "0123456789")
+
+    def test_normalize_isbn_10_with_x(self):
+        """Test normalizing ISBN-10 with X check digit"""
+        isbn = "012345678X"
+        result = normalize_isbn(isbn)
+        self.assertEqual(result, "012345678X")
+
+    def test_normalize_isbn_13_plain(self):
+        """Test normalizing plain ISBN-13"""
+        isbn = "9780123456789"
+        result = normalize_isbn(isbn)
+        self.assertEqual(result, "9780123456789")
+
+    def test_normalize_isbn_13_with_hyphens(self):
+        """Test normalizing ISBN-13 with hyphens"""
+        isbn = "978-0-123-45678-9"
+        result = normalize_isbn(isbn)
+        self.assertEqual(result, "9780123456789")
+
+    def test_normalize_isbn_13_979_prefix(self):
+        """Test normalizing ISBN-13 with 979 prefix"""
+        isbn = "979-0-123-45678-6"
+        result = normalize_isbn(isbn)
+        self.assertEqual(result, "9790123456786")
+
+    def test_normalize_isbn_with_spaces(self):
+        """Test normalizing ISBN with spaces"""
+        isbn = "978 0 123 45678 9"
+        result = normalize_isbn(isbn)
+        self.assertEqual(result, "9780123456789")
+
+    def test_normalize_isbn_invalid(self):
+        """Test normalizing invalid ISBN returns None"""
+        self.assertIsNone(normalize_isbn("not-an-isbn"))
+        self.assertIsNone(normalize_isbn(""))
+        self.assertIsNone(normalize_isbn("123"))  # Too short
+        self.assertIsNone(normalize_isbn("9770123456789"))  # Wrong prefix
+
+    def test_normalize_isbn_with_whitespace(self):
+        """Test normalizing ISBN with whitespace"""
+        isbn = "  978-0-123-45678-9  "
+        result = normalize_isbn(isbn)
+        self.assertEqual(result, "9780123456789")
+
+    @patch('apps.citations.services.isbn_lookup.urllib.request.urlopen')
+    def test_fetch_isbn_metadata_success(self, mock_urlopen):
+        """Test successful ISBN metadata fetch"""
+        # Mock OpenLibrary API response
+        mock_response = MagicMock()
+        mock_response.read.return_value = b'''{
+            "ISBN:9780123456789": {
+                "title": "Test Book Title",
+                "authors": [
+                    {"name": "John Doe"},
+                    {"name": "Jane Smith"}
+                ],
+                "publish_date": "January 15, 2024",
+                "publishers": [{"name": "Test Publisher"}],
+                "number_of_pages": 350,
+                "identifiers": {
+                    "isbn_10": ["0123456789"],
+                    "isbn_13": ["9780123456789"]
+                }
+            }
+        }'''
+        mock_response.__enter__ = MagicMock(return_value=mock_response)
+        mock_response.__exit__ = MagicMock(return_value=False)
+        mock_urlopen.return_value = mock_response
+
+        result = fetch_isbn_metadata("9780123456789")
+
+        self.assertIsNotNone(result)
+        assert result is not None  # Type narrowing
+        self.assertEqual(result['title'], 'Test Book Title')
+        self.assertEqual(result['authors'], ['John Doe', 'Jane Smith'])
+        self.assertEqual(result['publication_date'], '2024')
+        self.assertEqual(result['publisher'], 'Test Publisher')
+        self.assertEqual(result['pages'], 350)
+        self.assertEqual(result['isbn_10'], '0123456789')
+        self.assertEqual(result['isbn_13'], '9780123456789')
+
+    @patch('apps.citations.services.isbn_lookup.urllib.request.urlopen')
+    def test_fetch_isbn_metadata_minimal(self, mock_urlopen):
+        """Test ISBN metadata fetch with minimal data"""
+        mock_response = MagicMock()
+        mock_response.read.return_value = b'''{
+            "ISBN:9780123456789": {
+                "title": "Minimal Book"
+            }
+        }'''
+        mock_response.__enter__ = MagicMock(return_value=mock_response)
+        mock_response.__exit__ = MagicMock(return_value=False)
+        mock_urlopen.return_value = mock_response
+
+        result = fetch_isbn_metadata("9780123456789")
+
+        self.assertIsNotNone(result)
+        assert result is not None  # Type narrowing
+        self.assertEqual(result['title'], 'Minimal Book')
+        self.assertEqual(result['authors'], ['Unknown'])
+        self.assertEqual(result['publication_date'], 'n.d.')
+        self.assertEqual(result['publisher'], '')
+        self.assertEqual(result['pages'], 0)
+
+    @patch('apps.citations.services.isbn_lookup.urllib.request.urlopen')
+    def test_fetch_isbn_metadata_no_title(self, mock_urlopen):
+        """Test ISBN metadata fetch fails without title"""
+        mock_response = MagicMock()
+        mock_response.read.return_value = b'''{
+            "ISBN:9780123456789": {
+                "authors": [{"name": "John Doe"}]
+            }
+        }'''
+        mock_response.__enter__ = MagicMock(return_value=mock_response)
+        mock_response.__exit__ = MagicMock(return_value=False)
+        mock_urlopen.return_value = mock_response
+
+        result = fetch_isbn_metadata("9780123456789")
+        self.assertIsNone(result)
+
+    @patch('apps.citations.services.isbn_lookup.urllib.request.urlopen')
+    def test_fetch_isbn_metadata_not_found(self, mock_urlopen):
+        """Test ISBN metadata fetch returns None when ISBN not found"""
+        mock_response = MagicMock()
+        mock_response.read.return_value = b'{}'
+        mock_response.__enter__ = MagicMock(return_value=mock_response)
+        mock_response.__exit__ = MagicMock(return_value=False)
+        mock_urlopen.return_value = mock_response
+
+        result = fetch_isbn_metadata("9999999999999")
+        self.assertIsNone(result)
+
+    @patch('apps.citations.services.isbn_lookup.urllib.request.urlopen')
+    def test_fetch_isbn_metadata_api_error(self, mock_urlopen):
+        """Test ISBN metadata fetch returns None on API error"""
+        # Simulate API error
+        import urllib.error
+        mock_urlopen.side_effect = urllib.error.URLError("API Error")
+
+        result = fetch_isbn_metadata("9780123456789")
+        self.assertIsNone(result)
+
+    def test_fetch_isbn_metadata_invalid_isbn(self):
+        """Test fetch with invalid ISBN returns None"""
+        result = fetch_isbn_metadata("not-an-isbn")
+        self.assertIsNone(result)
+
+    @patch('apps.citations.services.isbn_lookup.urllib.request.urlopen')
+    def test_fetch_isbn_metadata_isbn_10(self, mock_urlopen):
+        """Test ISBN metadata fetch with ISBN-10"""
+        mock_response = MagicMock()
+        mock_response.read.return_value = b'''{
+            "ISBN:0123456789": {
+                "title": "Test Book",
+                "identifiers": {
+                    "isbn_10": ["0123456789"],
+                    "isbn_13": ["9780123456789"]
+                }
+            }
+        }'''
+        mock_response.__enter__ = MagicMock(return_value=mock_response)
+        mock_response.__exit__ = MagicMock(return_value=False)
+        mock_urlopen.return_value = mock_response
+
+        result = fetch_isbn_metadata("0123456789")
+
+        self.assertIsNotNone(result)
+        assert result is not None  # Type narrowing
+        self.assertEqual(result['isbn_10'], '0123456789')
+        self.assertEqual(result['isbn_13'], '9780123456789')
+
+    @patch('apps.citations.services.isbn_lookup.urllib.request.urlopen')
+    def test_fetch_isbn_metadata_publisher_string(self, mock_urlopen):
+        """Test ISBN metadata with publisher as string instead of dict"""
+        mock_response = MagicMock()
+        mock_response.read.return_value = b'''{
+            "ISBN:9780123456789": {
+                "title": "Test Book",
+                "publishers": ["Test Publisher"]
+            }
+        }'''
+        mock_response.__enter__ = MagicMock(return_value=mock_response)
+        mock_response.__exit__ = MagicMock(return_value=False)
+        mock_urlopen.return_value = mock_response
+
+        result = fetch_isbn_metadata("9780123456789")
+
+        self.assertIsNotNone(result)
+        assert result is not None  # Type narrowing
+        self.assertEqual(result['publisher'], 'Test Publisher')

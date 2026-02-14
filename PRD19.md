@@ -49,11 +49,11 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a developer, I need to track which vaults a user has muted to suppress notifications.
 
 **Acceptance Criteria:**
-- [ ] Add MutedVault model: `user` (FK), `vault` (FK), `created_at`
-- [ ] Unique constraint on (user, vault)
-- [ ] Generate and apply migration
-- [ ] Register in admin
-- [ ] Typecheck passes
+- [x] Add MutedVault model: `user` (FK), `vault` (FK), `created_at`
+- [x] Unique constraint on (user, vault)
+- [x] Generate and apply migration
+- [x] Register in admin
+- [x] Typecheck passes
 
 ---
 

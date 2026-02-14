@@ -24,6 +24,13 @@ PDF_MAGIC_NUMBERS = [
     b"%PDF-2.0",
 ]
 
+# Image validation constants (US-003)
+MAX_IMAGE_SIZE = 10 * 1024 * 1024  # 10MB in bytes
+ALLOWED_IMAGE_TYPES = {
+    'image/png': [b'\x89PNG'],
+    'image/jpeg': [b'\xff\xd8\xff'],
+}
+
 
 def validate_pdf_file(file) -> None:
     """

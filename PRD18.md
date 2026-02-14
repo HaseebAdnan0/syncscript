@@ -66,12 +66,12 @@ Implement a global full-text search system for SyncScript that enables researche
 **Description:** As a developer, I need a model to track anonymized search query popularity.
 
 **Acceptance Criteria:**
-- [ ] Create `SearchAnalytics` model with fields: `query_hash` (CharField, indexed), `query_normalized` (CharField), `search_count` (IntegerField), `last_searched` (DateTimeField)
-- [ ] Query normalized to lowercase, trimmed
-- [ ] Hash uses SHA-256 for privacy
-- [ ] Unique constraint on `query_hash`
-- [ ] Migration runs successfully
-- [ ] Typecheck passes
+- [x] Create `SearchAnalytics` model with fields: `query_hash` (CharField, indexed), `query_normalized` (CharField), `search_count` (IntegerField), `last_searched` (DateTimeField)
+- [x] Query normalized to lowercase, trimmed
+- [x] Hash uses SHA-256 for privacy
+- [x] Unique constraint on `query_hash`
+- [x] Migration runs successfully
+- [x] Typecheck passes
 
 ---
 

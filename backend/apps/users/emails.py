@@ -16,11 +16,10 @@ def get_unsubscribe_token(user):
     Returns:
         Unsubscribe token string
     """
-    # Import here to avoid circular dependency
-    from apps.users.models import EmailPreference
+    from .models import EmailPreference  # noqa: F401
 
     # Get or create EmailPreference (should be created by signal, but ensure it exists)
-    email_pref, created = EmailPreference.objects.get_or_create(
+    email_pref, _ = EmailPreference.objects.get_or_create(
         user=user,
         defaults={'unsubscribe_token': secrets.token_urlsafe(32)}
     )
@@ -188,8 +187,7 @@ def send_collaboration_notification(user, notification_data):
             - target: Optional related object (source, annotation, etc.)
             - action_url: URL to view the activity
     """
-    # Import here to avoid circular dependency
-    from apps.users.models import EmailPreference
+    from .models import EmailPreference  # noqa: F401
 
     # Check if user has notifications enabled
     try:
