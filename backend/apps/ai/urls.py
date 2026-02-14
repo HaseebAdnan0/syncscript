@@ -8,4 +8,7 @@ urlpatterns = [
     path('vaults/<uuid:vault_id>/insights/', views.vault_insights, name='vault-insights'),
     # Question answering (US-009)
     path('vaults/<uuid:vault_id>/ask/', views.ask_question, name='ask-question'),
+    # Chat history (US-010)
+    path('vaults/<uuid:vault_id>/conversations/', views.list_conversations, name='list-conversations'),
+    path('vaults/<uuid:vault_id>/conversations/<int:conversation_id>/', views.get_conversation, name='get-conversation'),
 ]

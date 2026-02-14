@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import TutorialProvider from './TutorialProvider';
+import { TutorialProvider } from './TutorialProvider';
 import type { Step } from 'react-joyride';
 
 interface InteractiveTutorialProps {
@@ -66,7 +66,8 @@ const InteractiveTutorial: React.FC<InteractiveTutorialProps> = ({ onComplete, o
   return (
     <TutorialProvider
       steps={tutorialSteps}
-      onComplete={onComplete}
+      run={true}
+      onFinish={onComplete}
       onSkip={onSkip}
     />
   );

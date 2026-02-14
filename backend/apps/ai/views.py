@@ -488,3 +488,125 @@ def ask_question(request, vault_id):
             {"error": "An unexpected error occurred while processing your question."},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def list_conversations(request, vault_id):
+    """
+    GET /api/v1/vaults/{id}/conversations/
+
+    List all conversations for a vault with message preview.
+
+    Returns:
+    - conversations: [{id, created_at, updated_at, message_count, preview}]
+    """
+    # Get vault and verify permissions
+    vault = get_object_or_404(Vault, id=vault_id, is_archived=False)
+
+    # Check if user has read permission on vault
+    has_permission = False
+    if vault.owner == request.user:
+        has_permission = True
+    else:
+        membership = VaultMembership.objects.filter(
+            vault=vault,
+            user=request.user
+        ).first()
+        has_permission = membership is not None
+
+    if not has_permission:
+        from rest_framework.exceptions import PermissionDenied
+        raise PermissionDenied("You do not have permission to access this vault.")
+
+    # Get all conversations for this vault and user
+    conversations = ChatConversation.objects.filter(
+        vault=vault,
+        user=request.user
+    ).order_by('-updated_at')
+
+    # Build response with preview
+    result = []
+    for conv in conversations:
+        messages = conv.messages.all()[:2]  # Get first 2 messages for preview
+        message_count = conv.messages.count()
+
+        preview = ""
+        if messages:
+            # Use first user message as preview
+            first_user_msg = messages[0] if messages[0].role == 'user' else None
+            if first_user_msg:
+                preview = first_user_msg.content[:100]
+                if len(first_user_msg.content) > 100:
+                    preview += "..."
+
+        result.append({
+            'id': conv.id,
+            'created_at': conv.created_at.isoformat(),
+            'updated_at': conv.updated_at.isoformat(),
+            'message_count': message_count,
+            'preview': preview
+        })
+
+    return Response({'conversations': result}, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_conversation(request, vault_id, conversation_id):
+    """
+    GET /api/v1/vaults/{id}/conversations/{conv_id}/
+
+    Get full message history for a conversation.
+
+    Returns:
+    - id: Conversation ID
+    - created_at: When conversation started
+    - updated_at: Last message time
+    - messages: [{role, content, sources_cited, created_at}]
+    """
+    # Get vault and verify permissions
+    vault = get_object_or_404(Vault, id=vault_id, is_archived=False)
+
+    # Check if user has read permission on vault
+    has_permission = False
+    if vault.owner == request.user:
+        has_permission = True
+    else:
+        membership = VaultMembership.objects.filter(
+            vault=vault,
+            user=request.user
+        ).first()
+        has_permission = membership is not None
+
+    if not has_permission:
+        from rest_framework.exceptions import PermissionDenied
+        raise PermissionDenied("You do not have permission to access this vault.")
+
+    # Get conversation and verify ownership
+    conversation = get_object_or_404(
+        ChatConversation,
+        id=conversation_id,
+        vault=vault,
+        user=request.user
+    )
+
+    # Get all messages
+    messages = conversation.messages.all().order_by('created_at')
+
+    # Build response
+    message_list = []
+    for msg in messages:
+        message_list.append({
+            'role': msg.role,
+            'content': msg.content,
+            'sources_cited': msg.sources_cited,
+            'created_at': msg.created_at.isoformat()
+        })
+
+    return Response({
+        'id': conversation.id,
+        'created_at': conversation.created_at.isoformat(),
+        'updated_at': conversation.updated_at.isoformat(),
+        'messages': message_list
+    }, status=status.HTTP_200_OK)

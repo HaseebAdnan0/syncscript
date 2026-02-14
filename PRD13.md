@@ -189,13 +189,13 @@ Enhance SyncScript's file storage system to production-ready status with Cloudfl
 **Description:** As a system admin, I want orphaned S3 files cleaned up to save storage costs.
 
 **Acceptance Criteria:**
-- [ ] Create `cleanup_orphaned_files` Celery task in `apps/sources/tasks.py`
-- [ ] List S3 objects in `vaults/` prefix
-- [ ] For each object, check if corresponding PDFUpload or FileUpload exists
-- [ ] If no DB record and file older than 24 hours, delete from S3
-- [ ] Log deleted files with keys
-- [ ] Return `{ "deleted_count": int, "errors": list }`
-- [ ] Typecheck passes
+- [x] Create `cleanup_orphaned_files` Celery task in `apps/sources/tasks.py`
+- [x] List S3 objects in `vaults/` prefix
+- [x] For each object, check if corresponding PDFUpload or FileUpload exists
+- [x] If no DB record and file older than 24 hours, delete from S3
+- [x] Log deleted files with keys
+- [x] Return `{ "deleted_count": int, "errors": list }`
+- [x] Typecheck passes
 
 ---
 

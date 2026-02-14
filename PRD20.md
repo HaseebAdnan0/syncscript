@@ -198,18 +198,18 @@ Create a comprehensive new user onboarding experience for SyncScript that guides
 **Description:** As a new user, I want an interactive tutorial highlighting key UI elements so I learn where things are.
 
 **Acceptance Criteria:**
-- [ ] Create `components/features/onboarding/InteractiveTutorial.tsx`
-- [ ] Define 5-7 tutorial steps highlighting:
+- [x] Create `components/features/onboarding/InteractiveTutorial.tsx`
+- [x] Define 5-7 tutorial steps highlighting:
   - Vault list sidebar
   - "Add Source" button
   - "Invite Collaborator" button
   - Annotations panel
   - Search functionality
-- [ ] Each step has title, description, and target element selector
-- [ ] "Next" / "Back" / "Skip" controls
-- [ ] Progress dots showing current step
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Each step has title, description, and target element selector
+- [x] "Next" / "Back" / "Skip" controls
+- [x] Progress dots showing current step
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-016: Tutorial navigation and completion
 **Description:** As a user in the tutorial, I want smooth navigation between steps and clear completion.

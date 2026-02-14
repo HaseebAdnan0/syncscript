@@ -584,3 +584,35 @@ Learnings for future iterations:
   - Loading/error states improve UX for async data fetching
   - Empty state provides feedback when no accounts exist
 ---
+## Iteration 21 - US-021: Implement OAuth provider disconnect functionality
+- Added disconnect handler to ConnectedAccounts component
+- Implemented confirmation dialog with "Disconnect {Provider}?" message
+- Modal styled with Bitcoin DeFi aesthetic (glass card, orange shadow, dark theme)
+- Calls DELETE /api/v1/auth/oauth/connected/{provider}/ endpoint
+- Handles "last auth method" error (400 response) with helpful message
+- Shows inline error message when disconnect fails or is last auth method
+- On success: removes provider from accounts list, shows success toast
+- Success toast auto-dismisses after 3 seconds
+- Disabled disconnect button while request is pending (prevents duplicate calls)
+- Used disconnecting state to track which provider is being disconnected
+- Used confirmDisconnect state to control which provider's confirmation dialog is shown
+- Frontend typecheck passes
+- Committed successfully
+
+Files changed:
+  - frontend/src/components/features/settings/ConnectedAccounts.tsx (added disconnect functionality)
+  - PRD12.md (marked US-021 complete except browser verification)
+
+Learnings for future iterations:
+  - Confirmation dialogs should be modal overlays (fixed inset-0) with backdrop blur
+  - Track pending operation state to disable buttons and show loading text
+  - Success toasts should auto-dismiss after 2-3 seconds for better UX
+  - Error handling: distinguish between validation errors (400) and server errors (500)
+  - Remove disconnected item from local state immediately for instant UI feedback
+  - Red styling (text-red-400, border-red-500/20) communicates destructive action
+  - Button disabled state: opacity-50 + cursor-not-allowed + disabled:hover:scale-100
+  - Fixed positioning for toasts: bottom-4 right-4 with z-50 to appear above content
+  - Checkmark SVG in success toast reinforces positive feedback
+  - Clear confirmDisconnect state after operation (success or error) to close modal
+---
+

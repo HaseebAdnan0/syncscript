@@ -217,10 +217,10 @@ Replace stub email implementation with production-ready email system using Hosti
 **Description:** As a user, I want to receive a welcome email after successfully verifying my account.
 
 **Acceptance Criteria:**
-- [ ] Update `VerifyEmailView` in `apps/users/views.py`
-- [ ] After setting `email_verified = True`, queue `send_welcome_email_task.delay(user.id)`
-- [ ] Only send if this is first-time verification (not re-verification)
-- [ ] Typecheck passes
+- [x] Update `VerifyEmailView` in `apps/users/views.py`
+- [x] After setting `email_verified = True`, queue `send_welcome_email_task.delay(user.id)`
+- [x] Only send if this is first-time verification (not re-verification)
+- [x] Typecheck passes
 
 ---
 
