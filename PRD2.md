@@ -29,9 +29,9 @@ Create a secure, collaborative Knowledge Vault system where researchers can crea
 **Description:** As a developer, I need role definitions so membership permissions can reference them.
 
 **Acceptance Criteria:**
-- [ ] Add `RoleChoices` TextChoices enum: OWNER, CONTRIBUTOR, VIEWER
-- [ ] Add `ROLE_WEIGHTS` dict: OWNER=3, CONTRIBUTOR=2, VIEWER=1
-- [ ] Typecheck passes
+- [x] Add `RoleChoices` TextChoices enum: OWNER, CONTRIBUTOR, VIEWER
+- [x] Add `ROLE_WEIGHTS` dict: OWNER=3, CONTRIBUTOR=2, VIEWER=1
+- [x] Typecheck passes
 
 ### US-003: Create Vault model
 **Description:** As a developer, I need the Vault model to store knowledge repository data.
