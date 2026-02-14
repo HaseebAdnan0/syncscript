@@ -7,18 +7,22 @@ from .models import Vault, VaultMembership, AuditLog
 
 class VaultSerializer(serializers.ModelSerializer):
     """
-    Serializer for Vault API responses (US-009).
-    Includes computed fields for member count and current user's role.
+    Serializer for Vault API responses (US-009, US-015).
+    Includes computed fields for member count, current user's role, and storage usage.
     """
     owner_username = serializers.CharField(source='owner.username', read_only=True)
     member_count = serializers.SerializerMethodField()
     user_role = serializers.SerializerMethodField()
+    storage_used_bytes = serializers.SerializerMethodField()
+    storage_file_count = serializers.SerializerMethodField()
+    storage_user_breakdown = serializers.SerializerMethodField()
 
     class Meta:
         model = Vault
         fields = [
             'id', 'name', 'description', 'owner', 'owner_username',
-            'is_archived', 'created_at', 'updated_at', 'member_count', 'user_role'
+            'is_archived', 'created_at', 'updated_at', 'member_count', 'user_role',
+            'storage_used_bytes', 'storage_file_count', 'storage_user_breakdown'
         ]
         read_only_fields = ['id', 'owner', 'created_at', 'updated_at']
 
@@ -38,6 +42,36 @@ class VaultSerializer(serializers.ModelSerializer):
 
         membership = obj.memberships.filter(user=request.user).first()
         return membership.role if membership else None
+
+    def get_storage_used_bytes(self, obj):
+        """
+        Returns the total storage used by this vault in bytes.
+        Returns 0 if VaultStorageUsage record doesn't exist.
+        """
+        try:
+            return obj.storage_usage.total_bytes
+        except Exception:
+            return 0
+
+    def get_storage_file_count(self, obj):
+        """
+        Returns the number of files in this vault.
+        Returns 0 if VaultStorageUsage record doesn't exist.
+        """
+        try:
+            return obj.storage_usage.file_count
+        except Exception:
+            return 0
+
+    def get_storage_user_breakdown(self, obj):
+        """
+        Returns the per-user storage breakdown as a JSON dict.
+        Returns empty dict if VaultStorageUsage record doesn't exist.
+        """
+        try:
+            return obj.storage_usage.user_breakdown
+        except Exception:
+            return {}
 
 
 class VaultMembershipSerializer(serializers.ModelSerializer):

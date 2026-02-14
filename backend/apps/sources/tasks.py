@@ -197,17 +197,116 @@ def process_uploaded_pdf(self, pdf_upload_id: str) -> dict[str, Any]:
 # WebSocket broadcast tasks (implemented in US-013)
 @shared_task
 def broadcast_source_created(source_id: int) -> None:
-    """Broadcast source.created event to vault collaborators (stub for US-013)."""
-    pass
+    """
+    Broadcast source.created event to vault collaborators.
+
+    Args:
+        source_id: ID of the newly created Source
+    """
+    from apps.sources.models import Source
+    from core.websocket_utils import broadcast_to_vault
+
+    try:
+        source = Source.objects.select_related('created_by', 'vault').get(id=source_id)
+
+        payload = {
+            'id': source.id,
+            'url': source.url,
+            'title': source.title,
+            'description': source.description,
+            'source_type': source.source_type,
+            'created_by': {
+                'id': source.created_by.id if source.created_by else None,
+                'username': source.created_by.username if source.created_by else None,
+            },
+            'created_at': source.created_at.isoformat(),
+        }
+
+        broadcast_to_vault(
+            vault_id=source.vault.id,
+            event_type='source.created',
+            payload=payload,
+            user=source.created_by,
+        )
+        logger.info(f"Broadcasted source.created for source {source_id} in vault {source.vault.id}")
+
+    except Source.DoesNotExist:
+        logger.error(f"Source {source_id} not found for broadcast")
 
 
 @shared_task
 def broadcast_source_updated(source_id: int, changed_fields: list[str]) -> None:
-    """Broadcast source.updated event to vault collaborators (stub for US-013)."""
-    pass
+    """
+    Broadcast source.updated event to vault collaborators.
+
+    Args:
+        source_id: ID of the updated Source
+        changed_fields: List of field names that were changed
+    """
+    from apps.sources.models import Source
+    from core.websocket_utils import broadcast_to_vault
+
+    try:
+        source = Source.objects.select_related('created_by', 'vault').get(id=source_id)
+
+        payload = {
+            'id': source.id,
+            'url': source.url,
+            'title': source.title,
+            'description': source.description,
+            'source_type': source.source_type,
+            'changed_fields': changed_fields,
+            'updated_at': source.updated_at.isoformat(),
+        }
+
+        broadcast_to_vault(
+            vault_id=source.vault.id,
+            event_type='source.updated',
+            payload=payload,
+            user=None,  # Updated by might not be tracked
+        )
+        logger.info(f"Broadcasted source.updated for source {source_id} in vault {source.vault.id}")
+
+    except Source.DoesNotExist:
+        logger.error(f"Source {source_id} not found for broadcast")
 
 
 @shared_task
 def broadcast_source_deleted(source_id: int, vault_id: int, deleted_by_id: int | None) -> None:
-    """Broadcast source.deleted event to vault collaborators (stub for US-013)."""
-    pass
+    """
+    Broadcast source.deleted event to vault collaborators.
+
+    Args:
+        source_id: ID of the deleted Source
+        vault_id: ID of the vault the source belonged to
+        deleted_by_id: ID of the user who deleted the source (optional)
+    """
+    from django.contrib.auth import get_user_model
+    from core.websocket_utils import broadcast_to_vault
+
+    User = get_user_model()
+
+    payload = {
+        'id': source_id,
+        'vault_id': vault_id,
+    }
+
+    # Fetch user if deleted_by_id provided
+    deleted_by = None
+    if deleted_by_id:
+        try:
+            deleted_by = User.objects.get(id=deleted_by_id)
+            payload['deleted_by'] = {
+                'id': deleted_by.id,
+                'username': deleted_by.username,
+            }
+        except User.DoesNotExist:
+            logger.warning(f"User {deleted_by_id} not found for source deletion broadcast")
+
+    broadcast_to_vault(
+        vault_id=vault_id,
+        event_type='source.deleted',
+        payload=payload,
+        user=deleted_by,
+    )
+    logger.info(f"Broadcasted source.deleted for source {source_id} in vault {vault_id}")

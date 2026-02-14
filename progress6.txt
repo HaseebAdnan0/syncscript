@@ -305,3 +305,25 @@
   - Django system check passes (0 errors)
   - Pyright warnings about unaccessed parameters in destroy() are false positives (required by Django signature)
 ---
+
+## Iteration 14 - US-014: Create storage usage calculation utility
+- Created backend/apps/sources/utils.py with update_vault_storage_usage() function
+- Implemented storage usage aggregation from non-deleted PDFUploads:
+  - total_bytes: Sum of all file_size fields
+  - file_count: Count of all PDF uploads
+  - user_breakdown: JSON dict mapping user_id to bytes used
+- Used Django ORM aggregate functions (Sum, Count) for efficient queries
+- update_or_create() pattern ensures VaultStorageUsage record exists
+- Invalidates Redis cache key vault_storage:{vault_id} after update
+- Files changed:
+  - backend/apps/sources/utils.py (created)
+  - PRD6.md (marked US-014 complete)
+- Learnings for future iterations:
+  - Django aggregate() returns dict with keys matching field names
+  - aggregate() returns None for empty querysets - use 'or 0' for defaults
+  - values() + annotate() pattern calculates per-group aggregates
+  - update_or_create(defaults={}) updates fields only if record exists
+  - cache.delete() is idempotent (safe to call even if key doesn't exist)
+  - Django shell imports work with 'python manage.py shell -c "code"'
+  - Pyright import errors for Django are normal without stubs installed
+---

@@ -291,10 +291,10 @@ Create a secure, collaborative Knowledge Vault system where researchers can crea
 **Description:** As a system, I need to log when members are removed.
 
 **Acceptance Criteria:**
-- [ ] post_delete signal on VaultMembership
-- [ ] Creates AuditLog with action='membership.removed'
-- [ ] Metadata includes user_id
-- [ ] Typecheck passes
+- [x] post_delete signal on VaultMembership
+- [x] Creates AuditLog with action='membership.removed'
+- [x] Metadata includes user_id
+- [x] Typecheck passes
 
 ### US-029: Register signals in apps.py ready()
 **Description:** As a developer, I need signals connected on app startup.

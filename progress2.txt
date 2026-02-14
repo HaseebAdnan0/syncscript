@@ -349,3 +349,32 @@
   - Action naming convention: 'model.verb' pattern (e.g., 'vault.created', 'vault.updated')
   - Actor set to vault.owner for all vault mutations (even if updated by system)
 ---
+
+## Iteration 27 - US-026: Create membership added audit signal
+- Implemented post_save signal on VaultMembership to log member additions
+- Files changed:
+  - backend/apps/vaults/signals.py (added log_membership_added signal handler)
+  - PRD2.md (marked US-026 as complete)
+- Django check passed with no issues
+- Learnings for future iterations:
+  - VaultMembership signal follows same pattern as Vault signal: check created=True
+  - Metadata includes user_id (converted to string using str()) and role
+  - Actor field uses instance.added_by to track who added the member
+  - Action naming: 'membership.added' follows 'entity.verb' convention
+  - Signal registered with @receiver(post_save, sender=VaultMembership)
+---
+
+## Iteration 28 - US-027: Create role change audit signal
+- Implemented pre_save signal on VaultMembership to detect and log role changes
+- Files changed:
+  - backend/apps/vaults/signals.py (added pre_save import, added log_membership_role_changed signal handler)
+  - PRD2.md (marked US-027 as complete)
+- Django check passed with no issues
+- Learnings for future iterations:
+  - pre_save signals run before object is saved, allowing detection of field changes
+  - Must check if instance.pk exists to distinguish updates from creates
+  - Retrieve old version with VaultMembership.objects.get(pk=instance.pk) to compare fields
+  - Wrap in try/except VaultMembership.DoesNotExist for safety (though should not happen)
+  - Metadata includes user_id, old_role, and new_role for complete audit trail
+  - Action naming: 'membership.role_changed' follows 'entity.verb_phrase' convention
+---

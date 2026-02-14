@@ -1,4 +1,4 @@
-from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import post_save, pre_save, post_delete
 from django.dispatch import receiver
 from .models import Vault, VaultMembership, AuditLog, RoleChoices
 
@@ -78,3 +78,19 @@ def log_membership_role_changed(sender, instance, **kwargs):
         except VaultMembership.DoesNotExist:
             # Should not happen, but handle gracefully
             pass
+
+
+@receiver(post_delete, sender=VaultMembership)
+def log_membership_removed(sender, instance, **kwargs):
+    """
+    Log when a member is removed from a vault.
+    """
+    metadata = {
+        'user_id': str(instance.user.id)
+    }
+    AuditLog.objects.create(
+        vault=instance.vault,
+        actor=None,  # Cannot reliably track who performed the deletion
+        action='membership.removed',
+        metadata=metadata
+    )

@@ -352,3 +352,23 @@
   - Nested routers registered in parent app's urls.py even if ViewSet is in another app
   - Always check git history before implementing - task may already be complete
 ---
+
+## Iteration 17 - US-016: Create BulkSourceSerializer
+- Created BulkSourceSerializer in apps/sources/serializers.py
+- Added urls field as ListField with URLField children
+- Constraints:
+  - min_length=1, max_length=50 (max 50 URLs enforced)
+  - Each URL validated via URLField(max_length=2048)
+  - Custom validate_urls() method checks for duplicate URLs within request
+- Returns ValidationError if URLs are not unique
+- Django check passes with 0 issues
+- Files changed:
+  - backend/apps/sources/serializers.py (added BulkSourceSerializer class)
+  - PRD3.md (marked US-016 complete)
+- Learnings for future iterations:
+  - ListField with min_length/max_length validates list size constraints
+  - ListField(child=URLField()) validates each item in the list
+  - Custom validation via validate_<field_name>() methods for complex rules
+  - Use set() to detect duplicates: len(set(urls)) != len(urls)
+  - Serializer.Serializer (not ModelSerializer) for non-model data structures
+---
