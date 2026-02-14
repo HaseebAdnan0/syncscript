@@ -21,7 +21,7 @@ from .serializers import (
     CustomTokenObtainPairSerializer,
     RegisterSerializer,
 )
-from .tokens import generate_verification_token
+from .tokens import generate_verification_token, verify_token
 from .emails import send_verification_email
 
 
@@ -232,3 +232,41 @@ class RegisterView(APIView):
             'user': user_data,
             'message': 'Registration successful. Please check your email to verify your account.'
         }, status=status.HTTP_201_CREATED)
+
+
+@method_decorator(ratelimit(key='ip', rate='10/m', method='POST', block=True), name='dispatch')
+class VerifyEmailView(APIView):
+    """
+    Verify user email address with token (US-015).
+
+    POST /api/v1/auth/verify-email/
+    Rate limited to 10 attempts per minute per IP.
+    Accepts token in request body and validates it.
+    """
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        """Verify email using token from verification link."""
+        token = request.data.get('token')
+
+        if not token:
+            return Response({
+                'error': 'Token is required.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Validate token using tokens.py logic
+        user = verify_token(token)
+
+        if user is None:
+            return Response({
+                'error': 'Invalid or expired verification token.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Set email_verified = True
+        user.email_verified = True
+        user.save(update_fields=['email_verified'])
+
+        return Response({
+            'message': 'Email verified successfully. You can now log in.',
+            'user': UserSerializer(user).data
+        }, status=status.HTTP_200_OK)

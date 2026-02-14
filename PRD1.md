@@ -203,13 +203,13 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a user, I want to verify my email address to activate my account.
 
 **Acceptance Criteria:**
-- [ ] Add VerifyEmailView to `apps/users/views.py`
-- [ ] POST /api/v1/auth/verify-email/ accepts token in body
-- [ ] Validate token using tokens.py logic
-- [ ] Set user.email_verified = True on success
-- [ ] Return success/error message
-- [ ] Apply @ratelimit decorator (10/min per IP)
-- [ ] Typecheck passes
+- [x] Add VerifyEmailView to `apps/users/views.py`
+- [x] POST /api/v1/auth/verify-email/ accepts token in body
+- [x] Validate token using tokens.py logic
+- [x] Set user.email_verified = True on success
+- [x] Return success/error message
+- [x] Apply @ratelimit decorator (10/min per IP)
+- [x] Typecheck passes
 
 ---
 
