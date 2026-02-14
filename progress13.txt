@@ -77,3 +77,25 @@ vaults/{vault_id}/thumbnails/{uuid}.jpg
   - Test database drop command: `python manage.py shell -c "from django.db import connections; cursor = connections['default'].cursor(); cursor.execute('DROP DATABASE IF EXISTS test_syncscript')"`
 
 ---
+
+## Iteration 3 - Add image file type constants and validators (US-003)
+- Added image validation constants to backend/apps/sources/validators.py:
+  - `MAX_IMAGE_SIZE = 10 * 1024 * 1024` (10MB)
+  - `ALLOWED_IMAGE_TYPES = {'image/png': [b'\x89PNG'], 'image/jpeg': [b'\xff\xd8\xff']}`
+- Created `validate_image_file(file)` function with comprehensive checks:
+  - File size validation (10MB max)
+  - Content-Type header verification
+  - Magic number verification (PNG starts with \x89PNG, JPEG starts with \xff\xd8\xff)
+  - python-magic MIME type detection
+  - Content type mismatch detection
+- Files changed:
+  - backend/apps/sources/validators.py
+  - PRD13.md
+  - progress13.txt
+- Learnings for future iterations:
+  - Image validation follows same pattern as PDF validation
+  - PNG magic number: b'\x89PNG'
+  - JPEG magic number: b'\xff\xd8\xff'
+  - python-magic library works for both PDF and image validation
+
+---

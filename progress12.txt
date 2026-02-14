@@ -103,3 +103,28 @@ Learnings for future iterations:
   - Pattern is consistent: each provider added to SOCIALACCOUNT_PROVIDERS dict with APP and SCOPE keys
   - Can have separate OAuth Apps for dev/prod or use same with multiple callback URLs
 ---
+
+## Iteration 4 - US-004: Create custom OAuth adapter for JWT integration
+- Created apps/users/adapters.py with JWTSocialAccountAdapter
+- Extended DefaultSocialAccountAdapter from django-allauth
+- Overrode get_login_redirect_url() to generate JWT tokens after successful OAuth
+- Used RefreshToken.for_user() from simplejwt (same pattern as CustomTokenObtainPairView)
+- Set both access_token and refresh_token in httpOnly cookies with proper settings
+- Configured redirect to frontend callback page: /auth/callback?success=true
+- Added authentication_error() method to handle OAuth failures gracefully
+- Configured SOCIALACCOUNT_ADAPTER in settings.py
+- Verified adapter imports successfully via Django shell
+- Typecheck passed with mypy --ignore-missing-imports --check-untyped-defs
+
+Files changed:
+  - backend/apps/users/adapters.py (created)
+  - backend/config/settings.py (added SOCIALACCOUNT_ADAPTER setting)
+
+Learnings for future iterations:
+  - django-allauth adapters use get_login_redirect_url() not authentication_success_response()
+  - HttpResponseRedirect can set cookies before returning to client
+  - Cookie settings must match production requirements: httponly=True, secure=(not DEBUG), samesite='Lax'
+  - Token lifetimes for cookies should match SIMPLE_JWT settings (15min access, 7day refresh)
+  - Use noqa: ARG002 to suppress unused parameter warnings for required method signatures
+  - Testing OAuth adapters requires Django shell context, not raw Python imports
+---
