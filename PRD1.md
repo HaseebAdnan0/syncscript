@@ -376,13 +376,13 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a developer, I need unit tests for the User model.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/users/tests/__init__.py`
-- [ ] Create `apps/users/tests/test_models.py`
-- [ ] Test user creation with all fields
-- [ ] Test email uniqueness constraint
-- [ ] Test email_verified default is False
-- [ ] Test EmailVerificationToken creation and relationships
-- [ ] All tests pass
+- [x] Create `apps/users/tests/__init__.py`
+- [x] Create `apps/users/tests/test_models.py`
+- [x] Test user creation with all fields
+- [x] Test email uniqueness constraint
+- [x] Test email_verified default is False
+- [x] Test EmailVerificationToken creation and relationships
+- [x] All tests pass
 
 ---
 

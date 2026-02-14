@@ -91,16 +91,24 @@ class VaultMembershipSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         """
-        Validate that the vault has at least one owner (US-033).
-        Prevents downgrading/removing the last owner.
+        Validate ownership transfer and last owner protection (US-033, US-034).
+        - Prevents downgrading/removing the last owner
+        - Validates single OWNER constraint (automatic demotion happens in update())
         """
         from .models import RoleChoices
 
-        # Only validate on updates (instance exists)
-        if self.instance:
-            vault = self.instance.vault
-            role = attrs.get('role', self.instance.role)
+        # Get the vault (from instance for updates, from attrs for creates)
+        vault = self.instance.vault if self.instance else attrs.get('vault')
+        role = attrs.get('role', self.instance.role if self.instance else None)
 
+        # US-034: Validate ownership transfer - member must already exist
+        if role == RoleChoices.OWNER and self.instance:
+            # Validate user is already a member (updating existing membership)
+            # This is inherently satisfied if self.instance exists
+            pass
+
+        # US-033: Last owner protection - only validate on updates
+        if self.instance:
             # Check if this is the last owner being downgraded
             if self.instance.role == RoleChoices.OWNER and role != RoleChoices.OWNER:
                 # Count how many owners exist in this vault
@@ -115,6 +123,29 @@ class VaultMembershipSerializer(serializers.ModelSerializer):
                     )
 
         return attrs
+
+    def update(self, instance, validated_data):
+        """
+        Handle ownership transfer (US-034).
+        When promoting a member to OWNER, automatically demote the existing owner to CONTRIBUTOR.
+        """
+        from .models import RoleChoices
+
+        role = validated_data.get('role', instance.role)
+
+        # US-034: Automatic ownership transfer
+        if role == RoleChoices.OWNER and instance.role != RoleChoices.OWNER:
+            # Find and demote the existing owner
+            existing_owner = VaultMembership.objects.filter(
+                vault=instance.vault,
+                role=RoleChoices.OWNER
+            ).exclude(pk=instance.pk).first()
+
+            if existing_owner:
+                existing_owner.role = RoleChoices.CONTRIBUTOR
+                existing_owner.save()
+
+        return super().update(instance, validated_data)
 
 
 class AuditLogSerializer(serializers.ModelSerializer):

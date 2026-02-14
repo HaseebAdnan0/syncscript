@@ -453,3 +453,31 @@
   - Use @patch to mock external dependencies like extract_metadata
   - Verify both positive and negative cases (access granted/denied)
 ---
+
+## Iteration 20 - US-019: Write Source view tests for permissions
+- Implemented comprehensive Source API permission tests in test_views.py
+- Created new test class SourcePermissionTest with 5 test methods:
+  1. test_non_member_cannot_list_vault_sources - verifies non-members see empty list
+  2. test_viewer_can_list_and_retrieve_but_not_create - verifies Viewer role permissions
+  3. test_contributor_can_create_and_update - verifies Contributor can create and update
+  4. test_contributor_cannot_delete - verifies Contributor receives 403 on delete
+  5. test_owner_can_delete_and_restore - verifies Owner can delete and restore sources
+- Tests cover all acceptance criteria:
+  - Non-member filtering (empty result set, not 403)
+  - Viewer read-only access
+  - Contributor create/update permissions
+  - Contributor delete restriction
+  - Owner full permissions including restore
+- Files changed:
+  - backend/apps/sources/tests/test_views.py (added SourcePermissionTest class)
+  - PRD3.md (marked US-019 complete)
+- Learnings for future iterations:
+  - Permission tests should verify both successful actions and denied actions
+  - Non-members don't get 403, they just see filtered empty results (due to get_queryset filtering)
+  - Viewer role can read (GET list/detail) but cannot write (POST/PATCH/DELETE)
+  - Contributor role can create and update but not delete
+  - Owner role (both Vault.owner and VaultMembership.role=OWNER) can perform all operations
+  - Test both nested routes (/vaults/{id}/sources/) and direct routes (/sources/{id}/)
+  - Django check passes with 0 issues
+  - Python syntax check passes
+---

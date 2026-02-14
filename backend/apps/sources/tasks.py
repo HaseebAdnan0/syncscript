@@ -432,3 +432,108 @@ def cleanup_deleted_pdfs() -> dict[str, Any]:
         'deleted_count': deleted_count,
         'errors': errors,
     }
+
+
+@shared_task
+def cleanup_orphaned_multipart_uploads() -> dict[str, Any]:
+    """
+    Clean up abandoned S3 multipart uploads to prevent storage waste.
+
+    This task runs daily to abort multipart uploads that were initiated
+    more than 24 hours ago and never completed. This prevents storage
+    accumulation from abandoned uploads.
+
+    Returns:
+        dict with cleanup results:
+            - aborted_count: Number of multipart uploads aborted
+            - errors: List of errors encountered during cleanup
+    """
+    # Only run if S3 is enabled
+    if not getattr(settings, 'USE_S3', False):
+        logger.info("S3 not enabled, skipping multipart upload cleanup")
+        return {
+            'aborted_count': 0,
+            'errors': [],
+        }
+
+    aborted_count = 0
+    errors = []
+
+    try:
+        # Initialize S3 client
+        s3_client = boto3.client(
+            's3',
+            endpoint_url=getattr(settings, 'AWS_S3_ENDPOINT_URL', None),
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+            region_name=getattr(settings, 'AWS_S3_REGION_NAME', 'auto'),
+        )
+
+        # Calculate threshold (24 hours ago)
+        threshold = timezone.now() - timedelta(hours=24)
+
+        # List all in-progress multipart uploads
+        # Note: list_multipart_uploads returns uploads for the entire bucket
+        response = s3_client.list_multipart_uploads(
+            Bucket=settings.AWS_STORAGE_BUCKET_NAME,
+        )
+
+        # Get uploads that are older than 24 hours
+        uploads = response.get('Uploads', [])
+
+        for upload in uploads:
+            initiated = upload.get('Initiated')
+            upload_id = upload.get('UploadId')
+            key = upload.get('Key')
+
+            # Skip if missing required fields
+            if not initiated or not upload_id or not key:
+                continue
+
+            # Convert initiated datetime to timezone-aware datetime
+            # boto3 returns timezone-aware datetime from S3 API
+            if initiated < threshold:
+                try:
+                    # Abort the multipart upload
+                    s3_client.abort_multipart_upload(
+                        Bucket=settings.AWS_STORAGE_BUCKET_NAME,
+                        Key=key,
+                        UploadId=upload_id,
+                    )
+
+                    aborted_count += 1
+                    logger.info(
+                        f"Aborted orphaned multipart upload: "
+                        f"key={key}, upload_id={upload_id}, "
+                        f"initiated={initiated.isoformat()}"
+                    )
+
+                except Exception as abort_exc:
+                    logger.error(
+                        f"Failed to abort multipart upload {upload_id} for key {key}: {abort_exc}",
+                        exc_info=True,
+                    )
+                    errors.append({
+                        'upload_id': upload_id,
+                        'key': key,
+                        'error': str(abort_exc),
+                    })
+
+        logger.info(
+            f"Multipart upload cleanup completed: {aborted_count} uploads aborted, "
+            f"{len(errors)} errors"
+        )
+
+    except Exception as exc:
+        logger.error(
+            f"Error during multipart upload cleanup: {exc}",
+            exc_info=True,
+        )
+        errors.append({
+            'error': f"Cleanup failed: {exc}",
+        })
+
+    return {
+        'aborted_count': aborted_count,
+        'errors': errors,
+    }

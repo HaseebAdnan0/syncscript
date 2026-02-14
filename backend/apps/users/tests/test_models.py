@@ -79,7 +79,7 @@ class UserModelTestCase(TestCase):
 
         self.assertEqual(user.email, 'minimal@example.com')
         self.assertEqual(user.username, 'minimal')
-        self.assertIsNone(user.avatar_url)
+        self.assertEqual(user.avatar_url, '')  # blank=True defaults to empty string
         self.assertEqual(user.bio, '')
         self.assertEqual(user.institution, '')
 
@@ -118,8 +118,8 @@ class EmailVerificationTokenModelTestCase(TestCase):
             expires_at=expires_at
         )
 
-        # Access token from user
-        user_tokens = self.user.emailverificationtoken_set.all()
+        # Access token from user (related_name='verification_tokens')
+        user_tokens = self.user.verification_tokens.all()
         self.assertEqual(user_tokens.count(), 1)
         self.assertEqual(user_tokens.first(), token)
 
@@ -167,7 +167,7 @@ class EmailVerificationTokenModelTestCase(TestCase):
         )
 
     def test_token_string_representation(self):
-        """Test __str__ method returns token value"""
+        """Test __str__ method returns formatted string with user email"""
         expires_at = timezone.now() + timedelta(hours=24)
         token = EmailVerificationToken.objects.create(
             user=self.user,
@@ -175,4 +175,5 @@ class EmailVerificationTokenModelTestCase(TestCase):
             expires_at=expires_at
         )
 
-        self.assertIn('string_repr_token', str(token))
+        self.assertIn('tokentest@example.com', str(token))
+        self.assertEqual(str(token), f'Token for {self.user.email}')

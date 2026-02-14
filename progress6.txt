@@ -390,3 +390,25 @@
   - Django system check passes with 6 security warnings (expected in dev mode)
   - ViewSet.destroy() uses self.get_object() which automatically filters by queryset
 ---
+
+## Iteration 17 - US-017: Create cleanup_deleted_pdfs Celery task
+- Implemented cleanup_deleted_pdfs() as @shared_task in backend/apps/sources/tasks.py
+- Queries PDFUploads where deleted_at < 30 days ago using Django ORM filter
+- Deletes PDF file from S3 via boto3 s3_client.delete_object()
+- Deletes thumbnail from S3 by extracting thumbnail key from PDF file path pattern
+- Deletes database record via pdf.delete() after S3 cleanup
+- Returns dict with deleted_count and errors list for monitoring
+- Comprehensive logging for each permanent deletion and errors
+- Files changed:
+  - backend/apps/sources/tasks.py (added cleanup_deleted_pdfs task, imported timezone and timedelta)
+  - PRD6.md (marked US-017 complete)
+- Learnings for future iterations:
+  - Use timezone.now() - timedelta(days=30) to calculate date 30 days ago
+  - Query with deleted_at__lt=threshold to find old records
+  - S3 delete operations are idempotent (won't error if file doesn't exist)
+  - Thumbnail key extraction: parse file.name to get vault_id, construct thumbnails/{uuid}.jpg
+  - Best-effort thumbnail deletion: log warnings but don't fail task
+  - select_related('vault') optimizes queries when accessing related objects in loop
+  - Python syntax check passed (ast.parse validation)
+  - Django system check passed (6 security warnings expected in dev mode)
+---
