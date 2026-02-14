@@ -285,3 +285,24 @@
   - filterset_class is automatically used by DRF for query param filtering
   - Filter names in query params match field names (e.g., ?vault=uuid&date_from=2024-01-01)
 ---
+
+## Iteration 14 - US-013: Add tags filter to SourceFilter
+- Added tags CharFilter with method='filter_tags' to SourceFilter
+- Implemented filter_tags() method:
+  - Accepts comma-separated tags (e.g., ?tags=ml,nlp)
+  - Splits value by comma and strips whitespace
+  - Uses PostgreSQL metadata__tags__overlap lookup for JSON array overlap
+  - Returns sources where metadata['tags'] array contains ANY of the specified tags
+- Updated Meta.fields to include 'tags'
+- Django check passes with 0 issues
+- Files changed:
+  - backend/apps/sources/filters.py (added tags filter and filter_tags method)
+  - PRD3.md (marked US-013 complete)
+- Learnings for future iterations:
+  - CharFilter with method= allows custom filtering logic
+  - Filter method signature: filter_method(queryset, name, value)
+  - PostgreSQL JSONField supports __overlap lookup for array fields
+  - metadata__tags__overlap checks if JSON array overlaps with Python list
+  - Split and strip tags to handle whitespace in comma-separated values
+  - Empty tag list should return unfiltered queryset (no filtering applied)
+---
