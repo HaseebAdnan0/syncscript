@@ -392,12 +392,12 @@ Implement a global full-text search system for SyncScript that enables researche
 **Description:** As a user, I want Cmd+K (Mac) / Ctrl+K (Windows) to open search from anywhere in the app.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/hooks/useGlobalSearchShortcut.ts`
-- [ ] Detects platform for correct modifier key
-- [ ] Prevents default browser behavior
-- [ ] Only triggers when not in input/textarea
-- [ ] Returns `{ isOpen, open, close, toggle }`
-- [ ] Typecheck passes
+- [x] Create `frontend/src/hooks/useGlobalSearchShortcut.ts`
+- [x] Detects platform for correct modifier key
+- [x] Prevents default browser behavior
+- [x] Only triggers when not in input/textarea
+- [x] Returns `{ isOpen, open, close, toggle }`
+- [x] Typecheck passes
 
 ---
 
