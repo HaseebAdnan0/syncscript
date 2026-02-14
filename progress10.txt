@@ -1,9 +1,9 @@
 # Progress Log - PRD10: Real-time Updates & Notifications Integration
 
-## Status: Not Started
+## Status: In Progress
 
 ## User Stories
-- [ ] US-001: Create useVaultSocket hook for WebSocket connection management
+- [x] US-001: Create useVaultSocket hook for WebSocket connection management
 - [ ] US-002: Create ConnectionStatus indicator component
 - [ ] US-003: Create useRealtimeUpdates hook for optimistic updates with reconciliation
 - [ ] US-004: Integrate real-time source updates in vault detail page
@@ -25,6 +25,21 @@
 ## Learnings
 (Patterns discovered during implementation)
 
+---
+
+## Iteration 1 - US-001: Create useVaultSocket hook
+- Implemented WebSocket connection management hook at `frontend/src/hooks/useVaultSocket.ts`
+- Files changed:
+  - Created `frontend/src/hooks/useVaultSocket.ts`
+  - Updated `PRD10.md` (marked US-001 complete)
+- Learnings for future iterations:
+  - Hook uses refs for WebSocket instance and event handlers to prevent unnecessary re-renders
+  - Exponential backoff implemented with 1s, 2s, 4s, 8s... up to max 30s delay
+  - Uses `isUnmountedRef` flag to prevent state updates after unmount
+  - Event handlers stored in Map<string, Set<function>> for efficient multi-listener support
+  - WebSocket URL constructed from `NEXT_PUBLIC_WS_URL` env var + `/vault/{vaultId}/`
+  - Message format: `{ type: string, data: any }` for both send and receive
+  - Typecheck passes without issues
 ---
 
 ## Implementation Notes
