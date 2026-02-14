@@ -1023,3 +1023,68 @@ class CompleteOAuthEmailView(APIView):
         )
 
         return response
+
+
+class UnsubscribeView(APIView):
+    """
+    Unsubscribe from email notifications via token link (US-011).
+
+    GET /api/v1/auth/unsubscribe/{token}/
+    Validates unsubscribe token and sets collaboration_notifications to False.
+    Returns success message (could also redirect to a frontend success page).
+    """
+    permission_classes = [AllowAny]
+
+    def get(self, request, token):
+        """Unsubscribe user from collaboration notifications."""
+        try:
+            # Find EmailPreference by unsubscribe token
+            email_pref = EmailPreference.objects.get(unsubscribe_token=token)
+
+            # Set collaboration_notifications to False
+            email_pref.collaboration_notifications = False
+            email_pref.save(update_fields=['collaboration_notifications'])
+
+            return Response({
+                'message': 'You have been unsubscribed from collaboration notifications.',
+                'email': email_pref.user.email
+            }, status=status.HTTP_200_OK)
+
+        except EmailPreference.DoesNotExist:
+            return Response({
+                'error': 'Invalid unsubscribe token.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+
+class EmailPreferenceUpdateView(APIView):
+    """
+    Update email preferences for authenticated user (US-011).
+
+    POST /api/v1/users/email-preferences/
+    Allows users to update their email notification settings.
+    Requires authentication.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        """Update email preferences for current user."""
+        user = request.user
+
+        # Get or create EmailPreference (should exist from signal, but safety check)
+        email_pref, created = EmailPreference.objects.get_or_create(user=user)
+
+        # Validate and update preferences
+        serializer = EmailPreferenceSerializer(email_pref, data=request.data, partial=True)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer.save()
+
+        return Response({
+            'message': 'Email preferences updated successfully.',
+            'preferences': {
+                'collaboration_notifications': email_pref.collaboration_notifications,
+                'marketing_emails': email_pref.marketing_emails,
+            }
+        }, status=status.HTTP_200_OK)

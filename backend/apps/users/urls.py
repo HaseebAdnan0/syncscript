@@ -19,6 +19,8 @@ from .views import (
     GitHubOAuthRedirectView,
     LinkOAuthAccountView,
     CompleteOAuthEmailView,
+    UnsubscribeView,
+    EmailPreferenceUpdateView,
 )
 
 app_name = 'users'
@@ -53,4 +55,8 @@ urlpatterns = [
     path('auth/oauth/link/', LinkOAuthAccountView.as_view(), name='oauth-link'),
     path('auth/oauth/complete-email/', CompleteOAuthEmailView.as_view(), name='oauth-complete-email'),
     # Note: OAuth callbacks are handled by allauth URLs in config/urls.py
+
+    # Email preferences endpoints (US-011)
+    path('auth/unsubscribe/<str:token>/', UnsubscribeView.as_view(), name='unsubscribe'),
+    path('users/email-preferences/', EmailPreferenceUpdateView.as_view(), name='email-preferences'),
 ]

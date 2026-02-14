@@ -855,6 +855,10 @@ class VaultInsightsTestCase(APITestCase):
 
             response = self.client.get(f'/api/v1/vaults/{self.vault.id}/insights/')
 
+            # Debug output
+            if response.status_code != 200:
+                print(f'\nDEBUG: Status={response.status_code}, Data={response.data}')
+
             self.assertEqual(response.status_code, 200)
             self.assertEqual(len(response.data['themes']), 2)
             self.assertEqual(response.data['themes'][0]['name'], 'Machine Learning')

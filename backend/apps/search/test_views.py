@@ -308,3 +308,173 @@ class SuggestionsViewTest(TestCase):
         # Check that none of the suggestions are from the private vault
         for suggestion in response.data['suggestions']:
             self.assertNotIn('Secret', suggestion['text'])
+
+
+class RecentSearchesViewTest(TestCase):
+    def setUp(self):
+        """Set up test data"""
+        self.client = APIClient()
+
+        # Create test users
+        self.user1 = User.objects.create_user(
+            username='testuser1',
+            email='test1@example.com',
+            password='testpass123'
+        )
+        self.user2 = User.objects.create_user(
+            username='testuser2',
+            email='test2@example.com',
+            password='testpass123'
+        )
+
+        # Import SearchHistory model
+        from apps.search.models import SearchHistory
+
+        # Create search history for user1
+        self.search1 = SearchHistory.objects.create(
+            user=self.user1,
+            query='machine learning',
+            result_count=5
+        )
+        self.search2 = SearchHistory.objects.create(
+            user=self.user1,
+            query='python programming',
+            result_count=3
+        )
+        self.search3 = SearchHistory.objects.create(
+            user=self.user1,
+            query='data science',
+            result_count=10
+        )
+
+        # Create search history for user2 (to test isolation)
+        self.search_other = SearchHistory.objects.create(
+            user=self.user2,
+            query='private search',
+            result_count=1
+        )
+
+        self.url = reverse('search:recent_searches')
+
+    def test_recent_searches_requires_authentication(self):
+        """Test that recent searches endpoint requires authentication"""
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_get_recent_searches_success(self):
+        """Test GET recent searches returns user's history"""
+        self.client.force_authenticate(user=self.user1)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('recent_searches', response.data)
+        self.assertEqual(len(response.data['recent_searches']), 3)
+
+    def test_recent_searches_ordered_by_date(self):
+        """Test that recent searches are ordered by most recent first"""
+        self.client.force_authenticate(user=self.user1)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        searches = response.data['recent_searches']
+        # Most recent should be first (data science was created last)
+        self.assertEqual(searches[0]['query'], 'data science')
+
+    def test_recent_searches_max_ten(self):
+        """Test that only last 10 searches are returned"""
+        from apps.search.models import SearchHistory
+
+        # Create 15 total searches for user1
+        for i in range(12):  # We already have 3
+            SearchHistory.objects.create(
+                user=self.user1,
+                query=f'test query {i}',
+                result_count=1
+            )
+
+        self.client.force_authenticate(user=self.user1)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['recent_searches']), 10)
+
+    def test_recent_searches_respects_user_isolation(self):
+        """Test that users only see their own search history"""
+        self.client.force_authenticate(user=self.user1)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # User1 should not see user2's searches
+        for search in response.data['recent_searches']:
+            self.assertNotEqual(search['query'], 'private search')
+
+    def test_recent_searches_structure(self):
+        """Test that search history has expected structure"""
+        self.client.force_authenticate(user=self.user1)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        search = response.data['recent_searches'][0]
+        self.assertIn('id', search)
+        self.assertIn('query', search)
+        self.assertIn('result_count', search)
+        self.assertIn('created_at', search)
+
+    def test_delete_all_recent_searches(self):
+        """Test DELETE clears all search history for user"""
+        self.client.force_authenticate(user=self.user1)
+
+        # Delete all searches
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('deleted_count', response.data)
+        self.assertEqual(response.data['deleted_count'], 3)
+
+        # Verify searches are gone
+        response = self.client.get(self.url)
+        self.assertEqual(len(response.data['recent_searches']), 0)
+
+        # Verify user2's searches are unaffected
+        from apps.search.models import SearchHistory
+        self.assertTrue(
+            SearchHistory.objects.filter(user=self.user2).exists()
+        )
+
+    def test_delete_single_recent_search(self):
+        """Test DELETE /recent/{id}/ removes single entry"""
+        self.client.force_authenticate(user=self.user1)
+
+        # Delete one search
+        delete_url = reverse('search:delete_recent_search', kwargs={'search_id': self.search1.id})
+        response = self.client.delete(delete_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Verify it's gone
+        response = self.client.get(self.url)
+        self.assertEqual(len(response.data['recent_searches']), 2)
+
+        # Verify the correct search was deleted
+        for search in response.data['recent_searches']:
+            self.assertNotEqual(search['query'], 'machine learning')
+
+    def test_delete_single_search_not_found(self):
+        """Test DELETE single search returns 404 for non-existent ID"""
+        self.client.force_authenticate(user=self.user1)
+
+        # Try to delete non-existent search
+        delete_url = reverse('search:delete_recent_search', kwargs={'search_id': 99999})
+        response = self.client.delete(delete_url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_single_search_permission_check(self):
+        """Test users cannot delete other users' search history"""
+        self.client.force_authenticate(user=self.user1)
+
+        # Try to delete user2's search
+        delete_url = reverse('search:delete_recent_search', kwargs={'search_id': self.search_other.id})
+        response = self.client.delete(delete_url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        # Verify user2's search still exists
+        from apps.search.models import SearchHistory
+        self.assertTrue(
+            SearchHistory.objects.filter(id=self.search_other.id).exists()
+        )

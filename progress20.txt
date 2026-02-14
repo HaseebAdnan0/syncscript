@@ -102,3 +102,23 @@
   - Test both exists/not-exists scenarios for status endpoints
   - Test both success and already-exists scenarios for create endpoints
 ---
+
+## Iteration 7 - Create OnboardingProvider context (US-007)
+- Created OnboardingState and OnboardingUpdateData TypeScript types in lib/types/onboarding.ts
+- Added 5 onboarding API client functions to lib/api.ts:
+  - getOnboardingState(), updateOnboardingState(), getDemoVaultStatus(), createDemoVault(), resetDemoVault()
+- Created OnboardingProvider context in providers/OnboardingProvider.tsx
+- Provider fetches onboarding state on mount for authenticated users
+- Provides: step, completed, path, data, isLoading, error, updateOnboarding(), completeOnboarding(), refetch()
+- State changes synced to backend via PATCH /users/me/onboarding/
+- Handles loading and error states with proper error messages
+- Files changed: lib/types/onboarding.ts (new), lib/api.ts, providers/OnboardingProvider.tsx (new), PRD20.md
+- Typecheck passes
+- Learnings for future iterations:
+  - React Context pattern: createContext + useContext hook for type safety
+  - Fetch state on mount with useEffect + useCallback to prevent infinite loops
+  - Reset state to defaults when user logs out (!isAuthenticated)
+  - Provide both granular update method and convenience methods (completeOnboarding)
+  - Include refetch method for manual state refresh scenarios
+  - API imports require proper type imports from lib/types
+---

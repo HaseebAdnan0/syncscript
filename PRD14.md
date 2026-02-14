@@ -97,13 +97,13 @@ SyncScript's AI-powered citation generation system enables researchers to genera
 **Description:** As a system, I need to cache generated citations in source metadata to avoid redundant API calls and reduce latency.
 
 **Acceptance Criteria:**
-- [ ] Store citations in `source.metadata['citations'][format]` JSON structure
-- [ ] Cache structure: `{"text": "...", "html": "...", "generated_at": "ISO8601", "source": "structured|ai"}`
-- [ ] Check cache before generating new citation
-- [ ] Invalidate cache when source metadata is updated (via signal)
-- [ ] Add `invalidate_citation_cache(source)` utility function
-- [ ] Endpoint returns `cached: true` when serving from cache
-- [ ] Typecheck passes
+- [x] Store citations in `source.metadata['citations'][format]` JSON structure
+- [x] Cache structure: `{"text": "...", "html": "...", "generated_at": "ISO8601", "source": "structured|ai"}`
+- [x] Check cache before generating new citation
+- [x] Invalidate cache when source metadata is updated (via signal)
+- [x] Add `invalidate_citation_cache(source)` utility function
+- [x] Endpoint returns `cached: true` when serving from cache
+- [x] Typecheck passes
 
 ### US-008: Implement async task for AI citations
 **Description:** As a developer, I need AI citation generation to run asynchronously via Celery so users aren't blocked waiting for Claude API responses.

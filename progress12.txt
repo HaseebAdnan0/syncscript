@@ -262,3 +262,35 @@ Learnings for future iterations:
   - httpOnly cookies ensure tokens can't be accessed by JavaScript (security)
 ---
 
+## Iteration 10 - US-010: Create email submission endpoint for GitHub private email
+- Created CompleteOAuthEmailView in apps/users/views.py
+- Implemented POST /api/v1/auth/oauth/complete-email/ endpoint
+- Accepts JSON body: { email: string, temp_token: string }
+- Validates temp_token matches session data (oauth_temp_token)
+- Validates email format using Django EmailValidator
+- Checks email uniqueness against existing users
+- If email exists: returns link_required=true, stores email in pending_oauth, switches to linking flow
+- If email is new: creates User + SocialAccount, generates JWT tokens, returns 201
+- Clears session data after completion (pending_oauth, oauth_needs_email, oauth_temp_token)
+- Enhanced adapter to generate temp_token using secrets.token_urlsafe(32)
+- Adapter passes temp_token in redirect URL query parameter
+- URL routing configured at auth/oauth/complete-email/
+- Import and URL reverse tests pass
+- Committed successfully
+
+Files changed:
+  - backend/apps/users/views.py (added CompleteOAuthEmailView)
+  - backend/apps/users/adapters.py (added temp_token generation)
+  - backend/apps/users/urls.py (added oauth-complete-email route)
+  - PRD12.md (marked US-010 complete)
+
+Learnings for future iterations:
+  - Use secrets.token_urlsafe() for generating secure random tokens
+  - Django EmailValidator can validate email format before attempting operations
+  - Can transition between OAuth flows (email_required -> link_required) by updating session flags
+  - User.objects.create_user() is the proper way to create users (handles password hashing)
+  - OAuth providers that verify email can set email_verified=True on user creation
+  - Extract username from extra_data (GitHub: 'login' field) or derive from email
+  - Session tokens provide simple validation for multi-step OAuth flows
+---
+
