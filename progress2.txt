@@ -195,3 +195,18 @@
   - Commit succeeded with clean verification
 ---
 
+## Iteration 16 - US-015: Create VaultViewSet with CRUD
+- Implemented VaultViewSet with ModelViewSet for complete CRUD operations
+- Files changed:
+  - backend/apps/vaults/views.py (added VaultViewSet with filtering, ordering, pagination)
+  - PRD2.md (marked US-015 as complete)
+- Django check passed with no issues
+- Learnings for future iterations:
+  - Use Q objects from django.db.models for complex OR queries in filters
+  - get_queryset() with Q(owner=user) | Q(members=user) allows users to see vaults they own or are members of
+  - .distinct() required when filtering on ManyToMany relationships to avoid duplicates
+  - perform_create() hook sets owner automatically on vault creation
+  - DjangoFilterBackend and OrderingFilter work together for flexible API queries
+  - PageNumberPagination class reference (not instance) for DRF pagination
+---
+

@@ -30,9 +30,19 @@ class VaultViewSet(viewsets.ModelViewSet):
         """Return vaults owned by or accessible to the current user."""
         user = self.request.user
         # User can see vaults they own or are a member of
-        return Vault.objects.filter(
+        queryset = Vault.objects.filter(
             Q(owner=user) | Q(members=user)
         ).distinct()
+
+        # Filter by role if provided in query params
+        role = self.request.query_params.get('role')
+        if role:
+            queryset = queryset.filter(
+                vaultmembership__user=user,
+                vaultmembership__role=role
+            ).distinct()
+
+        return queryset
 
     def perform_create(self, serializer):
         """Set the vault owner to the current user."""

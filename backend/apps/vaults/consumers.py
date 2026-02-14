@@ -157,3 +157,80 @@ class VaultConsumer(AsyncWebsocketConsumer):
         """
         # Forward the event to the WebSocket client
         await self.send(text_data=json.dumps(event))
+
+    async def _add_to_presence(self, user_id: int, vault_id: int) -> None:
+        """
+        Add user to Redis sorted set for presence tracking.
+
+        Args:
+            user_id: User ID to add
+            vault_id: Vault ID for the presence set
+        """
+        presence_key = f"vault_{vault_id}:presence"
+        timestamp = time.time()
+
+        # Add to sorted set with current timestamp as score
+        redis_conn = cache.client.get_client()  # type: ignore[attr-defined]
+        redis_conn.zadd(presence_key, {str(user_id): timestamp})
+
+    async def _remove_from_presence(self, user_id: int, vault_id: int) -> None:
+        """
+        Remove user from Redis sorted set for presence tracking.
+
+        Args:
+            user_id: User ID to remove
+            vault_id: Vault ID for the presence set
+        """
+        presence_key = f"vault_{vault_id}:presence"
+
+        # Remove from sorted set
+        redis_conn = cache.client.get_client()  # type: ignore[attr-defined]
+        redis_conn.zrem(presence_key, str(user_id))
+
+    @database_sync_to_async
+    def _get_presence_list(self, vault_id: int) -> list[dict]:
+        """
+        Fetch presence list with user details from Redis.
+
+        Args:
+            vault_id: Vault ID for the presence set
+
+        Returns:
+            List of dicts with user_id, username, joined_at, status
+        """
+        presence_key = f"vault_{vault_id}:presence"
+        redis_conn = cache.client.get_client()  # type: ignore[attr-defined]
+
+        # Get all users with their timestamps
+        user_scores = redis_conn.zrange(presence_key, 0, -1, withscores=True)
+
+        current_time = time.time()
+        presence_list = []
+
+        for user_id_bytes, timestamp in user_scores:
+            user_id = int(user_id_bytes)
+            time_since = current_time - timestamp
+
+            # Determine status based on time since last update
+            if time_since < 60:
+                status = 'active'
+            elif time_since < 300:
+                status = 'idle'
+            else:
+                # User is stale, skip
+                continue
+
+            # Fetch user details from database
+            try:
+                user = User.objects.get(id=user_id)
+                presence_list.append({
+                    'user_id': user_id,
+                    'username': user.username,
+                    'joined_at': int(timestamp),
+                    'status': status
+                })
+            except User.DoesNotExist:
+                # User was deleted, remove from presence
+                redis_conn.zrem(presence_key, str(user_id))
+
+        return presence_list

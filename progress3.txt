@@ -179,3 +179,24 @@
   - Metadata extraction happens automatically on create if no title is provided
   - Typecheck shows Meta class warnings but serializer is functionally correct
 ---
+
+## Iteration 9 - US-008: Create SourceViewSet with basic CRUD
+- Implemented SourceViewSet extending ModelViewSet in apps/sources/views.py
+- Set queryset to Source.objects.filter(is_deleted=False)
+- Set serializer_class to SourceSerializer
+- Overrode perform_create() to set created_by from request.user automatically
+- Overrode get_queryset() to filter sources by vaults user has access to:
+  - Includes vaults where user is owner
+  - Includes vaults where user is member (through VaultMembership)
+  - Filters to only return non-deleted sources
+- Registered sources router in urls.py: router.register(r'sources', SourceViewSet)
+- Files changed:
+  - backend/apps/sources/views.py (added SourceViewSet class)
+  - backend/apps/sources/urls.py (registered sources router)
+  - PRD3.md (marked US-008 complete)
+- Learnings for future iterations:
+  - ViewSet get_queryset() is called for all list/retrieve operations - perfect for filtering by permissions
+  - Need to combine both owned vaults and member vaults to get full accessible vault set
+  - Django ORM values_list('id', flat=True) returns a queryset, convert to list to combine
+  - Typecheck passes with 0 errors
+---

@@ -181,10 +181,10 @@ Create a secure, collaborative Knowledge Vault system where researchers can crea
 **Description:** As a user, I want to filter vaults by my role so I can find owned vs contributed vaults.
 
 **Acceptance Criteria:**
-- [ ] `get_queryset` reads `role` from query_params
-- [ ] Filters by `vaultmembership__user=user, vaultmembership__role=role`
-- [ ] Works with values: OWNER, CONTRIBUTOR, VIEWER
-- [ ] Typecheck passes
+- [x] `get_queryset` reads `role` from query_params
+- [x] Filters by `vaultmembership__user=user, vaultmembership__role=role`
+- [x] Works with values: OWNER, CONTRIBUTOR, VIEWER
+- [x] Typecheck passes
 
 ### US-017: Add owner-only permissions to vault mutations
 **Description:** As a system, I need to restrict update/delete to owners only.
