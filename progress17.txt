@@ -64,3 +64,37 @@
   - Tests must clear auto-generated audit logs after vault creation (signals)
   - All 7 tests passing (auth, success, formatting, limit params, empty, null actor, access control)
 ---
+
+## Iteration 4 - US-004: Create analytics endpoints
+- Implemented three analytics endpoints for dashboard chart data
+- Created GET /api/v1/dashboard/analytics/sources-timeline/
+  - Returns sources added per day for last 30 days
+  - Uses Django's TruncDate aggregation for efficient date grouping
+  - Excludes deleted sources
+  - Returns array: [{ date: "2026-02-01", count: 5 }, ...]
+- Created GET /api/v1/dashboard/analytics/source-types/
+  - Returns breakdown by source type with counts and percentages
+  - Sorted by count (descending)
+  - Percentages rounded to 1 decimal place
+  - Returns array: [{ type: "PDF", count: 15, percentage: 45.5 }, ...]
+- Created GET /api/v1/dashboard/analytics/top-collaborators/
+  - Returns top 5 collaborators by contribution count
+  - Counts sources created, annotations created, and audit log entries
+  - Excludes current user from results
+  - Shows user_id, name, avatar_url, and total contributions
+  - Returns array sorted by contributions_count (descending)
+- Files changed:
+  - backend/apps/dashboard/views.py (added 3 analytics views, imported Count and TruncDate)
+  - backend/apps/dashboard/urls.py (added 3 analytics routes)
+  - backend/apps/dashboard/tests.py (added AnalyticsTests class with 15 comprehensive tests)
+  - PRD17.md (marked US-004 complete)
+- Learnings for future iterations:
+  - TruncDate() from django.db.models.functions efficiently groups by date
+  - Count() aggregation with values() creates grouped counts by field
+  - Percentage calculation: (count / total * 100) with proper zero-handling
+  - Contributions calculated from multiple sources: sources + annotations + audit logs
+  - VaultMembership query gets all collaborators, then filter by contributions > 0
+  - Top 5 selection done in Python after calculating all contributions
+  - All endpoints scoped to accessible vaults (Q(owner=user) | Q(members=user))
+  - All 15 analytics tests passing, total 29 dashboard tests passing
+---
