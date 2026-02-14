@@ -10,7 +10,9 @@ import { SourcesListHeader } from '@/components/features/sources/SourcesListHead
 import { SourcesFilterBar } from '@/components/features/sources/SourcesFilterBar';
 import { SourcesList } from '@/components/features/sources/SourcesList';
 import { AddSourceModal } from '@/components/features/sources/AddSourceModal';
-import { ArrowLeft, Wifi, WifiOff } from 'lucide-react';
+import { BulkImportModal } from '@/components/features/sources/BulkImportModal';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { ArrowLeft, Wifi, WifiOff, Keyboard } from 'lucide-react';
 
 export default function SourcesPage() {
   const params = useParams();
@@ -28,8 +30,10 @@ export default function SourcesPage() {
   // View preference hook
   const [viewMode, setViewMode] = useSourcesViewPreference();
 
-  // Add source modal state
+  // Modal state
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isBulkImportOpen, setIsBulkImportOpen] = useState(false);
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
 
   // Real-time updates via WebSocket
   const { status } = useSourcesWebSocket({ vaultId });
@@ -40,6 +44,47 @@ export default function SourcesPage() {
       document.title = `${vault.name} - Sources | SyncScript`;
     }
   }, [vault]);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      // Don't trigger shortcuts when typing in input fields
+      const target = e.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+        return;
+      }
+
+      // Escape closes any open modal
+      if (e.key === 'Escape') {
+        setIsAddModalOpen(false);
+        setIsBulkImportOpen(false);
+        setIsHelpOpen(false);
+        return;
+      }
+
+      // Other shortcuts
+      switch (e.key.toLowerCase()) {
+        case 'n':
+          setIsAddModalOpen(true);
+          break;
+        case 'b':
+          setIsBulkImportOpen(true);
+          break;
+        case 'g':
+          setViewMode('grid');
+          break;
+        case 't':
+          setViewMode('table');
+          break;
+        case '?':
+          setIsHelpOpen(true);
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [setViewMode]);
 
   // Loading state
   if (vaultLoading) {
@@ -139,6 +184,62 @@ export default function SourcesPage() {
         onOpenChange={setIsAddModalOpen}
         vaultId={vaultId}
       />
+
+      {/* Bulk import modal */}
+      <BulkImportModal
+        open={isBulkImportOpen}
+        onOpenChange={setIsBulkImportOpen}
+        onParsedUrls={() => {
+          // Bulk import feature would show preview list here
+          // For now, just close the modal
+          setIsBulkImportOpen(false);
+        }}
+      />
+
+      {/* Keyboard shortcuts help dialog */}
+      <Dialog open={isHelpOpen} onOpenChange={setIsHelpOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Keyboard className="w-5 h-5 text-[#F7931A]" />
+              Keyboard Shortcuts
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-[#94A3B8]">Open Add Source</span>
+                <kbd className="px-2 py-1 bg-white/10 border border-white/20 rounded font-mono text-xs">N</kbd>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-[#94A3B8]">Open Bulk Import</span>
+                <kbd className="px-2 py-1 bg-white/10 border border-white/20 rounded font-mono text-xs">B</kbd>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-[#94A3B8]">Toggle Grid View</span>
+                <kbd className="px-2 py-1 bg-white/10 border border-white/20 rounded font-mono text-xs">G</kbd>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-[#94A3B8]">Toggle Table View</span>
+                <kbd className="px-2 py-1 bg-white/10 border border-white/20 rounded font-mono text-xs">T</kbd>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-[#94A3B8]">Close Modal</span>
+                <kbd className="px-2 py-1 bg-white/10 border border-white/20 rounded font-mono text-xs">Escape</kbd>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-[#94A3B8]">Show This Help</span>
+                <kbd className="px-2 py-1 bg-white/10 border border-white/20 rounded font-mono text-xs">?</kbd>
+              </div>
+            </div>
+
+            <p className="text-xs text-[#94A3B8] border-t border-white/10 pt-3">
+              Shortcuts are disabled when typing in input fields.
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

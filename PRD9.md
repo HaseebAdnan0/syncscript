@@ -452,13 +452,13 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 **Description:** As a power user, I want keyboard shortcuts so I can manage sources efficiently without using the mouse.
 
 **Acceptance Criteria:**
-- [ ] `n` opens Add Source modal (when not in input)
-- [ ] `b` opens Bulk Import modal
-- [ ] `g` toggles grid view, `t` toggles table view
-- [ ] `Escape` closes any open modal
-- [ ] `?` shows keyboard shortcuts help overlay
-- [ ] Shortcuts only active when sources page focused
-- [ ] Typecheck passes
+- [x] `n` opens Add Source modal (when not in input)
+- [x] `b` opens Bulk Import modal
+- [x] `g` toggles grid view, `t` toggles table view
+- [x] `Escape` closes any open modal
+- [x] `?` shows keyboard shortcuts help overlay
+- [x] Shortcuts only active when sources page focused
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---
