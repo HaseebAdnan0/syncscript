@@ -17,6 +17,15 @@ export interface VaultMember {
   is_pending?: boolean; // For invited users who haven't joined yet
 }
 
+// Storage usage info
+export interface StorageUsage {
+  used_bytes: number;
+  limit_bytes: number;
+  percentage: number;
+  warning: boolean;
+  file_count: number;
+}
+
 // Main vault type
 export interface Vault {
   id: number;
@@ -30,6 +39,7 @@ export interface Vault {
   member_count: number;
   user_role: VaultRole; // Current user's role in this vault
   last_activity?: string;
+  storage_usage?: StorageUsage; // Storage quota information
 }
 
 // Request/Response types for API

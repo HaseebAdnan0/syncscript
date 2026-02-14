@@ -5,7 +5,9 @@ import { useRouter } from 'next/navigation';
 import { AppHeader } from '@/components/features/notifications/AppHeader';
 import { Sidebar } from '@/components/features/dashboard/Sidebar';
 import OnboardingFlow from '@/components/features/onboarding/OnboardingFlow';
+import GlobalSearch from '@/components/features/search/GlobalSearch';
 import { useAuthStore } from '@/stores/authStore';
+import { useGlobalSearchShortcut } from '@/hooks/useGlobalSearchShortcut';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -14,6 +16,7 @@ interface AppLayoutProps {
 export default function AppLayout({ children }: AppLayoutProps) {
   const router = useRouter();
   const { user, isLoading } = useAuthStore();
+  const { isOpen, close } = useGlobalSearchShortcut();
 
   // Redirect unauthenticated users to login
   useEffect(() => {
@@ -47,6 +50,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
         <main className="flex-1 min-h-[calc(100vh-72px)]">{children}</main>
       </div>
       <OnboardingFlow />
+      <GlobalSearch isOpen={isOpen} onClose={close} />
     </div>
   );
 }

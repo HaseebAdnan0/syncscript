@@ -469,3 +469,30 @@ Learnings for future iterations:
 - Manual verification checklists should include prerequisites, expected behavior, and space for issues found
 ---
 
+## Iteration 16 - US-015: Create ResearchInsightsPanel component
+- Discovered US-015 was already completed in commit bea4ad3 (previous work session)
+- Verified implementation in frontend/src/components/features/ai/ResearchInsightsPanel.tsx
+- Component properly implements all acceptance criteria:
+  - Collapsible sections: Themes (weighted tag cloud), Research Gaps, Cross-References, Suggested Searches
+  - "Generate Insights" button for empty state (no insights yet)
+  - "Refresh" button with last-updated timestamp display
+  - Empty state for vaults with < 2 sources with clear messaging
+  - Bitcoin DeFi design: glass cards, orange gradients, animated expand/collapse
+  - All props fully typed with TypeScript interfaces
+- My re-implementation was identical to existing code except removed unused vaultId prop
+- Typecheck passes successfully
+- PRD15.md already marked US-015 complete
+
+Files verified:
+- frontend/src/components/features/ai/ResearchInsightsPanel.tsx (already exists, fully typed)
+- PRD15.md (US-015 already marked [x])
+
+Learnings for future iterations:
+- Always check git history before implementing - task may already be complete
+- Use `git log --oneline --all -- <file>` to check file commit history
+- ResearchInsightsPanel already removed vaultId prop in previous implementation
+- Weighted themes displayed with dynamic font sizing based on weight
+- Collapsible sections improve UX for dense insight data
+- Empty states guide users on minimum requirements (2+ sources for insights)
+---
+

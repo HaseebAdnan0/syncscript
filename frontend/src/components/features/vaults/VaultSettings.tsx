@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/useToast';
 import GradientButton from '@/components/ui/GradientButton';
 import { AlertTriangle, Trash2, CheckCircle2, XCircle } from 'lucide-react';
 import * as Dialog from '@radix-ui/react-dialog';
+import { StorageUsageIndicator } from './StorageUsageIndicator';
 
 interface VaultSettingsProps {
   vault: Vault;
@@ -158,6 +159,45 @@ export function VaultSettings({ vault, userRole }: VaultSettingsProps) {
           )}
         </div>
       </div>
+
+      {/* Storage Usage Section */}
+      {vault.storage_usage && (
+        <div className="bg-[#0F1115] border border-white/10 rounded-2xl p-8">
+          <h2 className="text-2xl font-bold text-white mb-6">Storage Usage</h2>
+
+          <StorageUsageIndicator
+            usedBytes={vault.storage_usage.used_bytes}
+            limitBytes={vault.storage_usage.limit_bytes}
+            warning={vault.storage_usage.warning}
+          />
+
+          {/* Warning message when approaching limit */}
+          {vault.storage_usage.warning && vault.storage_usage.percentage >= 0.8 && vault.storage_usage.percentage < 0.95 && (
+            <div className="mt-6 bg-[#F7931A]/10 border border-[#F7931A]/30 rounded-lg p-4">
+              <p className="text-[#F7931A] text-sm font-medium">
+                ⚠️ Storage Approaching Limit
+              </p>
+              <p className="text-[#94A3B8] text-sm mt-2">
+                You're using {Math.round(vault.storage_usage.percentage * 100)}% of your storage quota.
+                Consider archiving or removing old files to free up space.
+              </p>
+            </div>
+          )}
+
+          {/* Critical warning when nearly full */}
+          {vault.storage_usage.percentage >= 0.95 && (
+            <div className="mt-6 bg-red-500/10 border border-red-500/30 rounded-lg p-4">
+              <p className="text-red-400 text-sm font-semibold">
+                🚨 Storage Nearly Full
+              </p>
+              <p className="text-[#94A3B8] text-sm mt-2">
+                You've used {Math.round(vault.storage_usage.percentage * 100)}% of your storage quota.
+                Delete files immediately to continue uploading new content.
+              </p>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Non-owner message */}
       {!isOwner && (

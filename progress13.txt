@@ -625,3 +625,55 @@ vaults/{vault_id}/thumbnails/{uuid}.jpg
   - Component compiles successfully (pre-existing build manifest error unrelated)
 ---
 
+## Iteration 20 - Integrate upload components into SourcesList (US-020)
+- Updated frontend/src/components/features/sources/SourcesList.tsx
+- Integration implementation:
+  - Imported FileUploadZone, UploadProgressBar, UploadErrorState components
+  - Imported useFileUpload hook for upload state management
+  - Added onRefresh prop to SourcesListProps for refreshing sources after upload completes
+  - Used useFileUpload hook to get uploads Map and upload functions
+  - State management:
+    - uploadingFiles boolean state to track active upload session
+    - useEffect monitors uploads Map for completed uploads
+    - handleUploadComplete callback refreshes sources list
+  - Upload handlers:
+    - handleFilesSelected: async function that uploads each file via uploadFile()
+    - handleUploadComplete: wrapped in useCallback, calls onRefresh if provided
+    - retryUpload: calls hook's retryUpload with uploadId
+    - cancelUpload: calls hook's cancelUpload with uploadId
+  - renderUploadSection helper function:
+    - Returns FileUploadZone component at top
+    - Accepts PDF, PNG, JPG (max 10 files)
+    - Maps through uploads.entries() to get [uploadId, upload] pairs
+    - Renders UploadErrorState for failed uploads (status === 'error')
+    - Renders UploadProgressBar for other statuses
+    - Uses uploadId as React key (from Map key, not optional field)
+  - Upload section added to both render paths:
+    - Grid view: renderUploadSection() before grid
+    - Table view: renderUploadSection() before table
+- Upload flow:
+  - User selects files via FileUploadZone (drag-drop or click)
+  - handleFilesSelected calls uploadFile() for each file
+  - useFileUpload hook manages upload state in Map
+  - UploadProgressBar shows real-time progress
+  - UploadErrorState shows errors with retry/dismiss buttons
+  - useEffect detects completed uploads and triggers onRefresh
+  - Sources list re-renders with new uploaded files
+- React best practices:
+  - handleUploadComplete wrapped in useCallback with [onRefresh] deps
+  - useEffect has proper dependency array [uploads, uploadingFiles, handleUploadComplete]
+  - Map.entries() used to iterate with keys for proper TypeScript types
+  - No optional chaining needed since uploadId comes from Map key
+- Files changed:
+  - frontend/src/components/features/sources/SourcesList.tsx (major updates)
+  - PRD13.md
+  - progress13.txt
+- Learnings for future iterations:
+  - Map.entries() provides [key, value] tuples for proper iteration
+  - Using Map key as uploadId avoids optional type issues
+  - useCallback prevents infinite useEffect loops
+  - Upload section should appear before content (grid/table)
+  - Build compiles successfully (pre-existing warnings unrelated)
+  - Integration tested successfully in browser
+---
+

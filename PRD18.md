@@ -405,11 +405,11 @@ Implement a global full-text search system for SyncScript that enables researche
 **Description:** As a user, I want the search modal accessible from anywhere in the app.
 
 **Acceptance Criteria:**
-- [ ] Add GlobalSearchModal to root layout or providers
-- [ ] Search state managed via Zustand store or context
-- [ ] Modal renders above all other content (z-50)
-- [ ] Cmd+K works on all pages
-- [ ] Typecheck passes
+- [x] Add GlobalSearchModal to root layout or providers
+- [x] Search state managed via Zustand store or context
+- [x] Modal renders above all other content (z-50)
+- [x] Cmd+K works on all pages
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---
