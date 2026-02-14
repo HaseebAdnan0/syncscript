@@ -50,12 +50,12 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a developer, I need the users app structure and initial database migration.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/users/__init__.py`
-- [ ] Create `apps/users/apps.py` with UsersConfig
-- [ ] Create `apps/users/admin.py` (empty for now)
-- [ ] Generate migration with `python manage.py makemigrations users`
-- [ ] Migration file created in `apps/users/migrations/`
-- [ ] Typecheck passes
+- [x] Create `apps/users/__init__.py`
+- [x] Create `apps/users/apps.py` with UsersConfig
+- [x] Create `apps/users/admin.py` (empty for now)
+- [x] Generate migration with `python manage.py makemigrations users`
+- [x] Migration file created in `apps/users/migrations/`
+- [x] Typecheck passes
 
 ---
 
