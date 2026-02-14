@@ -245,14 +245,14 @@ SyncScript needs a complete frontend authentication system that enables users to
 **Description:** As a user, I want toast notifications so that I receive feedback on auth operations.
 
 **Acceptance Criteria:**
-- [ ] Set up toast provider using Radix Toast or similar
-- [ ] Create `useToast` hook with `toast.success()`, `toast.error()` methods
-- [ ] Toast appears in top-right corner
-- [ ] Auto-dismiss after 5 seconds
-- [ ] Style: dark background, orange accent for success, red for error
-- [ ] Add ToastProvider to root layout
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Set up toast provider using Radix Toast or similar
+- [x] Create `useToast` hook with `toast.success()`, `toast.error()` methods
+- [x] Toast appears in top-right corner
+- [x] Auto-dismiss after 5 seconds
+- [x] Style: dark background, orange accent for success, red for error
+- [x] Add ToastProvider to root layout
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 
