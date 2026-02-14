@@ -578,3 +578,38 @@ In Progress - US-004 complete
   - Fail gracefully in email sending (return False, don't raise exception)
   - Log errors with print() for debugging (could use Django logging in production)
 ---
+
+## Iteration 21 - US-022: Celery Task for Immediate Email Notifications
+- Added emailed_at field to Notification model (nullable datetime)
+- Generated and applied migration 0004_notification_emailed_at
+- Created apps/notifications/tasks.py with send_immediate_notification_email Celery task
+- Task checks user's email_digest_frequency preference before sending
+- Only sends email if preference is 'immediate', returns False otherwise
+- Marks notification as emailed (sets emailed_at timestamp) after successful send
+- Integrated task into create_notification service with .delay() for async execution
+- Created comprehensive test suite with 7 test cases:
+  - Sends email when preference is immediate
+  - Skips email when preference is daily/weekly/none
+  - Handles missing notification gracefully
+  - Handles missing preferences gracefully
+  - Only marks as emailed on successful send (not on failure)
+- All tests pass (7/7), mypy typecheck passes
+- Commit 4d7c22b
+- Files changed:
+  - backend/apps/notifications/models.py (added emailed_at field)
+  - backend/apps/notifications/migrations/0004_notification_emailed_at.py (new)
+  - backend/apps/notifications/tasks.py (new)
+  - backend/apps/notifications/services.py (integrated task call)
+  - backend/apps/notifications/test_immediate_email_task.py (new)
+  - PRD19.md (marked US-022 complete)
+- Learnings for future iterations:
+  - Celery shared_task decorator needs type: ignore[import-untyped]
+  - Task functions should handle missing objects gracefully (DoesNotExist)
+  - Check preferences via try/except to handle missing NotificationPreferences
+  - .delay() queues task asynchronously, needs type: ignore[attr-defined] for mypy
+  - select_related for efficient query when accessing user and preferences
+  - Update specific fields with save(update_fields=['field']) for efficiency
+  - notification.id needs type: ignore[attr-defined] throughout tests
+  - Integration point: create_notification() calls task after creating notification
+  - Task filtering: only send if frequency == 'immediate', otherwise return False
+---
