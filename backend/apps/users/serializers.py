@@ -73,6 +73,49 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         return user
 
 
+class RegisterSerializer(serializers.ModelSerializer):
+    """
+    Serializer for user registration (US-008).
+    Validates email uniqueness and password strength.
+    """
+    password = serializers.CharField(
+        write_only=True,
+        required=True,
+        min_length=8,
+        style={'input_type': 'password'}
+    )
+
+    class Meta:
+        model = User
+        fields = ['email', 'password', 'username', 'bio', 'institution']
+        extra_kwargs = {
+            'bio': {'required': False},
+            'institution': {'required': False},
+        }
+
+    def validate_password(self, value):
+        """Validate password strength using Django's password validators."""
+        try:
+            validate_password(value)
+        except DjangoValidationError as e:
+            raise serializers.ValidationError(list(e.messages))
+        return value
+
+    def validate_email(self, value):
+        """Validate email uniqueness."""
+        if User.objects.filter(email__iexact=value).exists():
+            raise serializers.ValidationError("A user with this email already exists.")
+        return value.lower()
+
+    def create(self, validated_data):
+        """Create user with hashed password."""
+        password = validated_data.pop('password')
+        user = User.objects.create(**validated_data)
+        user.set_password(password)
+        user.save()
+        return user
+
+
 class UserSerializer(serializers.ModelSerializer):
     """
     Serializer for user profile display.

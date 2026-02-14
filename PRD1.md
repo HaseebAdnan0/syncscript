@@ -112,13 +112,13 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a developer, I need a serializer for user registration with password strength validation.
 
 **Acceptance Criteria:**
-- [ ] Add RegisterSerializer to `apps/users/serializers.py`
-- [ ] Fields: email, password, username, bio (optional), institution (optional)
-- [ ] Password field write_only with min_length=8
-- [ ] Add validate_password method using Django's password validators
-- [ ] Add validate_email method to check uniqueness
-- [ ] Implement create method that hashes password
-- [ ] Typecheck passes
+- [x] Add RegisterSerializer to `apps/users/serializers.py`
+- [x] Fields: email, password, username, bio (optional), institution (optional)
+- [x] Password field write_only with min_length=8
+- [x] Add validate_password method using Django's password validators
+- [x] Add validate_email method to check uniqueness
+- [x] Implement create method that hashes password
+- [x] Typecheck passes
 
 ---
 
