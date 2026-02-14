@@ -292,16 +292,16 @@ SyncScript needs a complete frontend authentication system that enables users to
 **Description:** As a user, I want to change my password from the security tab so that I can keep my account secure.
 
 **Acceptance Criteria:**
-- [ ] Security tab shows password change form
-- [ ] Fields: current password, new password (with strength indicator), confirm new password
-- [ ] Validation: current required, new min 8 chars, confirm must match
-- [ ] Gradient "Update Password" button
-- [ ] On submit, POST to `/auth/password-change/`
-- [ ] Show loading state during submission
-- [ ] On success, clear form and show success toast
-- [ ] On error (wrong current password), show inline error
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Security tab shows password change form
+- [x] Fields: current password, new password (with strength indicator), confirm new password
+- [x] Validation: current required, new min 8 chars, confirm must match
+- [x] Gradient "Update Password" button
+- [x] On submit, POST to `/auth/password-change/`
+- [x] Show loading state during submission
+- [x] On success, clear form and show success toast
+- [x] On error (wrong current password), show inline error
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 

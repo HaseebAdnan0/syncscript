@@ -384,3 +384,29 @@ US-018 was already implemented in commit 873aeba but progress tracker wasn't upd
 - progress7.txt (updated to reflect completion)
 
 **Next task:** US-019 - Build security tab with password change
+
+## Iteration 20 - US-019: Build security tab with password change
+- Discovered that password change functionality was already implemented in commit 21c07b6
+- Implementation includes all required features:
+  - Security tab with password change form
+  - Fields: current password, new password (with PasswordStrength indicator), confirm new password
+  - Validation: current required, new min 8 chars, passwords must match
+  - GradientButton with "Update Password" label and loading state
+  - POST to /auth/password-change/ with old_password and new_password
+  - Success flow: clears form, shows success toast
+  - Error handling: inline error for wrong current password, toast for other errors
+- Files already committed:
+  - frontend/src/app/(protected)/profile/page.tsx (passwordErrors state, validatePasswordForm, handlePasswordSubmit)
+  - frontend/src/components/ui/PasswordStrength.tsx (reused from registration)
+- Fixed pre-existing build error in frontend/src/hooks/useAnnotationMutations.ts
+  - Added explicit type annotation for context parameter in onError handlers
+  - Changed from implicit context type to: context: MutationContext | undefined
+- Learnings for future iterations:
+  - Password change form follows same patterns as profile form (useState, validation, api.post)
+  - Error response structure: old_password array or message string
+  - Error detection checks for "incorrect" or "wrong" keywords to show inline vs toast
+  - Form clears all fields and errors on success
+  - PasswordStrength component reused from registration page (US-012)
+  - Build passes successfully with no TypeScript errors
+  - Typecheck passes
+---
