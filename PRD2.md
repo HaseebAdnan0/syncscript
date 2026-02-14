@@ -139,11 +139,11 @@ Create a secure, collaborative Knowledge Vault system where researchers can crea
 **Description:** As a developer, I need owner-only permission for vault management actions.
 
 **Acceptance Criteria:**
-- [ ] Extends BasePermission
-- [ ] `has_object_permission` checks if user has OWNER role in vault membership
-- [ ] Handles both Vault objects and objects with `.vault` attribute
-- [ ] Returns True only if membership exists with role=OWNER
-- [ ] Typecheck passes
+- [x] Extends BasePermission
+- [x] `has_object_permission` checks if user has OWNER role in vault membership
+- [x] Handles both Vault objects and objects with `.vault` attribute
+- [x] Returns True only if membership exists with role=OWNER
+- [x] Typecheck passes
 
 ### US-013: Create IsVaultContributor permission
 **Description:** As a developer, I need contributor+ permission for write operations.
