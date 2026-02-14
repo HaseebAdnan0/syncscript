@@ -317,6 +317,69 @@ const GuidedVaultWizard: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Step 3: Invite Collaborator */}
+      {currentStep === 3 && (
+        <div className="bg-[#0F1115] border border-white/10 rounded-2xl p-8">
+          <h2 className="text-3xl font-bold text-white mb-2">Invite a Collaborator</h2>
+          <p className="text-[#94A3B8] mb-8">
+            Research is better together! Invite a teammate to collaborate on your vault (optional).
+          </p>
+
+          <div className="mb-8">
+            <label htmlFor="collaborator-email" className="block text-white font-semibold mb-3">
+              Collaborator Email (Optional)
+            </label>
+            <input
+              id="collaborator-email"
+              type="email"
+              value={collaboratorEmail}
+              onChange={(e) => {
+                setCollaboratorEmail(e.target.value);
+                setEmailError(null);
+              }}
+              onKeyDown={handleKeyDown}
+              placeholder="colleague@university.edu"
+              className="w-full bg-black/50 border-b-2 border-white/20 h-12 px-4 text-white placeholder:text-[#94A3B8]/50 focus:border-[#F7931A] focus:outline-none transition-colors"
+              autoFocus
+            />
+            {emailError && (
+              <p className="mt-2 text-sm text-red-400">{emailError}</p>
+            )}
+          </div>
+
+          <div className="flex justify-between items-center">
+            <button
+              onClick={handleStep3Back}
+              disabled={isSubmitting}
+              className="text-[#94A3B8] hover:text-white transition-colors px-4 py-2"
+            >
+              Back
+            </button>
+            <div className="flex gap-4 items-center">
+              <button
+                onClick={handleStep3Skip}
+                disabled={isSubmitting}
+                className="text-[#94A3B8] hover:text-white transition-colors text-sm underline"
+              >
+                Skip
+              </button>
+              <GradientButton
+                onClick={() => handleCreateVault()}
+                disabled={isSubmitting}
+                isLoading={isSubmitting}
+              >
+                Create Vault
+              </GradientButton>
+            </div>
+          </div>
+
+          {/* Helpful Tip */}
+          <div className="mt-6 text-center text-[#94A3B8] text-sm">
+            💡 Tip: Collaborators can add sources, create annotations, and help build your research vault
+          </div>
+        </div>
+      )}
     </div>
   );
 };

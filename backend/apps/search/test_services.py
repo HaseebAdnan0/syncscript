@@ -1,7 +1,8 @@
 from django.test import TestCase
 from django.utils import timezone
-from .models import SearchAnalytics
-from .services import track_search_analytics
+from apps.users.models import User
+from .models import SearchAnalytics, SearchHistory
+from .services import track_search_analytics, record_search_history
 
 
 class TrackSearchAnalyticsTest(TestCase):

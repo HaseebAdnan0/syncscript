@@ -403,3 +403,25 @@ Learnings for future iterations:
   - px-4 spacing on divider text prevents border from showing through text
 ---
 
+## Iteration 15 - US-015: Add OAuth buttons to registration page
+- Imported OAuthButtons component into registration page (default import)
+- Positioned OAuth buttons above email/password form (before the form element)
+- Added OR divider with horizontal line and centered "or" text
+- Divider styling matches login page: white/10 border with text on bg-[#0F1115] background
+- OAuth buttons disabled when isLoading is true (form is submitting)
+- Maintained existing registration form functionality (all handlers, validation intact)
+- Frontend typecheck passes (pre-existing errors in GuidedVaultWizard unrelated)
+- Committed successfully
+
+Files changed:
+  - frontend/src/app/(auth)/register/page.tsx (added OAuthButtons import and rendering)
+  - PRD12.md (marked US-015 complete except browser verification)
+
+Learnings for future iterations:
+  - OAuthButtons is a default export, not named export (use `import OAuthButtons` not `import { OAuthButtons }`)
+  - Same divider pattern works consistently across auth pages (login, register)
+  - OAuth buttons positioned before form encourages OAuth usage
+  - Disabled state syncs between OAuth buttons and form submission state
+  - Keep consistency between login and register pages for better UX
+---
+

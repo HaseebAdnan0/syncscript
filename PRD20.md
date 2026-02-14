@@ -160,14 +160,14 @@ Create a comprehensive new user onboarding experience for SyncScript that guides
 **Description:** As a new user, I want to optionally invite a collaborator as the final step.
 
 **Acceptance Criteria:**
-- [ ] Step 3: "Invite a collaborator (optional)" with email input
-- [ ] Email validation (basic format check)
-- [ ] "Back" button to return to Step 2
-- [ ] "Create Vault" button to complete wizard
-- [ ] "Skip" link to create without inviting
-- [ ] Progress indicator shows "Step 3 of 3"
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Step 3: "Invite a collaborator (optional)" with email input
+- [x] Email validation (basic format check)
+- [x] "Back" button to return to Step 2
+- [x] "Create Vault" button to complete wizard
+- [x] "Skip" link to create without inviting
+- [x] Progress indicator shows "Step 3 of 3"
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-013: GuidedVaultWizard submission logic
 **Description:** As a new user completing the wizard, I want my vault created with the source and invite applied.

@@ -1047,18 +1047,10 @@ class CacheInvalidationSignalsTestCase(TestCase):
             password='testpass123'
         )
 
-        # Create vault with cached insights
+        # Create vault WITHOUT cache initially
         self.vault = Vault.objects.create(
             name='Test Vault',
-            owner=self.user,
-            ai_insights_cache={
-                'themes': [{'name': 'Theme 1', 'weight': 0.8, 'source_count': 1}],
-                'research_gaps': [],
-                'cross_references': [],
-                'suggested_searches': [],
-                'generated_at': '2024-01-01T00:00:00Z'
-            },
-            ai_insights_updated_at=timezone.now()
+            owner=self.user
         )
 
         # Create a source
@@ -1070,6 +1062,17 @@ class CacheInvalidationSignalsTestCase(TestCase):
             source_type='URL',
             created_by=self.user
         )
+
+        # NOW set cache AFTER source is created (so signal doesn't invalidate it in setUp)
+        self.vault.ai_insights_cache = {
+            'themes': [{'name': 'Theme 1', 'weight': 0.8, 'source_count': 1}],
+            'research_gaps': [],
+            'cross_references': [],
+            'suggested_searches': [],
+            'generated_at': '2024-01-01T00:00:00Z'
+        }
+        self.vault.ai_insights_updated_at = timezone.now()
+        self.vault.save()
 
     def test_cache_invalidated_on_source_save(self):
         """Test that vault insights cache is invalidated when source is updated."""

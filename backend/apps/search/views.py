@@ -11,7 +11,7 @@ from apps.annotations.models import Annotation
 from apps.vaults.models import Vault
 from .models import SearchHistory
 from .serializers import SearchHistorySerializer
-from .services import track_search_analytics
+from .services import track_search_analytics, record_search_history
 
 
 @api_view(['GET'])
@@ -188,8 +188,11 @@ def search_view(request):
         len(results['vaults'])
     )
 
-    # Track search analytics (async, no user identity)
+    # Track search analytics (anonymous, no user identity)
     track_search_analytics(query_string)
+
+    # Record search in user's history
+    record_search_history(request.user, query_string, results['total_count'])
 
     return Response(results)
 
