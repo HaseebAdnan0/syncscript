@@ -936,10 +936,12 @@ class CitationEndpointTests(TestCase):
         # Create test users
         self.user1 = User.objects.create_user(
             email='user1@test.com',
+            username='user1',
             password='testpass123'
         )
         self.user2 = User.objects.create_user(
             email='user2@test.com',
+            username='user2',
             password='testpass123'
         )
 

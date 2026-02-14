@@ -181,3 +181,25 @@
   - motion.div with initial/animate props creates fade-in effects on scroll
   - Combining icon + number + label in vertical layout creates clear stat presentation
 ---
+
+## Iteration 9 - US-009: Create Feature Card Component
+- Verified FeatureCard.tsx already exists and is complete (created in previous session)
+- Component implements all acceptance criteria:
+  - Reusable component with icon, title, description props
+  - Card styling: bg-[#0F1115], border-white/10, rounded-2xl, padding 8
+  - Icon container with orange gradient and glow shadow effect
+  - Large watermark icon in background (opacity-5, reveals to opacity-10 on hover)
+  - Hover effects: -translate-y-1, border-[#F7931A]/50, smooth transitions
+- Component uses group class for coordinated hover effects
+- Typecheck passes, build succeeds
+- Files changed:
+  - FeatureCard.tsx already existed and was committed previously
+  - PRD16.md was already marked complete
+- Learnings for future iterations:
+  - Tailwind's group class enables coordinated parent-child hover effects
+  - Using absolute positioning with inset-0 creates full background watermark layer
+  - z-10 on content div ensures it stays above watermark
+  - transition-all duration-300 provides smooth hover animations
+  - overflow-hidden on watermark container prevents icon from extending beyond card bounds
+  - inline-flex for icon container provides proper sizing without full-width stretch
+---
