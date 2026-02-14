@@ -773,3 +773,34 @@ vaults/{vault_id}/thumbnails/{uuid}.jpg
   - Test database can be preserved with --keepdb flag for faster iteration
 ---
 
+## Iteration 24 - Update presigned URL generation for images (US-024)
+- Updated generate_presigned_upload_url() in backend/apps/sources/storage.py
+  - Added file_type parameter with default value 'pdf' for backward compatibility
+  - Updated function signature: file_type: str = 'pdf'
+  - Added conditional path logic:
+    - if file_type == 'image': vaults/{vault_id}/images/{uuid}.{ext}
+    - else (pdf): vaults/{vault_id}/pdfs/{uuid}.{ext}
+  - Updated docstring with examples for both PDF and image uploads
+  - Content-Type already set dynamically via content_type parameter
+- Updated initiate_multipart_upload() in backend/apps/sources/storage.py
+  - Added file_type parameter with default value 'pdf'
+  - Added same conditional path logic as generate_presigned_upload_url
+  - Updated docstring to document file_type parameter
+  - Updated example to show file_type='pdf' usage
+- Backward compatibility maintained:
+  - Existing calls in views.py don't specify file_type, so default to 'pdf'
+  - No changes needed to existing upload endpoints
+  - File paths remain: vaults/{vault_id}/pdfs/{uuid}.pdf for existing code
+- Typecheck passes (only pre-existing boto3 stub warnings)
+- Files changed:
+  - backend/apps/sources/storage.py (updated 2 functions)
+  - PRD13.md (marked US-024 complete)
+  - progress13.txt
+- Learnings for future iterations:
+  - Default parameter values provide backward compatibility
+  - File type determines S3 path prefix (pdfs/ vs images/)
+  - Content-Type is already handled by content_type parameter (no changes needed)
+  - Both single and multipart uploads need file_type support
+  - File extension extracted from filename regardless of file_type
+---
+

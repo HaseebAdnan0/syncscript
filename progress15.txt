@@ -649,3 +649,39 @@ Learnings for future iterations:
 - Border transitions on hover improve interaction feedback (border-[#F7931A]/30)
 - TypeScript unused param: vaultId will be used in US-021 for API integration
 ---
+
+## Iteration 22 - US-021: Integrate AskAI chat into vault sidebar
+- Added conversation types (Conversation, ChatMessage, ConversationDetail) to frontend/src/lib/types/vault.ts
+- Created API functions for conversations: getConversations, getConversation, askQuestion in frontend/src/lib/api/vaults.ts
+- Installed @radix-ui/react-collapsible package for collapsible sidebar
+- Integrated chat sidebar into vault detail page:
+  - Added two-column layout (main content + sidebar)
+  - Implemented collapsible "Ask AI" section with ChatHistory and AskAIChat components
+  - Added state management for conversations, messages, loading states
+  - Implemented handleSendMessage, handleNewChat, handleSelectConversation handlers
+  - Conversation list fetched on mount
+  - Messages loaded when conversation selected
+  - Rate limit handling with toast notifications
+  - Loading skeleton displayed while AI responds
+- Updated AskAIChat component to accept messages and handlers as props instead of managing own state
+- Typecheck passes successfully
+
+Files changed:
+- frontend/src/lib/types/vault.ts (added chat types)
+- frontend/src/lib/api/vaults.ts (added conversation API functions)
+- frontend/src/app/(app)/vaults/[id]/page.tsx (integrated chat sidebar)
+- frontend/src/components/features/ai/AskAIChat.tsx (updated to use external state)
+- frontend/package.json (added @radix-ui/react-collapsible dependency)
+- PRD15.md (marked US-021 code implementation complete, browser verification pending)
+
+Learnings for future iterations:
+- ChatHistory component expects vaultId as string, must use vaultId.toString() when passing number
+- Collapsible.Root from Radix UI works well for expandable sidebar sections
+- State management for chat should be in parent component (page) not in chat component for better control
+- Conversation list should be refetched after sending message to update previews
+- Messages should be reloaded from server after API call to ensure consistency with backend
+- Rate limit errors should be handled gracefully with toast notifications showing retry time
+- Loading skeleton should be shown in chat area while messages are loading
+- Install Radix UI packages as needed: npm install @radix-ui/react-collapsible
+- Browser verification is manual task - will be added to .planning/MANUAL_VERIFICATION.md
+---
