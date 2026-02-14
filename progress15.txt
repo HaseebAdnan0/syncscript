@@ -154,3 +154,37 @@ Learnings for future iterations:
 - Test edge cases: empty text, short text, single chunk scenarios all important
 - Allow some flexibility in sentence boundary tests (70% threshold vs 100%)
 ---
+
+## Iteration 6 - US-006: Implement source summarization endpoint
+- Created POST /api/v1/sources/{id}/summarize/ endpoint in apps/ai/views.py
+- Implemented SummarizeRequestSerializer and SummarizeResponseSerializer in apps/ai/serializers.py
+- Added URL route in apps/ai/urls.py and included in main config/urls.py
+- Endpoint validates user has vault read permission (owner or member)
+- Returns cached summary if exists and regenerate=false
+- Extracts text from PDFs using PDFUpload.extracted_text field (already implemented in tasks.py)
+- For URLs, uses metadata abstract or description field
+- Sends text to ClaudeClient.summarize() method
+- Response includes: abstract, key_findings[], methodology, limitations, keywords[], language, quality_flags[], generated_at
+- Saves summary to source.ai_summary JSONField
+- Logs token usage with log_usage(user, 'summary', tokens_used)
+- Applied @ai_rate_limit decorator for rate limiting
+- Created comprehensive test suite with 10 tests in SourceSummarizationTestCase
+- All 39 AI app tests pass successfully
+
+Files changed:
+- backend/apps/ai/views.py (implemented summarize_source function)
+- backend/apps/ai/serializers.py (added serializers)
+- backend/apps/ai/urls.py (added route)
+- backend/config/urls.py (included AI URLs)
+- backend/apps/ai/tests.py (added SourceSummarizationTestCase with 10 tests)
+- PRD15.md (marked US-006 complete)
+
+Learnings for future iterations:
+- PDFUpload.extracted_text already contains full text from all pages (see tasks.py line 152-166)
+- For URL sources, can use metadata['abstract'] or description field as content source
+- Vault permission check: user must be owner OR have any membership (viewer/contributor/owner)
+- Query params in POST requests use request.query_params not request.data
+- Mock ClaudeClient in tests to avoid actual API calls and costs
+- Use force_authenticate() in APITestCase for authenticated requests
+- Import models inside test methods to avoid circular import issues
+---
