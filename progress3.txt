@@ -797,3 +797,26 @@
   - Import validation via Django shell confirms code is functional
 ---
 
+## Iteration 33 - US-032: Add AnnotationFilter
+- Created AnnotationFilter class in apps/annotations/filters.py
+- Implementation details:
+  - Extends django_filters.rest_framework.FilterSet
+  - Added user filter (NumberFilter on user field)
+  - Added page_number filter (NumberFilter on page_number field)
+  - Meta class specifies Annotation model and fields list
+- Updated AnnotationViewSet to include filterset_class = AnnotationFilter
+- Imported AnnotationFilter in views.py
+- Django check passes with 0 issues
+- Files changed:
+  - backend/apps/annotations/filters.py (created AnnotationFilter class)
+  - backend/apps/annotations/views.py (added AnnotationFilter import and filterset_class)
+  - PRD3.md (marked US-032 complete)
+- Learnings for future iterations:
+  - FilterSet pattern matches SourceFilter from sources app (consistent architecture)
+  - NumberFilter for integer/FK fields (user ID, page_number)
+  - django-filter automatically handles query param filtering (e.g., ?user=1&page_number=5)
+  - filterset_class in ViewSet enables automatic filter application to queryset
+  - Django check sufficient for validation when pyright requires full venv setup
+  - Import validation via Django shell confirms code is functional
+---
+
