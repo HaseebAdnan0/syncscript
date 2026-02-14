@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { ChartWrapper, chartColors, tooltipStyles } from './ChartWrapper';
+import ChartWrapper, { chartColors, tooltipStyles } from './ChartWrapper';
 import { FileText } from 'lucide-react';
 
 interface TimelineData {
@@ -114,9 +114,11 @@ export default function SourcesTimelineChart() {
             allowDecimals={false}
           />
           <Tooltip
-            contentStyle={tooltipStyles}
+            contentStyle={tooltipStyles.contentStyle}
+            labelStyle={tooltipStyles.labelStyle}
+            itemStyle={tooltipStyles.itemStyle}
             labelFormatter={(value) => formatDate(value as string)}
-            formatter={(value: number) => [value, 'Sources']}
+            formatter={(value: number | undefined) => [value ?? 0, 'Sources']}
           />
           <Line
             type="monotone"

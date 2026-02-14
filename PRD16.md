@@ -239,17 +239,17 @@ Create SyncScript's production landing page following the Bitcoin DeFi aesthetic
 **Description:** As a user, I want a comprehensive footer so I can navigate to other resources.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/marketing/Footer.tsx`
-- [ ] 4-column layout: Product, Resources, Company, Legal
-- [ ] Product: Features, Pricing, Demo, Changelog
-- [ ] Resources: Documentation, API, Blog, Help Center
-- [ ] Company: About, Careers, Contact, Press
-- [ ] Legal: Privacy, Terms, Security, Cookies
-- [ ] Social links row with icon buttons (Twitter, GitHub, LinkedIn, Discord)
-- [ ] Copyright line with dynamic year
-- [ ] Responsive: 2x2 grid on tablet, stacked on mobile
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/marketing/Footer.tsx`
+- [x] 4-column layout: Product, Resources, Company, Legal
+- [x] Product: Features, Pricing, Demo, Changelog
+- [x] Resources: Documentation, API, Blog, Help Center
+- [x] Company: About, Careers, Contact, Press
+- [x] Legal: Privacy, Terms, Security, Cookies
+- [x] Social links row with icon buttons (Twitter, GitHub, LinkedIn, Discord)
+- [x] Copyright line with dynamic year
+- [x] Responsive: 2x2 grid on tablet, stacked on mobile
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-018: Create Marketing Navbar
 **Description:** As a user, I want a sticky navbar so I can navigate while scrolling.
