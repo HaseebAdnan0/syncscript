@@ -460,3 +460,34 @@
   - Django system check passes (6 security warnings expected in dev mode)
   - Celery Beat worker must be started separately: celery -A config beat -l info
 ---
+
+## Iteration 20 - US-020: Add WebSocket notifications for PDF events
+- Task was already implemented in previous sessions (commits ccda158 and 50eb6e3)
+- Verified implementation in backend/apps/sources/tasks.py:
+  - Added import: from core.websocket_utils import broadcast_to_vault
+  - In process_uploaded_pdf task (after successful processing):
+    - Sends pdf.uploaded event to vault_{vault_id} WebSocket group
+    - Payload includes: pdf_id, filename, pdf_title, page_count, thumbnail_url
+    - User context: pdf_upload.uploaded_by
+  - Error handling: WebSocket failures logged as warnings but don't fail the task
+- Verified implementation in backend/apps/sources/views.py:
+  - Added import: from core.websocket_utils import broadcast_to_vault
+  - In PDFUploadViewSet.destroy() method (after soft-delete):
+    - Sends pdf.deleted event to vault_{vault_id} WebSocket group
+    - Payload includes: pdf_id, filename
+    - User context: request.user
+  - Error handling: WebSocket failures logged as warnings but don't fail the request
+- Uses existing broadcast_to_vault() utility from core/websocket_utils.py
+- Channel layer infrastructure already configured via Django Channels + Redis
+- PRD6.md already marked US-020 complete
+- Files changed:
+  - None (already implemented in previous sessions)
+- Learnings for future iterations:
+  - Always check git log -S "pattern" to find when code was added
+  - WebSocket broadcasts should not fail the main operation (try-except wrapper)
+  - broadcast_to_vault() handles: sequence numbering, message envelope, group send, Redis buffering
+  - Event types follow pattern: resource.action (e.g., pdf.uploaded, pdf.deleted)
+  - Payload should include minimal identifying info (id, filename) and relevant metadata
+  - User context optional but helpful for client-side filtering and display
+  - Django system check passes (validates all imports and configuration)
+---

@@ -428,13 +428,13 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a developer, I need integration tests for login and logout.
 
 **Acceptance Criteria:**
-- [ ] Add tests to `apps/users/tests/test_auth.py`
-- [ ] Test successful login returns tokens
-- [ ] Test unverified user cannot login
-- [ ] Test wrong password returns 401
-- [ ] Test logout blacklists refresh token
-- [ ] Test blacklisted token cannot be used
-- [ ] All tests pass
+- [x] Add tests to `apps/users/tests/test_auth.py`
+- [x] Test successful login returns tokens
+- [x] Test unverified user cannot login
+- [x] Test wrong password returns 401
+- [x] Test logout blacklists refresh token
+- [x] Test blacklisted token cannot be used
+- [x] All tests pass
 
 ---
 

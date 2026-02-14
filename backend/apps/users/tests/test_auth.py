@@ -177,3 +177,115 @@ class EmailVerificationFlowTests(TestCase):
         # User still verified
         self.user.refresh_from_db()
         self.assertTrue(self.user.email_verified)
+
+
+class LoginAndLogoutFlowTests(TestCase):
+    """Test login and logout flows."""
+
+    def setUp(self):
+        self.client = APIClient()
+        self.login_url = reverse('users:login')
+        self.logout_url = reverse('users:logout')
+
+        # Create a verified user for login tests
+        self.verified_user = User.objects.create_user(
+            email='verified@example.com',
+            username='verifieduser',
+            password='TestP@ss123',
+            email_verified=True
+        )
+
+        # Create an unverified user for verification tests
+        self.unverified_user = User.objects.create_user(
+            email='unverified@example.com',
+            username='unverifieduser',
+            password='TestP@ss123',
+            email_verified=False
+        )
+
+    def test_successful_login_returns_tokens(self):
+        """Test that successful login returns access and refresh tokens."""
+        data = {
+            'email': 'verified@example.com',
+            'password': 'TestP@ss123'
+        }
+        response = self.client.post(self.login_url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('access', response.data)
+        self.assertIn('refresh', response.data)
+        self.assertIn('user', response.data)
+        self.assertEqual(response.data['user']['email'], 'verified@example.com')
+
+    def test_unverified_user_cannot_login(self):
+        """Test that unverified user cannot login (returns 403)."""
+        data = {
+            'email': 'unverified@example.com',
+            'password': 'TestP@ss123'
+        }
+        response = self.client.post(self.login_url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertIn('error', response.data)
+        self.assertIn('Email not verified', response.data['error'])
+
+    def test_wrong_password_returns_401(self):
+        """Test that wrong password returns 401 Unauthorized."""
+        data = {
+            'email': 'verified@example.com',
+            'password': 'WrongP@ssw0rd!'
+        }
+        response = self.client.post(self.login_url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertIn('error', response.data)
+        self.assertIn('Invalid email or password', response.data['error'])
+
+    def test_logout_blacklists_refresh_token(self):
+        """Test that logout blacklists the refresh token."""
+        # First login to get tokens
+        login_data = {
+            'email': 'verified@example.com',
+            'password': 'TestP@ss123'
+        }
+        login_response = self.client.post(self.login_url, login_data, format='json')
+        self.assertEqual(login_response.status_code, status.HTTP_200_OK)
+
+        refresh_token = login_response.data['refresh']
+
+        # Set authentication header
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {login_response.data["access"]}')
+
+        # Logout with refresh token
+        logout_data = {'refresh': refresh_token}
+        logout_response = self.client.post(self.logout_url, logout_data, format='json')
+
+        self.assertEqual(logout_response.status_code, status.HTTP_200_OK)
+        self.assertIn('message', logout_response.data)
+        self.assertIn('Logout successful', logout_response.data['message'])
+
+    def test_blacklisted_token_cannot_be_used(self):
+        """Test that blacklisted token cannot be used to refresh."""
+        # Login to get tokens
+        login_data = {
+            'email': 'verified@example.com',
+            'password': 'TestP@ss123'
+        }
+        login_response = self.client.post(self.login_url, login_data, format='json')
+        refresh_token = login_response.data['refresh']
+
+        # Set authentication header
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {login_response.data["access"]}')
+
+        # Logout (blacklist token)
+        logout_data = {'refresh': refresh_token}
+        self.client.post(self.logout_url, logout_data, format='json')
+
+        # Try to use blacklisted token to refresh
+        refresh_url = reverse('users:refresh')
+        refresh_data = {'refresh': refresh_token}
+        refresh_response = self.client.post(refresh_url, refresh_data, format='json')
+
+        # Should return 401 Unauthorized (blacklisted token)
+        self.assertEqual(refresh_response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertIn('error', refresh_response.data)

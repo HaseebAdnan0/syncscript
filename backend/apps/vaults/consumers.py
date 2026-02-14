@@ -31,8 +31,9 @@ class VaultConsumer(AsyncWebsocketConsumer):
         1. Extract vault_id from URL kwargs
         2. Check user is authenticated (not AnonymousUser)
         3. Verify user has vault membership (any role)
-        4. On success: accept connection and join room
-        5. On failure: send error JSON and close with code 1008
+        4. Enforce connection limit per user (Layer 1)
+        5. On success: accept connection and join room
+        6. On failure: send error JSON and close with code 1008
         """
         # Extract vault_id from URL kwargs
         url_route = self.scope.get('url_route', {})  # type: ignore[typeddict-item]
@@ -61,8 +62,17 @@ class VaultConsumer(AsyncWebsocketConsumer):
             await self._send_error_and_close('PERMISSION_DENIED', 'No access to this vault')
             return
 
+        # Enforce connection limit per user (Layer 1)
+        can_connect = await self._check_and_enforce_connection_limit(user.id)
+        if not can_connect:
+            await self._send_error_and_close('RATE_LIMIT_EXCEEDED', 'Connection limit exceeded (max 5 per user)')
+            return
+
         # Accept connection
         await self.accept()
+
+        # Track this connection in Redis
+        await self._add_user_connection(user.id)
 
         # Join vault room group
         self.room_group_name = f"vault_{self.vault_id}"
@@ -96,6 +106,10 @@ class VaultConsumer(AsyncWebsocketConsumer):
         Args:
             code: WebSocket close code
         """
+        # Remove connection from user's connection set
+        if hasattr(self, 'user'):
+            await self._remove_user_connection(self.user.id)
+
         # Remove user from presence tracking
         if hasattr(self, 'user') and hasattr(self, 'vault_id'):
             await self._remove_from_presence(self.user.id, self.vault_id)
@@ -350,3 +364,97 @@ class VaultConsumer(AsyncWebsocketConsumer):
             await self.send(text_data=json.dumps(event))
 
         logger.info(f"Replayed {len(filtered_events)} events to user {self.user.id} (since_seq={since_seq})")
+
+    async def _check_and_enforce_connection_limit(self, user_id: int) -> bool:
+        """
+        Check if user has reached connection limit and close oldest connection if needed.
+
+        Layer 1 rate limiting: Limit connections per user to prevent resource abuse.
+
+        Args:
+            user_id: User ID to check
+
+        Returns:
+            True if user can connect, False if limit exceeded and oldest connection closed
+        """
+        connections_key = f"user_{user_id}:connections"
+        redis_conn = cache.client.get_client()  # type: ignore[attr-defined]
+
+        # Get current connections for this user (stored as sorted set with timestamps)
+        connections = redis_conn.zrange(connections_key, 0, -1, withscores=True)
+
+        # If user has >= 5 connections, close the oldest one
+        if len(connections) >= 5:
+            # Get oldest connection (lowest score/timestamp)
+            oldest_channel = connections[0][0].decode('utf-8')
+
+            # Remove oldest connection from Redis
+            redis_conn.zrem(connections_key, oldest_channel)
+
+            # Close the oldest connection via channel layer
+            await self.channel_layer.send(  # type: ignore[union-attr]
+                oldest_channel,
+                {
+                    'type': 'close_connection',
+                    'code': 1008  # Policy violation
+                }
+            )
+
+            logger.info(f"User {user_id} reached connection limit, closed oldest connection: {oldest_channel}")
+
+        return True
+
+    async def _add_user_connection(self, user_id: int) -> None:
+        """
+        Add current connection to user's connection set in Redis.
+
+        Args:
+            user_id: User ID
+        """
+        connections_key = f"user_{user_id}:connections"
+        timestamp = time.time()
+        redis_conn = cache.client.get_client()  # type: ignore[attr-defined]
+
+        # Add channel to sorted set with timestamp as score
+        redis_conn.zadd(connections_key, {self.channel_name: timestamp})
+
+        # Set 1 hour expiry on connection tracking
+        redis_conn.expire(connections_key, 3600)
+
+    async def _remove_user_connection(self, user_id: int) -> None:
+        """
+        Remove current connection from user's connection set in Redis.
+
+        Args:
+            user_id: User ID
+        """
+        connections_key = f"user_{user_id}:connections"
+        redis_conn = cache.client.get_client()  # type: ignore[attr-defined]
+
+        # Remove channel from sorted set
+        redis_conn.zrem(connections_key, self.channel_name)
+
+    async def close_connection(self, event: dict) -> None:
+        """
+        Handle close_connection message from channel layer (triggered by rate limiting).
+
+        This is called when the user exceeds connection limits and their oldest
+        connection needs to be closed.
+
+        Args:
+            event: Event dictionary containing close code
+        """
+        code = event.get('code', 1008)
+
+        # Send error message before closing
+        await self.send(text_data=json.dumps({
+            'type': 'error',
+            'error': {
+                'code': 'RATE_LIMIT_EXCEEDED',
+                'message': 'Connection limit exceeded - closing oldest connection'
+            }
+        }))
+
+        # Close the connection
+        await self.close(code=code)
+        logger.warning(f"Connection closed due to rate limiting: {self.channel_name}")

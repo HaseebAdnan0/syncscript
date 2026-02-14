@@ -579,3 +579,27 @@ Learnings for future iterations:
 - EmailVerificationToken created automatically by RegisterView after user creation
 ---
 
+---
+
+## Iteration 29 - Create email verification flow tests (US-031)
+- Added EmailVerificationFlowTests class to test_auth.py with 4 tests
+- Test valid token activates account: verifies email_verified set to True and token deleted
+- Test expired token returns error: creates token with expires_at in the past
+- Test invalid token returns error: tests non-existent token
+- Test already verified user handles gracefully: verifies idempotent behavior
+- All 4 tests pass successfully
+- Django system check passes
+
+Files changed:
+- backend/apps/users/tests/test_auth.py (added EmailVerificationFlowTests class)
+- PRD1.md (marked US-031 complete)
+
+Learnings for future iterations:
+- timezone.now() + timedelta(hours=24) creates future expiration dates
+- timezone.now() - timedelta(hours=1) creates past dates for testing expiration
+- Token deletion is verified using EmailVerificationToken.objects.filter().exists()
+- user.refresh_from_db() reloads user from database after verification
+- Idempotent behavior: already verified users can verify again without error
+- EmailVerificationToken model has expires_at field for expiration checking
+- verify_token() in tokens.py handles all validation logic (expiration, deletion)
+---
