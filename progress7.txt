@@ -201,3 +201,25 @@
   - Pre-existing TS error in vaults/[id]/page.tsx was resolved by clean build
   - Typecheck passes successfully
 ---
+
+## Iteration 12 - US-012: Add registration form validation and submission
+- Created PasswordStrength component with weak/medium/strong indicators
+- Added validation for name (min 2 chars), email (valid format), password (min 8 chars), confirm password (must match)
+- Integrated useAuth().register() for form submission with loading state
+- Added auto-login and redirect to /dashboard on successful registration
+- Display error toast on registration failure with inline validation errors
+- Files changed:
+  - frontend/src/components/ui/PasswordStrength.tsx (new file)
+  - frontend/src/app/(auth)/register/page.tsx (added validation and submission)
+- Learnings for future iterations:
+  - PasswordStrength component shows visual progress bar filling based on password complexity
+  - Strength calculation uses score-based system: length (8+, 12+), lowercase, uppercase, numbers, special chars
+  - Color coding: red (weak), yellow (medium), green (strong) with corresponding text labels
+  - Component returns null if password is empty (no visual indicator before typing)
+  - Registration form follows same validation pattern as login (validateEmail, validate function)
+  - useAuth().register() expects RegisterData object with email, password, username, first_name
+  - Using email as username for now (username: email)
+  - Toast accepts { title, description } for success and error messages
+  - Password strength indicator placed inside a div wrapper with FormInput for proper spacing
+  - Typecheck passes successfully with no errors
+---
