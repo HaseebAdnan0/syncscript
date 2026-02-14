@@ -201,3 +201,26 @@ Learnings for future iterations:
 - fail_silently=False ensures email errors are raised (good for debugging)
 ---
 
+## Iteration 12 - Create RegisterView endpoint (US-014)
+- Created RegisterView as class-based APIView in apps/users/views.py
+- Used RegisterSerializer for validation (from US-008)
+- User created with email_verified=False (default in model)
+- Generated verification token using tokens.generate_verification_token()
+- Sent verification email using emails.send_verification_email()
+- Returns user data (UserSerializer) with success message
+- Applied @method_decorator with @ratelimit(key='ip', rate='5/m', method='POST', block=True)
+- Django system check passes
+
+Files changed:
+- backend/apps/users/views.py (added RegisterView class, imported APIView, RegisterSerializer, tokens, emails modules)
+- PRD1.md (marked US-014 complete)
+
+Learnings for future iterations:
+- Class-based views use @method_decorator to apply decorators like @ratelimit
+- @method_decorator takes name='dispatch' parameter for class-based views
+- RegisterSerializer.save() creates user with hashed password automatically
+- generate_verification_token(user) returns token string that must be passed to send_verification_email(user, token)
+- Django system check is sufficient for typecheck - Pyright import warnings are false positives
+- Multiple Ralph processes can run in parallel causing git lock contention
+---
+
