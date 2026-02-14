@@ -221,7 +221,7 @@ This feature uses Claude as the AI backbone with a simple chunking strategy (no 
 - [x] Show AILoadingSkeleton while loading
 - [x] Handle rate limit: show cached insights with "Using cached data" badge
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser
 
 ### US-018: Create AskAIChat component
 **Description:** As a user, I want a chat interface to ask questions about my vault.

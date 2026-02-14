@@ -1052,3 +1052,124 @@
 ### Issues Found
 (Append any bugs, edge cases, or unexpected behavior discovered during testing)
 
+
+
+---
+
+## PRD15: AI Research Assistant - US-017 Integration - 2026-02-14
+
+### ResearchInsightsPanel Integration in Vault Dashboard
+
+#### Prerequisites
+- [ ] Backend server running: `cd backend && python manage.py runserver`
+- [ ] Frontend dev server running: `cd frontend && npm run dev`
+- [ ] Valid Anthropic API key configured in backend .env
+- [ ] Test user account with AI usage quota available
+- [ ] Vault with at least 2 sources for insights generation
+
+#### Insights Tab Visibility
+- [ ] Login with valid user account
+- [ ] Navigate to a vault detail page
+- [ ] Verify "Insights" tab is visible in the tab list (between Sources and Members)
+- [ ] Verify tab has orange underline indicator when active
+- [ ] Click "Insights" tab
+- [ ] Verify tab content area switches to show insights panel
+
+#### Generate Insights Flow (First Time)
+- [ ] Navigate to vault with 2+ sources but no insights generated yet
+- [ ] Click "Insights" tab
+- [ ] Verify ResearchInsightsPanel shows empty state:
+  - "Discover Research Insights" heading
+  - Description mentioning number of sources
+  - "Generate Insights" gradient button
+- [ ] Click "Generate Insights" button
+- [ ] Verify AILoadingSkeleton appears with "Discovering insights..." text
+- [ ] Verify skeleton shows pulsing orange accents and themed animations
+- [ ] Wait for Claude API response (20-60 seconds depending on vault size)
+- [ ] Verify ResearchInsightsPanel appears with insights content:
+  - Header: "Research Insights" with gradient text
+  - Last updated timestamp
+  - "Refresh" button in header
+  - Common Themes section (collapsible, expanded by default)
+  - Research Gaps section (collapsible)
+  - Cross-References section (collapsible)
+  - Suggested Searches section (collapsible)
+- [ ] Verify success toast appears: "Insights generated successfully"
+
+#### Insights Content Verification
+- [ ] Expand all collapsible sections
+- [ ] Verify Themes section shows weighted tag cloud:
+  - Larger font size for higher weight themes
+  - Orange gradient coloring
+  - Source count displayed for each theme
+- [ ] Verify Research Gaps section shows bulleted list of identified gaps
+- [ ] Verify Cross-References section shows connections between sources
+- [ ] Verify Suggested Searches section shows clickable search suggestions
+
+#### Refresh Insights Flow
+- [ ] Click "Refresh" button in panel header
+- [ ] Verify AILoadingSkeleton appears during refresh
+- [ ] Verify new insights appear after completion
+- [ ] Verify "Last updated" timestamp reflects refresh time
+- [ ] Verify success toast appears
+
+#### Rate Limit Error Handling
+- [ ] Trigger 20+ AI requests in one day to hit rate limit
+- [ ] Click "Generate Insights" or "Refresh" button after limit exceeded
+- [ ] Verify cached insights badge appears above panel:
+  - Orange background with border
+  - "Using cached data" message
+  - Explanation that limit was reached
+- [ ] Verify cached insights remain visible (not replaced)
+- [ ] Verify error toast appears: "Rate limit reached. Using cached insights."
+
+#### Error Handling (General)
+- [ ] Disconnect internet or stop backend server
+- [ ] Click "Generate Insights" button
+- [ ] Verify error toast appears: "Failed to generate insights"
+- [ ] Verify panel state resets (button re-enabled)
+- [ ] Reconnect and verify retry works
+
+#### Empty State (< 2 Sources)
+- [ ] Navigate to vault with 0 or 1 source
+- [ ] Click "Insights" tab
+- [ ] Verify empty state appears:
+  - AlertCircle icon with orange tint
+  - "Not Enough Sources" heading
+  - Description explaining minimum 2 sources required
+- [ ] Verify no "Generate Insights" button visible
+- [ ] Add second source to vault
+- [ ] Return to Insights tab
+- [ ] Verify "Generate Insights" button now visible
+
+#### UI/UX Verification
+- [ ] Verify ResearchInsightsPanel follows Bitcoin DeFi design:
+  - Glass morphism background (backdrop-blur-lg)
+  - Orange gradient accents on buttons and headers
+  - Dark theme (#0F1115 surface color)
+  - Border with white/10 opacity
+- [ ] Verify expand/collapse animations smooth
+- [ ] Verify panel is responsive on mobile viewports
+- [ ] Verify collapsible sections open/close smoothly
+- [ ] Verify last updated timestamp formats correctly
+
+#### Cache Behavior
+- [ ] Generate insights for a vault
+- [ ] Add a new source to the vault
+- [ ] Return to Insights tab
+- [ ] Verify insights are still visible (cache not invalidated yet)
+- [ ] Click "Refresh" to regenerate with new source included
+
+### Expected Behavior
+- Insights tab integrates seamlessly into vault dashboard
+- Generate/Refresh buttons trigger AI insights generation
+- Loading skeleton provides feedback during API processing
+- Rate limit errors handled gracefully with cached data fallback
+- Success/error toasts appear for all user actions
+- Panel styling matches Bitcoin DeFi aesthetic
+- Empty state guides users when insufficient sources
+- Collapsible sections improve UX for dense insight data
+
+### Issues Found
+(Append any bugs, edge cases, or unexpected behavior discovered during testing)
+
