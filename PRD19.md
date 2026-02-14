@@ -182,12 +182,12 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a vault member, I want to be notified when new sources are added.
 
 **Acceptance Criteria:**
-- [ ] Listen for Source creation
-- [ ] Notify all vault members except the creator
-- [ ] Create notification with type `source_added`
-- [ ] Data includes: `vault_id`, `vault_name`, `source_id`, `source_title`, `creator_name`
-- [ ] Respect muted vaults
-- [ ] Typecheck passes
+- [x] Listen for Source creation
+- [x] Notify all vault members except the creator
+- [x] Create notification with type `source_added`
+- [x] Data includes: `vault_id`, `vault_name`, `source_id`, `source_title`, `creator_name`
+- [x] Respect muted vaults
+- [x] Typecheck passes
 
 ---
 

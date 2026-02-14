@@ -347,3 +347,29 @@ In Progress - US-004 complete
   - Pre-existing mypy errors in vaults/models.py are unrelated to notification changes
   - Tests validate that both notifications are created independently with correct data
 ---
+
+## Iteration 14 - US-014: Signal Handler for source_added Notifications
+- Created Source post_save signal handler to notify vault members when sources are added
+- Notifies all vault members except the creator
+- Signal respects muted vaults and email_vault_activity preference via create_notification service
+- Loops through all vault members and creates individual notifications
+- Created comprehensive test suite with 6 test cases:
+  - Test all members (except creator) receive notifications
+  - Test creator doesn't get notified about their own source
+  - Test signal doesn't trigger on updates (only creation)
+  - Test respects muted vault preference
+  - Test respects email_vault_activity preference
+  - Test handles unknown creator (created_by=None)
+- All tests pass (62/62)
+- Files changed:
+  - backend/apps/notifications/signals.py (added source_created handler, imported Source)
+  - backend/apps/notifications/test_source_signal.py (new test file)
+  - PRD19.md (marked US-014 complete)
+- Learnings for future iterations:
+  - Single signal can notify multiple users via loop over vault.members.all()
+  - Use instance.created_by.id comparison to skip notifying the creator
+  - Handle None created_by gracefully with conditional check before comparison
+  - Source.vault.members gives access to all vault members (User objects)
+  - create_notification automatically handles muting and preferences per user
+  - Separate test file is acceptable when test suite gets large
+---
