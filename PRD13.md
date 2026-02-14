@@ -167,10 +167,10 @@ Enhance SyncScript's file storage system to production-ready status with Cloudfl
 **Description:** As a system, I need to prevent uploads when vault storage is full.
 
 **Acceptance Criteria:**
-- [ ] Check storage quota before accepting uploads in upload view
-- [ ] If `exceeded=True`, return 413 with message "Storage quota exceeded"
-- [ ] Include `used_bytes` and `limit_bytes` in error response
-- [ ] Typecheck passes
+- [x] Check storage quota before accepting uploads in upload view
+- [x] If `exceeded=True`, return 413 with message "Storage quota exceeded"
+- [x] Include `used_bytes` and `limit_bytes` in error response
+- [x] Typecheck passes
 
 ---
 
