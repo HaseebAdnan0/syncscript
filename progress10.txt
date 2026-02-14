@@ -207,3 +207,25 @@
   - Member events (member.added, member.removed, member.role_changed) shown to all users
   - Typecheck passes without issues (pre-existing errors in login page are unrelated)
 ---
+
+## Iteration 10 - US-010: Create UnreadBadge component for header
+- Implemented unread notification badge at `frontend/src/components/features/notifications/UnreadBadge.tsx`
+- Files changed:
+  - Created `frontend/src/components/features/notifications/UnreadBadge.tsx`
+  - Updated `PRD10.md` (marked US-010 complete except browser verification)
+- Learnings for future iterations:
+  - useEffect cleanup function must be returned in ALL code paths (not just conditional branches)
+  - Solution: declare timer variable outside if block, conditionally set it, always return cleanup
+  - Timer type: `NodeJS.Timeout | undefined` to handle optional cleanup
+  - Badge positioned absolute with `-top-1 -right-1` (relative to parent container)
+  - Min-width 18px to handle single digit, auto-expands for "9+" display
+  - Text size: 10px font-bold for compact yet readable appearance
+  - Gradient background: `from-[#EA580C] to-[#F7931A]` (Bitcoin orange gradient)
+  - Shadow with orange glow: `shadow-[0_0_10px_-2px_rgba(247,147,26,0.6)]`
+  - Pulse animation triggered when count increases (tracked via prevCount state)
+  - Animation duration: 1000ms pulse, then stops
+  - Badge returns null when count === 0 (completely hidden, not just invisible)
+  - Display logic: shows "9+" when count > 9, otherwise shows actual number
+  - Component accepts optional className prop for additional styling
+  - Typecheck passes without issues
+---

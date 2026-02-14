@@ -154,12 +154,12 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 **Description:** As a user, I want a modal to add a new source by entering a URL so I can expand my research collection.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/sources/AddSourceModal.tsx`
-- [ ] Modal uses Radix Dialog with glass morphism backdrop
-- [ ] URL input field with bottom-border focus style
-- [ ] "Fetch Metadata" button triggers preview
-- [ ] Shows loading spinner while fetching metadata
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/sources/AddSourceModal.tsx`
+- [x] Modal uses Radix Dialog with glass morphism backdrop
+- [x] URL input field with bottom-border focus style
+- [x] "Fetch Metadata" button triggers preview
+- [x] Shows loading spinner while fetching metadata
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---

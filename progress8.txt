@@ -229,3 +229,39 @@ Learnings for future iterations:
 - Search input uses `bg-transparent border-0 border-b-2` for bottom-border-only style
 - The implementation in vaults page was in commit 36ba4ff but had misleading commit message
 ---
+
+## Iteration 10 - US-009: Create vault modal dialog
+- Created `frontend/src/components/features/vaults/CreateVaultModal.tsx` with complete modal UI:
+  - Radix Dialog with glass morphism styling: `backdrop-blur-lg bg-white/5 border border-white/10`
+  - Form fields: Name (required text input), Description (optional textarea)
+  - Gradient orange submit button, disabled while submitting and when name is empty
+  - Uses useCreateVault mutation from hooks
+  - Success flow: closes modal, shows toast notification, navigates to new vault detail page
+  - Error handling: displays error message in red banner within modal
+  - Form validation: requires name field to be filled
+  - Reset form state on close
+- Created `frontend/src/components/ui/textarea.tsx` UI component:
+  - Follows shadcn/ui pattern with forwardRef
+  - Bitcoin DeFi styling with white/20 border and orange focus state
+  - TextareaProps interface extending React.TextareaHTMLAttributes
+- Integrated CreateVaultModal into vaults listing page (`frontend/src/app/vaults/page.tsx`)
+- Fixed import path: useToast is at `@/hooks/useToast` not `@/hooks/use-toast`
+- Typecheck passes successfully
+
+Files changed:
+- frontend/src/components/features/vaults/CreateVaultModal.tsx (created)
+- frontend/src/components/ui/textarea.tsx (created)
+- frontend/src/app/vaults/page.tsx (added CreateVaultModal import and component)
+- PRD8.md (marked US-009 complete except browser verification)
+
+Learnings for future iterations:
+- Toast hook is at `@/hooks/useToast` (capital T, no hyphen)
+- Radix Dialog pattern: Portal > Overlay + Content, use Dialog.Root open/onOpenChange props
+- Glass morphism for modals: `bg-[#0F1115] backdrop-blur-lg border border-white/10`
+- Orange glow shadow: `shadow-[0_0_40px_-10px_rgba(247,147,26,0.3)]`
+- Dialog.Close should be disabled during mutations to prevent premature close
+- Modal overlay uses `bg-black/80 backdrop-blur-sm` for dimmed backdrop
+- Form submit buttons should check both isPending state AND form validation (e.g., !name.trim())
+- React.ChangeEvent<HTMLTextAreaElement> needed for typed onChange handlers
+- Always reset form state when closing modals (both success and cancel paths)
+---

@@ -137,16 +137,16 @@ Integrate SyncScript's frontend with the existing backend WebSocket system and n
 **Description:** As a user, I want to view my notification history in a dropdown panel so I can catch up on missed events.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/notifications/NotificationPanel.tsx`
-- [ ] Dropdown panel triggered by bell icon click in header
-- [ ] Lists notifications with icon, message, timestamp, read/unread state
-- [ ] Unread notifications have left border accent (orange)
-- [ ] "Mark all as read" button at top
-- [ ] Click notification marks it as read
-- [ ] Empty state message when no notifications
-- [ ] Max height with scroll, shows last 20 notifications
-- [ ] Uses glass morphism styling per design system
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/notifications/NotificationPanel.tsx`
+- [x] Dropdown panel triggered by bell icon click in header
+- [x] Lists notifications with icon, message, timestamp, read/unread state
+- [x] Unread notifications have left border accent (orange)
+- [x] "Mark all as read" button at top
+- [x] Click notification marks it as read
+- [x] Empty state message when no notifications
+- [x] Max height with scroll, shows last 20 notifications
+- [x] Uses glass morphism styling per design system
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-012: Create NotificationPreferences panel for user settings

@@ -194,3 +194,63 @@ Learnings for future iterations:
 - FileQuestion icon from lucide-react is perfect for empty source states
 - Component design allows parent to control all actions via optional callbacks
 - Always fix unrelated TypeScript errors to ensure typecheck passes for current task
+---
+
+## Iteration 8 - US-009: Create useSourcesQuery hook (already completed)
+- US-009 (useSourcesQuery hook) was already implemented in a previous iteration
+- Hook exists at frontend/src/hooks/useSourcesQuery.ts with correct implementation
+- Accepts vaultId and optional filters parameter
+- Uses React Query with queryKey: ['sources', vaultId, filters]
+- Returns data, isLoading, error, refetch (standard React Query return)
+- Stale time correctly set to 30 seconds (30 * 1000)
+- Created missing Textarea UI component (frontend/src/components/ui/textarea.tsx)
+- Textarea follows design system: bg-black/50, border-white/20, focus:border-[#F7931A]
+- Fixed imports in CreateVaultModal (already auto-fixed)
+- All changes already committed in previous workflow
+- Typecheck passes ✓
+- PRD9.md already correctly marked US-009 as complete
+
+Files changed:
+- frontend/src/hooks/useSourcesQuery.ts (already existed)
+- frontend/src/components/ui/textarea.tsx (created to fix missing dependency)
+- PRD9.md (already marked US-009 complete)
+
+Learnings for future iterations:
+- useSourcesQuery follows same pattern as useAnnotations hook
+- Query key includes filters to ensure cache invalidation when filters change
+- enabled: !!vaultId prevents query from running if vaultId is not provided
+- Textarea component needed for CreateVaultModal - uses same bottom-border focus style
+- cn() utility function used for className merging in UI components
+- React.forwardRef pattern used for all UI components to support ref forwarding
+---
+
+## Iteration 9 - US-010: Create AddSourceModal component
+- Created Dialog UI component at frontend/src/components/ui/dialog.tsx
+- Dialog follows Radix UI pattern with glass morphism styling
+- DialogContent uses bg-[#0F1115] border border-white/10 backdrop-blur-lg for glass effect
+- DialogOverlay uses bg-black/80 backdrop-blur-sm for darkened backdrop
+- Close button (X) positioned absolute top-right with orange focus ring
+- Created AddSourceModal at frontend/src/components/features/sources/AddSourceModal.tsx
+- Modal accepts open, onOpenChange, and vaultId props
+- URL input uses bottom-border focus style: border-b-2 border-white/20 focus:border-[#F7931A]
+- Fetch Metadata button uses full gradient style with loading state (Loader2 icon + spinner)
+- Loading state shows spinner with "Fetching metadata from URL..." message
+- Enter key triggers metadata fetch for better UX
+- Button disabled when URL is empty or while loading
+- Typecheck passes ✓
+
+Files changed:
+- frontend/src/components/ui/dialog.tsx (new)
+- frontend/src/components/features/sources/AddSourceModal.tsx (new)
+- PRD9.md (marked US-010 complete except browser verification)
+
+Learnings for future iterations:
+- Dialog component follows same export pattern as dropdown-menu (individual exports for each part)
+- Glass morphism modal uses rounded-2xl border with backdrop-blur-lg
+- DialogOverlay creates the darkened backdrop automatically via Portal
+- Input with Enter key handler improves UX for form submission
+- Loader2 icon from lucide-react with animate-spin for loading states
+- Button gradient uses shadow-[0_0_20px_-5px_rgba(234,88,12,0.5)] for orange glow effect
+- Modal dialogs use DialogHeader with DialogTitle and DialogDescription for accessibility
+- vaultId will be used in next user story for actual metadata fetching/source creation
+---

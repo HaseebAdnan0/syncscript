@@ -1,136 +1,42 @@
 'use client';
 
-import { useParams } from 'next/navigation';
-import { useState, useEffect, useCallback } from 'react';
+import { useParams, useRouter } from 'next/navigation';
 import { useVault } from '@/hooks/useVaults';
-import { useSources } from '@/hooks/useSources';
-import { useVaultSocket } from '@/hooks/useVaultSocket';
-import { SourceCard } from '@/components/features/sources/SourceCard';
-import { AnnotationCard } from '@/components/features/annotations/AnnotationCard';
-import type { Source } from '@/lib/types/sources';
-import type { Annotation } from '@/lib/types/annotations';
+import { useVaultsStore } from '@/stores/vaultsStore';
+import * as Tabs from '@radix-ui/react-tabs';
+import { ArrowLeft } from 'lucide-react';
 
 export default function VaultDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const vaultId = parseInt(params.id as string, 10);
-  const vaultIdStr = params.id as string;
 
   // Fetch vault data
   const { data: vault, isLoading: vaultLoading, error: vaultError } = useVault(vaultId);
 
-  // Fetch sources
-  const { data: sources = [], isLoading: sourcesLoading, refetch: refetchSources } = useSources(vaultId);
+  // Active tab from Zustand store
+  const { activeTab, setActiveTab } = useVaultsStore();
 
-  // WebSocket connection
-  const { status, addEventListener } = useVaultSocket({ vaultId: vaultIdStr });
-
-  // Local state for animated sources (to trigger fade-in)
-  const [newSourceIds, setNewSourceIds] = useState<Set<number>>(new Set());
-
-  // Local state for recent annotations (vault-wide)
-  const [recentAnnotations, setRecentAnnotations] = useState<Annotation[]>([]);
-  const [newAnnotationIds, setNewAnnotationIds] = useState<Set<number>>(new Set());
-
-  // Handle real-time source events
-  const handleSourceCreated = useCallback((data: { source: Source }) => {
-    console.log('Source created event:', data);
-    // Mark as new for animation
-    setNewSourceIds((prev) => new Set(prev).add(data.source.id));
-    // Refetch sources to update the list
-    refetchSources();
-    // Remove animation after 2 seconds
-    setTimeout(() => {
-      setNewSourceIds((prev) => {
-        const updated = new Set(prev);
-        updated.delete(data.source.id);
-        return updated;
-      });
-    }, 2000);
-  }, [refetchSources]);
-
-  const handleSourceUpdated = useCallback((data: { source: Source }) => {
-    console.log('Source updated event:', data);
-    refetchSources();
-  }, [refetchSources]);
-
-  const handleSourceDeleted = useCallback((data: { source_id: number }) => {
-    console.log('Source deleted event:', data);
-    refetchSources();
-  }, [refetchSources]);
-
-  // Handle real-time annotation events
-  const handleAnnotationCreated = useCallback((data: { annotation: Annotation }) => {
-    console.log('Annotation created event:', data);
-    // Add to recent annotations list (prepend)
-    setRecentAnnotations((prev) => [data.annotation, ...prev].slice(0, 10)); // Keep last 10
-    // Mark as new for animation
-    setNewAnnotationIds((prev) => new Set(prev).add(data.annotation.id));
-    // Remove animation after 2 seconds
-    setTimeout(() => {
-      setNewAnnotationIds((prev) => {
-        const updated = new Set(prev);
-        updated.delete(data.annotation.id);
-        return updated;
-      });
-    }, 2000);
-  }, []);
-
-  const handleAnnotationUpdated = useCallback((data: { annotation: Annotation }) => {
-    console.log('Annotation updated event:', data);
-    // Update in recent annotations list
-    setRecentAnnotations((prev) =>
-      prev.map((ann) => (ann.id === data.annotation.id ? data.annotation : ann))
-    );
-  }, []);
-
-  const handleAnnotationDeleted = useCallback((data: { annotation_id: number }) => {
-    console.log('Annotation deleted event:', data);
-    // Remove from recent annotations list
-    setRecentAnnotations((prev) => prev.filter((ann) => ann.id !== data.annotation_id));
-  }, []);
-
-  // Subscribe to WebSocket events
-  useEffect(() => {
-    // Source events
-    const unsubscribeCreated = addEventListener('source.created', handleSourceCreated);
-    const unsubscribeUpdated = addEventListener('source.updated', handleSourceUpdated);
-    const unsubscribeDeleted = addEventListener('source.deleted', handleSourceDeleted);
-
-    // Annotation events
-    const unsubscribeAnnotationCreated = addEventListener('annotation.created', handleAnnotationCreated);
-    const unsubscribeAnnotationUpdated = addEventListener('annotation.updated', handleAnnotationUpdated);
-    const unsubscribeAnnotationDeleted = addEventListener('annotation.deleted', handleAnnotationDeleted);
-
-    return () => {
-      unsubscribeCreated();
-      unsubscribeUpdated();
-      unsubscribeDeleted();
-      unsubscribeAnnotationCreated();
-      unsubscribeAnnotationUpdated();
-      unsubscribeAnnotationDeleted();
-    };
-  }, [
-    addEventListener,
-    handleSourceCreated,
-    handleSourceUpdated,
-    handleSourceDeleted,
-    handleAnnotationCreated,
-    handleAnnotationUpdated,
-    handleAnnotationDeleted,
-  ]);
-
+  // Loading state
   if (vaultLoading) {
     return (
       <div className="min-h-screen bg-[#030304] flex items-center justify-center">
-        <div className="text-[#94A3B8]">Loading vault...</div>
+        <div className="text-[#94A3B8] text-lg">Loading vault...</div>
       </div>
     );
   }
 
+  // 404 handling
   if (vaultError || !vault) {
     return (
-      <div className="min-h-screen bg-[#030304] flex items-center justify-center">
-        <div className="text-red-500">Failed to load vault</div>
+      <div className="min-h-screen bg-[#030304] flex flex-col items-center justify-center gap-4">
+        <div className="text-red-500 text-xl">Vault not found</div>
+        <button
+          onClick={() => router.push('/vaults')}
+          className="text-[#F7931A] hover:text-[#FFD600] transition-colors"
+        >
+          Return to vaults
+        </button>
       </div>
     );
   }
@@ -140,88 +46,69 @@ export default function VaultDetailPage() {
       {/* Header */}
       <div className="bg-[#0F1115] border-b border-white/10">
         <div className="max-w-7xl mx-auto px-6 py-8">
+          {/* Back button */}
+          <button
+            onClick={() => router.push('/vaults')}
+            className="flex items-center gap-2 text-[#94A3B8] hover:text-white transition-colors mb-6"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            <span>Back to vaults</span>
+          </button>
+
+          {/* Vault name and description */}
           <h1 className="text-4xl font-bold text-white mb-2">{vault.name}</h1>
-          <p className="text-[#94A3B8]">{vault.description}</p>
-          <div className="flex items-center gap-6 mt-4 text-sm text-[#94A3B8]">
-            <span>{vault.source_count} sources</span>
-            <span>{vault.member_count} members</span>
-            <span>
-              Connection:{' '}
-              <span
-                className={
-                  status === 'connected'
-                    ? 'text-green-500'
-                    : status === 'reconnecting'
-                    ? 'text-[#F7931A]'
-                    : 'text-red-500'
-                }
-              >
-                {status}
-              </span>
-            </span>
-          </div>
+          {vault.description && (
+            <p className="text-[#94A3B8] text-lg">{vault.description}</p>
+          )}
         </div>
       </div>
 
-      {/* Main content */}
+      {/* Main content with tabs */}
       <div className="max-w-7xl mx-auto px-6 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Sources section */}
-          <div className="lg:col-span-2">
-            <h2 className="text-2xl font-bold text-white mb-6">Sources</h2>
+        <Tabs.Root value={activeTab} onValueChange={setActiveTab}>
+          {/* Tab list */}
+          <Tabs.List className="flex gap-8 border-b border-white/10 mb-8">
+            <Tabs.Trigger
+              value="sources"
+              className="pb-4 px-2 text-[#94A3B8] hover:text-white transition-colors relative data-[state=active]:text-white"
+            >
+              <span className="text-lg font-medium">Sources</span>
+              {/* Active indicator */}
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#F7931A] opacity-0 data-[state=active]:opacity-100 transition-opacity" />
+            </Tabs.Trigger>
 
-            {sourcesLoading ? (
-              <div className="text-[#94A3B8]">Loading sources...</div>
-            ) : sources.length === 0 ? (
-              <div className="bg-[#0F1115] border border-white/10 rounded-2xl p-12 text-center">
-                <p className="text-[#94A3B8]">No sources yet. Add your first source to get started!</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {sources.map((source) => (
-                  <div
-                    key={source.id}
-                    className={
-                      newSourceIds.has(source.id)
-                        ? 'animate-in fade-in duration-500'
-                        : ''
-                    }
-                  >
-                    <SourceCard source={source} vaultId={vaultId.toString()} />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+            <Tabs.Trigger
+              value="members"
+              className="pb-4 px-2 text-[#94A3B8] hover:text-white transition-colors relative data-[state=active]:text-white"
+            >
+              <span className="text-lg font-medium">Members</span>
+              {/* Active indicator */}
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#F7931A] opacity-0 data-[state=active]:opacity-100 transition-opacity" />
+            </Tabs.Trigger>
 
-          {/* Recent Annotations sidebar */}
-          <div className="lg:col-span-1">
-            <h2 className="text-2xl font-bold text-white mb-6">Recent Annotations</h2>
+            <Tabs.Trigger
+              value="settings"
+              className="pb-4 px-2 text-[#94A3B8] hover:text-white transition-colors relative data-[state=active]:text-white"
+            >
+              <span className="text-lg font-medium">Settings</span>
+              {/* Active indicator */}
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#F7931A] opacity-0 data-[state=active]:opacity-100 transition-opacity" />
+            </Tabs.Trigger>
+          </Tabs.List>
 
-            {recentAnnotations.length === 0 ? (
-              <div className="bg-[#0F1115] border border-white/10 rounded-2xl p-8 text-center">
-                <p className="text-sm text-[#94A3B8]">
-                  No annotations yet. Annotations will appear here as team members add them.
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {recentAnnotations.map((annotation) => (
-                  <div
-                    key={annotation.id}
-                    className={
-                      newAnnotationIds.has(annotation.id)
-                        ? 'animate-in fade-in duration-500'
-                        : ''
-                    }
-                  >
-                    <AnnotationCard annotation={annotation} />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
+          {/* Tab content */}
+          <Tabs.Content value="sources">
+            <div className="text-[#94A3B8]">Sources tab content (to be implemented)</div>
+          </Tabs.Content>
+
+          <Tabs.Content value="members">
+            <div className="text-[#94A3B8]">Members tab content (to be implemented)</div>
+          </Tabs.Content>
+
+          <Tabs.Content value="settings">
+            <div className="text-[#94A3B8]">Settings tab content (to be implemented)</div>
+          </Tabs.Content>
+        </Tabs.Root>
       </div>
     </div>
   );
