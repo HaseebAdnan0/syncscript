@@ -745,3 +745,29 @@
   - Django check sufficient for validation when pyright requires full venv
   - Router registration creates /api/v1/annotations/ endpoint automatically
 ---
+
+## Iteration 31 - US-030: Create nested annotation list endpoint
+- Created nested route for source annotations: /api/v1/sources/{source_id}/annotations/
+- Implementation details:
+  - Added drf-nested-routers NestedDefaultRouter in apps/sources/urls.py
+  - Nested sources_router to create sources/{source_pk}/annotations/ endpoint
+  - Created AnnotationPagination class with page_size=50 for top-level annotations
+  - Updated AnnotationViewSet.get_queryset() to:
+    - Check for source_pk in kwargs (nested route detection)
+    - Filter by source_id=source_pk and parent=None (top-level only)
+    - Use prefetch_related('replies') for performance optimization
+  - Updated AnnotationViewSet.perform_create() to handle source_pk from nested route
+  - Returns nested structure: top-level annotations include 'replies' field via SerializerMethodField
+- Django check passes with 0 errors
+- Files changed:
+  - backend/apps/sources/urls.py (added nested sources_router for annotations)
+  - backend/apps/annotations/views.py (added AnnotationPagination, updated get_queryset and perform_create)
+  - PRD3.md (marked US-030 complete)
+- Learnings for future iterations:
+  - Nested routers use NestedDefaultRouter(parent_router, r'parent_prefix', lookup='parent')
+  - lookup='source' creates source_pk parameter in kwargs (not source_id)
+  - prefetch_related() reduces N+1 queries when serializing nested replies
+  - Filter parent=None to get only top-level annotations for threaded display
+  - Pagination on top-level only prevents pagination confusion with nested replies
+  - Conditional queryset filtering based on kwargs.get('source_pk') handles both nested and direct routes
+---

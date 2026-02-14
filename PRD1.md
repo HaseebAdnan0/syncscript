@@ -482,12 +482,12 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a developer, I need tests to verify rate limiting works correctly.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/users/tests/test_rate_limiting.py`
-- [ ] Test 6th login attempt within minute returns 429
-- [ ] Test 6th registration attempt within minute returns 429
-- [ ] Test rate limit resets after time window
-- [ ] Mock Redis for consistent test behavior
-- [ ] All tests pass
+- [x] Create `apps/users/tests/test_rate_limiting.py`
+- [x] Test 6th login attempt within minute returns 429
+- [x] Test 6th registration attempt within minute returns 429
+- [x] Test rate limit resets after time window
+- [x] Mock Redis for consistent test behavior
+- [x] All tests pass
 
 ---
 

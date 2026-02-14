@@ -18,14 +18,8 @@ class RateLimitingTests(TestCase):
     def setUp(self):
         self.client = APIClient()
         # Clear cache before each test to ensure clean state
+        # This ensures each test starts with empty rate limit counters
         cache.clear()
-
-    def tearDown(self):
-        # Clear cache after each test to ensure clean state for next test
-        cache.clear()
-        # Small delay to ensure cache operations complete
-        import time
-        time.sleep(0.1)
 
     def test_login_rate_limit_blocks_after_5_attempts(self):
         """Test that 6th login attempt within a minute is rate limited"""

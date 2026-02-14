@@ -2,10 +2,13 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.exceptions import PermissionDenied
+from django.shortcuts import get_object_or_404
 from apps.annotations.models import Annotation
 from apps.annotations.serializers import AnnotationSerializer
 from apps.annotations.permissions import IsAuthorOrReadOnly
 from apps.vaults.models import Vault, VaultMembership
+from apps.sources.models import Source
 
 
 class AnnotationPagination(PageNumberPagination):
@@ -31,12 +34,27 @@ class AnnotationViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         """
         Override perform_create to set user from request.user automatically (US-029).
-        For nested routes, also sets source from URL source_pk (US-031).
+        For nested routes, also sets source from URL source_pk and validates vault membership (US-031).
         """
         # Check if this is a nested route (sources/{source_pk}/annotations/)
         source_pk = self.kwargs.get('source_pk')
         if source_pk:
-            serializer.save(user=self.request.user, source_id=source_pk)
+            # Get the source object
+            source = get_object_or_404(Source, pk=source_pk)
+
+            # Validate user has membership in source's vault (US-031)
+            user = self.request.user
+            vault = source.vault
+
+            # Check if user is vault owner or member
+            is_owner = vault.owner == user
+            is_member = VaultMembership.objects.filter(vault=vault, user=user).exists()
+
+            if not (is_owner or is_member):
+                raise PermissionDenied("You must be a member of this vault to create annotations on its sources.")
+
+            # Save annotation with source and user
+            serializer.save(user=user, source_id=source_pk)
         else:
             serializer.save(user=self.request.user)
 
