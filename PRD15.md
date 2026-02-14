@@ -80,16 +80,16 @@ This feature uses Claude as the AI backbone with a simple chunking strategy (no 
 **Description:** As a user, I want to get an AI-generated summary of any source so I can quickly understand its contents.
 
 **Acceptance Criteria:**
-- [ ] `POST /api/v1/sources/{id}/summarize/` endpoint
-- [ ] Requires authentication and source read permission
-- [ ] If `source.ai_summary` exists and `regenerate=false`, return cached summary
-- [ ] If `regenerate=true` or no cache: extract text (use existing PDF extraction or fetch URL content)
-- [ ] Send to Claude with academic summarization prompt
-- [ ] Response schema: `{abstract, key_findings[], methodology, limitations, keywords[], generated_at}`
-- [ ] Save to `source.ai_summary` JSONField
-- [ ] Log token usage via usage service
-- [ ] Apply `@ai_rate_limit` decorator
-- [ ] Typecheck passes
+- [x] `POST /api/v1/sources/{id}/summarize/` endpoint
+- [x] Requires authentication and source read permission
+- [x] If `source.ai_summary` exists and `regenerate=false`, return cached summary
+- [x] If `regenerate=true` or no cache: extract text (use existing PDF extraction or fetch URL content)
+- [x] Send to Claude with academic summarization prompt
+- [x] Response schema: `{abstract, key_findings[], methodology, limitations, keywords[], generated_at}`
+- [x] Save to `source.ai_summary` JSONField
+- [x] Log token usage via usage service
+- [x] Apply `@ai_rate_limit` decorator
+- [x] Typecheck passes
 
 ### US-007: Implement vault insights endpoint
 **Description:** As a user, I want AI-generated insights about my vault so I can see themes and gaps across all sources.

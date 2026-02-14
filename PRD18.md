@@ -130,14 +130,14 @@ Implement a global full-text search system for SyncScript that enables researche
 **Description:** As a user, I want to search across all my accessible content so I can find relevant information quickly.
 
 **Acceptance Criteria:**
-- [ ] Create `GET /api/v1/search/` endpoint
-- [ ] Query params: `q` (required), `type` (optional: sources,annotations,vaults), `vault_id` (optional), `limit` (default 20)
-- [ ] Filter results to vaults where user is Owner/Contributor/Viewer
-- [ ] Return grouped results by type with relevance scores
-- [ ] Highlight matching text with `<mark>` tags in snippet
-- [ ] Minimum query length: 2 characters
-- [ ] Return 400 if query too short
-- [ ] Typecheck passes
+- [x] Create `GET /api/v1/search/` endpoint
+- [x] Query params: `q` (required), `type` (optional: sources,annotations,vaults), `vault_id` (optional), `limit` (default 20)
+- [x] Filter results to vaults where user is Owner/Contributor/Viewer
+- [x] Return grouped results by type with relevance scores
+- [x] Highlight matching text with `<mark>` tags in snippet
+- [x] Minimum query length: 2 characters
+- [x] Return 400 if query too short
+- [x] Typecheck passes
 
 ---
 

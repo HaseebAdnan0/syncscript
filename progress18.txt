@@ -153,3 +153,33 @@
   - Django check command validates serializers even with Pyright warnings
   - Test serializers by instantiating with data and calling is_valid()
 ---
+
+## Iteration 9 - US-009: Create main search endpoint
+- Created GET /api/v1/search/ endpoint in apps/search/views.py
+- Implemented full-text search across Sources, Annotations, and Vaults
+- Query params: q (required, min 2 chars), type (optional filter), vault_id (optional filter), limit (default 20, max 100)
+- Permission filtering: users can only search vaults where they are Owner/Contributor/Viewer
+- Uses PostgreSQL SearchQuery, SearchRank, and SearchHeadline for relevance and highlighting
+- Sources: weighted search on title (A), description (B), metadata (C)
+- Annotations: search on content field with weight A
+- Vaults: simple case-insensitive search on name/description (no tsvector yet)
+- Results include highlighted snippets with <mark> tags via SearchHeadline
+- Returns grouped results by type with relevance scores, vault context, and breadcrumbs
+- Created comprehensive test suite with 10 tests covering auth, permissions, filters, and result structure
+- Files changed:
+  - backend/apps/search/views.py (implemented search_view)
+  - backend/apps/search/urls.py (registered search endpoint)
+  - backend/config/urls.py (added search URLs to main config)
+  - backend/apps/search/test_views.py (created test suite)
+  - PRD18.md (marked US-009 complete)
+- Learnings for future iterations:
+  - SearchQuery with config='english' creates full-text search queries
+  - SearchRank provides relevance scoring for ordering results
+  - SearchHeadline generates highlighted snippets with configurable <mark> tags
+  - Coalesce() wraps nullable fields before passing to SearchHeadline to avoid errors
+  - Vault permissions: check both vault_memberships and owned vaults (owner field)
+  - Use select_related() to avoid N+1 queries when accessing related objects
+  - Use get_or_create() in tests instead of create() to handle duplicate constraint violations
+  - min() function caps user-provided limit to prevent excessive queries
+  - PostgreSQL tsvector search uses @@ operator via Django's filter(search_vector=search_query)
+---

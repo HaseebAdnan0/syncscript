@@ -129,11 +129,11 @@ Enhance SyncScript's file storage system to production-ready status with Cloudfl
 **Description:** As a developer, I need to abort failed multipart uploads to free S3 resources.
 
 **Acceptance Criteria:**
-- [ ] Add `abort_multipart_upload(file_key: str, upload_id: str) -> None` to `apps/sources/storage.py`
-- [ ] Call `s3_client.abort_multipart_upload()` with bucket, key, upload_id
-- [ ] Log abort action
-- [ ] Handle and log S3 errors gracefully
-- [ ] Typecheck passes
+- [x] Add `abort_multipart_upload(file_key: str, upload_id: str) -> None` to `apps/sources/storage.py`
+- [x] Call `s3_client.abort_multipart_upload()` with bucket, key, upload_id
+- [x] Log abort action
+- [x] Handle and log S3 errors gracefully
+- [x] Typecheck passes
 
 ---
 
