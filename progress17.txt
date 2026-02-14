@@ -326,3 +326,25 @@
   - Typecheck passes with no errors
 ---
 
+## Iteration 16 - US-016: Create notifications dropdown component
+- Verified that NotificationPanel component already implements all requirements
+- Added "Notification settings" link at bottom of NotificationPanel (footer section)
+- Link points to /settings/notifications with Bitcoin orange theme styling
+- Files changed:
+  - frontend/src/components/features/notifications/NotificationPanel.tsx (added settings link)
+  - PRD17.md (marked US-016 acceptance criteria complete)
+- Learnings for future iterations:
+  - NotificationPanel component was already created in commit 62f824f (US-011 from different PRD)
+  - Component already had: bell icon in header, unread badge, dropdown, notifications list, mark read/all
+  - Only missing piece was "Notification settings" link at bottom
+  - Settings link added with border-t divider and centered layout
+  - Link uses text-xs, uppercase, tracking-wide for consistent UI pattern
+  - Hover effect changes color from orange (#F7931A) to gold (#FFD600)
+  - AppHeader component (apps/notifications/AppHeader.tsx) already integrates NotificationPanel
+  - Bell button positioned in header with useRef for click-outside detection
+  - UnreadBadge component shows count with gradient, animates on count increase
+  - All components follow Bitcoin DeFi design system
+  - Typecheck passes with no errors
+  - Changes were already committed in 4426df2 (from PRD 12/18 work)
+---
+

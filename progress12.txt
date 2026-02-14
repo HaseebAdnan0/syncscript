@@ -551,3 +551,36 @@ Learnings for future iterations:
   - Disable form inputs during loading to prevent state changes mid-request
   - sessionStorage used to preserve state during redirects between pages
 ---
+
+## Iteration 20 - US-020: Create Connected Accounts settings section
+- Created components/features/settings/ConnectedAccounts.tsx component
+- Fetches connected accounts from GET /api/v1/auth/oauth/connected/ endpoint
+- Displays connected providers with icon, name, email, connected date
+- Shows provider-specific info: Google profile picture, GitHub username
+- Lists available providers not yet connected with "Connect" buttons
+- Connect button redirects to OAuth flow with next=/settings parameter
+- Disconnect button placeholder (disabled) for US-021 implementation
+- Loading state with Bitcoin Orange spinner during fetch
+- Error state with retry button for failed requests
+- Empty state handling when no providers available
+- Divider between connected and available providers
+- Styled with Bitcoin DeFi aesthetic (dark cards, orange accents, glass morphism)
+- Frontend typecheck passes
+- Committed successfully
+
+Files changed:
+  - frontend/src/components/features/settings/ConnectedAccounts.tsx (created)
+  - PRD12.md (marked US-020 complete except browser verification)
+
+Learnings for future iterations:
+  - Use Set to track which providers are already connected for filtering
+  - Provider configuration object pattern for icons and display names works well
+  - Google icon uses multi-color SVG (official brand colors), GitHub uses white fill
+  - withCredentials: true needed for httpOnly cookie authentication in API calls
+  - Display connected_at timestamp with toLocaleDateString() for user-friendly dates
+  - Disconnect buttons should be disabled until US-021 is implemented
+  - Connect button redirects to backend OAuth endpoint with next parameter for return URL
+  - API client (api) from lib/api.ts handles authentication automatically via interceptors
+  - Loading/error states improve UX for async data fetching
+  - Empty state provides feedback when no accounts exist
+---

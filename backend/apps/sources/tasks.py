@@ -806,6 +806,154 @@ def cleanup_deleted_pdfs() -> dict[str, Any]:
 
 
 @shared_task
+def cleanup_orphaned_files() -> dict[str, Any]:
+    """
+    Clean up orphaned S3 files that have no corresponding database records.
+
+    This task runs daily to delete S3 objects in the vaults/ prefix that:
+    1. Have no corresponding PDFUpload or FileUpload record in the database
+    2. Are older than 24 hours (to avoid deleting files mid-upload)
+
+    This prevents storage waste from failed uploads or deleted database records.
+
+    Returns:
+        dict with cleanup results:
+            - deleted_count: Number of orphaned files deleted
+            - errors: List of errors encountered during cleanup
+    """
+    # Only run if S3 is enabled
+    if not getattr(settings, 'USE_S3', False):
+        logger.info("S3 not enabled, skipping orphaned file cleanup")
+        return {
+            'deleted_count': 0,
+            'errors': [],
+        }
+
+    deleted_count = 0
+    errors = []
+
+    try:
+        # Initialize S3 client
+        s3_client = boto3.client(
+            's3',
+            endpoint_url=getattr(settings, 'AWS_S3_ENDPOINT_URL', None),
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+            region_name=getattr(settings, 'AWS_S3_REGION_NAME', 'auto'),
+        )
+
+        # Calculate threshold (24 hours ago)
+        threshold = timezone.now() - timedelta(hours=24)
+
+        # List all objects in vaults/ prefix
+        paginator = s3_client.get_paginator('list_objects_v2')
+        page_iterator = paginator.paginate(
+            Bucket=settings.AWS_STORAGE_BUCKET_NAME,
+            Prefix='vaults/',
+        )
+
+        for page in page_iterator:
+            # Get objects from page
+            objects = page.get('Contents', [])
+
+            for obj in objects:
+                key = obj.get('Key')
+                last_modified = obj.get('LastModified')
+
+                # Skip if missing required fields
+                if not key or not last_modified:
+                    continue
+
+                # Skip if file is newer than 24 hours (might be mid-upload)
+                if last_modified >= threshold:
+                    continue
+
+                # Skip thumbnail files (they're managed by PDF/image processing)
+                if '/thumbnails/' in key:
+                    continue
+
+                # Extract file UUID from key
+                # Format: vaults/{vault_id}/pdfs/{uuid}.pdf or vaults/{vault_id}/images/{uuid}.{ext}
+                try:
+                    parts = key.split('/')
+                    if len(parts) < 4:
+                        # Invalid key format, skip
+                        continue
+
+                    file_type = parts[2]  # 'pdfs' or 'images'
+                    filename = parts[3]   # '{uuid}.pdf' or '{uuid}.{ext}'
+                    file_uuid = filename.rsplit('.', 1)[0]  # Extract UUID before extension
+
+                    # Check if corresponding database record exists
+                    has_db_record = False
+
+                    if file_type == 'pdfs':
+                        # Check PDFUpload table
+                        has_db_record = PDFUpload.objects.filter(id=file_uuid).exists()
+                    elif file_type == 'images':
+                        # Check FileUpload table
+                        has_db_record = FileUpload.objects.filter(id=file_uuid).exists()
+                    else:
+                        # Unknown file type, skip
+                        logger.warning(f"Unknown file type in key: {key}")
+                        continue
+
+                    # If no DB record exists, delete the orphaned file
+                    if not has_db_record:
+                        try:
+                            s3_client.delete_object(
+                                Bucket=settings.AWS_STORAGE_BUCKET_NAME,
+                                Key=key,
+                            )
+
+                            deleted_count += 1
+                            logger.info(
+                                f"Deleted orphaned file: key={key}, "
+                                f"last_modified={last_modified.isoformat()}"
+                            )
+
+                        except Exception as delete_exc:
+                            logger.error(
+                                f"Failed to delete orphaned file {key}: {delete_exc}",
+                                exc_info=True,
+                            )
+                            errors.append({
+                                'key': key,
+                                'error': str(delete_exc),
+                            })
+
+                except Exception as parse_exc:
+                    # Log parsing errors but continue processing other files
+                    logger.warning(
+                        f"Failed to parse S3 key {key}: {parse_exc}",
+                        exc_info=True,
+                    )
+                    errors.append({
+                        'key': key,
+                        'error': f"Parse error: {parse_exc}",
+                    })
+
+        logger.info(
+            f"Orphaned file cleanup completed: {deleted_count} files deleted, "
+            f"{len(errors)} errors"
+        )
+
+    except Exception as exc:
+        logger.error(
+            f"Error during orphaned file cleanup: {exc}",
+            exc_info=True,
+        )
+        errors.append({
+            'error': f"Cleanup failed: {exc}",
+        })
+
+    return {
+        'deleted_count': deleted_count,
+        'errors': errors,
+    }
+
+
+@shared_task
 def cleanup_orphaned_multipart_uploads() -> dict[str, Any]:
     """
     Clean up abandoned S3 multipart uploads to prevent storage waste.

@@ -50,6 +50,9 @@ export function ConnectedAccounts() {
   const [accounts, setAccounts] = useState<ConnectedAccount[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [disconnecting, setDisconnecting] = useState<string | null>(null);
+  const [confirmDisconnect, setConfirmDisconnect] = useState<'google' | 'github' | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   useEffect(() => {
     fetchConnectedAccounts();
@@ -75,6 +78,39 @@ export function ConnectedAccounts() {
     // Redirect to OAuth flow with next=/settings to return here after auth
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
     window.location.href = `${apiUrl}/auth/${provider}/?next=/settings`;
+  };
+
+  const handleDisconnect = async (provider: 'google' | 'github') => {
+    try {
+      setDisconnecting(provider);
+      setError(null);
+      await api.delete(`/auth/oauth/connected/${provider}/`, {
+        withCredentials: true,
+      });
+
+      // Remove from accounts list
+      setAccounts(accounts.filter((acc) => acc.provider !== provider));
+      setConfirmDisconnect(null);
+
+      // Show success toast
+      setSuccessMessage(`${providerConfig[provider].name} account disconnected successfully`);
+      setTimeout(() => setSuccessMessage(null), 3000);
+    } catch (err: any) {
+      console.error('Failed to disconnect account:', err);
+
+      // Handle "last auth method" error
+      if (err.response?.status === 400) {
+        setError(
+          err.response?.data?.error ||
+          'Cannot disconnect your only authentication method. Please set a password or connect another account first.'
+        );
+      } else {
+        setError('Failed to disconnect account. Please try again.');
+      }
+      setConfirmDisconnect(null);
+    } finally {
+      setDisconnecting(null);
+    }
   };
 
   if (loading) {

@@ -119,15 +119,15 @@ This feature uses Claude as the AI backbone with a simple chunking strategy (no 
 **Description:** As a user, I want to ask questions about my vault contents and get cited answers.
 
 **Acceptance Criteria:**
-- [ ] `POST /api/v1/vaults/{id}/ask/` endpoint with `{question, conversation_id?}` body
-- [ ] Requires authentication and vault read permission
-- [ ] Gather text from all sources in vault, chunk them
-- [ ] Use `get_relevant_chunks()` to find relevant context
-- [ ] Send question + context to Claude with citation instructions
-- [ ] Response: `{answer, citations[{source_id, source_title, excerpt}], conversation_id}`
-- [ ] Apply `@ai_rate_limit` decorator
-- [ ] Log token usage
-- [ ] Typecheck passes
+- [x] `POST /api/v1/vaults/{id}/ask/` endpoint with `{question, conversation_id?}` body
+- [x] Requires authentication and vault read permission
+- [x] Gather text from all sources in vault, chunk them
+- [x] Use `get_relevant_chunks()` to find relevant context
+- [x] Send question + context to Claude with citation instructions
+- [x] Response: `{answer, citations[{source_id, source_title, excerpt}], conversation_id}`
+- [x] Apply `@ai_rate_limit` decorator
+- [x] Log token usage
+- [x] Typecheck passes
 
 ### US-010: Implement chat history persistence
 **Description:** As a user, I want my vault Q&A conversations saved so I can continue where I left off.
