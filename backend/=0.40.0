@@ -24,3 +24,5 @@ Downloading distro-1.9.0-py3-none-any.whl (20 kB)
 Downloading docstring_parser-0.17.0-py3-none-any.whl (36 kB)
 Downloading jiter-0.13.0-cp314-cp314-win_amd64.whl (204 kB)
 Installing collected packages: jiter, docstring-parser, distro, anthropic
+
+Successfully installed anthropic-0.79.0 distro-1.9.0 docstring-parser-0.17.0 jiter-0.13.0

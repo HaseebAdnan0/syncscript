@@ -192,3 +192,156 @@ class RateLimitDecoratorTestCase(APITestCase):
         # Should be tomorrow (or later today if it's currently before midnight)
         now = timezone.now()
         self.assertGreater(resets_at, now)
+
+
+class ClaudeClientTestCase(TestCase):
+    """Test Claude API client service."""
+
+    def setUp(self):
+        """Set up test fixtures."""
+        from unittest.mock import Mock, MagicMock
+        from apps.ai.services.claude_client import ClaudeClient
+
+        # Mock the anthropic client
+        self.mock_client = Mock()
+        self.claude_client = ClaudeClient.__new__(ClaudeClient)
+        self.claude_client.client = self.mock_client
+        self.claude_client.model = "claude-3-5-sonnet-20241022"
+
+    def test_summarize_success(self):
+        """Test successful source summarization."""
+        from unittest.mock import Mock
+
+        # Mock response
+        mock_message = Mock()
+        mock_message.content = [Mock(text='{"abstract": "Test abstract", "key_findings": ["Finding 1"], "methodology": "Test method", "limitations": "Test limits", "keywords": ["keyword1"], "language": "en", "quality_flags": []}')]
+        mock_message.usage = Mock(input_tokens=100, output_tokens=200)
+        self.mock_client.messages.create.return_value = mock_message
+
+        # Call summarize
+        result = self.claude_client.summarize("Test content", "pdf")
+
+        # Verify result
+        self.assertEqual(result['abstract'], "Test abstract")
+        self.assertEqual(result['key_findings'], ["Finding 1"])
+        self.assertEqual(result['tokens_used'], 300)
+        self.assertNotIn('error', result)
+
+    def test_summarize_json_in_markdown(self):
+        """Test summarize handles JSON in markdown code blocks."""
+        from unittest.mock import Mock
+
+        # Mock response with JSON in markdown
+        mock_message = Mock()
+        mock_message.content = [Mock(text='```json\n{"abstract": "Test", "key_findings": [], "methodology": "Test", "limitations": "None", "keywords": [], "language": "en", "quality_flags": []}\n```')]
+        mock_message.usage = Mock(input_tokens=100, output_tokens=200)
+        self.mock_client.messages.create.return_value = mock_message
+
+        result = self.claude_client.summarize("Test content", "url")
+
+        self.assertEqual(result['abstract'], "Test")
+        self.assertEqual(result['tokens_used'], 300)
+
+    def test_summarize_api_error(self):
+        """Test summarize handles API errors gracefully."""
+        import anthropic
+
+        # Mock API error
+        self.mock_client.messages.create.side_effect = anthropic.APIError("API error")
+
+        result = self.claude_client.summarize("Test content", "pdf")
+
+        self.assertIn('error', result)
+        self.assertIn('Claude API error', result['error'])
+        self.assertEqual(result['tokens_used'], 0)
+
+    def test_analyze_sources_success(self):
+        """Test successful vault insights analysis."""
+        from unittest.mock import Mock
+
+        # Mock response
+        mock_message = Mock()
+        mock_message.content = [Mock(text='{"themes": [{"name": "Theme1", "weight": 0.8, "source_count": 3}], "research_gaps": ["Gap1"], "cross_references": [], "suggested_searches": ["search1"]}')]
+        mock_message.usage = Mock(input_tokens=500, output_tokens=300)
+        self.mock_client.messages.create.return_value = mock_message
+
+        sources = [
+            {"title": "Source 1", "authors": "Author A", "summary": "Summary 1", "url": "http://example.com/1"},
+            {"title": "Source 2", "authors": "Author B", "summary": "Summary 2", "url": "http://example.com/2"}
+        ]
+
+        result = self.claude_client.analyze_sources(sources)
+
+        self.assertEqual(len(result['themes']), 1)
+        self.assertEqual(result['themes'][0]['name'], "Theme1")
+        self.assertEqual(result['tokens_used'], 800)
+        self.assertNotIn('error', result)
+
+    def test_analyze_sources_handles_missing_fields(self):
+        """Test analyze_sources handles sources with missing fields."""
+        from unittest.mock import Mock
+
+        mock_message = Mock()
+        mock_message.content = [Mock(text='{"themes": [], "research_gaps": [], "cross_references": [], "suggested_searches": []}')]
+        mock_message.usage = Mock(input_tokens=100, output_tokens=100)
+        self.mock_client.messages.create.return_value = mock_message
+
+        # Sources with missing fields
+        sources = [
+            {"title": "Source 1"},  # Missing authors, summary, url
+            {},  # Empty source
+        ]
+
+        result = self.claude_client.analyze_sources(sources)
+
+        # Should not raise error
+        self.assertNotIn('error', result)
+        self.assertEqual(result['tokens_used'], 200)
+
+    def test_answer_question_success(self):
+        """Test successful question answering with citations."""
+        from unittest.mock import Mock
+
+        mock_message = Mock()
+        mock_message.content = [Mock(text='{"answer": "Test answer", "citations": [0, 1], "confidence": "high"}')]
+        mock_message.usage = Mock(input_tokens=400, output_tokens=150)
+        self.mock_client.messages.create.return_value = mock_message
+
+        chunks = ["Chunk 0 content", "Chunk 1 content", "Chunk 2 content"]
+        result = self.claude_client.answer_question("What is this about?", chunks)
+
+        self.assertEqual(result['answer'], "Test answer")
+        self.assertEqual(result['citations'], [0, 1])
+        self.assertEqual(result['confidence'], "high")
+        self.assertEqual(result['tokens_used'], 550)
+
+    def test_answer_question_empty_context(self):
+        """Test answer_question with empty context."""
+        from unittest.mock import Mock
+
+        mock_message = Mock()
+        mock_message.content = [Mock(text='{"answer": "No context available", "citations": [], "confidence": "low"}')]
+        mock_message.usage = Mock(input_tokens=50, output_tokens=30)
+        self.mock_client.messages.create.return_value = mock_message
+
+        result = self.claude_client.answer_question("What is this?", [])
+
+        self.assertIn('answer', result)
+        self.assertEqual(result['tokens_used'], 80)
+
+    def test_client_initialization_requires_api_key(self):
+        """Test that ClaudeClient raises error without API key."""
+        from django.conf import settings
+        from apps.ai.services.claude_client import ClaudeClient
+
+        # Temporarily clear API key
+        old_key = getattr(settings, 'ANTHROPIC_API_KEY', None)
+        settings.ANTHROPIC_API_KEY = None
+
+        with self.assertRaises(ValueError) as context:
+            ClaudeClient()
+
+        self.assertIn('ANTHROPIC_API_KEY not configured', str(context.exception))
+
+        # Restore
+        settings.ANTHROPIC_API_KEY = old_key

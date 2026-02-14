@@ -68,7 +68,7 @@ def _convert_to_csl_json(metadata: Dict[str, Any], source_id: str) -> Dict[str, 
     Returns:
         CSL JSON formatted dictionary
     """
-    csl_item = {
+    csl_item: Dict[str, Any] = {
         'id': source_id,
         'type': 'article-journal',  # Default type, can be overridden
     }
@@ -260,7 +260,7 @@ def generate_structured_citation(
     # Create bibliography
     bib_source = CiteProcJSON([csl_item])
     bib_style = CitationStylesStyle(style_path, validate=False)
-    bibliography = CitationStylesBibliography(bib_style, bib_source, formatter=None)
+    bibliography = CitationStylesBibliography(bib_style, bib_source, formatter=None)  # type: ignore[arg-type]
 
     # Register citation
     citation = Citation([CitationItem(source_id)])

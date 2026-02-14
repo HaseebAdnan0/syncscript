@@ -137,3 +137,24 @@
   - Test template rendering with render_to_string before committing
   - Windows console needs ASCII-safe output (no unicode checkmarks)
 ---
+
+## Iteration 5 - US-005: Create verification email template
+- Created templates/emails/verification.html extending base.html
+- Implemented preheader: "Verify your email to start using SyncScript"
+- Added personalized greeting using {{ user.first_name|default:user.username }}
+- Included explanatory text about email verification purpose
+- Created orange gradient CTA button "Verify Email Address" with verification_url
+- Added fallback text link below button for email clients that block buttons
+- Included "Link expires in 24 hours" notice in footer section
+- Created templates/emails/verification.txt plaintext version
+- Tested both templates render successfully with render_to_string
+- Files changed:
+  - backend/templates/emails/verification.html (new)
+  - backend/templates/emails/verification.txt (new)
+  - PRD11.md (marked US-005 complete)
+- Learnings for future iterations:
+  - Template context includes user object, verification_url, and site_url
+  - HTML template uses table-based layout consistent with base.html
+  - Plaintext version provides all key info without HTML formatting
+  - Django shell with render_to_string is quick way to verify templates work
+---

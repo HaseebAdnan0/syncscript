@@ -69,7 +69,7 @@ Enhance SyncScript's file storage system to production-ready status with Cloudfl
 **Description:** As a developer, I need a model to store image uploads separate from PDFs.
 
 **Acceptance Criteria:**
-- [ ] Create `FileUpload` model in `apps/sources/models.py` with fields:
+- [x] Create `FileUpload` model in `apps/sources/models.py` with fields:
   - `id` (UUIDField, primary key)
   - `vault` (ForeignKey to Vault)
   - `file` (FileField, upload_to path)
@@ -81,8 +81,8 @@ Enhance SyncScript's file storage system to production-ready status with Cloudfl
   - `uploaded_at` (DateTimeField auto_now_add)
   - `thumbnail_url` (URLField, blank)
   - `deleted_at` (DateTimeField, null)
-- [ ] Generate and run migration
-- [ ] Typecheck passes
+- [x] Generate and run migration
+- [x] Typecheck passes
 
 ---
 

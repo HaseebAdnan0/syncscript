@@ -113,3 +113,26 @@
   - Button hover effects (scale, border color changes) add polish to CTAs
   - Responsive flex-col sm:flex-row allows buttons to stack on mobile
 ---
+---
+
+## Iteration 6 - US-006: Create Video Demo Modal
+- Created `frontend/src/components/marketing/VideoModal.tsx` using Radix Dialog
+- Implemented modal with dark overlay (bg-black/80) and backdrop blur
+- Close button in top-right corner with glass morphism styling (bg-black/50 backdrop-blur-lg)
+- Embedded YouTube iframe placeholder with autoplay parameter
+- Modal closes on overlay click, Escape key, or close button click (Radix Dialog built-in)
+- Video auto-pauses when modal closes (Radix unmounts content, stopping iframe)
+- Integrated modal into HeroContent with useState for open/close state
+- "Watch Demo" button onClick triggers setIsVideoOpen(true)
+- Files changed:
+  - Created: `frontend/src/components/marketing/VideoModal.tsx`
+  - Modified: `frontend/src/components/marketing/HeroContent.tsx` (added modal state and integration)
+  - Modified: `PRD16.md` (marked US-006 complete)
+- Learnings for future iterations:
+  - Radix Dialog provides excellent accessibility out of the box (Escape, overlay click, focus trap)
+  - Dialog.Portal renders modal outside parent DOM hierarchy, avoiding z-index issues
+  - Radix unmounts Dialog.Content when closed, automatically stopping video playback
+  - Glass morphism on close button (bg-black/50 backdrop-blur-lg) matches design system
+  - YouTube iframe autoplay parameter requires user interaction on most browsers
+  - aspect-video utility class maintains 16:9 ratio for responsive video containers
+---

@@ -56,15 +56,15 @@ SyncScript's AI-powered citation generation system enables researchers to genera
 **Description:** As a developer, I need a service that generates citations using citeproc-py for sources with complete metadata.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/citations/services/structured_citation.py`
-- [ ] Add `citeproc-py` to requirements.txt
-- [ ] Function `generate_structured_citation(metadata: dict, format: CitationFormat) -> str`
-- [ ] Support all 6 formats: APA7, MLA9, Chicago17, BibTeX, IEEE, Harvard
-- [ ] Load appropriate CSL style files for each format
-- [ ] Function `has_complete_metadata(metadata: dict) -> bool` checks required fields
-- [ ] Required fields: title, author(s), date (at minimum)
-- [ ] Unit tests for each citation format with sample metadata
-- [ ] Typecheck passes
+- [x] Create `apps/citations/services/structured_citation.py`
+- [x] Add `citeproc-py` to requirements.txt
+- [x] Function `generate_structured_citation(metadata: dict, format: CitationFormat) -> str`
+- [x] Support all 6 formats: APA7, MLA9, Chicago17, BibTeX, IEEE, Harvard
+- [x] Load appropriate CSL style files for each format
+- [x] Function `has_complete_metadata(metadata: dict) -> bool` checks required fields
+- [x] Required fields: title, author(s), date (at minimum)
+- [x] Unit tests for each citation format with sample metadata
+- [x] Typecheck passes
 
 ### US-005: Implement Claude AI citation service
 **Description:** As a developer, I need a service that uses Claude to generate citations when metadata is incomplete, ensuring academic accuracy.

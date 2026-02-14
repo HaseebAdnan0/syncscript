@@ -256,6 +256,9 @@ class ActivityFeedTests(TestCase):
         vault2 = Vault.objects.create(name='Vault 2', owner=self.other_user)
         VaultMembership.objects.create(vault=vault2, user=self.user, role='CONTRIBUTOR')
 
+        # Clear auto-generated audit logs from vault creation signals
+        AuditLog.objects.all().delete()
+
         # Create audit logs for vault1
         log1 = AuditLog.objects.create(
             vault=vault1,
