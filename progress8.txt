@@ -170,3 +170,36 @@ Learnings for future iterations:
 - Icon containers use: `bg-white/5 border border-white/10` for glass effect
 - Orange accent color `#F7931A` used for icon color to maintain brand consistency
 ---
+
+## Iteration 8 - US-007: Create SourcesFilterBar component
+- Created `frontend/src/components/features/sources/SourcesFilterBar.tsx` with complete filter UI:
+  - Type filter dropdown: All Types, URL, PDF, Citation, Article (uses SourceType enum)
+  - Date filter dropdown: Any Time, Today, This Week, This Month, Custom Range
+  - Contributor filter dropdown populated from vault members prop
+  - Clear filters button appears when any filter is active
+  - All filters update URL search params via Next.js router for shareability
+  - Glass morphism styling: `backdrop-blur-lg bg-white/5 border border-white/10`
+  - Hover effects on filter buttons: `hover:border-[#F7931A]/50`
+  - Clear button uses orange accent color with hover transition
+- Fixed pre-existing typecheck errors in notifications files:
+  - Changed import in notifications.ts from './client' to './api'
+  - Removed unused 'query' parameter (linter auto-fixed)
+  - Notification type now properly used in PaginatedResponse generics
+- Typecheck passes successfully
+
+Files changed:
+- frontend/src/components/features/sources/SourcesFilterBar.tsx (created)
+- frontend/src/lib/api/notifications.ts (fixed import path)
+- frontend/src/hooks/useNotifications.ts (linter auto-fixed unused parameter)
+- PRD9.md (marked US-007 complete except browser verification)
+
+Learnings for future iterations:
+- SourceType is an ENUM, must use SourceType.URL not string 'url'
+- When using enums in dropdown handlers, convert to string with .toString() for URL params
+- Next.js useSearchParams + useRouter + usePathname pattern for filter state in URL
+- URLSearchParams.delete() for resetting filter values instead of setting to default
+- hasActiveFilters check enables conditional rendering of "Clear Filters" button
+- Radix DropdownMenu components accept className for custom glass morphism styling
+- Button variant="ghost" is good for filter triggers with custom backgrounds
+- Filter components should take optional props (like vaultMembers) with sensible defaults
+---
