@@ -288,7 +288,7 @@ Establish the Next.js 16 frontend foundation for SyncScript with a Bitcoin DeFi-
 **Description:** As a developer, I want React Query configured with sensible defaults so that I have consistent data fetching behavior.
 
 **Acceptance Criteria:**
-- [ ] Create `src/lib/providers/query-provider.tsx` with:
+- [x] Create `src/lib/providers/query-provider.tsx` with:
   - QueryClient with default options:
     ```typescript
     {
@@ -303,8 +303,8 @@ Establish the Next.js 16 frontend foundation for SyncScript with a Bitcoin DeFi-
     ```
   - Wrap children in `QueryClientProvider`
   - Handle client-side only rendering (`'use client'`)
-- [ ] Import provider in `src/app/layout.tsx`
-- [ ] Typecheck passes
+- [x] Import provider in `src/app/layout.tsx`
+- [x] Typecheck passes
 
 ---
 
