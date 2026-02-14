@@ -220,23 +220,23 @@ Establish the Next.js 16 frontend foundation for SyncScript with a Bitcoin DeFi-
 **Description:** As a developer, I want layout components and a theme provider so that pages have consistent structure with dark mode enforced.
 
 **Acceptance Criteria:**
-- [ ] **Layout Components** (`src/components/layout.tsx`):
+- [x] **Layout Components** (`src/components/layout.tsx`):
   - `Container`: `max-w-7xl mx-auto px-4 sm:px-6 lg:px-8`
   - `Section`: `py-24`
   - `PageLayout`: wrapper with optional header/footer slots
   - Export types: `ContainerProps`, `SectionProps`, `PageLayoutProps`
-- [ ] **Theme Provider** (`src/components/theme-provider.tsx`):
+- [x] **Theme Provider** (`src/components/theme-provider.tsx`):
   - Uses `next-themes` ThemeProvider
   - Forces dark mode (`forcedTheme="dark"`)
   - Sets `attribute="class"` for Tailwind dark mode
   - Exports `ThemeProvider` component
-- [ ] **Root Layout** (`src/app/layout.tsx`):
+- [x] **Root Layout** (`src/app/layout.tsx`):
   - Wraps children in `<ThemeProvider>`
   - Applies font CSS variables from next/font
   - Sets metadata: title "SyncScript", description
   - Body has class: `font-body bg-background text-foreground`
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 

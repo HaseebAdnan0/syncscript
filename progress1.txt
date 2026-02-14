@@ -141,3 +141,23 @@ Learnings for future iterations:
 - Password validation pattern same as RegisterSerializer: try/except with DjangoValidationError
 ---
 
+## Iteration 9 - Create email verification token logic (US-011)
+- Created apps/users/tokens.py with generate_verification_token and verify_token functions
+- generate_verification_token() creates 32-byte URL-safe token using secrets.token_urlsafe(32)
+- Token expires in 24 hours (timedelta(hours=24))
+- verify_token() validates token, checks expiration, returns user or None
+- Token is deleted after successful verification
+- Django system check passes
+
+Files changed:
+- backend/apps/users/tokens.py (created with token generation/validation logic)
+- PRD1.md (marked US-011 complete)
+
+Learnings for future iterations:
+- secrets.token_urlsafe() generates cryptographically secure random tokens
+- timezone.now() must be used instead of datetime.now() for timezone-aware comparisons
+- Token deletion happens after both expired and successful verification
+- DoesNotExist exception handling returns None for invalid tokens
+- Django system check is sufficient for typecheck - Pyright import warnings are false positives
+---
+

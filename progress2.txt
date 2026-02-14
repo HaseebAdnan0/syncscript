@@ -128,3 +128,16 @@
   - Imported VaultMembership and AuditLog for future US-010 and US-011 (currently unused)
 ---
 
+## Iteration 11 - US-010: Create VaultMembershipSerializer
+- Added VaultMembershipSerializer with user details for membership API
+- Files changed:
+  - backend/apps/vaults/serializers.py (added VaultMembershipSerializer class)
+  - PRD2.md (marked US-010 as complete)
+- Django check passed with no issues
+- Learnings for future iterations:
+  - Similar pattern to VaultSerializer: use source='user.field' for related model access
+  - username and email both marked read_only since they come from User model
+  - read_only_fields includes id, added_at, added_by per acceptance criteria
+  - Pyright warnings on Meta class are false positives from DRF type stubs - ignore them
+---
+

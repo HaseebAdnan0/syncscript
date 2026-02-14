@@ -10,7 +10,7 @@ class UploadURLRequestSerializer(serializers.Serializer):
     vault_id = serializers.UUIDField(required=True)
     filename = serializers.CharField(required=True, max_length=255)
     file_size = serializers.IntegerField(required=True, min_value=1, max_value=50 * 1024 * 1024)  # Max 50MB
-    content_type = serializers.CharField(required=True, default='application/pdf')
+    content_type = serializers.CharField(default='application/pdf')
 
     def validate_content_type(self, value):
         """Ensure only PDF files are accepted."""

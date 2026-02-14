@@ -163,12 +163,12 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a developer, I need an HTML email template for account verification.
 
 **Acceptance Criteria:**
-- [ ] Create `templates/emails/verify_email.html`
-- [ ] Include user's name/email in greeting
-- [ ] Include verification link with token
-- [ ] Include expiration notice (24 hours)
-- [ ] Simple, professional styling
-- [ ] Typecheck passes
+- [x] Create `templates/emails/verify_email.html`
+- [x] Include user's name/email in greeting
+- [x] Include verification link with token
+- [x] Include expiration notice (24 hours)
+- [x] Simple, professional styling
+- [x] Typecheck passes
 
 ---
 

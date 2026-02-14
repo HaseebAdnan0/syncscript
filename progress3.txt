@@ -113,3 +113,25 @@
   - Typecheck passes with 0 errors
 - NOTE: Tests written and typecheck passes, but require PostgreSQL database 'syncscript' to exist for actual execution
 ---
+
+## Iteration 6 - US-005: Create metadata extraction service
+- Added newspaper3k>=0.2.8 and lxml>=5.0 to requirements.txt
+- Installed lxml_html_clean dependency (required by newer lxml versions)
+- Created extract_metadata(url: str) -> MetadataDict function in services.py
+- Function extracts:
+  - title (or falls back to url if empty)
+  - authors (list)
+  - publication_date (formatted as ISO string if datetime, or string if already string)
+  - abstract (first 500 chars of article text)
+- Uses newspaper3k Config with request_timeout=10 seconds
+- Returns fallback dict with 'title': url and 'error': error_message on any exception
+- Files changed:
+  - backend/requirements.txt (added newspaper3k and lxml)
+  - backend/apps/sources/services.py (implemented extract_metadata)
+  - PRD3.md (marked US-005 complete)
+- Learnings for future iterations:
+  - newspaper3k Config.request_timeout sets download timeout (not Article.download(timeout=...))
+  - newspaper3k publish_date type is ambiguous - use hasattr check and type: ignore for isoformat()
+  - lxml 6.x requires lxml_html_clean to be installed separately
+  - Typecheck passes with 0 errors
+---
