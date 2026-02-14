@@ -25,3 +25,18 @@
   - Frontend submodule pointer is automatically updated when committing in parent repo
   - TypeScript strict mode caught no issues because the project was freshly scaffolded
 ---
+## Iteration 3 - US-003: Tailwind CSS Design System Configuration
+- Updated tailwind.config.ts with Bitcoin DeFi design tokens (colors, fontFamily, boxShadow)
+- Replaced local Geist fonts with Google Fonts (Space Grotesk, Inter, JetBrains Mono) in layout.tsx
+- Updated globals.css with custom utilities: bg-grid-pattern, glass-card, glass-input, glass-surface
+- Added animate-float keyframe animation for hero elements
+- Updated app metadata to SyncScript branding
+- Verified typecheck passes and dev server starts without errors
+- Files changed: frontend/tailwind.config.ts, frontend/src/app/layout.tsx, frontend/src/app/globals.css, PRD4.md
+- Learnings for future iterations:
+  - Google Fonts automatically handle variable font CSS variables when using next/font/google
+  - Tailwind v4 still uses extend pattern in config, not @theme directive (that's for pure CSS config)
+  - Custom utilities should be in @layer components for complex patterns, @layer utilities for simple ones
+  - Dev server starts quickly with Next.js 14.2.35 (~2.4s)
+---
+
