@@ -364,13 +364,13 @@ Implement a global full-text search system for SyncScript that enables researche
 **Description:** As a user, I want helpful feedback when no results are found so I know my search was processed.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/search/NoResultsState.tsx`
-- [ ] Shows "No results for [query]" message
-- [ ] Suggests: "Try different keywords" or "Search in all types"
-- [ ] Shows popular searches if available
-- [ ] Uses muted styling
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/features/search/NoResultsState.tsx`
+- [x] Shows "No results for [query]" message
+- [x] Suggests: "Try different keywords" or "Search in all types"
+- [x] Shows popular searches if available
+- [x] Uses muted styling
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 
