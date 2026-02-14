@@ -24,15 +24,15 @@ def broadcast_annotation_created(annotation_id: int) -> None:
 
         # Build payload matching event catalog
         payload: dict[str, Any] = {
-            'id': annotation.id,
-            'source_id': annotation.source.id,
-            'text': annotation.text,
-            'page_number': annotation.page_number,
+            'id': annotation.id,  # type: ignore[attr-defined]
+            'source_id': annotation.source.id,  # type: ignore[attr-defined]
+            'text': annotation.text,  # type: ignore[attr-defined]
+            'page_number': annotation.page_number,  # type: ignore[attr-defined]
             'created_by': {
                 'id': annotation.created_by.id,  # type: ignore[attr-defined]
                 'username': annotation.created_by.username,  # type: ignore[attr-defined]
             },
-            'created_at': annotation.created_at.isoformat(),
+            'created_at': annotation.created_at.isoformat(),  # type: ignore[attr-defined]
         }
 
         # Broadcast to vault

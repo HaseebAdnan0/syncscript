@@ -9,6 +9,7 @@ class Annotation(models.Model):
     User annotations/notes on PDF sources.
     Links to Source and tracks text, page number, and creator.
     """
+    id: int  # Django auto-creates this field
     source = models.ForeignKey(
         'sources.Source',
         on_delete=models.CASCADE,
