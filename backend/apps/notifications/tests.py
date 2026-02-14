@@ -173,13 +173,13 @@ class MarkNotificationReadTestCase(TestCase):
     def test_mark_read_is_idempotent(self) -> None:
         """Test re-marking notification as read doesn't change timestamp."""
         # Mark as read first time
-        response1 = self.client.patch(f'/api/v1/notifications/{self.notification.id}/read/')  # type: ignore[attr-defined]
+        response1 = self.client.patch(f'/api/v1/notifications/{self.notification.id}/mark-read/')  # type: ignore[attr-defined]
         self.assertEqual(response1.status_code, status.HTTP_200_OK)
         self.notification.refresh_from_db()
         first_read_at = self.notification.read_at
 
         # Mark as read again
-        response2 = self.client.patch(f'/api/v1/notifications/{self.notification.id}/read/')  # type: ignore[attr-defined]
+        response2 = self.client.patch(f'/api/v1/notifications/{self.notification.id}/mark-read/')  # type: ignore[attr-defined]
         self.assertEqual(response2.status_code, status.HTTP_200_OK)
         self.notification.refresh_from_db()
 
@@ -197,7 +197,7 @@ class MarkNotificationReadTestCase(TestCase):
             data={}
         )
 
-        response = self.client.patch(f'/api/v1/notifications/{other_notification.id}/read/')  # type: ignore[attr-defined]
+        response = self.client.patch(f'/api/v1/notifications/{other_notification.id}/mark-read/')  # type: ignore[attr-defined]
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_mark_read_returns_updated_notification(self) -> None:
@@ -213,7 +213,7 @@ class MarkNotificationReadTestCase(TestCase):
     def test_requires_authentication(self) -> None:
         """Test endpoint requires authentication."""
         client = APIClient()
-        response = client.patch(f'/api/v1/notifications/{self.notification.id}/read/')  # type: ignore[attr-defined]
+        response = client.patch(f'/api/v1/notifications/{self.notification.id}/mark-read/')  # type: ignore[attr-defined]
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 

@@ -68,12 +68,12 @@ Create a comprehensive new user onboarding experience for SyncScript that guides
 **Description:** As a user, I want to reset my demo vault to its original state so I can start fresh after experimenting.
 
 **Acceptance Criteria:**
-- [ ] Create `POST /api/v1/users/me/demo-vault/reset/` endpoint
-- [ ] Deletes existing demo vault and all its sources/annotations
-- [ ] Creates fresh demo vault from template
-- [ ] Returns new vault data
-- [ ] Typecheck passes
-- [ ] Tests pass
+- [x] Create `POST /api/v1/users/me/demo-vault/reset/` endpoint
+- [x] Deletes existing demo vault and all its sources/annotations
+- [x] Creates fresh demo vault from template
+- [x] Returns new vault data
+- [x] Typecheck passes
+- [x] Tests pass
 
 ### US-006: Prompt to recreate deleted demo vault
 **Description:** As a user, I want to be prompted to recreate the demo vault if I delete it so I don't lose access to the learning resource.

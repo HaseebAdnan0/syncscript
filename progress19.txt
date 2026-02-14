@@ -183,3 +183,24 @@ In Progress - US-004 complete
   - PATCH is semantic for partial updates like marking read
   - 404 is correct response when object doesn't exist in user's queryset (not 403)
 ---
+
+## Iteration 7 - US-007: Mark All Notifications as Read Endpoint
+- Verified mark_all_read action already implemented in NotificationViewSet
+- POST /api/v1/notifications/mark-all-read/ uses efficient bulk update
+- Returns count of updated notifications in response
+- Comprehensive tests already exist: 5 test cases covering all scenarios
+  - Empty state returns 0
+  - Marks all unread notifications
+  - Only updates unread (doesn't touch already read)
+  - Filters by authenticated user
+  - Requires authentication
+- All tests pass (5/5), mypy typecheck passes
+- Files changed:
+  - PRD19.md (marked US-007 complete)
+- Learnings for future iterations:
+  - Use .update() for bulk operations instead of iterating (more efficient)
+  - .update() returns count of affected rows automatically
+  - Efficient query: filter(read_at__isnull=True).update(read_at=timezone.now())
+  - No need to refresh individual objects when using bulk update
+  - Tests should verify count returned matches expected updates
+---

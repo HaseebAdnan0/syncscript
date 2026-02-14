@@ -152,17 +152,17 @@ Create SyncScript's production landing page following the Bitcoin DeFi aesthetic
 **Description:** As a user, I want to see how the platform works in simple steps so I understand the user journey.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/marketing/HowItWorksSection.tsx`
-- [ ] Section heading centered
-- [ ] Vertical gradient line (orange #F7931A to transparent)
-- [ ] 3 steps with circular numbered nodes on the line
-- [ ] Step cards with corner border accents (top-left and bottom-right)
-- [ ] Steps: 1) Create Vault, 2) Add Sources, 3) Collaborate
-- [ ] Alternating left/right layout on desktop
-- [ ] Stacked centered on mobile
-- [ ] Framer Motion fade-in on scroll
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/marketing/HowItWorksSection.tsx`
+- [x] Section heading centered
+- [x] Vertical gradient line (orange #F7931A to transparent)
+- [x] 3 steps with circular numbered nodes on the line
+- [x] Step cards with corner border accents (top-left and bottom-right)
+- [x] Steps: 1) Create Vault, 2) Add Sources, 3) Collaborate
+- [x] Alternating left/right layout on desktop
+- [x] Stacked centered on mobile
+- [x] Framer Motion fade-in on scroll
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-012: Create Testimonial Card Component
 **Description:** As a developer, I need a testimonial card component for social proof.

@@ -68,3 +68,20 @@
   - Test idempotency by calling service twice and verifying same vault returned
   - Pre-existing import error in sources.services fixed during this iteration
 ---
+
+## Iteration 5 - Create demo vault reset endpoint (US-005)
+- Created DemoVaultResetView at POST /api/v1/users/me/demo-vault/reset/
+- Endpoint deletes existing demo vault and creates fresh one from template
+- Added URL routing: users/me/demo-vault/reset/
+- Created comprehensive test suite: DemoVaultResetAPITests with 5 test methods
+- Fixed FK constraint violation by disconnecting membership deletion signal during vault deletion
+- Files changed: backend/apps/users/views.py, urls.py, tests/test_onboarding.py, PRD20.md
+- All tests pass (5/5)
+- Learnings for future iterations:
+  - Vault deletion triggers post_delete signals on VaultMembership that try to create audit logs
+  - AuditLog has FK to Vault with CASCADE, but signals fire AFTER vault is deleted
+  - Solution: Temporarily disconnect post_delete signal during vault deletion using try/finally
+  - Pattern: `post_delete.disconnect(handler, sender=Model)` before delete, reconnect in finally
+  - Test cascade deletion by capturing IDs before delete, verifying they don't exist after
+  - VaultSerializer context={'request': request} needed for user_role field computation
+---
