@@ -137,3 +137,20 @@
   - QueryClient default options apply to all queries unless overridden
 ---
 
+## Iteration 10 - US-010: ESLint & Prettier Configuration
+- Updated .eslintrc.json with three TypeScript rules (no-unused-vars, no-explicit-any, react/no-unescaped-entities)
+- Created .prettierrc with consistent formatting config (semi, singleQuote, tabWidth, trailingComma, printWidth)
+- Added format script to package.json: "prettier --write \"src/**/*.{ts,tsx,css}\""
+- Fixed InputProps in input.tsx from empty interface to type alias (to satisfy @typescript-eslint/no-empty-object-type rule)
+- Verified npm run lint passes with no warnings or errors
+- Verified npm run type-check passes
+- Files changed: frontend/.eslintrc.json, frontend/.prettierrc, frontend/package.json, frontend/src/components/ui/input.tsx, PRD4.md
+- Learnings for future iterations:
+  - Empty interfaces trigger @typescript-eslint/no-empty-object-type error - use type aliases instead
+  - ESLint v8 is installed (not v10 as PRD specified) - this is from create-next-app default
+  - .eslintrc.json format still works with ESLint v8 (flat config is optional)
+  - Prettier v3.8.1 is installed and working correctly
+  - All three required scripts (lint, format, type-check) are now in package.json
+  - The frontend uses Next.js 14.2.35, not 16.1.6 as PRD specified (create-next-app default)
+---
+
