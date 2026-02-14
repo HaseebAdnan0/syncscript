@@ -179,3 +179,91 @@
   ```
 - **jwt.io**: Online tool to decode and inspect JWT tokens
 - **Django Admin**: Check user last_login timestamp updates on successful login
+
+---
+
+## Authentication System (US-039) - 2026-02-14
+
+### Registration Flow
+- [ ] Start backend server: `cd backend && python manage.py runserver`
+- [ ] Send POST to `/api/v1/auth/register/` with valid user data
+- [ ] Verify 201 response with user data and message about verification email
+- [ ] Verify user created in database with `email_verified=False`
+- [ ] Verify EmailVerificationToken created in database
+- [ ] Check email output (console/inbox depending on EMAIL_BACKEND)
+
+### Email Verification Flow
+- [ ] Copy verification token from email
+- [ ] Send POST to `/api/v1/auth/verify-email/` with `{"token": "..."}`
+- [ ] Verify 200 response with success message
+- [ ] Verify user's `email_verified` is now `True` in database
+- [ ] Verify EmailVerificationToken is deleted from database
+
+### Login Flow
+- [ ] Send POST to `/api/v1/auth/login/` with email and password
+- [ ] Verify 200 response with access token, refresh token, and user data
+- [ ] Verify access token is valid JWT
+- [ ] Try login with unverified user - verify 403 error
+- [ ] Try login with wrong password - verify 401 error
+
+### Token Refresh Flow
+- [ ] Obtain refresh token from login
+- [ ] Send POST to `/api/v1/auth/refresh/` with `{"refresh": "..."}`
+- [ ] Verify 200 response with new access token and rotated refresh token
+- [ ] Verify old refresh token is blacklisted (cannot be reused)
+- [ ] Try refresh with blacklisted token - verify 401 error
+
+### Logout Flow
+- [ ] Login to obtain tokens
+- [ ] Send POST to `/api/v1/auth/logout/` with Authorization header and `{"refresh": "..."}`
+- [ ] Verify 200 response with success message
+- [ ] Verify refresh token is blacklisted
+- [ ] Try using blacklisted token - verify 401 error
+
+### Password Reset Flow
+- [ ] Send POST to `/api/v1/auth/password-reset/` with `{"email": "..."}`
+- [ ] Verify 200 response with success message (even for non-existent email)
+- [ ] Check email output for password reset link with uid and token
+- [ ] Send POST to `/api/v1/auth/password-reset-confirm/` with uid, token, new_password
+- [ ] Verify 200 response with success message
+- [ ] Try login with old password - verify fails
+- [ ] Try login with new password - verify succeeds
+- [ ] Try reusing same reset token - verify fails (token invalidated)
+
+### Profile Update Flow
+- [ ] Login to obtain access token
+- [ ] Send GET to `/api/v1/users/profile/` with Authorization header
+- [ ] Verify 200 response with user profile data
+- [ ] Send PATCH to `/api/v1/users/profile/` with avatar_url, bio, institution
+- [ ] Verify 200 response with updated profile data
+- [ ] Try to update email via PATCH - verify 400 error
+- [ ] Try to update password via PATCH - verify 400 error
+- [ ] Send PATCH with bio > 500 chars - verify 400 error
+- [ ] Send PATCH with institution > 200 chars - verify 400 error
+
+### Rate Limiting Tests
+- [ ] Attempt 6 login requests within 1 minute from same IP
+- [ ] Verify 6th request returns 429 (or 403 in test mode)
+- [ ] Attempt 6 registration requests within 1 minute from same IP
+- [ ] Verify 6th request returns 429 (or 403 in test mode)
+- [ ] Attempt 4 password reset requests within 1 hour for same email
+- [ ] Verify 4th request returns 429 (or 403 in test mode)
+- [ ] Wait for time window to expire and verify requests work again
+
+### Expected Behavior
+- Registration creates unverified users and sends verification email
+- Email verification activates accounts
+- Only verified users can login
+- JWT tokens expire (access: 15min, refresh: 7 days)
+- Token rotation blacklists old refresh tokens
+- Password reset always returns success (no user enumeration)
+- Profile endpoint allows updating specific fields only
+- Rate limiting prevents abuse on all auth endpoints
+- All validation rules enforced (password strength, field length, etc.)
+
+### Prerequisites
+1. PostgreSQL database running and configured in .env
+2. Redis server running for rate limiting
+3. Email backend configured (console or SMTP)
+4. Django migrations applied: `python manage.py migrate`
+5. Test from Postman, curl, or API testing tool

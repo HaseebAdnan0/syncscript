@@ -521,13 +521,13 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a developer, I need a checklist for manually testing the auth system.
 
 **Acceptance Criteria:**
-- [ ] Create or update `.planning/MANUAL_VERIFICATION.md`
-- [ ] Add auth system section with date
-- [ ] Include steps: register, verify email, login, refresh, logout
-- [ ] Include password reset flow steps
-- [ ] Include profile update steps
-- [ ] Include rate limiting test steps
-- [ ] Typecheck passes
+- [x] Create or update `.planning/MANUAL_VERIFICATION.md`
+- [x] Add auth system section with date
+- [x] Include steps: register, verify email, login, refresh, logout
+- [x] Include password reset flow steps
+- [x] Include profile update steps
+- [x] Include rate limiting test steps
+- [x] Typecheck passes
 
 ---
 
