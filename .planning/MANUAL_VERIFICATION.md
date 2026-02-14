@@ -729,3 +729,82 @@
 ### Issues Found
 (Append any bugs, edge cases, or unexpected behavior discovered during testing)
 
+
+---
+
+## US-019: Integrate onboarding into app layout - 2026-02-14
+
+### Setup
+- [ ] Start backend server: `cd backend && python manage.py runserver`
+- [ ] Start frontend dev server: `cd frontend && npm run dev`
+- [ ] Create test user with onboarding incomplete:
+  ```python
+  # Django shell: python manage.py shell
+  from apps.users.models import User
+  user = User.objects.create_user(
+    username='onboarding_test',
+    email='onboarding@test.com',
+    password='testpass123',
+    onboarding_completed=False,
+    onboarding_step=None
+  )
+  ```
+
+### Verification Steps
+
+- [ ] **OnboardingProvider Integration**
+  - Open browser DevTools Network tab
+  - Login with test user (onboarding_completed=False)
+  - Verify GET request to `/api/v1/users/me/onboarding/` is made after login
+  - Verify onboarding state is fetched successfully
+  - Check React DevTools - verify OnboardingProvider context is available
+
+- [ ] **OnboardingFlow Renders in App Layout**
+  - After login, verify onboarding modal appears automatically
+  - Verify main app content (AppHeader, Sidebar) is still visible but dimmed behind modal
+  - Verify onboarding modal overlays the main content
+  - Verify z-index stacking is correct (onboarding on top)
+
+- [ ] **Onboarding Only Shows for Incomplete Onboarding**
+  - Complete onboarding flow for test user
+  - Verify onboarding modal disappears after completion
+  - Logout and login again
+  - Verify onboarding modal does NOT appear (onboarding_completed=true)
+  - Navigate to different pages in app
+  - Verify onboarding never reappears once completed
+
+- [ ] **Onboarding Only Shows for Authenticated Users**
+  - Logout (return to unauthenticated state)
+  - Verify no onboarding modal appears on marketing pages
+  - Navigate to /login page
+  - Verify no onboarding modal appears (not in app layout)
+  - Login with user that has incomplete onboarding
+  - Verify onboarding appears immediately after reaching authenticated app layout
+
+- [ ] **Layout Structure Verification**
+  - Inspect DOM structure in DevTools
+  - Verify OnboardingProvider wraps all children in root layout
+  - Verify OnboardingFlow is rendered as sibling to main content in app layout
+  - Verify main app content structure is not affected by onboarding integration
+  - Verify Toaster component still renders correctly
+
+### Expected Behavior
+- OnboardingProvider added to root layout, wrapping children inside AuthProvider
+- OnboardingFlow added to authenticated app layout (app/(app)/layout.tsx)
+- Onboarding modal automatically appears for users with onboarding_completed=false
+- Main app content visible but dimmed/overlayed by onboarding modal
+- Onboarding only shows for authenticated users in app layout
+- Onboarding never shows for users with completed onboarding
+- App providers hierarchy: ThemeProvider > QueryProvider > AuthProvider > OnboardingProvider
+- No breaking changes to existing layout or functionality
+
+### Prerequisites
+1. Backend server running on http://localhost:8000
+2. Frontend dev server running on http://localhost:3000
+3. Test user with onboarding_completed=false in database
+4. React DevTools browser extension (for context inspection)
+5. All previous US-001 through US-018 tasks completed
+
+### Issues Found
+(Append any bugs, edge cases, or unexpected behavior discovered during testing)
+

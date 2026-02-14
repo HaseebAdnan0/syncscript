@@ -277,14 +277,14 @@ Enhance SyncScript's file storage system to production-ready status with Cloudfl
 **Description:** As a user, I want to see clear error messages and retry failed uploads.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/uploads/UploadErrorState.tsx`
-- [ ] Props: `filename: string`, `error: string`, `onRetry: () => void`, `onDismiss: () => void`
-- [ ] Display error icon, filename, error message
-- [ ] "Retry" button calls onRetry
-- [ ] "X" dismiss button calls onDismiss
-- [ ] Red accent color for error state
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/features/uploads/UploadErrorState.tsx`
+- [x] Props: `filename: string`, `error: string`, `onRetry: () => void`, `onDismiss: () => void`
+- [x] Display error icon, filename, error message
+- [x] "Retry" button calls onRetry
+- [x] "X" dismiss button calls onDismiss
+- [x] Red accent color for error state
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 

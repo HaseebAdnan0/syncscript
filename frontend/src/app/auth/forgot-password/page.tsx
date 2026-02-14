@@ -8,10 +8,10 @@ import GradientButton from '@/components/ui/GradientButton';
 import { useToast } from '@/hooks/useToast';
 
 export default function ForgotPasswordPage() {
+  const { toast } = useToast();
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,19 +65,42 @@ export default function ForgotPasswordPage() {
   if (isSubmitted) {
     return (
       <div className="min-h-screen bg-[#030304] flex items-center justify-center p-4">
-        <GlassCard className="w-full max-w-md p-8 text-center">
-          <Mail className="w-16 h-16 text-[#F7931A] mx-auto mb-6" />
-          <h1 className="text-2xl font-bold text-white mb-4">Check Your Email</h1>
-          <p className="text-[#94A3B8] mb-6">
-            If an account exists with <span className="text-white font-medium">{email}</span>,
-            we've sent password reset instructions to that address.
-          </p>
-          <p className="text-[#94A3B8] text-sm mb-8">
-            The link will expire in 1 hour.
-          </p>
-          <Link href="/login" className="text-[#F7931A] hover:text-[#FFD600] transition-colors flex items-center justify-center gap-2">
+        <GlassCard className="w-full max-w-md p-8">
+          {/* Mail Icon */}
+          <div className="flex justify-center mb-6">
+            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#F7931A]/20 to-[#FFD600]/20 border border-[#F7931A]/30 flex items-center justify-center">
+              <Mail className="w-10 h-10 text-[#F7931A]" />
+            </div>
+          </div>
+
+          {/* Title */}
+          <div className="mb-8 text-center">
+            <h1 className="text-3xl font-heading font-bold bg-gradient-to-r from-[#F7931A] to-[#FFD600] bg-clip-text text-transparent mb-2">
+              Check Your Email
+            </h1>
+            <p className="text-[#94A3B8] text-sm">
+              If an account exists with
+            </p>
+            <p className="text-white font-semibold mt-2 break-all">{email}</p>
+            <p className="text-[#94A3B8] text-sm mt-2">
+              we've sent password reset instructions to that address.
+            </p>
+          </div>
+
+          {/* Expiry Notice */}
+          <div className="mb-8 bg-[#F7931A]/10 border border-[#F7931A]/20 rounded-lg p-4">
+            <p className="text-[#94A3B8] text-sm text-center">
+              The link will expire in <span className="text-[#F7931A] font-semibold">1 hour</span>.
+            </p>
+          </div>
+
+          {/* Back to Login Link */}
+          <Link
+            href="/login"
+            className="flex items-center justify-center gap-2 text-sm text-[#94A3B8] hover:text-[#F7931A] transition-colors"
+          >
             <ArrowLeft className="w-4 h-4" />
-            Back to login
+            Back to Login
           </Link>
         </GlassCard>
       </div>
@@ -87,19 +110,26 @@ export default function ForgotPasswordPage() {
   return (
     <div className="min-h-screen bg-[#030304] flex items-center justify-center p-4">
       <GlassCard className="w-full max-w-md p-8">
+        {/* Back to Login Link */}
         <Link
           href="/login"
-          className="text-[#94A3B8] hover:text-[#F7931A] transition-colors flex items-center gap-2 mb-6"
+          className="flex items-center gap-2 text-sm text-[#94A3B8] hover:text-[#F7931A] transition-colors mb-6"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to login
+          Back to Login
         </Link>
 
-        <h1 className="text-3xl font-bold text-white mb-2">Forgot Password?</h1>
-        <p className="text-[#94A3B8] mb-8">
-          Enter your email address and we'll send you instructions to reset your password.
-        </p>
+        {/* Title */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-heading font-bold bg-gradient-to-r from-[#F7931A] to-[#FFD600] bg-clip-text text-transparent mb-2">
+            Forgot Password?
+          </h1>
+          <p className="text-[#94A3B8] text-sm">
+            Enter your email address and we'll send you instructions to reset your password.
+          </p>
+        </div>
 
+        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-white mb-2">
@@ -120,9 +150,10 @@ export default function ForgotPasswordPage() {
           <GradientButton
             type="submit"
             disabled={isSubmitting}
+            isLoading={isSubmitting}
             className="w-full"
           >
-            {isSubmitting ? 'Sending...' : 'Send Reset Link'}
+            Send Reset Link
           </GradientButton>
         </form>
       </GlassCard>

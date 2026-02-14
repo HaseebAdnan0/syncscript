@@ -263,13 +263,13 @@ Create a comprehensive new user onboarding experience for SyncScript that guides
 **Description:** As a new user, I want onboarding to appear automatically after first login.
 
 **Acceptance Criteria:**
-- [ ] Add OnboardingProvider to app providers
-- [ ] Add OnboardingFlow to authenticated layout
-- [ ] Onboarding modal overlays main content
-- [ ] Main app still visible but dimmed behind modal
-- [ ] Onboarding only shows for authenticated users with incomplete onboarding
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Add OnboardingProvider to app providers
+- [x] Add OnboardingFlow to authenticated layout
+- [x] Onboarding modal overlays main content
+- [x] Main app still visible but dimmed behind modal
+- [x] Onboarding only shows for authenticated users with incomplete onboarding
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-020: Resume onboarding on return
 **Description:** As a user who abandoned onboarding, I want to resume from my last step when I return.

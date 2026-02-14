@@ -142,3 +142,54 @@ def source_created(sender, instance, created, **kwargs):  # type: ignore[misc]
                 f"Skipped source_added notification for user {member.id} "
                 f"(preferences or mute)"
             )
+
+
+@receiver(post_save, sender=Annotation)
+def annotation_created(sender, instance, created, **kwargs):  # type: ignore[misc]
+    """
+    Handle Annotation post_save signal.
+
+    Creates annotation_reply notification for the parent annotation author
+    when someone replies to their annotation.
+    """
+    del sender, kwargs  # Mark unused but required params
+
+    if not created:
+        # Only handle new annotations, not updates
+        return
+
+    # Only handle replies (annotations with a parent)
+    if not instance.parent:
+        return
+
+    # Don't notify if replying to own annotation
+    if instance.parent.user == instance.user:
+        return
+
+    # Get preview of reply content (first 100 chars)
+    preview = instance.content[:100] + "..." if len(instance.content) > 100 else instance.content
+
+    notification = create_notification(
+        user=instance.parent.user,
+        notification_type="annotation_reply",
+        title=f"Reply to your annotation",
+        body=f"{instance.user.username} replied to your annotation: {preview}",
+        data={
+            "source_id": instance.source.id,
+            "annotation_id": instance.id,
+            "parent_id": instance.parent.id,
+            "replier_name": instance.user.username,
+            "preview": preview,
+        },
+    )
+
+    if notification:
+        logger.info(
+            f"Created annotation_reply notification for user {instance.parent.user.id} "
+            f"about reply {instance.id} to annotation {instance.parent.id}"
+        )
+    else:
+        logger.debug(
+            f"Skipped annotation_reply notification for user {instance.parent.user.id} "
+            f"(preferences or mute)"
+        )
