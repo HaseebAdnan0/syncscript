@@ -257,13 +257,13 @@ SyncScript's AI-powered citation generation system enables researchers to genera
 **Description:** As a user, I want to set my default citation format in settings so my preference is remembered.
 
 **Acceptance Criteria:**
-- [ ] Add "Citation Preferences" section to user settings page
-- [ ] Dropdown to select default format (or "Always Ask")
-- [ ] Save preference via API on change
-- [ ] Show success toast on save
-- [ ] For vault settings: add similar dropdown for vault owners
-- [ ] Vault setting shows "Use User Preference" as default option
-- [ ] Typecheck passes
+- [x] Add "Citation Preferences" section to user settings page
+- [x] Dropdown to select default format (or "Always Ask")
+- [x] Save preference via API on change
+- [x] Show success toast on save
+- [x] For vault settings: add similar dropdown for vault owners
+- [x] Vault setting shows "Use User Preference" as default option
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-021: Handle BibTeX special character escaping

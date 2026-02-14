@@ -15,9 +15,24 @@ interface VaultSettingsProps {
   userRole: VaultRole;
 }
 
+type CitationFormat = 'apa7' | 'mla9' | 'chicago17' | 'bibtex' | 'ieee' | 'harvard';
+
+const CITATION_FORMATS: { value: CitationFormat | 'none'; label: string }[] = [
+  { value: 'none', label: 'Use User Preference' },
+  { value: 'apa7', label: 'APA 7th Edition' },
+  { value: 'mla9', label: 'MLA 9th Edition' },
+  { value: 'chicago17', label: 'Chicago 17th Edition' },
+  { value: 'bibtex', label: 'BibTeX' },
+  { value: 'ieee', label: 'IEEE' },
+  { value: 'harvard', label: 'Harvard' },
+];
+
 export function VaultSettings({ vault, userRole }: VaultSettingsProps) {
   const [name, setName] = useState(vault.name);
   const [description, setDescription] = useState(vault.description || '');
+  const [citationFormat, setCitationFormat] = useState<CitationFormat | 'none'>(
+    vault.default_citation_format || 'none'
+  );
   const [isArchiveDialogOpen, setIsArchiveDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
@@ -33,10 +48,14 @@ export function VaultSettings({ vault, userRole }: VaultSettingsProps) {
   useEffect(() => {
     setName(vault.name);
     setDescription(vault.description || '');
-  }, [vault.name, vault.description]);
+    setCitationFormat(vault.default_citation_format || 'none');
+  }, [vault.name, vault.description, vault.default_citation_format]);
 
   // Check if form has changes
-  const hasChanges = name !== vault.name || description !== (vault.description || '');
+  const hasChanges =
+    name !== vault.name ||
+    description !== (vault.description || '') ||
+    citationFormat !== (vault.default_citation_format || 'none');
 
   const handleSave = async () => {
     if (!hasChanges) return;
@@ -45,6 +64,7 @@ export function VaultSettings({ vault, userRole }: VaultSettingsProps) {
       await updateVault.mutateAsync({
         name: name.trim(),
         description: description.trim() || undefined,
+        default_citation_format: citationFormat === 'none' ? null : citationFormat,
       });
 
       toast({
@@ -147,6 +167,50 @@ export function VaultSettings({ vault, userRole }: VaultSettingsProps) {
               className="w-full bg-black/50 border-2 border-white/20 rounded-lg p-4 text-white focus:border-[#F7931A] focus:outline-none transition-colors resize-none disabled:opacity-50 disabled:cursor-not-allowed"
               placeholder="Enter vault description"
             />
+          </div>
+
+          {/* Citation Format selector */}
+          <div>
+            <label htmlFor="citation-format" className="block text-sm font-medium text-[#94A3B8] mb-2">
+              Default Citation Format
+            </label>
+            <p className="text-sm text-[#94A3B8] mb-3">
+              Set a default citation format for this vault. This overrides individual user preferences.
+              Select &quot;Use User Preference&quot; to let members use their own defaults.
+            </p>
+            <div className="relative">
+              <select
+                id="citation-format"
+                value={citationFormat}
+                onChange={(e) => setCitationFormat(e.target.value as CitationFormat | 'none')}
+                disabled={!isOwner}
+                className="w-full bg-black/50 border border-white/20 rounded-lg px-4 py-3 text-white
+                           focus:border-[#F7931A] focus:outline-none transition-colors
+                           disabled:opacity-50 disabled:cursor-not-allowed
+                           appearance-none cursor-pointer"
+              >
+                {CITATION_FORMATS.map((format) => (
+                  <option key={format.value} value={format.value} className="bg-[#0F1115] text-white">
+                    {format.label}
+                  </option>
+                ))}
+              </select>
+              {/* Custom dropdown arrow */}
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                <svg
+                  className="h-5 w-5 text-[#94A3B8]"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+            </div>
           </div>
 
           {/* Save button (only for owners) */}

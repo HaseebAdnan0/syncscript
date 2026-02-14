@@ -40,6 +40,7 @@ export interface Vault {
   user_role: VaultRole; // Current user's role in this vault
   last_activity?: string;
   storage_usage?: StorageUsage; // Storage quota information
+  default_citation_format?: 'apa7' | 'mla9' | 'chicago17' | 'bibtex' | 'ieee' | 'harvard' | null;
 }
 
 // Request/Response types for API
@@ -51,6 +52,7 @@ export interface CreateVaultRequest {
 export interface UpdateVaultRequest {
   name?: string;
   description?: string;
+  default_citation_format?: 'apa7' | 'mla9' | 'chicago17' | 'bibtex' | 'ieee' | 'harvard' | null;
 }
 
 export interface AddMemberRequest {

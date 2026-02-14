@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Bell, User, Shield, Palette, Link, GraduationCap, Sparkles } from 'lucide-react';
+import { Bell, User, Shield, Palette, Link, GraduationCap, Sparkles, Quote } from 'lucide-react';
 import { NotificationPreferences } from '@/components/features/notifications/NotificationPreferences';
 import { ConnectedAccounts } from '@/components/features/settings/ConnectedAccounts';
 import { OnboardingSettings } from '@/components/features/settings/OnboardingSettings';
+import { CitationPreferences } from '@/components/features/settings/CitationPreferences';
 import TokenUsageDisplay from '@/components/features/ai/TokenUsageDisplay';
 import { getAIUsage } from '@/lib/api/ai';
 import { AIUsageStats } from '@/lib/types/ai';
@@ -70,6 +71,20 @@ export default function SettingsPage() {
             ) : (
               <p className="text-[#94A3B8]">Unable to load usage statistics</p>
             )}
+          </section>
+
+          {/* Citation Preferences Section */}
+          <section className="bg-[#0F1115] border border-white/10 rounded-2xl p-8">
+            <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
+              <div className="h-10 w-10 rounded-full bg-gradient-to-r from-[#EA580C] to-[#F7931A] flex items-center justify-center">
+                <Quote className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-heading font-bold text-white">Citation Preferences</h2>
+                <p className="text-[#94A3B8] text-sm">Set your default citation format</p>
+              </div>
+            </div>
+            <CitationPreferences />
           </section>
 
           {/* Notifications Section */}

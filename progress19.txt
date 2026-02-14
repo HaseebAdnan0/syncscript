@@ -1021,3 +1021,30 @@ In Progress - US-004 complete
   - Navigation happens after marking as read for better UX (no wait)
   - Test backend changes with existing test suites before frontend integration
 ---
+## Iteration 35 - US-036: Create Notification Preferences Page Layout
+- Created dedicated notification preferences page at frontend/src/app/(app)/settings/notifications/page.tsx
+- Implemented three main sections with Bitcoin DeFi card-based layout:
+  - Email Notifications section (placeholder for US-037, US-038)
+  - Push Notifications section (placeholder for US-039)
+  - Muted Vaults section with API integration
+- Added loading skeleton with animate-pulse for better UX
+- Back link to settings page with ChevronLeft icon
+- Fetches muted vaults from API using React Query
+- Displays muted vaults list or empty state with icon
+- Gradient header matching app design system
+- TypeScript typecheck passes
+- Commit a0d6da2
+- Files changed:
+  - frontend/src/app/(app)/settings/notifications/page.tsx (new)
+  - PRD19.md (marked US-036 complete except browser verification)
+- Learnings for future iterations:
+  - Import getMutedVaults from @/lib/api, not @/lib/api/notifications
+  - MutedVault type is in @/types/notifications
+  - Removed unused useState and preferences query (will be added in US-037)
+  - Card sections follow consistent pattern: icon circle + title + subtitle + content
+  - Loading skeleton mirrors actual content structure for smooth transition
+  - Placeholder text for future US tasks prevents "coming soon" repetition
+  - Back navigation using Link from next/link for client-side routing
+  - Empty state includes icon, message, and helpful hint for users
+---
+

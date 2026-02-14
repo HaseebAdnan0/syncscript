@@ -865,3 +865,49 @@ Learnings for future iterations:
 - Button placement: added to header next to PresenceIndicator in flex container
 - Tooltip via title attribute shows on disabled button hover
 ---
+
+## Iteration 22 - US-020: Add citation format settings UI
+- Created CitationPreferences component for user settings page
+- Updated User type to include default_citation_format field (CitationFormat | null)
+- Updated Vault type to include default_citation_format field
+- Updated UpdateVaultRequest type to include default_citation_format parameter
+- Created CitationPreferences.tsx with format selector dropdown:
+  - "Always Ask" option (sets to null)
+  - All 6 citation formats: APA7, MLA9, Chicago17, BibTeX, IEEE, Harvard
+  - Auto-save on change with PATCH /api/v1/users/me/
+  - Loading state with spinner during save
+  - Success toast with format name
+  - Error handling with toast and revert to previous value
+  - Info message with tip about usage
+- Added CitationPreferences component to settings page:
+  - New section with Quote icon
+  - Positioned before Notifications section
+  - Follows Bitcoin DeFi design system
+- Updated VaultSettings component to include citation format selector:
+  - "Use User Preference" option (sets to null)
+  - All 6 citation formats as options
+  - Included in vault update request (PATCH /api/v1/vaults/{id}/)
+  - Integrated into existing form with Save Changes button
+  - Only editable by vault owners
+- Files changed:
+  - frontend/src/lib/types/user.ts: Added CitationFormat type and default_citation_format field
+  - frontend/src/lib/types/vault.ts: Added default_citation_format to Vault and UpdateVaultRequest
+  - frontend/src/components/features/settings/CitationPreferences.tsx (new, 126 lines)
+  - frontend/src/app/(app)/settings/page.tsx: Added CitationPreferences section
+  - frontend/src/components/features/vaults/VaultSettings.tsx: Added citation format selector
+  - PRD14.md: Marked acceptance criteria complete (except browser verification)
+- Typecheck: Passes with 0 errors
+- **Manual browser verification required** (documented in PRD)
+
+Learnings for future iterations:
+- User settings page structure: sections with icon, title, description header
+- Bitcoin DeFi select styling: dark bg, orange focus border, custom dropdown arrow
+- Auto-save pattern: onChange triggers immediate API call with loading state
+- Error recovery: revert to previous value on API error to prevent UI state drift
+- Vault settings hierarchy: vault override > user preference > none (null)
+- "Use User Preference" as vault default allows flexibility for team members
+- TypeScript union types: CitationFormat | 'none' for local state, CitationFormat | null for API
+- Select dropdown custom arrow: absolute positioned SVG with pointer-events-none
+- Info boxes: bg-[#F7931A]/10 with border-[#F7931A]/20 for tips and warnings
+- Vault update form: track multiple fields for hasChanges detection
+---

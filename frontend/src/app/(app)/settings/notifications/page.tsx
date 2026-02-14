@@ -1,17 +1,70 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
-import { Bell, Mail, VolumeX, ChevronLeft } from 'lucide-react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Bell, Mail, VolumeX, ChevronLeft, Check } from 'lucide-react';
 import Link from 'next/link';
-import { getMutedVaults } from '@/lib/api';
-import type { MutedVault } from '@/types/notifications';
+import { useState } from 'react';
+import { getMutedVaults, getPreferences, updatePreferences } from '@/lib/api';
+import type { MutedVault, NotificationPreferences } from '@/types/notifications';
 
 export default function NotificationPreferencesPage() {
+  const queryClient = useQueryClient();
+  const [showSaved, setShowSaved] = useState(false);
+
   // Fetch muted vaults
-  const { data: mutedVaults, isLoading } = useQuery<MutedVault[]>({
+  const { data: mutedVaults, isLoading: isLoadingVaults } = useQuery<MutedVault[]>({
     queryKey: ['muted-vaults'],
     queryFn: getMutedVaults,
   });
+
+  // Fetch preferences
+  const { data: preferences, isLoading: isLoadingPreferences } = useQuery<NotificationPreferences>({
+    queryKey: ['notification-preferences'],
+    queryFn: getPreferences,
+  });
+
+  // Update preferences mutation
+  const updatePreferencesMutation = useMutation({
+    mutationFn: (data: Partial<NotificationPreferences>) => updatePreferences(data),
+    onMutate: async (newData) => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['notification-preferences'] });
+
+      // Snapshot previous value
+      const previousPreferences = queryClient.getQueryData<NotificationPreferences>(['notification-preferences']);
+
+      // Optimistically update
+      if (previousPreferences) {
+        queryClient.setQueryData<NotificationPreferences>(['notification-preferences'], {
+          ...previousPreferences,
+          ...newData,
+        });
+      }
+
+      return { previousPreferences };
+    },
+    onSuccess: () => {
+      // Show saved confirmation
+      setShowSaved(true);
+      setTimeout(() => setShowSaved(false), 2000);
+    },
+    onError: (_error, _variables, context) => {
+      // Rollback on error
+      if (context?.previousPreferences) {
+        queryClient.setQueryData(['notification-preferences'], context.previousPreferences);
+      }
+    },
+    onSettled: () => {
+      // Refetch to ensure sync with server
+      queryClient.invalidateQueries({ queryKey: ['notification-preferences'] });
+    },
+  });
+
+  const handleToggle = (field: keyof NotificationPreferences, value: boolean) => {
+    updatePreferencesMutation.mutate({ [field]: value });
+  };
+
+  const isLoading = isLoadingVaults || isLoadingPreferences;
 
   return (
     <div className="min-h-screen bg-[#030304] py-12">
