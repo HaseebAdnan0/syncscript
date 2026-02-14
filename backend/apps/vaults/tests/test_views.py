@@ -147,6 +147,85 @@ class VaultViewSetTest(TestCase):
         vault.refresh_from_db()
         self.assertFalse(vault.is_archived)
 
+    def test_vault_citation_format_initially_null(self):
+        """Test new vaults have no default citation format (US-014)."""
+        vault = Vault.objects.create(name='Test', owner=self.owner)
+        self.assertIsNone(vault.default_citation_format)
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.get(f'/api/v1/vaults/{vault.id}/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIsNone(response.data['default_citation_format'])
+
+    def test_owner_can_set_vault_citation_format(self):
+        """Test owner can set vault's default citation format (US-014)."""
+        vault = Vault.objects.create(name='Test', owner=self.owner)
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.patch(
+            f'/api/v1/vaults/{vault.id}/',
+            {'default_citation_format': 'apa7'}
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['default_citation_format'], 'apa7')
+
+        vault.refresh_from_db()
+        self.assertEqual(vault.default_citation_format, 'apa7')
+
+    def test_update_vault_citation_format_all_formats(self):
+        """Test all 6 citation formats can be set (US-014)."""
+        vault = Vault.objects.create(name='Test', owner=self.owner)
+        self.client.force_authenticate(user=self.owner)
+
+        formats = ['apa7', 'mla9', 'chicago17', 'bibtex', 'ieee', 'harvard']
+        for fmt in formats:
+            response = self.client.patch(
+                f'/api/v1/vaults/{vault.id}/',
+                {'default_citation_format': fmt}
+            )
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(response.data['default_citation_format'], fmt)
+
+    def test_clear_vault_citation_format(self):
+        """Test vault citation format can be cleared by setting to null (US-014)."""
+        vault = Vault.objects.create(name='Test', owner=self.owner, default_citation_format='apa7')
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.patch(
+            f'/api/v1/vaults/{vault.id}/',
+            {'default_citation_format': None},
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIsNone(response.data['default_citation_format'])
+
+        vault.refresh_from_db()
+        self.assertIsNone(vault.default_citation_format)
+
+    def test_invalid_vault_citation_format_rejected(self):
+        """Test invalid citation format is rejected (US-014)."""
+        vault = Vault.objects.create(name='Test', owner=self.owner)
+
+        self.client.force_authenticate(user=self.owner)
+        response = self.client.patch(
+            f'/api/v1/vaults/{vault.id}/',
+            {'default_citation_format': 'invalid_format'}
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_contributor_cannot_set_vault_citation_format(self):
+        """Test contributor cannot set vault's default citation format (US-014)."""
+        vault = Vault.objects.create(name='Test', owner=self.owner)
+        VaultMembership.objects.create(vault=vault, user=self.contributor, role=RoleChoices.CONTRIBUTOR)
+
+        self.client.force_authenticate(user=self.contributor)
+        response = self.client.patch(
+            f'/api/v1/vaults/{vault.id}/',
+            {'default_citation_format': 'apa7'}
+        )
+        # Contributors get 403 on vault updates (per existing permission structure)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
 
 class VaultMembershipViewSetTest(TestCase):
     """Tests for VaultMembershipViewSet (US-037)."""

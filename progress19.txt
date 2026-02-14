@@ -857,3 +857,31 @@ In Progress - US-004 complete
   - NotificationPanel component handles dropdown display (separate from bell)
   - Bell button uses ref for click-outside detection (bellButtonRef)
 ---
+
+## Iteration 30 - US-031: Set up Pusher Client for Real-time Notifications
+- Updated existing frontend/src/lib/pusher.ts to match US-031 requirements
+- Installed pusher-js package (already installed, verified up to date)
+- Implemented custom authorizer for private channel authentication:
+  - Uses POST /api/v1/notifications/pusher/auth/ endpoint
+  - Sends channel_name and socket_id in request body
+  - Receives auth signature from backend
+  - Properly typed with ChannelAuthorizationData interface
+- Changed from auth.headers pattern to authorizer callback pattern for proper Pusher authentication
+- Added ChannelAuthorizationData interface definition (not exported by pusher-js)
+- Preserved requestNotificationPermission() function for backward compatibility (used by NotificationPreferences)
+- Exported getPusherClient() as default export and named export
+- Helper functions: subscribeToUserChannel(), unsubscribeFromUserChannel(), disconnectPusher()
+- TypeScript typecheck passes without errors
+- Commit 057d572
+- Files changed:
+  - frontend/src/lib/pusher.ts (updated authorizer, types, imports)
+  - PRD19.md (marked US-031 complete)
+- Learnings for future iterations:
+  - Pusher authorizer callback must match exact signature: (error: Error | null, authData: ChannelAuthorizationData | null) => void
+  - Don't use async/await in authorizer, use .then()/.catch() instead for Promise handling
+  - ChannelAuthorizationData interface has fields: auth (required), channel_data (optional), shared_secret (optional)
+  - Define local interfaces for types not exported by external libraries
+  - Check for existing implementations and preserve backward-compatible functions
+  - Custom authorizer pattern preferred over authEndpoint + headers for more control
+  - Import api client from @/lib/api to make authenticated requests
+---

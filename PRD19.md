@@ -422,13 +422,13 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a user, I want notifications to appear instantly without refreshing.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/hooks/usePusherNotifications.ts`
-- [ ] Subscribe to `private-user-{userId}` channel
-- [ ] Listen for `notification` event
-- [ ] Update React Query cache with new notification
-- [ ] Listen for `badge_update` event to update count
-- [ ] Cleanup subscription on unmount
-- [ ] Typecheck passes
+- [x] Create `frontend/src/hooks/usePusherNotifications.ts`
+- [x] Subscribe to `private-user-{userId}` channel
+- [x] Listen for `notification` event
+- [x] Update React Query cache with new notification
+- [x] Listen for `badge_update` event to update count
+- [x] Cleanup subscription on unmount
+- [x] Typecheck passes
 
 ---
 

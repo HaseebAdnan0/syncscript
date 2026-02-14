@@ -25,7 +25,7 @@ class VaultSerializer(serializers.ModelSerializer):
             'id', 'name', 'description', 'owner', 'owner_username',
             'is_archived', 'created_at', 'updated_at', 'member_count', 'user_role',
             'storage_used_bytes', 'storage_file_count', 'storage_user_breakdown',
-            'storage_usage'
+            'storage_usage', 'default_citation_format'
         ]
         read_only_fields = ['id', 'owner', 'created_at', 'updated_at']
 

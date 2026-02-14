@@ -30,6 +30,20 @@ class Vault(models.Model):
         on_delete=models.CASCADE,
         related_name='owned_vaults'
     )
+    default_citation_format = models.CharField(
+        max_length=20,
+        null=True,
+        blank=True,
+        choices=[
+            ('apa7', 'APA 7th Edition'),
+            ('mla9', 'MLA 9th Edition'),
+            ('chicago17', 'Chicago 17th Edition'),
+            ('bibtex', 'BibTeX'),
+            ('ieee', 'IEEE'),
+            ('harvard', 'Harvard'),
+        ],
+        help_text='Default citation format for this vault (overrides user preference)'
+    )
     ai_insights_cache = models.JSONField(
         null=True,
         blank=True,

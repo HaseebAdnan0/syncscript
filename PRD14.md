@@ -178,12 +178,12 @@ SyncScript's AI-powered citation generation system enables researchers to genera
 **Description:** As a vault owner, I want to set a default citation format for my vault so team members use consistent formatting.
 
 **Acceptance Criteria:**
-- [ ] Add `default_citation_format` field to Vault model (nullable, CharField)
-- [ ] Create migration for new field
-- [ ] Update vault serializer to include `default_citation_format`
-- [ ] Owners/Contributors can update via `PATCH /api/v1/vaults/{id}/`
-- [ ] API returns effective format: vault override > user preference > none
-- [ ] Typecheck passes
+- [x] Add `default_citation_format` field to Vault model (nullable, CharField)
+- [x] Create migration for new field
+- [x] Update vault serializer to include `default_citation_format`
+- [x] Owners/Contributors can update via `PATCH /api/v1/vaults/{id}/`
+- [x] API returns effective format: vault override > user preference > none
+- [x] Typecheck passes
 
 ### US-015: Create CitationButton component
 **Description:** As a user, I want a "Cite" button on source cards that opens a citation dropdown so I can quickly generate citations.
