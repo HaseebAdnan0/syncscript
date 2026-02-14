@@ -535,12 +535,12 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a developer, I need setup instructions for email and Redis configuration.
 
 **Acceptance Criteria:**
-- [ ] Create or update `.planning/USER_SETUP.md`
-- [ ] Add Email Configuration section with SMTP setup steps
-- [ ] Add Redis Configuration section with installation steps
-- [ ] Add JWT secret key generation instructions
-- [ ] List all required environment variables
-- [ ] Typecheck passes
+- [x] Create or update `.planning/USER_SETUP.md`
+- [x] Add Email Configuration section with SMTP setup steps
+- [x] Add Redis Configuration section with installation steps
+- [x] Add JWT secret key generation instructions
+- [x] List all required environment variables
+- [x] Typecheck passes
 
 ---
 

@@ -146,8 +146,29 @@ This will print emails to console instead of sending them.
 
 ---
 
+## JWT Configuration
+### Required For: JWT token authentication (access and refresh tokens)
+### Steps:
+1. JWT token lifetimes are configured in `backend/config/settings.py` with the following defaults:
+   - Access Token: 15 minutes
+   - Refresh Token: 7 days
+   - Token Rotation: Enabled (old refresh token invalidated after use)
+   - Token Blacklisting: Enabled (logout blacklists refresh tokens)
+
+2. These settings are managed through SIMPLE_JWT configuration and can be customized via environment variables if needed.
+
+3. No additional setup required - JWT settings are pre-configured in the project.
+
+### Environment Variables (Optional):
+- `JWT_ACCESS_TOKEN_LIFETIME`: Access token lifetime in minutes (default: 15)
+- `JWT_REFRESH_TOKEN_LIFETIME`: Refresh token lifetime in days (default: 7)
+
+**Note:** JWT tokens are signed using Django's `SECRET_KEY`, so ensure `SECRET_KEY` is set securely (see Django Secret Key section below).
+
+---
+
 ## Site URL Configuration
-### Required For: Email verification links
+### Required For: Email verification links and password reset links
 ### Steps:
 1. For development, use default: `http://localhost:3000`
 2. For production, set to your actual domain: `https://yourdomain.com`
