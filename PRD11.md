@@ -133,14 +133,14 @@ Replace stub email implementation with production-ready email system using Hosti
 **Description:** As a user, I want to receive a branded invitation when someone adds me to a vault.
 
 **Acceptance Criteria:**
-- [ ] Create `templates/emails/vault_invite.html` extending base.html
-- [ ] Preheader: "{{ inviter.username }} invited you to collaborate"
-- [ ] Show inviter name and vault name prominently
-- [ ] Show role being granted (Contributor/Viewer)
-- [ ] Orange CTA button: "Accept Invitation" linking to vault
-- [ ] Brief description of what the vault contains (if provided)
-- [ ] Create `templates/emails/vault_invite.txt` plaintext version
-- [ ] Typecheck passes
+- [x] Create `templates/emails/vault_invite.html` extending base.html
+- [x] Preheader: "{{ inviter.username }} invited you to collaborate"
+- [x] Show inviter name and vault name prominently
+- [x] Show role being granted (Contributor/Viewer)
+- [x] Orange CTA button: "Accept Invitation" linking to vault
+- [x] Brief description of what the vault contains (if provided)
+- [x] Create `templates/emails/vault_invite.txt` plaintext version
+- [x] Typecheck passes
 
 ---
 

@@ -1,0 +1,65 @@
+{% extends "emails/base.html" %}
+
+{% block preheader %}{{ inviter.username }} invited you to collaborate{% endblock %}
+
+{% block title %}You're Invited!{% endblock %}
+
+{% block content %}
+<tr>
+  <td style="padding: 20px 0; color: #FFFFFF; font-size: 16px; line-height: 1.6;">
+    <h2 style="margin: 0 0 20px 0; color: #FFFFFF; font-size: 28px; font-weight: 700; background: linear-gradient(135deg, #F7931A 0%, #FFD600 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+      You're Invited!
+    </h2>
+    <p style="margin: 0 0 16px 0; color: #FFFFFF; font-size: 16px; line-height: 1.6;">
+      Hi {{ user.first_name|default:user.username }},
+    </p>
+    <p style="margin: 0 0 24px 0; color: #FFFFFF; font-size: 16px; line-height: 1.6;">
+      <strong style="color: #F7931A;">{{ inviter.username }}</strong> has invited you to collaborate on their Knowledge Vault: <strong style="color: #F7931A;">{{ vault.name }}</strong>
+    </p>
+
+    <!-- Role Badge -->
+    <table border="0" cellspacing="0" cellpadding="0" style="margin: 0 0 24px 0;">
+      <tr>
+        <td style="background: rgba(247, 147, 26, 0.1); border: 1px solid rgba(247, 147, 26, 0.3); border-radius: 8px; padding: 12px 20px;">
+          <p style="margin: 0; color: #F7931A; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+            Your Role: {{ role }}
+          </p>
+        </td>
+      </tr>
+    </table>
+
+    {% if vault.description %}
+    <div style="background: rgba(255, 255, 255, 0.05); border-left: 4px solid #F7931A; padding: 16px 20px; margin: 0 0 24px 0; border-radius: 4px;">
+      <p style="margin: 0; color: #94A3B8; font-size: 14px; line-height: 1.6; font-style: italic;">
+        "{{ vault.description }}"
+      </p>
+    </div>
+    {% endif %}
+
+    <p style="margin: 0 0 32px 0; color: #94A3B8; font-size: 14px; line-height: 1.6;">
+      {% if role == "Contributor" %}
+        As a <strong style="color: #FFFFFF;">Contributor</strong>, you can add sources, create annotations, and help build this research repository.
+      {% else %}
+        As a <strong style="color: #FFFFFF;">Viewer</strong>, you can browse sources, read annotations, and explore the research in this vault.
+      {% endif %}
+    </p>
+
+    <!-- CTA Button -->
+    <table border="0" cellspacing="0" cellpadding="0" style="margin: 0 0 24px 0;">
+      <tr>
+        <td align="center" style="border-radius: 50px; background: linear-gradient(135deg, #EA580C 0%, #F7931A 100%); box-shadow: 0 0 20px -5px rgba(234, 88, 12, 0.5);">
+          <a href="{{ vault_url }}" target="_blank" style="display: inline-block; padding: 16px 48px; color: #FFFFFF; text-decoration: none; font-size: 16px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
+            Accept Invitation
+          </a>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Fallback Link -->
+    <p style="margin: 0; color: #94A3B8; font-size: 12px; text-align: center;">
+      Or copy and paste this link into your browser:<br>
+      <a href="{{ vault_url }}" style="color: #F7931A; text-decoration: none; word-break: break-all;">{{ vault_url }}</a>
+    </p>
+  </td>
+</tr>
+{% endblock %}

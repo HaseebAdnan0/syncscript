@@ -1,0 +1,22 @@
+You're Invited to Collaborate!
+
+Hi {{ user.first_name|default:user.username }},
+
+{{ inviter.username }} has invited you to collaborate on their Knowledge Vault: {{ vault.name }}
+
+YOUR ROLE: {{ role }}
+
+{% if vault.description %}About this vault:
+{{ vault.description }}
+{% endif %}
+
+{% if role == "Contributor" %}As a Contributor, you can add sources, create annotations, and help build this research repository.{% else %}As a Viewer, you can browse sources, read annotations, and explore the research in this vault.{% endif %}
+
+Accept this invitation by visiting:
+{{ vault_url }}
+
+---
+SyncScript - Collaborative Research & Citation Engine
+If you have questions, contact us at support@syncscript.com
+
+(c) {% now "Y" %} SyncScript. All rights reserved.
