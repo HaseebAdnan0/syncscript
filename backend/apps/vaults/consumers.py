@@ -27,7 +27,7 @@ class VaultConsumer(AsyncWebsocketConsumer):
         1. Extract vault_id from URL kwargs
         2. Check user is authenticated (not AnonymousUser)
         3. Verify user has vault membership (any role)
-        4. On success: accept connection
+        4. On success: accept connection and join room
         5. On failure: send error JSON and close with code 1008
         """
         # Extract vault_id from URL kwargs
@@ -59,6 +59,24 @@ class VaultConsumer(AsyncWebsocketConsumer):
 
         # Accept connection
         await self.accept()
+
+        # Join vault room group
+        self.room_group_name = f"vault_{self.vault_id}"
+        await self.channel_layer.group_add(  # type: ignore[union-attr]
+            self.room_group_name,
+            self.channel_name
+        )
+
+        # Get current sequence number (placeholder - will be implemented with Redis in later tasks)
+        sequence_number = 0
+
+        # Send connection success message
+        await self.send(text_data=json.dumps({
+            'type': 'connection.success',
+            'seq': sequence_number,
+            'vault_id': self.vault_id
+        }))
+
         logger.info(f"User {user.id} connected to vault {self.vault_id}")
 
     async def disconnect(self, code: int) -> None:
@@ -68,6 +86,13 @@ class VaultConsumer(AsyncWebsocketConsumer):
         Args:
             code: WebSocket close code
         """
+        # Leave vault room group
+        if hasattr(self, 'room_group_name'):
+            await self.channel_layer.group_discard(  # type: ignore[union-attr]
+                self.room_group_name,
+                self.channel_name
+            )
+
         if hasattr(self, 'user') and hasattr(self, 'vault_id'):
             logger.info(f"User {self.user.id} disconnected from vault {self.vault_id} (code: {code})")
 
@@ -111,3 +136,13 @@ class VaultConsumer(AsyncWebsocketConsumer):
 
         await self.close(code=1008)  # Policy violation
         logger.warning(f"Connection rejected: {code} - {message}")
+
+    async def vault_event(self, event: dict) -> None:
+        """
+        Receive messages from vault room group and forward to WebSocket client.
+
+        Args:
+            event: Event dictionary from channel layer containing message data
+        """
+        # Forward the event to the WebSocket client
+        await self.send(text_data=json.dumps(event))

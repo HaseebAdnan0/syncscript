@@ -121,3 +121,23 @@
   - Django system check is sufficient to verify endpoint wiring
   - US-006 endpoint: POST /api/v1/sources/pdfs/upload-url/
 ---
+
+## Iteration 7 - US-007: Create upload completion endpoint
+- Task was already implemented in a previous session (commit 929f729)
+- Verified implementation in backend/apps/sources/views.py:
+  - complete() action method on PDFUploadViewSet
+  - Endpoint: POST /api/v1/sources/pdfs/{upload_id}/complete/
+  - Validates file_key in request body
+  - Updates PDFUpload.processing_status to 'processing'
+  - Includes TODO comment for Celery task trigger (placeholder as required)
+  - Returns pdf_id, status, and message
+  - Permission checking via _check_vault_permission()
+- Updated PRD6.md to mark US-007 complete
+- Django system check passes
+- Files changed:
+  - PRD6.md (marked US-007 complete)
+- Learnings for future iterations:
+  - Implementation was complete, just needed PRD update
+  - Inline Serializer class pattern (CompletionRequestSerializer) is valid for simple one-off validators
+  - TODO comments are acceptable for placeholder functionality (Celery task)
+---

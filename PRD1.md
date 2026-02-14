@@ -188,14 +188,14 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a user, I want to register an account so I can access SyncScript.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/users/views.py`
-- [ ] Implement RegisterView as APIView (POST /api/v1/auth/register/)
-- [ ] Use RegisterSerializer for validation
-- [ ] Create user with email_verified=False
-- [ ] Generate verification token and send email
-- [ ] Return user data with message about verification email
-- [ ] Apply @ratelimit decorator (5/min per IP)
-- [ ] Typecheck passes
+- [x] Create `apps/users/views.py`
+- [x] Implement RegisterView as APIView (POST /api/v1/auth/register/)
+- [x] Use RegisterSerializer for validation
+- [x] Create user with email_verified=False
+- [x] Generate verification token and send email
+- [x] Return user data with message about verification email
+- [x] Apply @ratelimit decorator (5/min per IP)
+- [x] Typecheck passes
 
 ---
 

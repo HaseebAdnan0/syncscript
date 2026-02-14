@@ -198,3 +198,37 @@ class CustomTokenObtainPairView(TokenObtainPairView):
                 # response.data.pop('refresh')
 
         return response
+
+
+@method_decorator(ratelimit(key='ip', rate='5/m', method='POST', block=True), name='dispatch')
+class RegisterView(APIView):
+    """
+    Register a new user account (US-014).
+
+    POST /api/v1/auth/register/
+    Rate limited to 5 attempts per minute per IP.
+    Creates user with email_verified=False and sends verification email.
+    """
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        """Create new user and send verification email."""
+        serializer = RegisterSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # Create user with email_verified=False (default in model)
+        user = serializer.save()
+
+        # Generate verification token and send email
+        token = generate_verification_token(user)
+        send_verification_email(user, token)
+
+        # Return user data with message
+        user_data = UserSerializer(user).data
+
+        return Response({
+            'user': user_data,
+            'message': 'Registration successful. Please check your email to verify your account.'
+        }, status=status.HTTP_201_CREATED)
