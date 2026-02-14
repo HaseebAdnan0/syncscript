@@ -145,3 +145,28 @@ Learnings for future iterations:
 - The `@/` import alias is configured for `frontend/src/`
 ---
 
+
+## Iteration 7 - US-007: Empty state for no vaults
+- Created `frontend/src/components/features/vaults/EmptyVaultsState.tsx` with empty state UI:
+  - FolderOpen icon from Lucide in circular container with orange accent
+  - Heading: "No vaults yet"
+  - Subtext: "Create your first Knowledge Vault to start organizing research"
+  - GradientButton CTA that triggers openCreateModal action
+  - Full Bitcoin DeFi styling (glass morphism icon container, gradient button with orange glow)
+- Integrated into vaults listing page with conditional rendering
+  - Shows EmptyVaultsState when `vaults.length === 0`
+  - Otherwise shows normal grid of VaultCard components
+- Typecheck passes successfully
+
+Files changed:
+- frontend/src/components/features/vaults/EmptyVaultsState.tsx (created)
+- frontend/src/app/vaults/page.tsx (updated to conditionally show empty state)
+- PRD8.md (marked US-007 complete)
+
+Learnings for future iterations:
+- Empty states should be friendly and actionable, not just informative
+- Conditional rendering pattern: `{array.length === 0 ? <EmptyState /> : <Grid />}`
+- EmptyVaultsState takes onCreateVault callback prop for flexibility
+- Icon containers use: `bg-white/5 border border-white/10` for glass effect
+- Orange accent color `#F7931A` used for icon color to maintain brand consistency
+---

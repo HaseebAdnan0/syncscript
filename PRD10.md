@@ -89,13 +89,13 @@ Integrate SyncScript's frontend with the existing backend WebSocket system and n
 **Description:** As a user, I want to see which collaborators are currently active in the vault so I know who I'm working with.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/notifications/PresenceIndicator.tsx`
-- [ ] Displays row of member avatars (max 5, +N overflow indicator)
-- [ ] Active members have green dot with `animate-ping` effect per DESIGN_RULES.md
-- [ ] Shows member name on avatar hover
-- [ ] Uses glass morphism container: `backdrop-blur-lg bg-white/5 border border-white/10`
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/features/notifications/PresenceIndicator.tsx`
+- [x] Displays row of member avatars (max 5, +N overflow indicator)
+- [x] Active members have green dot with `animate-ping` effect per DESIGN_RULES.md
+- [x] Shows member name on avatar hover
+- [x] Uses glass morphism container: `backdrop-blur-lg bg-white/5 border border-white/10`
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-008: Create notification API client and useNotifications hook
 **Description:** As a developer, I need to fetch and manage notifications from the backend API.

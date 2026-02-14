@@ -83,12 +83,12 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 **Description:** As a user, I want to toggle between grid and table views so I can choose the layout that works best for my workflow.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/sources/SourcesListHeader.tsx`
-- [ ] Contains title "Sources", source count badge, and view toggle buttons (grid/table icons)
-- [ ] View preference persists in localStorage key `syncscript:sources-view`
-- [ ] Toggle buttons use active/inactive states with orange highlight for active
-- [ ] Includes "Add Source" button (primary gradient style)
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/sources/SourcesListHeader.tsx`
+- [x] Contains title "Sources", source count badge, and view toggle buttons (grid/table icons)
+- [x] View preference persists in localStorage key `syncscript:sources-view`
+- [x] Toggle buttons use active/inactive states with orange highlight for active
+- [x] Includes "Add Source" button (primary gradient style)
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---
@@ -97,11 +97,11 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 **Description:** As a developer, I need a hook to manage view preference state with localStorage persistence.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/hooks/useSourcesViewPreference.ts`
-- [ ] Returns `[viewMode, setViewMode]` where viewMode is `'grid' | 'table'`
-- [ ] Default to `'grid'` if no preference stored
-- [ ] Persist changes to localStorage immediately
-- [ ] Typecheck passes
+- [x] Create `frontend/src/hooks/useSourcesViewPreference.ts`
+- [x] Returns `[viewMode, setViewMode]` where viewMode is `'grid' | 'table'`
+- [x] Default to `'grid'` if no preference stored
+- [x] Persist changes to localStorage immediately
+- [x] Typecheck passes
 
 ---
 
