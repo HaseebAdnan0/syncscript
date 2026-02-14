@@ -259,13 +259,13 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need tests verifying vault permission checks on sources.
 
 **Acceptance Criteria:**
-- [ ] Test non-member cannot list vault sources (403)
-- [ ] Test Viewer can list and retrieve but not create (403)
-- [ ] Test Contributor can create and update
-- [ ] Test Contributor cannot delete (403)
-- [ ] Test Owner can delete and restore
-- [ ] All tests pass
-- [ ] Typecheck passes
+- [x] Test non-member cannot list vault sources (403)
+- [x] Test Viewer can list and retrieve but not create (403)
+- [x] Test Contributor can create and update
+- [x] Test Contributor cannot delete (403)
+- [x] Test Owner can delete and restore
+- [x] All tests pass
+- [x] Typecheck passes
 
 ---
 

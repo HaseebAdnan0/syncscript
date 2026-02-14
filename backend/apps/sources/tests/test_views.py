@@ -304,3 +304,162 @@ class SourceCRUDTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         returned_ids = [item['id'] for item in response.data['results']]
         self.assertIn(str(source.id), returned_ids)
+
+
+class SourcePermissionTest(TestCase):
+    """Test suite for Source API permission checks (US-019)."""
+
+    def setUp(self):
+        """Set up test fixtures."""
+        self.client = APIClient()
+
+        # Create test users
+        self.owner_user = User.objects.create(
+            username='owner',
+            email='owner@example.com'
+        )
+        self.owner_user.set_password('testpass123')
+        self.owner_user.save()
+
+        self.contributor_user = User.objects.create(
+            username='contributor',
+            email='contributor@example.com'
+        )
+        self.contributor_user.set_password('testpass123')
+        self.contributor_user.save()
+
+        self.viewer_user = User.objects.create(
+            username='viewer',
+            email='viewer@example.com'
+        )
+        self.viewer_user.set_password('testpass123')
+        self.viewer_user.save()
+
+        self.non_member_user = User.objects.create(
+            username='nonmember',
+            email='nonmember@example.com'
+        )
+        self.non_member_user.set_password('testpass123')
+        self.non_member_user.save()
+
+        # Create test vault
+        self.vault = Vault.objects.create(
+            name='Test Vault',
+            description='A test vault',
+            owner=self.owner_user
+        )
+
+        # Add vault memberships
+        VaultMembership.objects.create(
+            vault=self.vault,
+            user=self.contributor_user,
+            role=RoleChoices.CONTRIBUTOR
+        )
+
+        VaultMembership.objects.create(
+            vault=self.vault,
+            user=self.viewer_user,
+            role=RoleChoices.VIEWER
+        )
+
+        # Create a test source
+        self.source = Source.objects.create(
+            vault=self.vault,
+            url='https://example.com/test-source',
+            title='Test Source',
+            created_by=self.owner_user
+        )
+
+    def test_non_member_cannot_list_vault_sources(self):
+        """Test non-member cannot list vault sources (403)."""
+        self.client.force_authenticate(user=self.non_member_user)
+
+        # Try to list sources in vault user is not member of
+        response = self.client.get('/api/v1/sources/')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Non-member should not see any sources from vault they're not part of
+        self.assertEqual(len(response.data['results']), 0)
+
+    def test_viewer_can_list_and_retrieve_but_not_create(self):
+        """Test Viewer can list and retrieve but not create (403)."""
+        self.client.force_authenticate(user=self.viewer_user)
+
+        # Viewer can list sources
+        response = self.client.get('/api/v1/sources/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 1)
+
+        # Viewer can retrieve source detail
+        response = self.client.get(f'/api/v1/sources/{self.source.id}/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['id'], str(self.source.id))
+
+        # Viewer CANNOT create source
+        url = f'/api/v1/vaults/{self.vault.id}/sources/'
+        data = {
+            'url': 'https://example.com/new-source',
+            'title': 'New Source',
+            'source_type': SourceType.URL,
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_contributor_can_create_and_update(self):
+        """Test Contributor can create and update."""
+        self.client.force_authenticate(user=self.contributor_user)
+
+        # Contributor can create source
+        url = f'/api/v1/vaults/{self.vault.id}/sources/'
+        data = {
+            'url': 'https://example.com/contributor-source',
+            'title': 'Contributor Created Source',
+            'source_type': SourceType.URL,
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        new_source_id = response.data['id']
+
+        # Contributor can update source
+        url = f'/api/v1/sources/{new_source_id}/'
+        data = {
+            'title': 'Updated by Contributor',
+        }
+        response = self.client.patch(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['title'], 'Updated by Contributor')
+
+    def test_contributor_cannot_delete(self):
+        """Test Contributor cannot delete (403)."""
+        self.client.force_authenticate(user=self.contributor_user)
+
+        # Contributor CANNOT delete source
+        url = f'/api/v1/sources/{self.source.id}/'
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        # Verify source still exists and not deleted
+        self.source.refresh_from_db()
+        self.assertFalse(self.source.is_deleted)
+
+    def test_owner_can_delete_and_restore(self):
+        """Test Owner can delete and restore."""
+        self.client.force_authenticate(user=self.owner_user)
+
+        # Owner can delete source
+        url = f'/api/v1/sources/{self.source.id}/'
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        # Verify soft delete
+        self.source.refresh_from_db()
+        self.assertTrue(self.source.is_deleted)
+
+        # Owner can restore source
+        url = f'/api/v1/sources/{self.source.id}/restore/'
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Verify restore
+        self.source.refresh_from_db()
+        self.assertFalse(self.source.is_deleted)
