@@ -350,13 +350,13 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need a serializer for Annotation CRUD with threaded replies.
 
 **Acceptance Criteria:**
-- [ ] Create `AnnotationSerializer` in `serializers.py` extending `ModelSerializer`
-- [ ] Fields: id, source, user, content, page_number, position, parent, replies, created_at, updated_at
-- [ ] Read-only: user, created_at, updated_at, replies
-- [ ] `user` uses `StringRelatedField`
-- [ ] `replies` uses `SerializerMethodField`
-- [ ] `get_replies()` returns nested `AnnotationSerializer` for top-level only (parent=None)
-- [ ] Typecheck passes
+- [x] Create `AnnotationSerializer` in `serializers.py` extending `ModelSerializer`
+- [x] Fields: id, source, user, content, page_number, position, parent, replies, created_at, updated_at
+- [x] Read-only: user, created_at, updated_at, replies
+- [x] `user` uses `StringRelatedField`
+- [x] `replies` uses `SerializerMethodField`
+- [x] `get_replies()` returns nested `AnnotationSerializer` for top-level only (parent=None)
+- [x] Typecheck passes
 
 ---
 

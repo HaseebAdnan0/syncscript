@@ -289,12 +289,12 @@ This PRD covers the full implementation: core infrastructure, event broadcasting
 **Description:** As a developer, I need consistent error responses so clients can handle failures gracefully.
 
 **Acceptance Criteria:**
-- [ ] Create `send_error(code, message, details=None)` helper method in consumer
-- [ ] Error format: `{"type": "error", "error": {"code": X, "message": Y, "details": Z}, "metadata": {"timestamp": ...}}`
-- [ ] Implement error codes: AUTH_FAILED, PERMISSION_DENIED, RATE_LIMIT_EXCEEDED, VAULT_NOT_FOUND, INTERNAL_ERROR
-- [ ] Wait 2 seconds after sending error before closing connection
-- [ ] Log errors to Django logger `channels.vault.consumer`
-- [ ] Typecheck passes
+- [x] Create `send_error(code, message, details=None)` helper method in consumer
+- [x] Error format: `{"type": "error", "error": {"code": X, "message": Y, "details": Z}, "metadata": {"timestamp": ...}}`
+- [x] Implement error codes: AUTH_FAILED, PERMISSION_DENIED, RATE_LIMIT_EXCEEDED, VAULT_NOT_FOUND, INTERNAL_ERROR
+- [x] Wait 2 seconds after sending error before closing connection
+- [x] Log errors to Django logger `channels.vault.consumer`
+- [x] Typecheck passes
 
 ---
 

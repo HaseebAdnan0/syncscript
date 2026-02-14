@@ -2,9 +2,11 @@
 WebSocket consumers for real-time vault collaboration.
 """
 
+import asyncio
 import json
 import logging
 import time
+from datetime import datetime, timezone
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.contrib.auth.models import AnonymousUser
@@ -207,19 +209,32 @@ class VaultConsumer(AsyncWebsocketConsumer):
             vault_id=vault_id
         ).exists()
 
-    async def _send_error_and_close(self, code: str, message: str) -> None:
+    async def _send_error_and_close(self, code: str, message: str, details: dict | None = None) -> None:
         """
         Send error message and close connection with code 1008 (policy violation).
 
+        Supported error codes:
+        - AUTH_FAILED: Authentication failed or missing
+        - PERMISSION_DENIED: User lacks permission to access vault
+        - RATE_LIMIT_EXCEEDED: Rate limit violated (throttle/ban)
+        - VAULT_NOT_FOUND: Vault ID invalid or not found
+        - INTERNAL_ERROR: Server error during processing
+        - ROOM_FULL: Vault room at capacity
+
         Args:
-            code: Error code (e.g., 'AUTH_FAILED', 'PERMISSION_DENIED')
+            code: Error code from supported list
             message: Human-readable error message
+            details: Optional dict with additional error context
         """
         error_payload = {
             'type': 'error',
             'error': {
                 'code': code,
-                'message': message
+                'message': message,
+                'details': details or {}
+            },
+            'metadata': {
+                'timestamp': datetime.now(timezone.utc).isoformat()
             }
         }
 
@@ -228,8 +243,11 @@ class VaultConsumer(AsyncWebsocketConsumer):
         except Exception as e:
             logger.error(f"Failed to send error message: {e}")
 
+        # Wait 2 seconds before closing to ensure client receives error
+        await asyncio.sleep(2)
+
         await self.close(code=1008)  # Policy violation
-        logger.warning(f"Connection rejected: {code} - {message}")
+        logger.warning(f"Connection rejected: {code} - {message} {f'(details: {details})' if details else ''}")
 
     async def vault_event(self, event: dict) -> None:
         """
