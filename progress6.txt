@@ -568,3 +568,25 @@
   - Django system check validates all ViewSet and router configuration
   - Implementation already existed in HEAD (commit ad903ed) - verified and documented
 ---
+## Iteration 24 - US-024: Write unit tests for PDF validation
+- Created backend/apps/sources/tests/test_validators.py with comprehensive test suite
+- Implemented 4 tests covering all acceptance criteria:
+  1. test_valid_pdf_passes_validation: Validates minimal valid PDF (single blank page) passes
+  2. test_non_pdf_file_raises_validation_error: Text file with text/plain content type is rejected
+  3. test_file_exceeding_size_limit_raises_validation_error: File >50MB is rejected
+  4. test_corrupted_pdf_raises_validation_error: PDF with valid header but invalid structure is rejected
+- All tests pass successfully (4/4 OK in 0.055s)
+- Files changed:
+  - backend/apps/sources/tests/test_validators.py (created)
+  - PRD6.md (marked US-024 complete)
+- Learnings for future iterations:
+  - SimpleUploadedFile creates in-memory Django uploaded files for testing
+  - Minimal valid PDF requires: header, catalog, pages, page, xref table, trailer
+  - Tests can use assertRaises(ValidationError) context manager to verify exceptions
+  - Error messages should be checked with assertIn() for flexibility (exact match too fragile)
+  - Django test runner uses --keepdb flag to reuse existing test database (faster)
+  - Test database creation errors can be bypassed with --keepdb
+  - Pyright import warnings for Django apps are false positives without proper stubs
+  - Test PDFs need realistic structure: corrupted PDFs can still pass magic number checks
+---
+

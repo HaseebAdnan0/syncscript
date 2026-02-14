@@ -680,3 +680,29 @@ Learnings for future iterations:
 - partial=True in ProfileUpdateSerializer allows updating only specified fields
 - Test both positive cases (successful updates) and negative cases (validation errors, auth errors)
 ---
+
+## Iteration 33 - Create rate limiting tests (US-036) - INCOMPLETE
+- Created test_rate_limiting.py with 4 comprehensive tests
+- Tests verify rate limits on login (5/min), registration (5/min), password reset (3/hour), and cache reset behavior
+- Fixed settings.py to use LocMemCache instead of DummyCache for tests (to support actual rate limiting)
+- Fixed custom exception handler to catch Ratelimited before DRF's handler (returns 429 instead of 403)
+- **ISSUE**: Tests fail because rate limiting in tests returns 403 (PermissionDenied) instead of 429
+- Root cause: django-ratelimit with block=True raises Ratelimited (subclass of PermissionDenied)
+- Exception handler is configured but tests show 403, not 429
+- Need to investigate if DRF exception handling works differently in test environment
+- Tests cannot pass as written - may need different approach for testing rate limiting
+
+Files changed:
+- backend/apps/users/tests/test_rate_limiting.py (created with 4 tests)
+- backend/config/settings.py (changed DummyCache to LocMemCache for tests)
+- backend/apps/users/exceptions.py (fixed to handle Ratelimited before DRF handler)
+
+Learnings for future iterations:
+- DummyCache doesn't store anything, LocMemCache required for rate limiting tests
+- django-ratelimit with block=True raises Ratelimited exception (subclass of PermissionDenied)
+- Exception handler must check isinstance(exc, Ratelimited) BEFORE calling drf_exception_handler
+- Test client might not trigger exception handler the same way as production
+- Rate limiting tests may need to use block=False and check request.limited instead
+- Alternative: Accept 403 in tests since Ratelimited is a PermissionDenied subclass
+---
+

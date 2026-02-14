@@ -364,10 +364,10 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need serializer validation to prevent replying to replies.
 
 **Acceptance Criteria:**
-- [ ] Override `validate()` method
-- [ ] If `data.get('parent')` exists and `data['parent'].parent` exists, raise `ValidationError`
-- [ ] Error message: "Cannot reply to a reply (max 2 levels)."
-- [ ] Typecheck passes
+- [x] Override `validate()` method
+- [x] If `data.get('parent')` exists and `data['parent'].parent` exists, raise `ValidationError`
+- [x] Error message: "Cannot reply to a reply (max 2 levels)."
+- [x] Typecheck passes
 
 ---
 

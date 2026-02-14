@@ -32,3 +32,10 @@ class AnnotationSerializer(serializers.ModelSerializer):
             return AnnotationSerializer(obj.replies.all(), many=True, context=self.context).data
         # For reply-level annotations, don't include nested replies
         return []
+
+    def validate(self, attrs):
+        """Validate that replies cannot be nested more than 2 levels"""
+        parent = attrs.get('parent')
+        if parent and parent.parent:
+            raise serializers.ValidationError("Cannot reply to a reply (max 2 levels).")
+        return attrs
