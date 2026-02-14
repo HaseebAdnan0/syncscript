@@ -171,7 +171,7 @@ def vault_insights(request, vault_id):
     - generated_at (datetime): When insights were generated
     """
     # Get vault and verify permissions
-    vault = get_object_or_404(Vault, id=vault_id, is_deleted=False)
+    vault = get_object_or_404(Vault, id=vault_id, is_archived=False)
 
     # Check if user has read permission on vault
     has_permission = False
