@@ -86,3 +86,109 @@ class UsageTrackingTestCase(TestCase):
 
         remaining = get_remaining_requests(self.user)
         self.assertEqual(remaining, 0)
+
+
+class RateLimitDecoratorTestCase(APITestCase):
+    """Test AI rate limiting decorator."""
+
+    def setUp(self):
+        """Create test user and view."""
+        self.user = User.objects.create_user(
+            email='test@example.com',
+            username='testuser',
+            password='testpass123'
+        )
+
+        # Create a test view wrapped with the decorator
+        @api_view(['GET'])
+        @ai_rate_limit
+        def test_view(request):
+            return Response({"message": "success"}, status=status.HTTP_200_OK)
+
+        self.test_view = test_view
+
+    def test_allows_request_within_limit(self):
+        """Test that requests within limit are allowed."""
+        # Create a mock request with force_authenticate
+        from rest_framework.test import APIRequestFactory, force_authenticate
+        factory = APIRequestFactory()
+        request = factory.get('/test/')
+        force_authenticate(request, user=self.user)
+
+        response = self.test_view(request)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['message'], 'success')
+
+    def test_blocks_request_at_limit(self):
+        """Test that requests are blocked when limit is reached."""
+        # Use up all requests
+        for _ in range(20):
+            log_usage(self.user, 'summary', 100)
+
+        # Try one more request
+        from rest_framework.test import APIRequestFactory, force_authenticate
+        factory = APIRequestFactory()
+        request = factory.get('/test/')
+        force_authenticate(request, user=self.user)
+
+        response = self.test_view(request)
+        self.assertEqual(response.status_code, 429)
+        self.assertIn('error', response.data)
+        self.assertEqual(response.data['error'], 'AI request limit reached')
+
+    def test_rate_limit_response_format(self):
+        """Test that rate limit response has correct format."""
+        # Use up all requests
+        for _ in range(20):
+            log_usage(self.user, 'summary', 100)
+
+        # Try blocked request
+        from rest_framework.test import APIRequestFactory, force_authenticate
+        factory = APIRequestFactory()
+        request = factory.get('/test/')
+        force_authenticate(request, user=self.user)
+
+        response = self.test_view(request)
+        self.assertEqual(response.status_code, 429)
+
+        # Check response format
+        self.assertIn('error', response.data)
+        self.assertIn('resets_at', response.data)
+        self.assertIn('cached_available', response.data)
+        self.assertEqual(response.data['cached_available'], True)
+
+        # Verify resets_at is a valid ISO timestamp
+        resets_at = response.data['resets_at']
+        self.assertIsInstance(resets_at, str)
+        # Should be parseable as datetime
+        from datetime import datetime
+        parsed = datetime.fromisoformat(resets_at.replace('Z', '+00:00'))
+        self.assertIsNotNone(parsed)
+
+    def test_rate_limit_resets_at_midnight(self):
+        """Test that resets_at is tomorrow at midnight UTC."""
+        # Use up all requests
+        for _ in range(20):
+            log_usage(self.user, 'summary', 100)
+
+        # Try blocked request
+        from rest_framework.test import APIRequestFactory
+        factory = APIRequestFactory()
+        request = factory.get('/test/')
+        request.user = self.user
+
+        response = self.test_view(request)
+        resets_at_str = response.data['resets_at']
+
+        # Parse the timestamp
+        from datetime import datetime
+        resets_at = datetime.fromisoformat(resets_at_str.replace('Z', '+00:00'))
+
+        # Should be midnight
+        self.assertEqual(resets_at.hour, 0)
+        self.assertEqual(resets_at.minute, 0)
+        self.assertEqual(resets_at.second, 0)
+
+        # Should be tomorrow (or later today if it's currently before midnight)
+        now = timezone.now()
+        self.assertGreater(resets_at, now)

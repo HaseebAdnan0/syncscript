@@ -2,6 +2,7 @@
 from unittest.mock import patch, MagicMock
 from django.test import TestCase
 from apps.citations.services.doi_lookup import normalize_doi, fetch_doi_metadata
+from apps.citations.services.isbn_lookup import normalize_isbn, fetch_isbn_metadata
 
 
 class DOILookupTests(TestCase):

@@ -82,6 +82,31 @@ class NotificationPreferences(models.Model):
         return f"{self.user.username} notification preferences"  # type: ignore[attr-defined]
 
 
+class MutedVault(models.Model):
+    """Tracks which vaults a user has muted to suppress notifications"""
+
+    user: models.ForeignKey = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='muted_vaults'
+    )
+    vault: models.ForeignKey = models.ForeignKey(
+        'vaults.Vault',
+        on_delete=models.CASCADE,
+        related_name='muted_by_users'
+    )
+    created_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = [['user', 'vault']]
+        indexes = [
+            models.Index(fields=['user', 'vault']),
+        ]
+
+    def __str__(self) -> str:
+        return f"{self.user.username} muted {self.vault.name}"  # type: ignore[attr-defined]
+
+
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_notification_preferences(sender, instance, created, **kwargs) -> None:  # type: ignore[misc]
     """Auto-create notification preferences when user is created"""

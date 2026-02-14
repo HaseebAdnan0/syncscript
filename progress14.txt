@@ -39,3 +39,17 @@ Learnings for future iterations:
 - Empty files created for future services (doi_lookup, isbn_lookup, ai_citation, structured_citation)
 
 ---
+## Iteration 2 - US-002: DOI metadata lookup service (Already Complete)
+- Checked PRD14.md and found US-002 was already implemented in commit 126be88
+- DOI lookup service with CrossRef API already exists at apps/citations/services/doi_lookup.py
+- All acceptance criteria already met:
+  - normalize_doi() function handles all DOI formats
+  - fetch_doi_metadata() calls CrossRef API via crossref-commons library
+  - Returns None on API failure or invalid DOI
+  - crossref-commons added to requirements.txt
+  - 16 comprehensive unit tests with mocking
+  - Typecheck passes with 0 errors
+- No changes needed, moving to next incomplete task
+
+---
+
