@@ -168,12 +168,12 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need filtering on sources by vault, type, creator, and dates.
 
 **Acceptance Criteria:**
-- [ ] Create `SourceFilter` class in `filters.py` extending `FilterSet`
-- [ ] Add filters: `vault`, `source_type`, `created_by` (standard lookups)
-- [ ] Add `date_from` as DateFilter on `created_at` with `lookup_expr='gte'`
-- [ ] Add `date_to` as DateFilter on `created_at` with `lookup_expr='lte'`
-- [ ] Set `filterset_class = SourceFilter` in SourceViewSet
-- [ ] Typecheck passes
+- [x] Create `SourceFilter` class in `filters.py` extending `FilterSet`
+- [x] Add filters: `vault`, `source_type`, `created_by` (standard lookups)
+- [x] Add `date_from` as DateFilter on `created_at` with `lookup_expr='gte'`
+- [x] Add `date_to` as DateFilter on `created_at` with `lookup_expr='lte'`
+- [x] Set `filterset_class = SourceFilter` in SourceViewSet
+- [x] Typecheck passes
 
 ---
 

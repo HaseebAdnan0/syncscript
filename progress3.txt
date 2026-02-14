@@ -263,3 +263,25 @@
   - Check both VaultMembership role AND Vault.owner for complete permission coverage
   - Restore actions should filter for is_deleted=True to prevent restoring already-active sources
 ---
+
+## Iteration 13 - US-012: Create SourceFilter with django-filter
+- Created SourceFilter class in filters.py extending FilterSet
+- Added filters:
+  - vault: UUIDFilter on vault field
+  - source_type: CharFilter on source_type field
+  - created_by: NumberFilter on created_by field
+  - date_from: DateFilter on created_at with gte lookup
+  - date_to: DateFilter on created_at with lte lookup
+- Set filterset_class = SourceFilter in SourceViewSet
+- Django check passes with 0 issues
+- Files changed:
+  - backend/apps/sources/filters.py (added SourceFilter class)
+  - backend/apps/sources/views.py (imported SourceFilter, added filterset_class)
+  - PRD3.md (marked US-012 complete)
+- Learnings for future iterations:
+  - django-filter uses FilterSet with Meta.model and Meta.fields
+  - UUIDFilter for UUID fields, CharFilter for text, NumberFilter for integers
+  - DateFilter with lookup_expr='gte'/'lte' for date ranges
+  - filterset_class is automatically used by DRF for query param filtering
+  - Filter names in query params match field names (e.g., ?vault=uuid&date_from=2024-01-01)
+---

@@ -13,6 +13,7 @@ from .serializers import (
 )
 from .storage import generate_presigned_upload_url, generate_presigned_download_url
 from .permissions import VaultSourcePermission
+from .filters import SourceFilter
 from apps.vaults.models import Vault, VaultMembership, RoleChoices
 
 
@@ -217,6 +218,7 @@ class SourceViewSet(viewsets.ModelViewSet):
     queryset = Source.objects.filter(is_deleted=False)
     serializer_class = SourceSerializer
     permission_classes = [IsAuthenticated, VaultSourcePermission]
+    filterset_class = SourceFilter
 
     def perform_create(self, serializer):
         """
