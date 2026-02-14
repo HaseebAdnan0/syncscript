@@ -42,13 +42,13 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 **Description:** As a user, I want to see sources displayed as visually appealing cards so I can quickly scan my research materials.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/sources/SourceCard.tsx`
-- [ ] Card uses glass morphism style: `bg-[#0F1115] border border-white/10 rounded-2xl`
-- [ ] Displays source title, type badge, contributor avatar, and created date
-- [ ] Shows truncated URL or citation preview
-- [ ] Hover effect: `-translate-y-1` and `border-[#F7931A]/50`
-- [ ] Click navigates to source detail page
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/sources/SourceCard.tsx`
+- [x] Card uses glass morphism style: `bg-[#0F1115] border border-white/10 rounded-2xl`
+- [x] Displays source title, type badge, contributor avatar, and created date
+- [x] Shows truncated URL or citation preview
+- [x] Hover effect: `-translate-y-1` and `border-[#F7931A]/50`
+- [x] Click navigates to source detail page
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---
