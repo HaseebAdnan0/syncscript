@@ -3,6 +3,11 @@
 ## Learnings
 (Patterns discovered during implementation)
 
+- User model requires both email AND username when creating test users (username is in REQUIRED_FIELDS)
+- For type safety in tests, import User directly from apps.users.models rather than using get_user_model()
+- Django datetime fields expect timezone-aware datetimes when USE_TZ=True
+- Always check existing migrations before creating new ones to avoid conflicts
+
 ---
 
 ## Iteration 1 - US-001: Create AI app with core models
@@ -31,4 +36,31 @@ Learnings for future iterations:
 - Migration dependencies can get out of sync when regenerating - always check existing migrations first
 - apps.ai app label must be configured in apps.py with name='apps.ai' and label='ai'
 - Use placeholder files for views/urls/serializers to avoid import errors while keeping the structure clean
+---
+
+## Iteration 2 - US-002: Implement token usage tracking service
+- Created apps/ai/services/ directory with __init__.py
+- Implemented usage.py service with three core functions:
+  - log_usage(user, request_type, tokens_used): Creates AIUsageLog records
+  - get_daily_usage(user): Returns DailyUsage TypedDict with tokens_used and request_count for today
+  - get_remaining_requests(user): Calculates remaining requests based on AI_DAILY_LIMIT setting
+- Added AI_DAILY_LIMIT setting to config/settings.py (default: 20, configurable via env)
+- Created comprehensive test suite in apps/ai/tests.py:
+  - UsageTrackingTestCase with 7 tests covering all usage scenarios
+  - Tests verify empty usage, usage with logs, old log filtering, and remaining request calculations
+  - All tests pass successfully
+
+Files changed:
+- backend/apps/ai/services/__init__.py (created)
+- backend/apps/ai/services/usage.py (created)
+- backend/apps/ai/tests.py (added UsageTrackingTestCase)
+- backend/config/settings.py (added AI_DAILY_LIMIT)
+- PRD15.md (marked US-002 complete)
+
+Learnings for future iterations:
+- TypedDict provides good type hints for return values without requiring full class definitions
+- Django aggregation with Sum/Count returns None when no records exist, must handle with `or 0`
+- max(0, remaining) pattern ensures we never return negative remaining requests
+- Settings can be read with getattr(settings, 'KEY', default) for graceful fallback
+- Test users need username because User.REQUIRED_FIELDS = ['username']
 ---
