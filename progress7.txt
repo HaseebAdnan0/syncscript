@@ -4,7 +4,7 @@
 
 ## User Stories (22 total)
 - [x] US-001: Create Zustand auth store
-- [ ] US-002: Create axios instance with interceptors
+- [x] US-002: Create axios instance with interceptors
 - [ ] US-003: Create useAuth hook with auth operations
 - [ ] US-004: Create AuthProvider for app initialization
 - [ ] US-005: Create reusable form input component (Bitcoin DeFi style)
@@ -44,4 +44,17 @@
   - Store exports User interface and useAuthStore hook
   - Initial isLoading state is true (for auth check on app load)
   - setUser automatically derives isAuthenticated from user presence
+---
+
+## Iteration 2 - US-002: Create axios instance with interceptors
+- Rewrote `frontend/src/lib/api.ts` to use httpOnly cookies instead of manual token handling
+- Files changed: frontend/src/lib/api.ts (rewritten)
+- Learnings for future iterations:
+  - Critical: PRD specifies httpOnly cookies managed by backend, NOT client-side JWT tokens
+  - Removed token-based auth logic (request interceptor with Bearer tokens, refresh token storage)
+  - Added `withCredentials: true` to axios instance for cookie support
+  - Response interceptor: on 401, POST to /auth/refresh/ (no body needed, cookies sent automatically)
+  - On refresh failure, call clearUser() from auth store and redirect to /login
+  - Kept ApiError and handleApiError utilities for consistent error handling
+  - Request queueing mechanism prevents multiple simultaneous refresh attempts
 ---
