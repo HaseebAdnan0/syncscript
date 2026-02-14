@@ -482,12 +482,12 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a user, I want a settings page to manage my notification preferences.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/app/settings/notifications/page.tsx`
-- [ ] Page title: "Notification Preferences"
-- [ ] Sections: "Email Notifications", "Push Notifications", "Muted Vaults"
-- [ ] Card-based layout matching app design
-- [ ] Loading skeleton while fetching preferences
-- [ ] Typecheck passes
+- [x] Create `frontend/src/app/settings/notifications/page.tsx`
+- [x] Page title: "Notification Preferences"
+- [x] Sections: "Email Notifications", "Push Notifications", "Muted Vaults"
+- [x] Card-based layout matching app design
+- [x] Loading skeleton while fetching preferences
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---
