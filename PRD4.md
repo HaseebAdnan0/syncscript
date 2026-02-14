@@ -149,13 +149,13 @@ Establish the Next.js 16 frontend foundation for SyncScript with a Bitcoin DeFi-
   - Space Grotesk (weights: 400, 700)
   - Inter (weights: 400, 500, 600)
   - JetBrains Mono (weights: 400, 500)
-- [ ] Update `src/styles/globals.css` (or `src/app/globals.css`) with:
+- [x] Update `src/styles/globals.css` (or `src/app/globals.css`) with:
   - Tailwind directives (`@tailwind base; @tailwind components; @tailwind utilities;`)
   - Grid pattern background: `.bg-grid-pattern`
   - Glass morphism utilities: `.glass-card`, `.glass-input`, `.glass-surface`
   - Float animation keyframes
   - Base body styles: `bg-background text-foreground font-body`
-- [ ] Typecheck passes
+- [x] Typecheck passes
 
 ---
 
