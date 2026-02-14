@@ -263,13 +263,13 @@ Implement a global full-text search system for SyncScript that enables researche
 **Description:** As a user, I want a search modal that opens with Cmd+K so I can search without leaving my current context.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/search/GlobalSearchModal.tsx`
-- [ ] Uses Radix Dialog with glass morphism backdrop
-- [ ] Modal width: 640px max, centered vertically (slightly above center)
-- [ ] Smooth fade-in animation
-- [ ] Closes on Escape or backdrop click
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/features/search/GlobalSearchModal.tsx`
+- [x] Uses Radix Dialog with glass morphism backdrop
+- [x] Modal width: 640px max, centered vertically (slightly above center)
+- [x] Smooth fade-in animation
+- [x] Closes on Escape or backdrop click
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 

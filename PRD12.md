@@ -341,14 +341,14 @@ Add social authentication to SyncScript using Google and GitHub OAuth providers.
 **Description:** As a user, I want clear error messages when OAuth fails.
 
 **Acceptance Criteria:**
-- [ ] Create error message mappings for common OAuth errors
-- [ ] "access_denied": "You cancelled the sign-in process"
-- [ ] "invalid_request": "Something went wrong. Please try again"
-- [ ] "email_exists": "This email is already registered. Please login with your password"
-- [ ] "provider_error": "Could not connect to {Provider}. Please try again"
-- [ ] Display errors on callback page and in modals
-- [ ] Include "Try Again" button that restarts OAuth flow
-- [ ] Typecheck passes
+- [x] Create error message mappings for common OAuth errors
+- [x] "access_denied": "You cancelled the sign-in process"
+- [x] "invalid_request": "Something went wrong. Please try again"
+- [x] "email_exists": "This email is already registered. Please login with your password"
+- [x] "provider_error": "Could not connect to {Provider}. Please try again"
+- [x] Display errors on callback page and in modals
+- [x] Include "Try Again" button that restarts OAuth flow
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---
