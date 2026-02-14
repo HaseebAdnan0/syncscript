@@ -4,7 +4,7 @@ Onboarding service for creating demo vaults for new users.
 import json
 from pathlib import Path
 from django.db import transaction
-from apps.vaults.models import Vault, VaultMembership, RoleChoices
+from apps.vaults.models import Vault
 from apps.sources.models import Source
 from apps.annotations.models import Annotation
 
@@ -39,19 +39,11 @@ def create_demo_vault(user):
 
     # Create vault and related objects in a transaction
     with transaction.atomic():
-        # Create vault
+        # Create vault (signal will auto-create owner membership)
         vault = Vault.objects.create(
             name=demo_data['vault']['name'],
             description=demo_data['vault']['description'],
             owner=user
-        )
-
-        # Create owner membership
-        VaultMembership.objects.create(
-            vault=vault,
-            user=user,
-            role=RoleChoices.OWNER,
-            added_by=user
         )
 
         # Create sources

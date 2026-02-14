@@ -104,3 +104,33 @@
   - Import models inside task to avoid circular imports (confirmed pattern)
   - Django check passes even with Pyright warnings about imports in functions
 ---
+
+## Iteration 7 - US-007: Add signals to trigger search vector updates
+- Created backend/apps/search/signals.py with post-save signal handlers
+- Signal for Source model triggers update_source_search_vector.delay() on create/update
+- Signal for Annotation model triggers update_annotation_search_vector.delay() on create/update
+- Signals only fire when relevant fields change (title, description, metadata for Source; content for Annotation)
+- Connected signals in SearchConfig.ready() method in apps.py
+- Added blank=True to search_vector fields (Source and Annotation) and position field (Annotation) for proper validation
+- Moved extract_metadata function to apps/sources/services/__init__.py to resolve import conflicts
+- Created comprehensive test suite (SearchSignalsTest) with 6 tests verifying signal behavior
+- Files changed:
+  - backend/apps/search/signals.py (created)
+  - backend/apps/search/apps.py (added ready() method)
+  - backend/apps/search/tests.py (created test suite)
+  - backend/apps/annotations/models.py (added blank=True to search_vector and position)
+  - backend/apps/sources/models.py (added blank=True to search_vector)
+  - backend/apps/sources/services/__init__.py (moved extract_metadata function)
+  - backend/apps/annotations/migrations/0003_alter_annotation_search_vector.py (created)
+  - backend/apps/annotations/migrations/0004_alter_annotation_position.py (created)
+  - backend/apps/sources/migrations/0006_alter_source_search_vector.py (created)
+  - PRD18.md (marked US-007 complete)
+- Learnings for future iterations:
+  - Django signals should be imported in AppConfig.ready() to ensure they're registered
+  - When testing signals, mock the task module path (apps.search.tasks.X) not the signal function path
+  - Fields with null=True also need blank=True for Django's full_clean() validation
+  - If both services.py and services/ directory exist, Python imports services/ as a package, shadowing the .py file
+  - Solution: move functions into services/__init__.py or re-export them from there
+  - Signal receivers should import tasks inside the function to avoid circular imports
+  - update_fields parameter in post_save signal allows optimizing to only update on relevant field changes
+---

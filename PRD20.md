@@ -55,14 +55,14 @@ Create a comprehensive new user onboarding experience for SyncScript that guides
 **Description:** As a developer, I need a service to create the demo vault for a user on first login so they have content to explore.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/users/services/onboarding.py` with `create_demo_vault(user)` function
-- [ ] Creates vault owned by user (not shared)
-- [ ] Populates with sources and annotations from fixture template
-- [ ] Annotations are created by the user (not a system user)
-- [ ] Returns created vault instance
-- [ ] Idempotent: does not create duplicate if vault exists with same name
-- [ ] Typecheck passes
-- [ ] Tests pass
+- [x] Create `apps/users/services/onboarding.py` with `create_demo_vault(user)` function
+- [x] Creates vault owned by user (not shared)
+- [x] Populates with sources and annotations from fixture template
+- [x] Annotations are created by the user (not a system user)
+- [x] Returns created vault instance
+- [x] Idempotent: does not create duplicate if vault exists with same name
+- [x] Typecheck passes
+- [x] Tests pass
 
 ### US-005: Create demo vault reset endpoint
 **Description:** As a user, I want to reset my demo vault to its original state so I can start fresh after experimenting.
