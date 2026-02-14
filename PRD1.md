@@ -327,10 +327,10 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a developer, I need the users app URLs included in the main URL configuration.
 
 **Acceptance Criteria:**
-- [ ] Update `config/urls.py`
-- [ ] Include auth endpoints at /api/v1/auth/
-- [ ] Include user endpoints at /api/v1/users/
-- [ ] Typecheck passes
+- [x] Update `config/urls.py`
+- [x] Include auth endpoints at /api/v1/auth/
+- [x] Include user endpoints at /api/v1/users/
+- [x] Typecheck passes
 
 ---
 
