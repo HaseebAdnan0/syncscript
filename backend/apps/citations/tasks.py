@@ -87,6 +87,123 @@ def generate_ai_citation_task(self, source_id: int, citation_format: str, user_i
         raise self.retry(exc=exc)
 
 
+@shared_task(bind=True, max_retries=0, time_limit=600)
+def export_vault_citations_task(self, vault_id: str, citation_format: str, user_id: int) -> dict[str, Any]:
+    """
+    Export all citations from a vault asynchronously (for large vaults).
+
+    This task generates citations for all sources in a vault and stores the
+    export file temporarily for download.
+
+    Args:
+        self: Celery task instance (bound task)
+        vault_id: UUID of the Vault to export citations from
+        citation_format: Citation format string (apa7, mla9, etc.)
+        user_id: ID of the User who requested the export
+
+    Returns:
+        dict with export results:
+            - vault_id: UUID of the vault
+            - format: Citation format used
+            - file_path: Path to temporary export file
+            - citation_count: Number of citations exported
+            - expires_at: ISO timestamp when file expires (24h)
+
+    Raises:
+        Exception: On task failure
+    """
+    import tempfile
+    import os
+    from django.conf import settings
+    from django.core.cache import cache
+    from apps.vaults.models import Vault
+    from apps.citations.models import CitationFormat
+    from apps.citations.services.structured_citation import has_complete_metadata, generate_structured_citation
+    from apps.citations.services.ai_citation import generate_ai_citation
+
+    try:
+        logger.info(f"Starting batch export for vault {vault_id} in format {citation_format}")
+
+        # Get vault
+        vault = get_object_or_404(Vault, id=vault_id)
+
+        # Get all sources from vault
+        sources = Source.objects.filter(vault=vault, is_deleted=False).order_by('created_at')
+
+        # Convert format string to enum
+        format_enum = CitationFormat(citation_format)
+
+        # Generate citations for all sources
+        citations = []
+        for source in sources:
+            # Check cache first
+            cached_citation = _get_cached_citation(source, citation_format)
+            if cached_citation:
+                citation_text = cached_citation['text']
+            else:
+                # Prepare metadata
+                metadata = source.metadata.copy() if source.metadata else {}
+                metadata['title'] = source.title
+                metadata['url'] = source.url
+
+                # Generate citation
+                if has_complete_metadata(metadata):
+                    citation_text = generate_structured_citation(metadata, format_enum)
+                    citation_html = citation_text
+                    generation_source = 'structured'
+                else:
+                    # Use AI citation
+                    citation_text, citation_html, _ = generate_ai_citation(metadata, format_enum)
+                    generation_source = 'ai'
+
+                # Cache the generated citation
+                _cache_citation(source, citation_format, citation_text, citation_html, generation_source)
+
+            citations.append(citation_text)
+
+        # Generate export file content
+        if format_enum == CitationFormat.BIBTEX:
+            content = '\n\n'.join(citations)
+            file_ext = 'bib'
+        else:
+            content = '\n\n'.join(citations)
+            file_ext = 'txt'
+
+        # Store file in temporary directory (managed by Django cache)
+        cache_key = f'export_file:{vault_id}:{citation_format}:{user_id}'
+        expires_at = timezone.now() + timezone.timedelta(hours=24)
+
+        # Store content in cache (24h expiry)
+        cache.set(cache_key, {
+            'content': content,
+            'filename': f'{vault.name}-citations.{file_ext}',
+            'content_type': 'application/x-bibtex' if format_enum == CitationFormat.BIBTEX else 'text/plain',
+            'expires_at': expires_at.isoformat(),
+        }, timeout=86400)  # 24 hours
+
+        logger.info(f"Successfully exported {len(citations)} citations for vault {vault_id}")
+
+        return {
+            'vault_id': str(vault_id),
+            'format': citation_format,
+            'cache_key': cache_key,
+            'citation_count': len(citations),
+            'expires_at': expires_at.isoformat(),
+        }
+
+    except Exception as exc:
+        logger.error(f"Failed to export citations for vault {vault_id}: {str(exc)}")
+        raise exc
+
+
+def _get_cached_citation(source: Any, citation_format: str) -> dict[str, Any] | None:
+    """Get cached citation from source metadata if available."""
+    if not source.metadata:
+        return None
+    citations_cache = source.metadata.get('citations', {})
+    return citations_cache.get(citation_format)
+
+
 def _cache_citation(source: Any, citation_format: str, text: str, html: str, generation_source: str) -> None:
     """
     Cache generated citation in source metadata.

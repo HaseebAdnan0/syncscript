@@ -4,15 +4,20 @@ Separated into its own module to avoid ViewSet routing issues.
 """
 from django.http import HttpResponse
 from django.db.models import Q
+from django.core.cache import cache
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError, PermissionDenied
+from rest_framework.response import Response
+from rest_framework import status
 from apps.vaults.models import Vault
 from apps.sources.models import Source
 from apps.citations.models import CitationFormat
 from apps.citations.services.structured_citation import has_complete_metadata, generate_structured_citation
 from apps.citations.services.ai_citation import generate_ai_citation
+from apps.citations.tasks import export_vault_citations_task
 from datetime import datetime
+from celery.result import AsyncResult
 
 
 @api_view(['GET'])

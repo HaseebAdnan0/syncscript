@@ -366,14 +366,14 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a user, I want a dropdown panel showing my recent notifications.
 
 **Acceptance Criteria:**
-- [ ] Create `components/features/notifications/NotificationDropdown.tsx`
-- [ ] Dropdown panel triggered by NotificationBell click
-- [ ] Header: "Notifications" with "Mark all as read" button
-- [ ] List of NotificationItem components (max 10, scrollable)
-- [ ] Empty state: "No notifications yet"
-- [ ] Footer link: "View all notifications"
-- [ ] Close on click outside
-- [ ] Typecheck passes
+- [x] Create `components/features/notifications/NotificationDropdown.tsx`
+- [x] Dropdown panel triggered by NotificationBell click
+- [x] Header: "Notifications" with "Mark all as read" button
+- [x] List of NotificationItem components (max 10, scrollable)
+- [x] Empty state: "No notifications yet"
+- [x] Footer link: "View all notifications"
+- [x] Close on click outside
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---

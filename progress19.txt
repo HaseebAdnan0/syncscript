@@ -732,3 +732,44 @@ In Progress - US-004 complete
   - Accessibility: add aria-label with current unread count
   - Gradient classes match project design system (#EA580C to #F7931A)
 ---
+
+## Iteration 26 - US-027: Create NotificationItem Component
+- Created frontend/src/components/features/notifications/NotificationItem.tsx
+- Implemented icon mapping for 5 notification types using lucide-react icons:
+  - vault_invite: Bell
+  - member_joined: UserPlus
+  - source_added: FileText
+  - annotation_reply: MessageCircle
+  - mention: AtSign
+- All icons colored with Bitcoin orange (#F7931A)
+- Implemented formatRelativeTime utility:
+  - just now (< 1 min)
+  - X minutes ago (< 1 hour)
+  - X hours ago (< 24 hours)
+  - X days ago (< 7 days)
+  - Full date for older notifications
+- Implemented truncateText utility (max 100 chars with ellipsis)
+- Component displays:
+  - Icon on left
+  - Title in bold white text
+  - Body preview in muted gray
+  - Relative timestamp
+  - Orange dot indicator for unread (gradient border)
+  - Unread items have subtle orange background tint (bg-[#F7931A]/5)
+- Hover state with bg-white/5 transition
+- Border-bottom separator between items
+- TypeScript typecheck passes
+- Commit 1c60b75
+- Files changed:
+  - frontend/src/components/features/notifications/NotificationItem.tsx (new)
+  - PRD19.md (marked US-027 complete except browser verification)
+- Learnings for future iterations:
+  - Switch statement for mapping enum values to UI elements
+  - Relative time calculation: subtract timestamps, convert to secs/mins/hours/days
+  - Use Math.floor() for rounding down time differences
+  - Optional onClick callback with ?. operator for safe invocation
+  - flex-shrink-0 prevents icon from being compressed
+  - min-w-0 on flex child enables text truncation with ellipsis
+  - Unread styling: combine subtle background tint + dot indicator
+  - Border separator on items inside dropdown lists
+---
