@@ -140,3 +140,45 @@
   - Cleanup functions stored for all event listeners and intervals
   - Typecheck passes without issues
 ---
+
+## Iteration 7 - US-007: Create PresenceIndicator component
+- Implemented presence indicator component at `frontend/src/components/features/notifications/PresenceIndicator.tsx`
+- Files changed:
+  - Created `frontend/src/components/features/notifications/PresenceIndicator.tsx`
+  - Updated `PRD10.md` (marked US-007 complete)
+- Learnings for future iterations:
+  - Component uses usePresence hook with `{ vaultId, currentUserId }` options
+  - Displays max 5 avatars by default (configurable via `maxDisplay` prop)
+  - Overflow count shown as "+N" in separate circle when activeMembers > maxDisplay
+  - Avatar: gradient circle (from-[#F7931A] to-[#EA580C]) with first letter of username
+  - Green presence dot positioned absolute bottom-right with animate-ping effect
+  - Ping effect: outer span with `animate-ping` + inner span with solid green-500
+  - Tooltip on hover uses group pattern (group + group-hover:opacity-100)
+  - Glass morphism container: `backdrop-blur-lg bg-white/5 border border-white/10 rounded-full`
+  - Member avatars overlapped with `-space-x-2` for compact display
+  - Border-2 border-[#0F1115] on avatars to create separation when overlapped
+  - Count text shows "N member(s) online" with conditional singular/plural
+  - Returns null when no active members (clean empty state)
+  - Typecheck passes without issues
+---
+## Iteration 8 - US-008: Create notification API client and useNotifications hook
+- Implemented notification API client and React Query hook
+- Files changed:
+  - Created `frontend/src/lib/api/notifications.ts` (API functions for notifications)
+  - Created `frontend/src/hooks/useNotifications.ts` (React Query hook with polling)
+  - Updated `PRD10.md` (marked US-008 complete)
+- Learnings for future iterations:
+  - Use `@/lib/api` for API client import (not `./client` or `./api`)
+  - Use existing `PaginatedResponse<T>` type from `@/lib/types/api` instead of custom response types
+  - Import types with `type` keyword to avoid unused import errors (e.g., `type Notification`)
+  - TanStack Query `refetchInterval` accepts function that returns interval or false
+  - Remove unused callback parameters (e.g., `query` param in refetchInterval function)
+  - Document visibility tracked with `visibilitychange` event and `document.hidden` property
+  - Polling pauses when tab not visible by returning `false` from refetchInterval function
+  - `refetchIntervalInBackground: false` prevents polling when browser tab in background
+  - Cache updates use `setQueryData` for optimistic UI (decrement unread count on mark-as-read)
+  - Backend API endpoints: `/notifications/`, `/notifications/{id}/read/`, `/notifications/mark-all-read/`, `/notifications/unread-count/`
+  - Notification type enum includes: source/annotation events, member events, mentions, vault updates
+  - Hook returns both data and mutation functions for complete notification management
+  - Typecheck passes without issues
+---
