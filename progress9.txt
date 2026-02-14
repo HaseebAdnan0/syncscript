@@ -86,3 +86,28 @@ Learnings for future iterations:
 - Badge styling follows pattern: bg-{color}/20 text-{color} border-{color}/30
 ---
 
+## Iteration 4 - US-004: Create SourceTableRow component
+- Created dropdown-menu UI component at frontend/src/components/ui/dropdown-menu.tsx
+- Created SourceTableRow component at frontend/src/components/features/sources/SourceTableRow.tsx
+- Implemented table row with: type badge, linked title, contributor, date added, actions dropdown
+- Row hover effect: bg-white/5 transition-colors
+- Actions dropdown uses Radix UI @radix-ui/react-dropdown-menu (already installed)
+- Dropdown includes: View (link to detail), Edit (callback), Delete (callback with red styling)
+- Delete option separated with DropdownMenuSeparator and styled with text-red-400
+- Typecheck passes ✓ (no errors in new files)
+
+Files changed:
+- frontend/src/components/ui/dropdown-menu.tsx (new)
+- frontend/src/components/features/sources/SourceTableRow.tsx (new)
+- PRD9.md (marked US-004 complete except browser verification)
+
+Learnings for future iterations:
+- Radix dropdown menu uses Portal for proper z-index stacking
+- Glass morphism dropdown: bg-[#0F1115] border border-white/10 backdrop-blur-lg
+- DropdownMenuItem supports asChild prop for Link components
+- Table row transitions use hover:bg-white/5 for subtle highlight
+- Actions menu icon uses MoreVertical from lucide-react
+- Destructive actions (delete) use text-red-400 focus:text-red-400
+- Optional callbacks (onEdit, onDelete) allow parent to control functionality
+---
+
