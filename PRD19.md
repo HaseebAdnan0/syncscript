@@ -409,12 +409,12 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a developer, I need Pusher client configured for real-time updates.
 
 **Acceptance Criteria:**
-- [ ] Install `pusher-js` package
-- [ ] Create `frontend/src/lib/pusher.ts` with client setup
-- [ ] Use `NEXT_PUBLIC_PUSHER_KEY` and cluster from env
-- [ ] Export configured Pusher instance
-- [ ] Add auth endpoint configuration for private channels
-- [ ] Typecheck passes
+- [x] Install `pusher-js` package
+- [x] Create `frontend/src/lib/pusher.ts` with client setup
+- [x] Use `NEXT_PUBLIC_PUSHER_KEY` and cluster from env
+- [x] Export configured Pusher instance
+- [x] Add auth endpoint configuration for private channels
+- [x] Typecheck passes
 
 ---
 

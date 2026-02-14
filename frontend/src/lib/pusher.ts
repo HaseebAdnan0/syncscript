@@ -1,12 +1,20 @@
 import Pusher from 'pusher-js';
+import api from '@/lib/api';
 
 /**
  * Pusher client for browser push notifications
  *
- * Handles connection to Pusher for high-priority notifications:
- * - member.joined events
- * - mention.created events
+ * Handles connection to Pusher for real-time notifications:
+ * - notification events
+ * - badge_update events
  */
+
+// Pusher authorization data type (matches pusher-js internal types)
+interface ChannelAuthorizationData {
+  auth: string;
+  channel_data?: string;
+  shared_secret?: string;
+}
 
 let pusherInstance: Pusher | null = null;
 
@@ -14,7 +22,7 @@ let pusherInstance: Pusher | null = null;
  * Initialize Pusher client
  * Returns existing instance if already initialized
  */
-export function initializePusher(): Pusher {
+export function initializePusher(): Pusher | null {
   if (pusherInstance) {
     return pusherInstance;
   }
@@ -23,16 +31,31 @@ export function initializePusher(): Pusher {
   const cluster = process.env.NEXT_PUBLIC_PUSHER_CLUSTER;
 
   if (!key || !cluster) {
-    throw new Error('Pusher configuration missing. Set NEXT_PUBLIC_PUSHER_KEY and NEXT_PUBLIC_PUSHER_CLUSTER');
+    console.warn('Pusher credentials not configured. Real-time notifications disabled.');
+    return null;
   }
 
   pusherInstance = new Pusher(key, {
     cluster,
-    authEndpoint: `${process.env.NEXT_PUBLIC_API_URL}/pusher/auth`,
-    auth: {
-      headers: {
-        Authorization: `Bearer ${getAccessToken()}`,
-      },
+    // Custom authorizer for private channel authentication
+    authorizer: (channel) => {
+      return {
+        authorize: (socketId: string, callback: (error: Error | null, authData: ChannelAuthorizationData | null) => void) => {
+          // Call our auth endpoint with channel name and socket ID
+          api.post<ChannelAuthorizationData>(
+            '/notifications/pusher/auth/',
+            {
+              channel_name: channel.name,
+              socket_id: socketId,
+            }
+          ).then((response) => {
+            callback(null, response.data);
+          }).catch((error) => {
+            console.error('Pusher auth error:', error);
+            callback(error as Error, null);
+          });
+        },
+      };
     },
   });
 
@@ -40,66 +63,24 @@ export function initializePusher(): Pusher {
 }
 
 /**
- * Get access token from localStorage
- * Used for Pusher authentication
- */
-function getAccessToken(): string {
-  if (typeof window === 'undefined') {
-    return '';
-  }
-  return localStorage.getItem('access_token') || '';
-}
-
-/**
  * Subscribe to user's private notification channel
  * Channel name format: private-user-{userId}
  */
-export function subscribeToUserChannel(userId: number): void {
+export function subscribeToUserChannel(userId: number | string) {
   const pusher = initializePusher();
+
+  if (!pusher) {
+    return null;
+  }
+
   const channelName = `private-user-${userId}`;
-
-  const channel = pusher.subscribe(channelName);
-
-  // Handle member.joined events
-  channel.bind('member.joined', (data: {
-    vault_id: number;
-    vault_name: string;
-    member_name: string;
-    member_role: string;
-  }) => {
-    showBrowserNotification({
-      title: 'New Vault Member',
-      body: `${data.member_name} joined "${data.vault_name}" as ${data.member_role}`,
-      data: {
-        type: 'member.joined',
-        vaultId: data.vault_id,
-      },
-    });
-  });
-
-  // Handle mention.created events
-  channel.bind('mention.created', (data: {
-    vault_id: number;
-    vault_name: string;
-    source_title?: string;
-    mentioned_by: string;
-    annotation_text: string;
-  }) => {
-    showBrowserNotification({
-      title: `You were mentioned in "${data.vault_name}"`,
-      body: `${data.mentioned_by}: ${data.annotation_text.slice(0, 100)}${data.annotation_text.length > 100 ? '...' : ''}`,
-      data: {
-        type: 'mention.created',
-        vaultId: data.vault_id,
-      },
-    });
-  });
+  return pusher.subscribe(channelName);
 }
 
 /**
  * Unsubscribe from user's private channel
  */
-export function unsubscribeFromUserChannel(userId: number): void {
+export function unsubscribeFromUserChannel(userId: number | string): void {
   if (!pusherInstance) {
     return;
   }
@@ -117,6 +98,14 @@ export function disconnectPusher(): void {
     pusherInstance.disconnect();
     pusherInstance = null;
   }
+}
+
+/**
+ * Get or create the Pusher client instance (alias for initializePusher)
+ * @returns Pusher client instance or null if not configured
+ */
+export function getPusherClient(): Pusher | null {
+  return initializePusher();
 }
 
 /**
@@ -141,51 +130,4 @@ export async function requestNotificationPermission(): Promise<boolean> {
   return permission === 'granted';
 }
 
-/**
- * Show native browser notification
- * Focuses app tab when notification is clicked
- */
-function showBrowserNotification(options: {
-  title: string;
-  body: string;
-  data?: any;
-}): void {
-  if (!('Notification' in window) || Notification.permission !== 'granted') {
-    return;
-  }
-
-  const notification = new Notification(options.title, {
-    body: options.body,
-    icon: '/favicon.ico',
-    badge: '/favicon.ico',
-    data: options.data,
-  });
-
-  // Focus app tab when notification clicked
-  notification.onclick = () => {
-    window.focus();
-    notification.close();
-
-    // Navigate to vault if data includes vaultId
-    if (options.data?.vaultId) {
-      window.location.href = `/vaults/${options.data.vaultId}`;
-    }
-  };
-}
-
-/**
- * Check if browser notifications are supported
- */
-export function isBrowserNotificationSupported(): boolean {
-  return 'Notification' in window;
-}
-
-/**
- * Get current notification permission status
- */
-export function getNotificationPermission(): NotificationPermission | null {
-  if (!('Notification' in window)) {
-    return null;
-  }
-  return Notification.permission;
-}
+export default getPusherClient;
