@@ -337,12 +337,12 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a user, I want to see a notification bell icon with unread count in the header.
 
 **Acceptance Criteria:**
-- [ ] Create `components/features/notifications/NotificationBell.tsx`
-- [ ] Bell icon (lucide-react)
-- [ ] Red badge with unread count (hide if 0)
-- [ ] Badge shows "9+" for counts > 9
-- [ ] Click opens notification dropdown
-- [ ] Typecheck passes
+- [x] Create `components/features/notifications/NotificationBell.tsx`
+- [x] Bell icon (lucide-react)
+- [x] Red badge with unread count (hide if 0)
+- [x] Badge shows "9+" for counts > 9
+- [x] Click opens notification dropdown
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---

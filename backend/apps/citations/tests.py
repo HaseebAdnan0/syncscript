@@ -2018,7 +2018,7 @@ class BatchExportTests(TestCase):
             print(f'Vault detail error: {vault_response.data if hasattr(vault_response, "data") else vault_response.content}')
 
         # Export citations
-        url = f'/api/v1/vaults/{self.vault.id}/citations/export/'
+        url = f'/api/v1/citations/vaults/{self.vault.id}/export/'
         print(f'Testing URL: {url}')
         print(f'Vault ID type: {type(self.vault.id)}')
         print(f'Vault ID value: {self.vault.id}')
@@ -2046,7 +2046,7 @@ class BatchExportTests(TestCase):
 
         # Export citations
         response = self.client.get(
-            f'/api/v1/vaults/{self.vault.id}/citations/export/',
+            f'/api/v1/citations/vaults/{self.vault.id}/export/',
             {'format': 'apa7'}
         )
 
@@ -2087,7 +2087,7 @@ class BatchExportTests(TestCase):
 
         # Export citations
         response = self.client.get(
-            f'/api/v1/vaults/{self.vault.id}/citations/export/',
+            f'/api/v1/citations/vaults/{self.vault.id}/export/',
             {'format': 'apa7'}
         )
 
@@ -2118,7 +2118,7 @@ class BatchExportTests(TestCase):
 
         # Export with invalid format
         response = self.client.get(
-            f'/api/v1/vaults/{self.vault.id}/citations/export/',
+            f'/api/v1/citations/vaults/{self.vault.id}/export/',
             {'format': 'invalid'}
         )
 
@@ -2164,7 +2164,7 @@ class BatchExportTests(TestCase):
 
         # Export citations
         response = self.client.get(
-            f'/api/v1/vaults/{self.vault.id}/citations/export/',
+            f'/api/v1/citations/vaults/{self.vault.id}/export/',
             {'format': 'apa7'}
         )
 
@@ -2194,7 +2194,7 @@ class BatchExportTests(TestCase):
 
         # Export citations
         response = self.client.get(
-            f'/api/v1/vaults/{self.vault.id}/citations/export/',
+            f'/api/v1/citations/vaults/{self.vault.id}/export/',
             {'format': 'bibtex'}
         )
 

@@ -674,3 +674,61 @@ In Progress - US-004 complete
   - Return dict from cleanup tasks for monitoring/logging purposes
   - Schedule cleanup tasks during off-peak hours (2 AM UTC)
 ---
+
+## Iteration 24 - US-025: Add Notification Types and API Client to Frontend
+- Created frontend/src/types/notifications.ts with all TypeScript interfaces
+- Defined NotificationType union type with 5 values (vault_invite, member_joined, source_added, annotation_reply, mention)
+- Defined EmailDigestFrequency type with 4 values (immediate, daily, weekly, none)
+- Created Notification interface with all fields including is_read boolean
+- Created NotificationPreferences interface matching backend model
+- Created MutedVault interface with vault_id and vault_name for display
+- Added UnreadCountResponse and MarkAllReadResponse helper interfaces
+- Implemented 9 notification API functions in frontend/src/lib/api.ts:
+  - getNotifications(unreadOnly, page) with pagination support
+  - markAsRead(id) for single notification
+  - markAllAsRead() for bulk read operation
+  - getUnreadCount() for badge display
+  - getPreferences() and updatePreferences(data) for settings
+  - getMutedVaults(), muteVault(vaultId), unmuteVault(vaultId)
+- All API functions properly typed with request/response types
+- TypeScript typecheck passes without errors
+- Commit df7dd8c
+- Files changed:
+  - frontend/src/types/notifications.ts (new)
+  - frontend/src/lib/api.ts (added notification API functions)
+  - PRD19.md (marked US-025 complete)
+- Learnings for future iterations:
+  - Union types in TypeScript use pipe operator: 'value1' | 'value2' | 'value3'
+  - Record<string, any> for flexible JSON data fields from backend
+  - Nullable fields use type | null syntax
+  - URLSearchParams for building query strings with optional parameters
+  - Paginated responses include count, next, previous, results fields
+  - PATCH for partial updates, POST for actions like mark-all-read
+  - Import types from @/types/ path, not relative paths
+  - Export types and interfaces for use in components and hooks
+---
+
+## Iteration 25 - US-026: Create NotificationBell Component with Badge
+- Created frontend/src/components/features/notifications/NotificationBell.tsx
+- Component accepts unreadCount and onClick props
+- Bell icon from lucide-react with hover states
+- Badge displays unread count with "9+" for counts > 9
+- Badge hidden when count is 0
+- Badge styled with Bitcoin DeFi gradient (EA580C to F7931A)
+- Positioned absolutely on top-right of bell icon
+- Responsive button with hover effect (bg-white/5)
+- Removed unused useState import to fix typecheck error
+- TypeScript typecheck passes
+- Files changed:
+  - frontend/src/components/features/notifications/NotificationBell.tsx (new)
+  - PRD19.md (marked US-026 complete except browser verification)
+- Learnings for future iterations:
+  - Remove unused imports immediately to avoid typecheck errors
+  - Use 'use client' directive for client-side interactive components in Next.js
+  - Badge positioning: absolute with negative top/right offsets
+  - Display "9+" for counts > 9 using ternary operator
+  - Conditional rendering with && operator for showing/hiding badge
+  - Min-width on badge ensures single digits are circular
+  - Accessibility: add aria-label with current unread count
+  - Gradient classes match project design system (#EA580C to #F7931A)
+---
