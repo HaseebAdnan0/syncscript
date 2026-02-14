@@ -1517,7 +1517,8 @@ class AsyncCitationEndpointTests(TestCase):
         mock_task.state = 'PENDING'
         mock_async_result.return_value = mock_task
 
-        response = self.client.get('/api/v1/citations/tasks/test-task-id/')
+        # Use a UUID-like task ID (Celery task IDs are UUIDs)
+        response = self.client.get('/api/v1/citations/tasks/12345678-1234-1234-1234-123456789abc/')
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['status'], 'pending')
@@ -1538,7 +1539,7 @@ class AsyncCitationEndpointTests(TestCase):
         }
         mock_async_result.return_value = mock_task
 
-        response = self.client.get('/api/v1/citations/tasks/test-task-id/')
+        response = self.client.get('/api/v1/citations/tasks/12345678-1234-1234-1234-123456789abc/')
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['status'], 'completed')
@@ -1554,7 +1555,7 @@ class AsyncCitationEndpointTests(TestCase):
         mock_task.info = Exception("API error")
         mock_async_result.return_value = mock_task
 
-        response = self.client.get('/api/v1/citations/tasks/test-task-id/')
+        response = self.client.get('/api/v1/citations/tasks/12345678-1234-1234-1234-123456789abc/')
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['status'], 'failed')

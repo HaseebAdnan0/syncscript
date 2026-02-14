@@ -1,3 +1,5 @@
+import Footer from '@/components/marketing/Footer';
+
 export default function MarketingLayout({
   children,
 }: {
@@ -51,14 +53,8 @@ export default function MarketingLayout({
       {/* Main Content */}
       <main>{children}</main>
 
-      {/* Footer Placeholder */}
-      <footer className="border-t border-white/10 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-center text-[#94A3B8] text-sm">
-            © {new Date().getFullYear()} SyncScript. All rights reserved.
-          </p>
-        </div>
-      </footer>
+      {/* Marketing Footer */}
+      <Footer />
     </div>
   );
 }

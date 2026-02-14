@@ -55,7 +55,7 @@ def send_verification_email_task(self, user_id: int, token: str):
     retry_backoff_max=600,
     max_retries=3,
 )
-def send_password_reset_email_task(self, user_id: int, uid: str, token: str):
+def send_password_reset_email_task(self, user_id: int, uid: str, token: str, request_ip: str = None, request_time: str = None):
     """
     Send password reset email asynchronously.
 
@@ -63,13 +63,15 @@ def send_password_reset_email_task(self, user_id: int, uid: str, token: str):
         user_id: ID of the user requesting password reset
         uid: Base64-encoded user ID
         token: Password reset token
+        request_ip: IP address of reset request (optional)
+        request_time: Timestamp of reset request (optional)
 
     Raises:
         ObjectDoesNotExist: If user doesn't exist (logged, not retried)
     """
     try:
         user = User.objects.get(id=user_id)
-        send_password_reset_email(user, uid, token)
+        send_password_reset_email(user, uid, token, request_ip, request_time)
         logger.info(f"Password reset email sent successfully to {user.email}")
     except ObjectDoesNotExist:
         logger.error(f"User with ID {user_id} not found - cannot send password reset email")

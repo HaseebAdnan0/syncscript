@@ -150,8 +150,8 @@ class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
         Validates user is member of vault before muting.
         """
         if request.method == 'GET':
-            muted = MutedVault.objects.filter(user=request.user).select_related('vault')
-            serializer = MutedVaultSerializer(muted, many=True)
+            muted_vaults = MutedVault.objects.filter(user=request.user).select_related('vault')
+            serializer = MutedVaultSerializer(muted_vaults, many=True)
             return Response(serializer.data)
 
         elif request.method == 'POST':

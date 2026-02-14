@@ -206,12 +206,12 @@ Add social authentication to SyncScript using Google and GitHub OAuth providers.
 **Description:** As a user on the login page, I want to see OAuth options prominently.
 
 **Acceptance Criteria:**
-- [ ] Import and add OAuthButtons to login page
-- [ ] Position above email/password form with "OR" divider
-- [ ] Divider styled: horizontal line with "or" text centered
-- [ ] OAuth buttons disabled while email/password form is submitting
-- [ ] Maintain existing login form functionality
-- [ ] Typecheck passes
+- [x] Import and add OAuthButtons to login page
+- [x] Position above email/password form with "OR" divider
+- [x] Divider styled: horizontal line with "or" text centered
+- [x] OAuth buttons disabled while email/password form is submitting
+- [x] Maintain existing login form functionality
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---

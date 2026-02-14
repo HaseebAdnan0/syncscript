@@ -34,7 +34,7 @@ from .serializers import (
 )
 from .tokens import generate_verification_token, verify_token
 from .emails import send_verification_email, send_password_reset_email
-from .tasks import send_verification_email_task
+from .tasks import send_verification_email_task, send_password_reset_email_task
 
 
 @api_view(['POST'])

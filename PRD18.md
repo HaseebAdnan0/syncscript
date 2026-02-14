@@ -172,12 +172,12 @@ Implement a global full-text search system for SyncScript that enables researche
 **Description:** As a developer, I need to track search queries for analytics without storing user identity.
 
 **Acceptance Criteria:**
-- [ ] Create `track_search_analytics` function in `backend/apps/search/services.py`
-- [ ] Hash query with SHA-256, normalize to lowercase
-- [ ] Increment `search_count` if exists, create if not
-- [ ] Update `last_searched` timestamp
-- [ ] Call from search endpoint after returning results
-- [ ] Typecheck passes
+- [x] Create `track_search_analytics` function in `backend/apps/search/services.py`
+- [x] Hash query with SHA-256, normalize to lowercase
+- [x] Increment `search_count` if exists, create if not
+- [x] Update `last_searched` timestamp
+- [x] Call from search endpoint after returning results
+- [x] Typecheck passes
 
 ---
 

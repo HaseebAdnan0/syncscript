@@ -8,6 +8,7 @@ import GradientButton from '@/components/ui/GradientButton';
 import GlassCard from '@/components/ui/GlassCard';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from '@/hooks/useToast';
+import OAuthButtons from '@/components/features/auth/OAuthButtons';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -88,6 +89,19 @@ export default function LoginPage() {
         <p className="text-[#94A3B8] text-sm">
           Sign in to access your Knowledge Vaults
         </p>
+      </div>
+
+      {/* OAuth Buttons */}
+      <OAuthButtons disabled={isLoading} />
+
+      {/* Divider */}
+      <div className="relative my-8">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-white/10"></div>
+        </div>
+        <div className="relative flex justify-center text-sm">
+          <span className="px-4 bg-[#0F1115] text-[#94A3B8]">or</span>
+        </div>
       </div>
 
       {/* Login Form */}

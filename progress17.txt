@@ -204,3 +204,23 @@
   - Bitcoin DeFi design system: dark backgrounds (#0F1115), orange gradients, white/10 borders
   - Typecheck passes with no errors
 ---
+
+## Iteration 10 - US-010: Install and configure Recharts
+- Installed recharts package (version 3.7.0) via npm
+- Created charts directory structure at frontend/src/components/features/dashboard/charts/
+- Created ChartWrapper base component with consistent Bitcoin DeFi styling
+- Files changed:
+  - frontend/package.json (added recharts ^3.7.0 dependency)
+  - frontend/package-lock.json (updated with recharts dependencies)
+  - frontend/src/components/features/dashboard/charts/ChartWrapper.tsx (new component)
+  - PRD17.md (marked US-010 complete)
+- Learnings for future iterations:
+  - ChartWrapper provides consistent card styling for all chart components
+  - Exported design system tokens: chartColors (primary, secondary, accent, etc.)
+  - Exported chartGradient array for multi-segment charts (5 shades from orange to gold)
+  - Exported tooltipStyles object for Recharts Tooltip component styling
+  - All chart components should import these tokens for consistency
+  - Wrapper includes title prop and hover effect (border changes to orange/30)
+  - Recharts installs with 37 additional packages
+  - Typecheck passes with no errors
+---
