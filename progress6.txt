@@ -238,3 +238,36 @@
   - presigned URLs for thumbnails use longer expiry (7 days) than download URLs (15 min)
   - S3 upload via upload_fileobj() requires BytesIO.seek(0) after saving image
 ---
+
+## Iteration 12 - US-012: Create multipart upload initiate endpoint
+- Implemented multipart upload initiation for large PDF files (>20MB)
+- Created serializers in backend/apps/sources/serializers.py:
+  - MultipartUploadRequestSerializer: validates vault_id, filename, file_size, part_size, content_type
+  - MultipartUploadResponseSerializer: returns upload_id, pdf_upload_id, file_key, part_urls, expires_in
+  - Validation: part_size minimum 5MB, maximum 10,000 parts (AWS S3 limit)
+- Added initiate_multipart_upload() utility in backend/apps/sources/storage.py:
+  - Calls s3_client.create_multipart_upload() via boto3
+  - Generates presigned URL for each part using upload_part operation
+  - Calculates number of parts: ceiling division (file_size + part_size - 1) // part_size
+  - Returns upload_id (S3 multipart ID), file_key, and list of {part_number, upload_url}
+- Implemented multipart_upload_initiate() action in backend/apps/sources/views.py:
+  - Endpoint: POST /api/v1/sources/pdfs/multipart-upload/initiate/
+  - @action(detail=False) creates route /pdfs/multipart-upload/initiate/
+  - Validates user has contributor/owner vault permission
+  - Creates PDFUpload record with status='pending'
+  - Returns all data needed for client to upload parts individually
+- Files changed:
+  - backend/apps/sources/serializers.py (added multipart serializers)
+  - backend/apps/sources/storage.py (added initiate_multipart_upload)
+  - backend/apps/sources/views.py (added multipart_upload_initiate action)
+  - PRD6.md (marked US-012 complete)
+- Learnings for future iterations:
+  - AWS S3 multipart upload has maximum 10,000 parts limit
+  - Minimum part size is 5MB (except last part)
+  - boto3 create_multipart_upload returns UploadId needed for completion
+  - Each part gets its own presigned URL via upload_part operation
+  - Part numbers start at 1 (not 0) in S3 multipart API
+  - Ceiling division formula: (a + b - 1) // b
+  - Django system check passed (6 security warnings expected in dev mode)
+  - Pyright errors on Meta class overrides are false positives (normal Django pattern)
+---

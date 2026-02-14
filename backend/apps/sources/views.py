@@ -299,16 +299,57 @@ class SourceViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         """
         Override perform_create to set created_by from request.user (US-008).
+        Also handles nested creation from /vaults/{vault_id}/sources/ (US-015).
         """
-        serializer.save(created_by=self.request.user)
+        # Check if this is a nested creation from /vaults/{vault_id}/sources/
+        vault_pk = self.kwargs.get('vault_pk')
+
+        if vault_pk:
+            # Nested route: /api/v1/vaults/{vault_id}/sources/
+            # Validate user has Owner/Contributor role on vault
+            vault = get_object_or_404(Vault, id=vault_pk)
+
+            # Check if user is owner
+            if vault.owner == self.request.user:
+                serializer.save(created_by=self.request.user, vault=vault)
+                return
+
+            # Check if user has membership with Contributor or Owner role
+            membership = VaultMembership.objects.filter(
+                vault=vault,
+                user=self.request.user,
+                role__in=[RoleChoices.OWNER, RoleChoices.CONTRIBUTOR]
+            ).first()
+
+            if not membership:
+                from rest_framework.exceptions import PermissionDenied
+                raise PermissionDenied("You must be an Owner or Contributor to add sources to this vault.")
+
+            serializer.save(created_by=self.request.user, vault=vault)
+        else:
+            # Standard route: /api/v1/sources/
+            serializer.save(created_by=self.request.user)
 
     def get_queryset(self):
         """
         Override get_queryset to filter by vaults user has access to (US-008).
         Returns only sources from vaults where user is owner or member.
+        Also handles nested listing from /vaults/{vault_id}/sources/ (US-015).
         """
         user = self.request.user
 
+        # Check if this is a nested route from /vaults/{vault_id}/sources/
+        vault_pk = self.kwargs.get('vault_pk')
+
+        if vault_pk:
+            # Nested route: Filter by specific vault only
+            # Permission is already checked by VaultSourcePermission
+            return Source.objects.filter(
+                vault_id=vault_pk,
+                is_deleted=False
+            )
+
+        # Standard route: Get all accessible sources
         # Get vaults where user is owner
         owned_vault_ids = Vault.objects.filter(owner=user).values_list('id', flat=True)
 

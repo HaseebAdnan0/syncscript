@@ -252,10 +252,10 @@ Create a secure, collaborative Knowledge Vault system where researchers can crea
 **Description:** As a system, I need to auto-create owner membership when vault is created.
 
 **Acceptance Criteria:**
-- [ ] post_save signal on Vault
-- [ ] On created=True, create VaultMembership with role=OWNER
-- [ ] Sets added_by to vault.owner
-- [ ] Typecheck passes
+- [x] post_save signal on Vault
+- [x] On created=True, create VaultMembership with role=OWNER
+- [x] Sets added_by to vault.owner
+- [x] Typecheck passes
 
 ### US-025: Create vault mutation audit signal
 **Description:** As a system, I need to log vault creation and updates.
