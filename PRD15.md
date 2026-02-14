@@ -203,13 +203,13 @@ This feature uses Claude as the AI backbone with a simple chunking strategy (no 
 **Description:** As a user, I want to visualize research themes as a tag cloud.
 
 **Acceptance Criteria:**
-- [ ] Create `components/features/ai/ThemeCloud.tsx`
-- [ ] Props: `themes[{name, weight, source_count}]`
-- [ ] Render as weighted tag cloud (larger = more common)
-- [ ] Orange gradient coloring based on weight
-- [ ] Hover shows source count tooltip
-- [ ] Clickable tags (onClick prop for future filtering)
-- [ ] Typecheck passes
+- [x] Create `components/features/ai/ThemeCloud.tsx`
+- [x] Props: `themes[{name, weight, source_count}]`
+- [x] Render as weighted tag cloud (larger = more common)
+- [x] Orange gradient coloring based on weight
+- [x] Hover shows source count tooltip
+- [x] Clickable tags (onClick prop for future filtering)
+- [x] Typecheck passes
 
 ### US-017: Integrate ResearchInsightsPanel into vault dashboard
 **Description:** As a user, I want to see research insights on my vault dashboard.
