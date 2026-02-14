@@ -102,3 +102,29 @@
   - Document blockers clearly for user follow-up
 ---
 
+## Iteration 9 - US-008: Register models in Django admin
+- Registered Vault, VaultMembership, and AuditLog in Django admin
+- Files changed:
+  - backend/apps/vaults/admin.py (added 3 ModelAdmin classes with @admin.register decorators)
+  - PRD2.md (marked US-008 complete)
+- All checks passed: python manage.py check vaults, python manage.py check admin
+- Learnings for future iterations:
+  - Admin registration does not require database connection - only code validation
+  - Django check admin validates admin configuration without DB
+  - Use @admin.register decorator pattern for clean registration
+  - list_display arrays directly in ModelAdmin class definition
+---
+
+## Iteration 10 - US-009: Create VaultSerializer
+- Added VaultSerializer with all required fields and computed properties
+- Files changed:
+  - backend/apps/vaults/serializers.py (created VaultSerializer class)
+  - PRD2.md (marked US-009 as complete)
+- Learnings for future iterations:
+  - SerializerMethodField used for computed fields like member_count and user_role
+  - owner_username uses source='owner.username' for related field access
+  - get_user_role() checks request context for authenticated user and queries membership
+  - Django check passes without database connection for serializer validation
+  - Imported VaultMembership and AuditLog for future US-010 and US-011 (currently unused)
+---
+

@@ -75,12 +75,12 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need a service to auto-extract metadata from URLs using newspaper3k.
 
 **Acceptance Criteria:**
-- [ ] Add `newspaper3k>=0.2.8` and `lxml>=5.0` to requirements.txt
-- [ ] Create `extract_metadata(url: str) -> dict` function in `services.py`
-- [ ] Extract title, authors (list), publication_date (string or None), abstract (first 500 chars of text)
-- [ ] Set timeout of 10 seconds for download
-- [ ] On any exception, return `{'title': url, 'error': str(e)}`
-- [ ] Typecheck passes
+- [x] Add `newspaper3k>=0.2.8` and `lxml>=5.0` to requirements.txt
+- [x] Create `extract_metadata(url: str) -> dict` function in `services.py`
+- [x] Extract title, authors (list), publication_date (string or None), abstract (first 500 chars of text)
+- [x] Set timeout of 10 seconds for download
+- [x] On any exception, return `{'title': url, 'error': str(e)}`
+- [x] Typecheck passes
 
 ---
 

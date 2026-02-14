@@ -79,3 +79,24 @@
   - Multiple validation layers provide defense in depth against malicious files
   - Pyright typecheck passed with 0 errors
 ---
+
+## Iteration 5 - US-005: Create presigned URL generation utilities
+- Task was already completed in a previous session (commit 7773f05)
+- Verified implementation in backend/apps/sources/storage.py:
+  - generate_presigned_upload_url(vault_id, filename, content_type) → returns (url, file_key)
+  - generate_presigned_download_url(file_key, original_filename) → returns presigned URL
+  - Upload URLs expire in 1 hour (3600 seconds)
+  - Download URLs expire in 15 minutes (900 seconds)
+  - Uses SigV4 signature version via Config(signature_version='s3v4')
+  - Download URLs include Content-Disposition header for attachment download
+  - File paths use UUID to prevent collisions: vaults/{vault_id}/pdfs/{uuid}.pdf
+- Verified implementation works:
+  - Django system check passes (no issues)
+  - Module imports successfully (no syntax errors)
+  - PRD6.md already marked complete
+- Learnings for future iterations:
+  - Always check git history before re-implementing (git log -- <file>)
+  - Presigned URLs are generated via boto3 generate_presigned_url() method
+  - Upload URLs use 'put_object' operation, download URLs use 'get_object' operation
+  - Content-Disposition header triggers browser download with original filename
+---

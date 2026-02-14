@@ -40,3 +40,36 @@
   - Dev server starts quickly with Next.js 14.2.35 (~2.4s)
 ---
 
+## Iteration 4 - US-004: ShadCN UI Initialization
+- Ran `npx shadcn@latest init --defaults` to initialize ShadCN UI
+- Manually updated components.json from "new-york" to "default" style to match PRD requirements
+- Created src/lib/utils.ts with cn() helper function for className merging
+- ShadCN init automatically installed tailwindcss-animate dependency
+- ShadCN init automatically added CSS variables to globals.css
+- Verified typecheck passes
+- Files changed: frontend/components.json, frontend/src/lib/utils.ts, frontend/package.json, frontend/src/app/globals.css, PRD4.md
+- Learnings for future iterations:
+  - ShadCN init with --defaults flag uses "new-york" style by default, not "default" - need to manually update components.json
+  - The init command sets up all aliases correctly in components.json (@/components, @/lib/utils, etc.)
+  - CSS variables for colors are auto-injected into globals.css by ShadCN
+  - tailwindcss-animate is required for ShadCN components and auto-installed
+---
+
+## Iteration 5 - US-005: Base Component Library (Button, Card, Input, Badge)
+- Created Button component with CVA variants (primary, outline, ghost) and sizes (sm, md, lg)
+- Created Card component with six subcomponents (Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter)
+- Created Input component with bottom-border focus style
+- Created Badge component with four variants (default, success, warning, error)
+- All components use Bitcoin DeFi design tokens (primary, secondary, accent, surface, etc.)
+- All components use cn() utility for className merging
+- Verified typecheck passes
+- Files changed: frontend/src/components/ui/button.tsx, frontend/src/components/ui/card.tsx, frontend/src/components/ui/input.tsx, frontend/src/components/ui/badge.tsx, PRD4.md
+- Learnings for future iterations:
+  - CVA (class-variance-authority) allows clean variant management for components
+  - Button uses forwardRef pattern for ref forwarding to underlying HTML element
+  - Badge uses regular function component (no forwardRef needed for div wrapper)
+  - Card components export all six subcomponents for flexible composition
+  - Input extends React.InputHTMLAttributes<HTMLInputElement> for full HTML props
+  - All color tokens from tailwind.config.ts work seamlessly (primary, secondary, accent, surface, etc.)
+---
+

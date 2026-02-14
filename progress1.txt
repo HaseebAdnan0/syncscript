@@ -104,3 +104,40 @@ Learnings for future iterations:
 - Django system check is the typecheck for Django projects
 ---
 
+## Iteration 7 - Create ProfileUpdateSerializer (US-009)
+- Created ProfileUpdateSerializer in apps/users/serializers.py
+- Added fields: avatar_url, bio, institution (all optional in extra_kwargs)
+- Implemented validate_avatar_url to ensure non-empty URL
+- Implemented validate_bio to enforce 500 character limit
+- Implemented validate_institution to enforce 200 character limit
+- Django system check passes
+
+Files changed:
+- backend/apps/users/serializers.py (added ProfileUpdateSerializer class)
+- PRD1.md (marked US-009 complete)
+
+Learnings for future iterations:
+- ModelSerializer fields are optional by default, use extra_kwargs to explicitly mark as required=False
+- URLField in model already validates URL format, but custom validation can add extra checks
+- Length validation should check `if value and len(value) > limit` to allow None/empty values
+- Django system check is sufficient for typecheck - Pyright warnings on Django models are false positives
+---
+
+## Iteration 8 - Create password reset serializers (US-010)
+- Added PasswordResetRequestSerializer with email field (EmailField)
+- Added PasswordResetConfirmSerializer with uid, token, new_password fields
+- Implemented validate_new_password using Django's validate_password() function
+- new_password field has min_length=8, write_only=True
+- Django system check passes
+
+Files changed:
+- backend/apps/users/serializers.py (added PasswordResetRequestSerializer and PasswordResetConfirmSerializer)
+- PRD1.md (marked US-010 complete)
+
+Learnings for future iterations:
+- PasswordResetRequestSerializer is simple with just an email field
+- PasswordResetConfirmSerializer validates new password strength before reset
+- uid and token fields are strings (will be validated in view logic)
+- Password validation pattern same as RegisterSerializer: try/except with DjangoValidationError
+---
+
