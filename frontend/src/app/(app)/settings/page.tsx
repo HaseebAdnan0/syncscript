@@ -2,7 +2,7 @@
 
 import { Bell, User, Shield, Palette, Link } from 'lucide-react';
 import { NotificationPreferences } from '@/components/features/notifications/NotificationPreferences';
-import ConnectedAccounts from '@/components/features/settings/ConnectedAccounts';
+import { ConnectedAccounts } from '@/components/features/settings/ConnectedAccounts';
 
 export default function SettingsPage() {
   return (

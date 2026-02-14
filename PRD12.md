@@ -328,11 +328,11 @@ Add social authentication to SyncScript using Google and GitHub OAuth providers.
 **Description:** As a user, I want to access Connected Accounts from my settings page.
 
 **Acceptance Criteria:**
-- [ ] Import ConnectedAccounts into settings page
-- [ ] Add new section/tab: "Connected Accounts"
-- [ ] Position after password/security section
-- [ ] Include section heading and description
-- [ ] Typecheck passes
+- [x] Import ConnectedAccounts into settings page
+- [x] Add new section/tab: "Connected Accounts"
+- [x] Position after password/security section
+- [x] Include section heading and description
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---

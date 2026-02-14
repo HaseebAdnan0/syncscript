@@ -8,6 +8,7 @@ interface TutorialProviderProps {
   run: boolean;
   onFinish?: () => void;
   onSkip?: () => void;
+  onStepChange?: (stepIndex: number) => void;
   children?: ReactNode;
 }
 
@@ -20,10 +21,11 @@ export function TutorialProvider({
   run,
   onFinish,
   onSkip,
+  onStepChange,
   children,
 }: TutorialProviderProps) {
   const handleJoyrideCallback = (data: CallBackProps) => {
-    const { status, action, type } = data;
+    const { status, action, type, index } = data;
 
     // Tutorial finished
     if (status === STATUS.FINISHED || status === STATUS.SKIPPED) {
@@ -37,6 +39,11 @@ export function TutorialProvider({
     // Close button clicked
     if (action === ACTIONS.CLOSE && type === EVENTS.STEP_AFTER) {
       onSkip?.();
+    }
+
+    // Step changed (Next or Back clicked)
+    if (type === EVENTS.STEP_AFTER && (action === ACTIONS.NEXT || action === ACTIONS.PREV)) {
+      onStepChange?.(index);
     }
   };
 
