@@ -103,3 +103,20 @@
   - Component is client-side ('use client' directive)
   - TypeScript interface extends React.InputHTMLAttributes<HTMLInputElement>
 ---
+
+## Iteration 6 - US-006: Create gradient button component
+- Created `frontend/src/components/ui/GradientButton.tsx` with gradient styling and loading state
+- Files changed: frontend/src/components/ui/GradientButton.tsx (new file)
+- Learnings for future iterations:
+  - GradientButton uses React.forwardRef for form library compatibility
+  - Gradient: `bg-gradient-to-r from-[#EA580C] to-[#F7931A]` (orange to Bitcoin orange)
+  - Pill-shaped button: `rounded-full px-6 py-3`
+  - Glow shadow: `shadow-[0_0_20px_-5px_rgba(234,88,12,0.5)]` for premium feel
+  - Hover animation: `hover:scale-105 transition-all duration-300`
+  - isLoading prop: shows spinner with "Loading..." text, disables button
+  - disabled prop: reduces opacity to 50%, prevents hover scale, changes cursor
+  - Spinner matches Bitcoin DeFi aesthetic: white border with transparent top
+  - Component extends ButtonHTMLAttributes for full button compatibility
+  - Uses uppercase tracking-wider for bold CTA appearance
+  - Disabled state prevents scale animation on hover
+---

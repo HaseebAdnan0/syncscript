@@ -87,15 +87,15 @@ SyncScript needs a complete frontend authentication system that enables users to
 **Description:** As a user, I want styled buttons so that auth forms have the signature gradient CTA style.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/ui/GradientButton.tsx`
-- [ ] Gradient: `bg-gradient-to-r from-[#EA580C] to-[#F7931A]`
-- [ ] Pill shape: `rounded-full`
-- [ ] Glow shadow: `shadow-[0_0_20px_-5px_rgba(234,88,12,0.5)]`
-- [ ] Hover scale: `hover:scale-105`
-- [ ] Support `isLoading` prop showing spinner and disabling button
-- [ ] Support `disabled` prop with reduced opacity
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/ui/GradientButton.tsx`
+- [x] Gradient: `bg-gradient-to-r from-[#EA580C] to-[#F7931A]`
+- [x] Pill shape: `rounded-full`
+- [x] Glow shadow: `shadow-[0_0_20px_-5px_rgba(234,88,12,0.5)]`
+- [x] Hover scale: `hover:scale-105`
+- [x] Support `isLoading` prop showing spinner and disabling button
+- [x] Support `disabled` prop with reduced opacity
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 
