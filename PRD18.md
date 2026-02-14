@@ -92,12 +92,12 @@ Implement a global full-text search system for SyncScript that enables researche
 **Description:** As a developer, I need a background task to update Annotation search vectors when content changes.
 
 **Acceptance Criteria:**
-- [ ] Create `update_annotation_search_vector` task in tasks.py
-- [ ] Task accepts annotation_id parameter
-- [ ] Combines content field with weight A
-- [ ] Uses `SearchVector` with `config='english'`
-- [ ] Task is idempotent
-- [ ] Typecheck passes
+- [x] Create `update_annotation_search_vector` task in tasks.py
+- [x] Task accepts annotation_id parameter
+- [x] Combines content field with weight A
+- [x] Uses `SearchVector` with `config='english'`
+- [x] Task is idempotent
+- [x] Typecheck passes
 
 ---
 

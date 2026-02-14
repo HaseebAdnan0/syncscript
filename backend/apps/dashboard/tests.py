@@ -6,7 +6,7 @@ from rest_framework.test import APIClient
 from rest_framework import status
 
 from apps.users.models import User
-from apps.vaults.models import Vault, VaultMembership
+from apps.vaults.models import Vault, VaultMembership, AuditLog
 from apps.sources.models import Source
 from apps.annotations.models import Annotation
 

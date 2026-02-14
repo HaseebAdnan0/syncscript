@@ -92,3 +92,24 @@
   - Combining multiple animation properties (bounce + hover scale) adds polish
   - Icons in gradient circles create strong visual anchors for stat cards
 ---
+
+## Iteration 5 - US-005: Create Hero Content (Headlines and CTAs)
+- Created `frontend/src/components/marketing/HeroContent.tsx` component
+- Implemented two-line headline: "Collaborative Research" + "Reimagined" with gradient
+- "Reimagined" uses gradient text: `bg-gradient-to-r from-[#F7931A] to-[#FFD600] bg-clip-text text-transparent`
+- Subheadline with muted color (#94A3B8) describes value proposition
+- "Start Free" button: primary gradient style with orange shadow, links to /register
+- "Watch Demo" button: outline style with white/20 border, hover changes to orange border
+- Headlines use Space Grotesk font via `font-heading` class
+- Buttons have uppercase tracking, rounded-full, and hover:scale-105 transitions
+- Refactored landing page to import and use HeroContent component
+- Files changed:
+  - Created: `frontend/src/components/marketing/HeroContent.tsx`
+  - Modified: `frontend/src/app/(marketing)/page.tsx` (replaced inline content with component)
+- Learnings for future iterations:
+  - Gradient text requires both `bg-clip-text` and `text-transparent` classes
+  - Using Link from next/link for navigation is better than anchor tags for internal routes
+  - Separating content into components makes the landing page more maintainable
+  - Button hover effects (scale, border color changes) add polish to CTAs
+  - Responsive flex-col sm:flex-row allows buttons to stack on mobile
+---

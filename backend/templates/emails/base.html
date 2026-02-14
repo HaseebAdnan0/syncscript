@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{% block title %}SyncScript{% endblock %}</title>
+    <!--[if mso]>
+    <style type="text/css">
+        body, table, td {font-family: Arial, Helvetica, sans-serif !important;}
+    </style>
+    <![endif]-->
+</head>
+<body style="margin: 0; padding: 0; background-color: #030304; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+    <!-- Preheader text (hidden but shows in email preview) -->
+    <div style="display: none; max-height: 0; overflow: hidden; opacity: 0; mso-hide: all;">
+        {% block preheader %}{% endblock %}
+    </div>
+
+    <!-- Email wrapper -->
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #030304;">
+        <tr>
+            <td style="padding: 40px 20px;">
+                <!-- Main container -->
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="max-width: 600px; margin: 0 auto; background-color: #0F1115; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; overflow: hidden;">
+
+                    <!-- Header with logo -->
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #EA580C 0%, #F7931A 100%); padding: 40px 30px; text-align: center;">
+                            <h1 style="margin: 0; padding: 0; color: #FFFFFF; font-size: 28px; font-weight: 700; letter-spacing: -0.02em;">
+                                <span style="background: linear-gradient(to right, #FFFFFF 0%, #FFD600 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">SyncScript</span>
+                            </h1>
+                            <p style="margin: 8px 0 0 0; padding: 0; color: rgba(255, 255, 255, 0.9); font-size: 14px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em;">
+                                Collaborative Research Engine
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Main content area -->
+                    <tr>
+                        <td style="padding: 40px 30px;">
+                            {% block content %}
+                            <!-- Child templates insert content here -->
+                            {% endblock %}
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style="padding: 30px; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                <tr>
+                                    <td style="padding-bottom: 16px;">
+                                        <p style="margin: 0; padding: 0; color: #94A3B8; font-size: 14px; line-height: 1.6;">
+                                            Questions? <a href="{{ support_url|default:'https://syncscript.com/support' }}" style="color: #F7931A; text-decoration: none; font-weight: 500;">Visit our support page</a>
+                                        </p>
+                                    </td>
+                                </tr>
+                                {% block unsubscribe %}
+                                <!-- Unsubscribe link for notification emails -->
+                                {% endblock %}
+                                <tr>
+                                    <td style="padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.05);">
+                                        <p style="margin: 0; padding: 0; color: #64748B; font-size: 12px; line-height: 1.5;">
+                                            &copy; {% now "Y" %} SyncScript. All rights reserved.
+                                        </p>
+                                        <p style="margin: 8px 0 0 0; padding: 0; color: #64748B; font-size: 12px; line-height: 1.5;">
+                                            Collaborative research powered by blockchain-grade security
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

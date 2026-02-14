@@ -76,12 +76,12 @@ Add social authentication to SyncScript using Google and GitHub OAuth providers.
 **Description:** As a user, I want to click "Continue with Google" and be redirected to Google's consent screen.
 
 **Acceptance Criteria:**
-- [ ] Create `GET /api/v1/auth/google/` endpoint in `apps/users/views.py`
-- [ ] Accept optional `next` query param for post-auth redirect
-- [ ] Store `next` URL in session for callback retrieval
-- [ ] Redirect to Google OAuth consent screen via allauth
-- [ ] Handle missing/invalid Google credentials with 503 error
-- [ ] Typecheck passes
+- [x] Create `GET /api/v1/auth/google/` endpoint in `apps/users/views.py`
+- [x] Accept optional `next` query param for post-auth redirect
+- [x] Store `next` URL in session for callback retrieval
+- [x] Redirect to Google OAuth consent screen via allauth
+- [x] Handle missing/invalid Google credentials with 503 error
+- [x] Typecheck passes
 
 ---
 
