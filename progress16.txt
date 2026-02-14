@@ -22,3 +22,20 @@
   - Typecheck passes after cleanup
   - Verified in browser at http://localhost:3000
 ---
+
+## Iteration 2 - US-002: Create Hero Section Background and Grid Pattern
+- Created `frontend/src/components/marketing/HeroBackground.tsx` component
+- Implemented CSS grid pattern using linear gradients (80px x 80px grid with rgba(255,255,255,0.05))
+- Added radial gradient vignette that fades from transparent center to #030304 at edges
+- Background uses correct color token #030304
+- All styling is pure CSS, no images required
+- Integrated HeroBackground into landing page hero section
+- Files changed:
+  - Created: `frontend/src/components/marketing/HeroBackground.tsx`
+  - Modified: `frontend/src/app/(marketing)/page.tsx` (added import and integration)
+- Learnings for future iterations:
+  - CSS grid patterns work well with linear-gradient overlays
+  - Radial gradients create effective vignette effects for depth
+  - Using absolute positioning with inset-0 allows full background coverage
+  - z-index layering (relative z-10 on content) ensures text appears above background
+---
