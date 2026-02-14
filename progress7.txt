@@ -187,3 +187,17 @@
   - Empty interface extending another type should use type alias instead
   - Changes may be auto-committed by linters/hooks during other operations
 ---
+
+## Iteration 11 - US-011: Build registration page UI
+- Verified registration page already exists at frontend/src/app/(auth)/register/page.tsx
+- Page was already committed with all required features
+- Files changed: None (already existed)
+- Learnings for future iterations:
+  - Registration page follows same pattern as login page (GlassCard, FormInput, GradientButton)
+  - Page uses controlled form inputs with useState for: name, email, password, confirmPassword
+  - Title uses gradient text: "Create Account" from Bitcoin orange to gold
+  - Includes link to /login for existing users
+  - Form is presentational only - validation and submission logic to be added in US-012
+  - Pre-existing TS error in vaults/[id]/page.tsx was resolved by clean build
+  - Typecheck passes successfully
+---

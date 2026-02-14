@@ -167,14 +167,14 @@ Integrate SyncScript's frontend with the existing backend WebSocket system and n
 **Description:** As a user, I want to receive browser push notifications for high-priority events even when the tab is not focused.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/lib/pusher.ts` for Pusher client setup
-- [ ] Initialize Pusher with `NEXT_PUBLIC_PUSHER_KEY` and `NEXT_PUBLIC_PUSHER_CLUSTER`
-- [ ] Subscribe to user's private notification channel on login
-- [ ] Handle `member.joined` and `mention.created` events
-- [ ] Request browser notification permission when user enables push
-- [ ] Display native browser notification with event details
-- [ ] Click notification focuses app tab
-- [ ] Typecheck passes
+- [x] Create `frontend/src/lib/pusher.ts` for Pusher client setup
+- [x] Initialize Pusher with `NEXT_PUBLIC_PUSHER_KEY` and `NEXT_PUBLIC_PUSHER_CLUSTER`
+- [x] Subscribe to user's private notification channel on login
+- [x] Handle `member.joined` and `mention.created` events
+- [x] Request browser notification permission when user enables push
+- [x] Display native browser notification with event details
+- [x] Click notification focuses app tab
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-014: Implement sound notification with global toggle
