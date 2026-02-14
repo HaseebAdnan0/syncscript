@@ -115,13 +115,13 @@ SyncScript needs a complete frontend authentication system that enables users to
 **Description:** As a user, I want auth pages to have a consistent centered layout so that the experience feels cohesive.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/app/(auth)/layout.tsx`
-- [ ] Full viewport height, centered content
-- [ ] Dark background `bg-[#030304]`
-- [ ] Optional floating decorative elements (subtle gradients)
-- [ ] Slot for page content
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/app/(auth)/layout.tsx`
+- [x] Full viewport height, centered content
+- [x] Dark background `bg-[#030304]`
+- [x] Optional floating decorative elements (subtle gradients)
+- [x] Slot for page content
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 

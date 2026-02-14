@@ -109,14 +109,14 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 **Description:** As a user, I want to filter sources by type, date range, and contributor so I can find specific materials quickly.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/sources/SourcesFilterBar.tsx`
-- [ ] Type filter dropdown: All Types, URL, PDF, Citation, Article
-- [ ] Date filter dropdown: Any Time, Today, This Week, This Month, Custom Range
-- [ ] Contributor filter dropdown populated from vault members
-- [ ] Clear filters button appears when any filter active
-- [ ] Filters update URL search params for shareability
-- [ ] Uses glass morphism dropdown styling
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/sources/SourcesFilterBar.tsx`
+- [x] Type filter dropdown: All Types, URL, PDF, Citation, Article
+- [x] Date filter dropdown: Any Time, Today, This Week, This Month, Custom Range
+- [x] Contributor filter dropdown populated from vault members
+- [x] Clear filters button appears when any filter active
+- [x] Filters update URL search params for shareability
+- [x] Uses glass morphism dropdown styling
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---

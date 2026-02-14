@@ -90,11 +90,11 @@ export function useNotifications(options: UseNotificationsOptions = {}) {
       // Update notifications list cache
       queryClient.setQueryData<PaginatedResponse<Notification>>(
         [...NOTIFICATIONS_QUERY_KEY, { page, limit, isRead }],
-        (old) => {
+        (old: PaginatedResponse<Notification> | undefined) => {
           if (!old) return old;
           return {
             ...old,
-            results: old.results.map((notification) =>
+            results: old.results.map((notification: Notification) =>
               notification.id === updatedNotification.id
                 ? updatedNotification
                 : notification
