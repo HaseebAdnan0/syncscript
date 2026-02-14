@@ -358,3 +358,29 @@
   - get_client_ip handles X-Forwarded-For header for proxy/load balancer scenarios
 ---
 
+
+## Iteration 14 - US-014: Send welcome email after verification (Already Complete)
+- Discovered US-014 was already implemented in commit ded3a28
+- Implementation details verified:
+  - Added send_welcome_email_task import to views.py
+  - Added is_first_verification check before setting email_verified = True
+  - Welcome email only queued on first-time verification (not re-verification)
+  - Exception handling with fallback if Celery unavailable
+  - Logger warning if task queueing fails
+- Verified implementation with custom test script - all tests pass:
+  - Welcome email task called on first verification
+  - Task called with correct user_id parameter
+  - User email_verified set to True after verification
+  - Reusing same token returns 400 (token deleted after use)
+- All 23 authentication tests pass (apps.users.tests.test_auth)
+- Django system check passes (only pre-existing allauth warnings)
+- PRD11.md already marked complete
+- Files already committed:
+  - backend/apps/users/views.py (commit ded3a28)
+  - PRD11.md (commit 49dd486)
+- Learnings for future iterations:
+  - Always check git log to see if task already completed in previous session
+  - Task correctly implemented with first-time verification check
+  - Exception handling ensures graceful fallback if Celery down
+  - is_first_verification = not user.email_verified captures state before update
+---
