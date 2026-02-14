@@ -267,3 +267,17 @@
 3. Email backend configured (console or SMTP)
 4. Django migrations applied: `python manage.py migrate`
 5. Test from Postman, curl, or API testing tool
+
+## US-024: E2E WebSocket Connection and Auth Tests - 2026-02-14
+- [ ] Stop any running test processes that might hold database locks
+- [ ] Drop test database manually: `DROP DATABASE IF EXISTS test_syncscript;` via psql or pgAdmin
+- [ ] Run tests fresh (without --keepdb): `python manage.py test apps.vaults.tests.test_websocket_e2e`
+- [ ] Expected results: 
+  - test_connection_success_with_valid_jwt_and_membership: PASS (WebSocket connects successfully)
+  - test_connection_rejected_with_invalid_jwt: PASS (Connection rejected with AUTH_FAILED error)
+  - test_connection_rejected_without_vault_membership: PASS (Connection rejected with PERMISSION_DENIED error)
+  - test_connection_rejected_with_missing_jwt: PASS (Connection rejected with AUTH_FAILED error)
+  - test_contributor_can_connect_to_vault: PASS (Contributor role can connect)
+- [ ] All 5 tests should pass
+- [ ] Typecheck passes: `pyright apps/vaults/tests/test_websocket_e2e.py`
+

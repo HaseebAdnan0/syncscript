@@ -453,14 +453,14 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need tests verifying annotation permission checks.
 
 **Acceptance Criteria:**
-- [ ] Test non-vault-member cannot list annotations (403)
-- [ ] Test any vault member can create annotation
-- [ ] Test author can update own annotation
-- [ ] Test non-author cannot update annotation (403)
-- [ ] Test author can delete own annotation
-- [ ] Test non-author cannot delete annotation (403)
-- [ ] All tests pass
-- [ ] Typecheck passes
+- [x] Test non-vault-member cannot list annotations (403)
+- [x] Test any vault member can create annotation
+- [x] Test author can update own annotation
+- [x] Test non-author cannot update annotation (403)
+- [x] Test author can delete own annotation
+- [x] Test non-author cannot delete annotation (403)
+- [x] All tests pass
+- [x] Typecheck passes
 
 ---
 

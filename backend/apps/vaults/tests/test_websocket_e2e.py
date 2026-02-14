@@ -31,17 +31,17 @@ class WebSocketConnectionAuthTests(TransactionTestCase):
     def setUp(self) -> None:
         """Create test fixtures."""
         # Create users
-        self.user1 = User.objects.create_user(
+        self.user1 = User.objects.create_user(  # type: ignore[attr-defined]
             username='testuser1',
             email='user1@example.com',
             password='testpass123'
         )
-        self.user2 = User.objects.create_user(
+        self.user2 = User.objects.create_user(  # type: ignore[attr-defined]
             username='testuser2',
             email='user2@example.com',
             password='testpass123'
         )
-        self.user_no_access = User.objects.create_user(
+        self.user_no_access = User.objects.create_user(  # type: ignore[attr-defined]
             username='noaccess',
             email='noaccess@example.com',
             password='testpass123'

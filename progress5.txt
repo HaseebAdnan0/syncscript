@@ -480,3 +480,25 @@
   - Database setup issues can be bypassed by creating verification scripts that use Django setup but not TestCase
 ---
 
+## Iteration 23 - US-024: Create E2E WebSocket tests (connection and auth)
+- Created test_websocket_e2e.py with 5 E2E WebSocket tests for connection and authentication
+- Tests cover: valid JWT + membership, invalid JWT rejection, missing JWT rejection, no membership rejection, contributor access
+- Used TransactionTestCase instead of TestCase for async test compatibility
+- Fixed vault_id type: updated routing pattern from \d+ to UUID pattern ([0-9a-f]{8}-...) 
+- Updated VaultConsumer to handle vault_id as UUID string instead of converting to int
+- Removed duplicate owner membership creation (signal auto-creates it)
+- Configured InMemoryChannelLayer for tests to avoid Redis dependency
+- Files changed: apps/vaults/tests/test_websocket_e2e.py (new), apps/vaults/routing.py, apps/vaults/consumers.py
+- Encountered database test cleanup issues with --keepdb flag
+- Tests NOT passing yet - database deadlock prevents clean test run
+- Learnings for future iterations:
+  - Vault model uses UUID primary key, not integer - routing must match
+  - TransactionTestCase required for async WebSocket tests with database access
+  - InMemoryChannelLayer works for tests without Redis
+  - create_owner_membership signal auto-creates OWNER membership on vault creation
+  - Database deadlocks can occur with --keepdb if test processes don't clean up properly
+  - WebSocketCommunicator from channels.testing for E2E testing
+  - Test database cleanup requires proper isolation between test runs
+  - Need to avoid --keepdb for WebSocket tests or ensure proper database cleanup
+---
+
