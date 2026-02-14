@@ -21,7 +21,7 @@
 - [x] US-016: Create toast notification system
 - [x] US-017: Build profile page layout with tabs
 - [x] US-018: Build profile info form
-- [ ] US-019: Build security tab with password change
+- [x] US-019: Build security tab with password change
 - [ ] US-020: Add logout functionality to app header
 - [ ] US-021: Add password strength indicator component
 - [ ] US-022: Integration test - complete auth flow
