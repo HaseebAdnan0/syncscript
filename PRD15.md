@@ -250,13 +250,13 @@ This feature uses Claude as the AI backbone with a simple chunking strategy (no 
 **Description:** As a user, I want to see and switch between my past conversations.
 
 **Acceptance Criteria:**
-- [ ] Create `components/features/ai/ChatHistory.tsx`
-- [ ] Props: `vaultId`, `conversations[]`, `activeId`, `onSelect`, `onNewChat`
-- [ ] List of conversation previews (first message truncated)
-- [ ] Active conversation highlighted
-- [ ] "New Chat" button at top
-- [ ] Shows relative timestamps
-- [ ] Typecheck passes
+- [x] Create `components/features/ai/ChatHistory.tsx`
+- [x] Props: `vaultId`, `conversations[]`, `activeId`, `onSelect`, `onNewChat`
+- [x] List of conversation previews (first message truncated)
+- [x] Active conversation highlighted
+- [x] "New Chat" button at top
+- [x] Shows relative timestamps
+- [x] Typecheck passes
 
 ### US-021: Integrate AskAI chat into vault sidebar
 **Description:** As a user, I want to access the AI chat from my vault view.

@@ -600,3 +600,44 @@
   - Clean up localStorage after retrieving stored values to prevent stale data
   - Email verification flow now supports returning users to their intended destination
 ---
+
+## Iteration 23 - US-023: Handle vault invites for unverified users
+- Updated backend vault permissions to check email verification status
+- Added _check_email_verified helper function in apps/vaults/permissions.py
+- Updated all three permission classes (IsVaultOwner, IsVaultContributor, IsVaultMember)
+  - Each permission check now calls _check_email_verified first
+  - Raises PermissionDenied with email_verification_required=True attribute for unverified users
+- Updated custom exception handler in apps/users/exceptions.py
+  - Detects email_verification_required attribute on PermissionDenied exceptions
+  - Adds email_verification_required flag to API response data
+- Updated frontend API interceptor in lib/api.ts
+  - Detects 403 responses with email_verification_required flag
+  - Dispatches custom 'email-verification-required' window event
+- Created EmailVerificationModal component
+  - Shows when vault access is blocked for unverified users
+  - Displays user's email address and verification message
+  - "Resend Verification Email" button with 60-second countdown
+  - "Go to Verification Page" link
+  - Bitcoin DeFi dark theme styling with orange gradients
+- Updated app layout to listen for email-verification-required event
+  - Added useState for showVerificationModal
+  - Added useEffect to listen for custom window event
+  - Renders EmailVerificationModal component
+- TypeScript typecheck passes
+- Django system check passes (only pre-existing deployment warnings)
+- Files changed:
+  - backend/apps/vaults/permissions.py
+  - backend/apps/users/exceptions.py
+  - backend/test_email_verification_permissions.py (test script)
+  - frontend/src/lib/api.ts
+  - frontend/src/components/features/auth/EmailVerificationModal.tsx (new)
+  - frontend/src/app/(app)/layout.tsx
+  - PRD11.md (marked US-023 complete)
+- Learnings for future iterations:
+  - Permission classes can raise custom exceptions with attributes
+  - Custom exception handler can modify response data based on exception attributes
+  - Window events are a clean way to communicate between API layer and UI layer
+  - Modal pattern works well for blocking user actions that require verification
+  - Unverified users can be vault members but cannot access vault content
+  - 403 with special flag is better UX than hard redirect (allows inline modal)
+---

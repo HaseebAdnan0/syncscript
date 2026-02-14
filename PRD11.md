@@ -341,12 +341,12 @@ Replace stub email implementation with production-ready email system using Hosti
 **Description:** As an unverified user accepting a vault invite, I should be prompted to verify my email.
 
 **Acceptance Criteria:**
-- [ ] Update vault invite acceptance logic in backend
-- [ ] Allow unverified users to be added to vault memberships
-- [ ] When unverified user tries to access vault content, return 403 with `email_verification_required: true`
-- [ ] Frontend shows modal: "Verify your email to access this vault"
-- [ ] Modal has "Resend Verification" button and "Check your inbox" message
-- [ ] Typecheck passes
+- [x] Update vault invite acceptance logic in backend
+- [x] Allow unverified users to be added to vault memberships
+- [x] When unverified user tries to access vault content, return 403 with `email_verification_required: true`
+- [x] Frontend shows modal: "Verify your email to access this vault"
+- [x] Modal has "Resend Verification" button and "Check your inbox" message
+- [x] Typecheck passes
 
 ---
 

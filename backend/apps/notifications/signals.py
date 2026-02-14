@@ -151,6 +151,8 @@ def annotation_created(sender, instance, created, **kwargs):  # type: ignore[mis
 
     Creates annotation_reply notification for the parent annotation author
     when someone replies to their annotation.
+
+    Also creates mention notifications for any @mentioned users in the annotation.
     """
     del sender, kwargs  # Mark unused but required params
 
@@ -158,38 +160,80 @@ def annotation_created(sender, instance, created, **kwargs):  # type: ignore[mis
         # Only handle new annotations, not updates
         return
 
-    # Only handle replies (annotations with a parent)
-    if not instance.parent:
-        return
-
-    # Don't notify if replying to own annotation
-    if instance.parent.user == instance.user:
-        return
-
-    # Get preview of reply content (first 100 chars)
+    # Get preview of annotation content (first 100 chars)
     preview = instance.content[:100] + "..." if len(instance.content) > 100 else instance.content
 
-    notification = create_notification(
-        user=instance.parent.user,
-        notification_type="annotation_reply",
-        title=f"Reply to your annotation",
-        body=f"{instance.user.username} replied to your annotation: {preview}",
-        data={
-            "source_id": instance.source.id,
-            "annotation_id": instance.id,
-            "parent_id": instance.parent.id,
-            "replier_name": instance.user.username,
-            "preview": preview,
-        },
-    )
+    # Handle annotation_reply notification if this is a reply
+    if instance.parent:
+        # Don't notify if replying to own annotation
+        if instance.parent.user != instance.user:
+            notification = create_notification(
+                user=instance.parent.user,
+                notification_type="annotation_reply",
+                title=f"Reply to your annotation",
+                body=f"{instance.user.username} replied to your annotation: {preview}",
+                data={
+                    "source_id": instance.source.id,
+                    "annotation_id": instance.id,
+                    "parent_id": instance.parent.id,
+                    "replier_name": instance.user.username,
+                    "preview": preview,
+                },
+            )
 
-    if notification:
-        logger.info(
-            f"Created annotation_reply notification for user {instance.parent.user.id} "
-            f"about reply {instance.id} to annotation {instance.parent.id}"
-        )
-    else:
-        logger.debug(
-            f"Skipped annotation_reply notification for user {instance.parent.user.id} "
-            f"(preferences or mute)"
-        )
+            if notification:
+                logger.info(
+                    f"Created annotation_reply notification for user {instance.parent.user.id} "
+                    f"about reply {instance.id} to annotation {instance.parent.id}"
+                )
+            else:
+                logger.debug(
+                    f"Skipped annotation_reply notification for user {instance.parent.user.id} "
+                    f"(preferences or mute)"
+                )
+
+    # Handle @mention notifications
+    from apps.notifications.mentions import extract_mentions, resolve_mentions
+
+    # Extract mentioned usernames
+    mentioned_usernames = extract_mentions(instance.content)
+
+    if mentioned_usernames:
+        # Resolve to vault members
+        mentioned_users = resolve_mentions(mentioned_usernames, instance.source.vault.id)
+
+        # Track users who already received annotation_reply notification
+        already_notified_user_id = instance.parent.user.id if instance.parent else None
+
+        for mentioned_user in mentioned_users:
+            # Skip self-mentions
+            if mentioned_user.id == instance.user.id:
+                continue
+
+            # Don't duplicate notification if user already got annotation_reply
+            if mentioned_user.id == already_notified_user_id:
+                continue
+
+            notification = create_notification(
+                user=mentioned_user,
+                notification_type="mention",
+                title=f"{instance.user.username} mentioned you",
+                body=f"{instance.user.username} mentioned you in an annotation: {preview}",
+                data={
+                    "source_id": instance.source.id,
+                    "annotation_id": instance.id,
+                    "mentioner_name": instance.user.username,
+                    "preview": preview,
+                },
+            )
+
+            if notification:
+                logger.info(
+                    f"Created mention notification for user {mentioned_user.id} "
+                    f"in annotation {instance.id}"
+                )
+            else:
+                logger.debug(
+                    f"Skipped mention notification for user {mentioned_user.id} "
+                    f"(preferences or mute)"
+                )

@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppHeader } from '@/components/features/notifications/AppHeader';
 import { Sidebar } from '@/components/features/dashboard/Sidebar';
 import OnboardingFlow from '@/components/features/onboarding/OnboardingFlow';
 import GlobalSearch from '@/components/features/search/GlobalSearch';
+import EmailVerificationModal from '@/components/features/auth/EmailVerificationModal';
 import { useAuthStore } from '@/stores/authStore';
 import { useGlobalSearchShortcut } from '@/hooks/useGlobalSearchShortcut';
 
@@ -17,6 +18,19 @@ export default function AppLayout({ children }: AppLayoutProps) {
   const router = useRouter();
   const { user, isLoading } = useAuthStore();
   const { isOpen, close } = useGlobalSearchShortcut();
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
+
+  // Listen for email verification requirement from API interceptor
+  useEffect(() => {
+    const handleVerificationRequired = () => {
+      setShowVerificationModal(true);
+    };
+
+    window.addEventListener('email-verification-required', handleVerificationRequired);
+    return () => {
+      window.removeEventListener('email-verification-required', handleVerificationRequired);
+    };
+  }, []);
 
   // Redirect unauthenticated users to login
   // Redirect unverified users to verification pending page
@@ -56,6 +70,10 @@ export default function AppLayout({ children }: AppLayoutProps) {
       </div>
       <OnboardingFlow />
       <GlobalSearch isOpen={isOpen} onClose={close} />
+      <EmailVerificationModal
+        isOpen={showVerificationModal}
+        onClose={() => setShowVerificationModal(false)}
+      />
     </div>
   );
 }

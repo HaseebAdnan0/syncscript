@@ -557,3 +557,67 @@ Learnings for future iterations:
 - Manual verification tasks must be appended to .planning/MANUAL_VERIFICATION.md per CLAUDE.md rules
 ---
 
+## Iteration 19 - US-018: Create AskAIChat component
+- Created AskAIChat component with full chat interface for vault Q&A
+- Implemented message list with user/assistant message display
+- User messages: right-aligned, orange gradient bubbles
+- Assistant messages: left-aligned, glass card style with citations section
+- Added input field with send button at bottom
+- Enter key support for sending messages (Shift+Enter prevented)
+- Integrated auto-scroll to latest message using useRef and useEffect
+- Citations displayed as clickable orange pill chips with hover tooltips showing excerpts
+- Loading state with bouncing orange dots and "Thinking..." text
+- Empty state with Sparkles icon guides users on AI chat functionality
+- Optimistic UI updates: user message added immediately before API call
+- Props fully typed: vaultId, conversationId?, onNewConversation callback
+- API integration placeholder with TODO comment ready for US-021
+- Used underscore prefix (_vaultId) to suppress unused var warning until US-021
+- Bitcoin DeFi design: gradient buttons, glass morphism, orange accents
+- Typecheck passes successfully
+- Commit successful: 82506fd
+
+Files changed:
+- frontend/src/components/features/ai/AskAIChat.tsx (created)
+- PRD15.md (marked US-018 complete)
+
+Learnings for future iterations:
+- TypeScript unused parameter warnings: use underscore prefix (_param) instead of eslint comments
+- Auto-scroll pattern: useRef on anchor div + scrollIntoView in useEffect on messages change
+- Optimistic UI: add user message immediately, rollback on error for snappy UX
+- Citation pills should show truncated title with full excerpt in hover tooltip
+- Loading indicators in chat: bouncing dots with staggered animation delays (0ms, 150ms, 300ms)
+- Enter key handling: check !e.shiftKey to allow Shift+Enter for newlines (future feature)
+- Message timestamps: use toLocaleTimeString() for clean time display
+- Empty state in chat should explain what AI can do to encourage first interaction
+- API integration: Leave TODO comments for future wiring tasks with user story number
+---
+
+
+## Iteration 20 - US-019: Create ChatMessage component
+- Created ChatMessage component for displaying chat messages with citations
+- User messages: right-aligned, orange gradient bubbles (rounded-2xl with rounded-br-none)
+- Assistant messages: left-aligned, glass card style (bg-[#0F1115], border, rounded-bl-none)
+- Citations displayed as orange pill badges with hover tooltips showing excerpts
+- Document icon SVG included in citation pills for visual context
+- Tooltip positioning: absolute bottom-full with downward arrow
+- Timestamp displayed below message bubbles with locale-formatted time
+- Max width 75% for messages to prevent overly wide bubbles
+- All props fully typed: role (user/assistant), content, citations[], timestamp
+- Bitcoin DeFi design: gradient backgrounds for user, glass morphism for assistant, orange pill badges for citations
+- Typecheck passes successfully
+- Commit successful: 852eb97
+
+Files changed:
+- frontend/src/components/features/ai/ChatMessage.tsx (created)
+- PRD15.md (marked US-019 complete)
+
+Learnings for future iterations:
+- User messages use rounded-br-none to point right, assistant use rounded-bl-none to point left
+- Citations should be separate from message bubble for cleaner UI (not inline)
+- Hover tooltips on citations show full excerpt for context without cluttering UI
+- Document icon SVG adds visual clarity to citation pills (shows it's a source reference)
+- Tooltip arrow uses border-t-4 with transparent left/right borders for downward triangle
+- Timestamp formatting: toLocaleTimeString with hour/minute only keeps it concise
+- max-w-[75%] prevents messages from spanning full width for better chat bubble aesthetics
+- whitespace-pre-wrap preserves line breaks in message content
+---

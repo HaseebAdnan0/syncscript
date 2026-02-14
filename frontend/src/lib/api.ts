@@ -45,13 +45,25 @@ const processQueue = (error: unknown) => {
   failedQueue = [];
 };
 
-// Response interceptor: Handle 401 errors and token refresh
+// Response interceptor: Handle 401 errors, token refresh, and email verification
 api.interceptors.response.use(
   (response) => {
     return response;
   },
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+
+    // Check for email verification requirement (403 with email_verification_required flag)
+    if (error.response?.status === 403) {
+      const responseData = error.response.data as { email_verification_required?: boolean };
+      if (responseData?.email_verification_required) {
+        // Emit custom event for email verification requirement
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('email-verification-required'));
+        }
+        return Promise.reject(error);
+      }
+    }
 
     // If error is 401 and we haven't retried yet
     if (error.response?.status === 401 && !originalRequest._retry) {
