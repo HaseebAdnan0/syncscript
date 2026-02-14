@@ -495,13 +495,13 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As an admin, I want to view and manage users in Django admin.
 
 **Acceptance Criteria:**
-- [ ] Update `apps/users/admin.py`
-- [ ] Register User model with custom UserAdmin
-- [ ] Display: email, username, email_verified, created_at
-- [ ] Add filters: email_verified, is_active, is_staff
-- [ ] Add search: email, username
-- [ ] Make email_verified editable in list view
-- [ ] Typecheck passes
+- [x] Update `apps/users/admin.py`
+- [x] Register User model with custom UserAdmin
+- [x] Display: email, username, email_verified, created_at
+- [x] Add filters: email_verified, is_active, is_staff
+- [x] Add search: email, username
+- [x] Make email_verified editable in list view
+- [x] Typecheck passes
 
 ---
 

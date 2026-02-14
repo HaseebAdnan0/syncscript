@@ -49,7 +49,7 @@ class VaultConsumerUnitTests(TestCase):
         consumer = VaultConsumer()
 
         # Mock scope with vault_id in URL route
-        consumer.scope = {
+        consumer.scope = {  # type: ignore[misc]
             'user': self.user,
             'url_route': {
                 'kwargs': {

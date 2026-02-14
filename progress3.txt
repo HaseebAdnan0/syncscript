@@ -771,3 +771,29 @@
   - Pagination on top-level only prevents pagination confusion with nested replies
   - Conditional queryset filtering based on kwargs.get('source_pk') handles both nested and direct routes
 ---
+## Iteration 32 - US-031: Create nested annotation create endpoint
+- Updated AnnotationViewSet.perform_create() to validate vault membership before creating annotations
+- Implementation details:
+  - Uses get_object_or_404 to fetch source from source_pk in nested route
+  - Validates user has membership in source's vault:
+    - Checks if user is vault owner (vault.owner == user)
+    - Checks if user is vault member (VaultMembership exists)
+  - Raises PermissionDenied with message if user is not a member
+  - Sets source_id from URL parameter when saving annotation
+- Nested route POST /api/v1/sources/{source_id}/annotations/ now:
+  - Creates annotation on specified source
+  - Validates vault membership (403 if not member)
+  - Returns 201 with created annotation (DRF default behavior)
+- Files changed:
+  - backend/apps/annotations/views.py (added vault membership validation to perform_create)
+  - PRD3.md (marked US-031 complete)
+- Learnings for future iterations:
+  - Nested route creation requires manual permission validation in perform_create()
+  - Use get_object_or_404 to fetch parent object from URL parameter (source_pk)
+  - Check both vault.owner and VaultMembership for complete access validation
+  - PermissionDenied exception automatically returns 403 Forbidden with error message
+  - DRF ModelViewSet.create() automatically returns 201 status on success
+  - Django check passes with 0 errors
+  - Import validation via Django shell confirms code is functional
+---
+

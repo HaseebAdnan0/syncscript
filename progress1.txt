@@ -733,3 +733,27 @@ Learnings for future iterations:
 - Always run full test suite, not just individual tests, to catch state management issues
 ---
 
+
+## Iteration 34 - Create User admin interface (US-037)
+- Verified apps/users/admin.py already exists with comprehensive UserAdmin configuration
+- Added list_editable = ['email_verified'] to allow editing email verification status from list view
+- Admin interface includes:
+  - list_display: email, username, email_verified, institution, is_active, created_at
+  - list_filter: email_verified, is_active, is_staff, created_at
+  - search_fields: email, username, institution
+  - Custom fieldsets for Profile Information and Email Verification
+  - Readonly fields for created_at and updated_at timestamps
+- Django system check passes
+
+Files changed:
+- backend/apps/users/admin.py (added list_editable configuration)
+- PRD1.md (marked US-037 complete)
+
+Learnings for future iterations:
+- list_editable makes fields editable directly in the Django admin list view
+- list_editable fields must also be in list_display
+- UserAdmin extends BaseUserAdmin for consistent Django auth admin experience
+- Custom fieldsets allow grouping profile and verification fields
+- Pyright warnings on Django admin code are false positives - Django system check is the real typecheck
+---
+

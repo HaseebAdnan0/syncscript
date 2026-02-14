@@ -14,6 +14,7 @@ class UserAdmin(BaseUserAdmin):
     list_display = ['email', 'username', 'email_verified', 'institution', 'is_active', 'created_at']
     list_filter = ['email_verified', 'is_active', 'is_staff', 'created_at']
     search_fields = ['email', 'username', 'institution']
+    list_editable = ['email_verified']
     ordering = ['-created_at']
 
     fieldsets = BaseUserAdmin.fieldsets + (

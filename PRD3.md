@@ -414,11 +414,11 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need POST `/api/v1/sources/{source_id}/annotations/` to create annotations.
 
 **Acceptance Criteria:**
-- [ ] POST to nested route creates annotation on that source
-- [ ] Override `perform_create()` to set source from URL `source_id`
-- [ ] Validate user has membership in source's vault
-- [ ] Return 201 with created annotation
-- [ ] Typecheck passes
+- [x] POST to nested route creates annotation on that source
+- [x] Override `perform_create()` to set source from URL `source_id`
+- [x] Validate user has membership in source's vault
+- [x] Return 201 with created annotation
+- [x] Typecheck passes
 
 ---
 

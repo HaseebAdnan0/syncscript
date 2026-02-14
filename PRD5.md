@@ -302,14 +302,14 @@ This PRD covers the full implementation: core infrastructure, event broadcasting
 **Description:** As a developer, I need unit tests for the VaultConsumer to verify core logic.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/vaults/tests/test_consumers.py`
-- [ ] Test: `test_connect_sets_vault_id_in_scope`
-- [ ] Test: `test_disconnect_removes_from_presence`
-- [ ] Test: `test_vault_event_sends_to_websocket`
-- [ ] Test: `test_heartbeat_updates_presence_timestamp`
-- [ ] Test: `test_replay_request_returns_filtered_events`
-- [ ] All tests pass with `python manage.py test apps.vaults.tests.test_consumers`
-- [ ] Typecheck passes
+- [x] Create `apps/vaults/tests/test_consumers.py`
+- [x] Test: `test_connect_sets_vault_id_in_scope`
+- [x] Test: `test_disconnect_removes_from_presence`
+- [x] Test: `test_vault_event_sends_to_websocket`
+- [x] Test: `test_heartbeat_updates_presence_timestamp`
+- [x] Test: `test_replay_request_returns_filtered_events`
+- [x] All tests pass with `python manage.py test apps.vaults.tests.test_consumers`
+- [x] Typecheck passes
 
 ---
 

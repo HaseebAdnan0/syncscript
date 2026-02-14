@@ -141,14 +141,15 @@ class UpdateVaultStorageUsageTests(TestCase):
 
     def test_update_vault_storage_usage_calculates_correct_totals(self):
         """Test that update_vault_storage_usage calculates correct total bytes and file count."""
-        # Create test PDFUploads
+        # Create test PDFUploads without actual file storage
         PDFUpload.objects.create(
             vault=self.vault,
             uploaded_by=self.user1,
             original_filename='file1.pdf',
             file_size=1000000,  # 1MB
             mime_type='application/pdf',
-            processing_status='completed'
+            processing_status='completed',
+            file=''  # Empty file path to avoid storage operations
         )
         PDFUpload.objects.create(
             vault=self.vault,
@@ -156,7 +157,8 @@ class UpdateVaultStorageUsageTests(TestCase):
             original_filename='file2.pdf',
             file_size=2000000,  # 2MB
             mime_type='application/pdf',
-            processing_status='completed'
+            processing_status='completed',
+            file=''
         )
         PDFUpload.objects.create(
             vault=self.vault,
@@ -164,7 +166,8 @@ class UpdateVaultStorageUsageTests(TestCase):
             original_filename='file3.pdf',
             file_size=3000000,  # 3MB
             mime_type='application/pdf',
-            processing_status='completed'
+            processing_status='completed',
+            file=''
         )
 
         # Calculate storage usage
@@ -176,14 +179,15 @@ class UpdateVaultStorageUsageTests(TestCase):
 
     def test_update_vault_storage_usage_calculates_per_user_breakdown(self):
         """Test that update_vault_storage_usage calculates correct per-user breakdown."""
-        # Create test PDFUploads
+        # Create test PDFUploads without actual file storage
         PDFUpload.objects.create(
             vault=self.vault,
             uploaded_by=self.user1,
             original_filename='file1.pdf',
             file_size=1500000,  # 1.5MB
             mime_type='application/pdf',
-            processing_status='completed'
+            processing_status='completed',
+            file=''
         )
         PDFUpload.objects.create(
             vault=self.vault,
@@ -191,7 +195,8 @@ class UpdateVaultStorageUsageTests(TestCase):
             original_filename='file2.pdf',
             file_size=2500000,  # 2.5MB
             mime_type='application/pdf',
-            processing_status='completed'
+            processing_status='completed',
+            file=''
         )
         PDFUpload.objects.create(
             vault=self.vault,
@@ -199,7 +204,8 @@ class UpdateVaultStorageUsageTests(TestCase):
             original_filename='file3.pdf',
             file_size=3000000,  # 3MB
             mime_type='application/pdf',
-            processing_status='completed'
+            processing_status='completed',
+            file=''
         )
 
         # Calculate storage usage
@@ -213,14 +219,15 @@ class UpdateVaultStorageUsageTests(TestCase):
         """Test that update_vault_storage_usage excludes soft-deleted PDFs."""
         from django.utils import timezone
 
-        # Create test PDFUploads (one deleted)
+        # Create test PDFUploads (one deleted) without actual file storage
         PDFUpload.objects.create(
             vault=self.vault,
             uploaded_by=self.user1,
             original_filename='file1.pdf',
             file_size=1000000,  # 1MB
             mime_type='application/pdf',
-            processing_status='completed'
+            processing_status='completed',
+            file=''
         )
         PDFUpload.objects.create(
             vault=self.vault,
@@ -229,7 +236,8 @@ class UpdateVaultStorageUsageTests(TestCase):
             file_size=2000000,  # 2MB (DELETED)
             mime_type='application/pdf',
             processing_status='completed',
-            deleted_at=timezone.now()  # Soft-deleted
+            deleted_at=timezone.now(),  # Soft-deleted
+            file=''
         )
 
         # Calculate storage usage
@@ -252,14 +260,15 @@ class UpdateVaultStorageUsageTests(TestCase):
     @patch('apps.sources.utils.cache.delete')
     def test_update_vault_storage_usage_invalidates_cache(self, mock_cache_delete):
         """Test that update_vault_storage_usage invalidates Redis cache."""
-        # Create a test PDFUpload
+        # Create a test PDFUpload without actual file storage
         PDFUpload.objects.create(
             vault=self.vault,
             uploaded_by=self.user1,
             original_filename='file1.pdf',
             file_size=1000000,
             mime_type='application/pdf',
-            processing_status='completed'
+            processing_status='completed',
+            file=''
         )
 
         # Calculate storage usage
