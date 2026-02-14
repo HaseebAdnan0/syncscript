@@ -5,7 +5,7 @@
 ## User Stories
 - [x] US-001: Create useVaultSocket hook for WebSocket connection management
 - [x] US-002: Create ConnectionStatus indicator component
-- [ ] US-003: Create useRealtimeUpdates hook for optimistic updates with reconciliation
+- [x] US-003: Create useRealtimeUpdates hook for optimistic updates with reconciliation
 - [ ] US-004: Integrate real-time source updates in vault detail page
 - [ ] US-005: Integrate real-time annotation updates
 - [ ] US-006: Create usePresence hook for tracking active vault members
@@ -55,6 +55,24 @@
   - Tooltip positioned above dot with arrow, uses glass morphism styling (bg-[#0F1115] with border-white/10)
   - Background glow effect added with semi-transparent color variants (e.g., bg-[#F7931A]/20)
   - Component is compact (3x3 dot, suitable for header placement)
+  - Typecheck passes without issues
+---
+
+## Iteration 3 - US-003: Create useRealtimeUpdates hook
+- Implemented optimistic updates hook at `frontend/src/hooks/useRealtimeUpdates.ts`
+- Files changed:
+  - Created `frontend/src/hooks/useRealtimeUpdates.ts`
+  - Updated `PRD10.md` (marked US-003 complete)
+- Learnings for future iterations:
+  - Hook integrates with useVaultSocket via `addEventListener` (not `on`/`off`)
+  - Uses `send(eventType, data)` signature (two params, not object)
+  - Accepts options with vaultId, queryKey, optional mutation, and success/error event names
+  - Returns `optimisticUpdate` function that accepts variables and optional optimistic data
+  - Tracks pending updates with unique IDs (timestamp + random) for reconciliation
+  - On success event: invalidates TanStack Query cache to fetch fresh server state
+  - On error event: rolls back to previous cached state using stored snapshot
+  - Uses refs to track pending updates Map to prevent stale closures
+  - Cleanup on unmount clears all pending updates
   - Typecheck passes without issues
 ---
 
