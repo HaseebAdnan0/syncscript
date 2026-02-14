@@ -52,16 +52,16 @@ Replace stub email implementation with production-ready email system using Hosti
 **Description:** As a developer, I need email helper functions that render templates and send via SMTP for all email types.
 
 **Acceptance Criteria:**
-- [ ] Update `apps/users/emails.py` with functions:
+- [x] Update `apps/users/emails.py` with functions:
   - `send_verification_email(user, token)` - verification link
   - `send_password_reset_email(user, uid, token)` - reset link
   - `send_welcome_email(user)` - welcome after verification
   - `send_vault_invite_email(invite)` - vault invitation
   - `send_collaboration_notification(user, notification_data)` - activity notification
-- [ ] All functions render HTML template + plaintext fallback
-- [ ] All functions use `DEFAULT_FROM_EMAIL` from settings
-- [ ] Add `get_unsubscribe_token(user)` helper for notification emails
-- [ ] Typecheck passes
+- [x] All functions render HTML template + plaintext fallback
+- [x] All functions use `DEFAULT_FROM_EMAIL` from settings
+- [x] Add `get_unsubscribe_token(user)` helper for notification emails
+- [x] Typecheck passes
 
 ---
 

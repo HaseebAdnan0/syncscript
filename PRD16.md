@@ -55,14 +55,14 @@ Create SyncScript's production landing page following the Bitcoin DeFi aesthetic
 **Description:** As a user, I want to see floating stat cards around the orb so I understand the platform's scale at a glance.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/marketing/FloatingStatCard.tsx`
-- [ ] Three cards positioned around orb: "Active Vaults", "Sources Indexed", "Researchers"
-- [ ] Cards have glass morphism style (`backdrop-blur-lg bg-white/5 border border-white/10`)
-- [ ] Each card has icon, number, and label
-- [ ] Cards have staggered bounce animation
-- [ ] Cards reposition to stack on mobile
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/marketing/FloatingStatCard.tsx`
+- [x] Three cards positioned around orb: "Active Vaults", "Sources Indexed", "Researchers"
+- [x] Cards have glass morphism style (`backdrop-blur-lg bg-white/5 border border-white/10`)
+- [x] Each card has icon, number, and label
+- [x] Cards have staggered bounce animation
+- [x] Cards reposition to stack on mobile
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-005: Create Hero Content (Headlines and CTAs)
 **Description:** As a user, I want to see compelling headlines and clear CTAs so I understand the value and can take action.

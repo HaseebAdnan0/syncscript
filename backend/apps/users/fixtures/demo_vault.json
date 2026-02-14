@@ -1,9 +1,10 @@
-[
-  {
-    "model": "sources.source",
-    "pk": 1,
-    "fields": {
-      "vault": "00000000-0000-0000-0000-000000000001",
+{
+  "vault": {
+    "name": "AI Research Papers 2025",
+    "description": "A curated collection of cutting-edge AI research papers covering transformer architectures, large language models, multimodal learning, and AI safety. This demo vault showcases SyncScript's collaborative research capabilities."
+  },
+  "sources": [
+    {
       "url": "https://arxiv.org/abs/1706.03762",
       "title": "Attention Is All You Need",
       "description": "Foundational paper introducing the Transformer architecture that revolutionized NLP and became the basis for modern LLMs.",
@@ -13,16 +14,9 @@
         "year": "2017",
         "venue": "NeurIPS",
         "arxiv_id": "1706.03762"
-      },
-      "ai_summary": null,
-      "is_deleted": false
-    }
-  },
-  {
-    "model": "sources.source",
-    "pk": 2,
-    "fields": {
-      "vault": "00000000-0000-0000-0000-000000000001",
+      }
+    },
+    {
       "url": "https://arxiv.org/abs/2005.14165",
       "title": "Language Models are Few-Shot Learners (GPT-3)",
       "description": "Landmark paper demonstrating that scaling language models enables few-shot learning without fine-tuning.",
@@ -32,16 +26,9 @@
         "year": "2020",
         "venue": "NeurIPS",
         "arxiv_id": "2005.14165"
-      },
-      "ai_summary": null,
-      "is_deleted": false
-    }
-  },
-  {
-    "model": "sources.source",
-    "pk": 3,
-    "fields": {
-      "vault": "00000000-0000-0000-0000-000000000001",
+      }
+    },
+    {
       "url": "https://arxiv.org/abs/2103.00020",
       "title": "Learning Transferable Visual Models From Natural Language Supervision (CLIP)",
       "description": "OpenAI's CLIP model connecting vision and language through contrastive learning on web-scale data.",
@@ -51,16 +38,9 @@
         "year": "2021",
         "venue": "ICML",
         "arxiv_id": "2103.00020"
-      },
-      "ai_summary": null,
-      "is_deleted": false
-    }
-  },
-  {
-    "model": "sources.source",
-    "pk": 4,
-    "fields": {
-      "vault": "00000000-0000-0000-0000-000000000001",
+      }
+    },
+    {
       "url": "https://arxiv.org/abs/2204.02311",
       "title": "PaLM: Scaling Language Modeling with Pathways",
       "description": "Google's 540B parameter model demonstrating breakthrough performance on reasoning tasks.",
@@ -70,16 +50,9 @@
         "year": "2022",
         "venue": "arXiv",
         "arxiv_id": "2204.02311"
-      },
-      "ai_summary": null,
-      "is_deleted": false
-    }
-  },
-  {
-    "model": "sources.source",
-    "pk": 5,
-    "fields": {
-      "vault": "00000000-0000-0000-0000-000000000001",
+      }
+    },
+    {
       "url": "https://arxiv.org/abs/2303.08774",
       "title": "GPT-4 Technical Report",
       "description": "OpenAI's multimodal large language model exhibiting human-level performance on various professional benchmarks.",
@@ -89,16 +62,9 @@
         "year": "2023",
         "venue": "arXiv",
         "arxiv_id": "2303.08774"
-      },
-      "ai_summary": null,
-      "is_deleted": false
-    }
-  },
-  {
-    "model": "sources.source",
-    "pk": 6,
-    "fields": {
-      "vault": "00000000-0000-0000-0000-000000000001",
+      }
+    },
+    {
       "url": "https://arxiv.org/abs/2307.09288",
       "title": "Llama 2: Open Foundation and Fine-Tuned Chat Models",
       "description": "Meta's open-source family of LLMs ranging from 7B to 70B parameters, advancing accessible AI research.",
@@ -108,16 +74,9 @@
         "year": "2023",
         "venue": "arXiv",
         "arxiv_id": "2307.09288"
-      },
-      "ai_summary": null,
-      "is_deleted": false
-    }
-  },
-  {
-    "model": "sources.source",
-    "pk": 7,
-    "fields": {
-      "vault": "00000000-0000-0000-0000-000000000001",
+      }
+    },
+    {
       "url": "https://arxiv.org/abs/2212.08073",
       "title": "Constitutional AI: Harmlessness from AI Feedback",
       "description": "Anthropic's approach to training helpful, harmless AI assistants using AI-generated feedback.",
@@ -127,16 +86,9 @@
         "year": "2022",
         "venue": "arXiv",
         "arxiv_id": "2212.08073"
-      },
-      "ai_summary": null,
-      "is_deleted": false
-    }
-  },
-  {
-    "model": "sources.source",
-    "pk": 8,
-    "fields": {
-      "vault": "00000000-0000-0000-0000-000000000001",
+      }
+    },
+    {
       "url": "https://arxiv.org/abs/2203.02155",
       "title": "Training Compute-Optimal Large Language Models (Chinchilla)",
       "description": "DeepMind's analysis showing that LLMs are typically undertrained, leading to the Chinchilla scaling laws.",
@@ -146,16 +98,9 @@
         "year": "2022",
         "venue": "NeurIPS",
         "arxiv_id": "2203.02155"
-      },
-      "ai_summary": null,
-      "is_deleted": false
-    }
-  },
-  {
-    "model": "sources.source",
-    "pk": 10,
-    "fields": {
-      "vault": "00000000-0000-0000-0000-000000000001",
+      }
+    },
+    {
       "url": "https://arxiv.org/abs/2305.10601",
       "title": "Tree of Thoughts: Deliberate Problem Solving with Large Language Models",
       "description": "Novel prompting framework enabling LLMs to explore multiple reasoning paths for complex problem-solving.",
@@ -165,16 +110,9 @@
         "year": "2023",
         "venue": "NeurIPS",
         "arxiv_id": "2305.10601"
-      },
-      "ai_summary": null,
-      "is_deleted": false
-    }
-  },
-  {
-    "model": "sources.source",
-    "pk": 11,
-    "fields": {
-      "vault": "00000000-0000-0000-0000-000000000001",
+      }
+    },
+    {
       "url": "https://arxiv.org/abs/2401.14423",
       "title": "The Era of 1-bit LLMs: All Large Language Models are in 1.58 Bits",
       "description": "BitNet breakthrough showing competitive performance with extreme quantization, reducing memory and compute costs.",
@@ -184,207 +122,135 @@
         "year": "2024",
         "venue": "arXiv",
         "arxiv_id": "2401.14423"
-      },
-      "ai_summary": null,
-      "is_deleted": false
+      }
     }
-  },
-  {
-    "model": "annotations.annotation",
-    "pk": 1,
-    "fields": {
-      "source": 1,
+  ],
+  "annotations": [
+    {
+      "source_index": 0,
       "content": "The self-attention mechanism introduced here is foundational. Key insight: attention weights computed via scaled dot-product allow each position to attend to all positions in the previous layer. This parallelization advantage over RNNs was crucial for scaling.",
       "page_number": 3,
       "position": {"highlight": "Multi-Head Attention", "section": "3.2"},
-      "parent": null
-    }
-  },
-  {
-    "model": "annotations.annotation",
-    "pk": 2,
-    "fields": {
-      "source": 1,
+      "parent_index": null
+    },
+    {
+      "source_index": 0,
       "content": "Important to note: the scaling factor of 1/sqrt(d_k) prevents dot products from growing too large in magnitude, which would push the softmax into regions with extremely small gradients. See Appendix for detailed analysis.",
       "page_number": 3,
       "position": {"highlight": "scaled by 1/√dk", "section": "3.2.1"},
-      "parent": 1
-    }
-  },
-  {
-    "model": "annotations.annotation",
-    "pk": 3,
-    "fields": {
-      "source": 1,
+      "parent_index": 0
+    },
+    {
+      "source_index": 0,
       "content": "Cross-reference with BERT paper: while both use transformers, BERT's bidirectional approach (masked language modeling) vs GPT's unidirectional (left-to-right) reflects different training objectives. The transformer architecture adapts well to both.",
       "page_number": null,
       "position": {},
-      "parent": null
-    }
-  },
-  {
-    "model": "annotations.annotation",
-    "pk": 4,
-    "fields": {
-      "source": 2,
+      "parent_index": null
+    },
+    {
+      "source_index": 1,
       "content": "GPT-3's 175B parameters enabled few-shot learning without gradient updates. Critical finding: performance improves log-linearly with scale across most tasks. This sparked the race to larger models.",
       "page_number": 1,
       "position": {"highlight": "Abstract", "section": "Introduction"},
-      "parent": null
-    }
-  },
-  {
-    "model": "annotations.annotation",
-    "pk": 5,
-    "fields": {
-      "source": 2,
+      "parent_index": null
+    },
+    {
+      "source_index": 1,
       "content": "The in-context learning phenomenon is fascinating. The model learns to perform tasks from examples in the prompt without parameter updates. This suggests the model has learned a general task-learning capability during pretraining.",
       "page_number": 4,
       "position": {"highlight": "In-Context Learning", "section": "2.1"},
-      "parent": null
-    }
-  },
-  {
-    "model": "annotations.annotation",
-    "pk": 6,
-    "fields": {
-      "source": 2,
+      "parent_index": null
+    },
+    {
+      "source_index": 1,
       "content": "Question: Does few-shot performance plateau at some scale, or continue improving indefinitely? The paper shows continued improvement but doesn't test beyond 175B. Update: PaLM (540B) and others suggest continued scaling benefits.",
       "page_number": 8,
       "position": {"highlight": "Scaling Laws", "section": "3.3"},
-      "parent": 5
-    }
-  },
-  {
-    "model": "annotations.annotation",
-    "pk": 7,
-    "fields": {
-      "source": 3,
+      "parent_index": 4
+    },
+    {
+      "source_index": 2,
       "content": "CLIP's contrastive pretraining on 400M image-text pairs enables zero-shot transfer to ImageNet without any task-specific training. The key is learning a shared embedding space where related images and texts are close.",
       "page_number": 2,
       "position": {"highlight": "Approach", "section": "2"},
-      "parent": null
-    }
-  },
-  {
-    "model": "annotations.annotation",
-    "pk": 8,
-    "fields": {
-      "source": 3,
+      "parent_index": null
+    },
+    {
+      "source_index": 2,
       "content": "Connection to recent multimodal models: CLIP laid groundwork for GPT-4 Vision, Gemini, etc. The vision-language alignment problem it solved is central to modern multimodal AI.",
       "page_number": null,
       "position": {},
-      "parent": 7
-    }
-  },
-  {
-    "model": "annotations.annotation",
-    "pk": 9,
-    "fields": {
-      "source": 4,
+      "parent_index": 6
+    },
+    {
+      "source_index": 3,
       "content": "PaLM's breakthrough on reasoning tasks (e.g., explaining jokes, chain-of-thought) suggests emergent capabilities appear at sufficient scale. The discontinuous improvements are intriguing and not yet fully understood.",
       "page_number": 12,
       "position": {"highlight": "Discontinuous Improvements", "section": "5.2"},
-      "parent": null
-    }
-  },
-  {
-    "model": "annotations.annotation",
-    "pk": 10,
-    "fields": {
-      "source": 5,
+      "parent_index": null
+    },
+    {
+      "source_index": 4,
       "content": "GPT-4's multimodal capabilities (accepting image and text inputs) mark a shift toward more general AI systems. Performance on professional exams (90th percentile on bar exam) is remarkable.",
       "page_number": 1,
       "position": {"highlight": "Introduction"},
-      "parent": null
-    }
-  },
-  {
-    "model": "annotations.annotation",
-    "pk": 11,
-    "fields": {
-      "source": 5,
+      "parent_index": null
+    },
+    {
+      "source_index": 4,
       "content": "Important limitation acknowledged: GPT-4 still hallucinates and can make reasoning errors. The gap between impressive benchmarks and reliable real-world deployment remains significant. See safety section for mitigation strategies.",
       "page_number": 15,
       "position": {"highlight": "Limitations", "section": "6"},
-      "parent": 10
-    }
-  },
-  {
-    "model": "annotations.annotation",
-    "pk": 12,
-    "fields": {
-      "source": 6,
+      "parent_index": 9
+    },
+    {
+      "source_index": 5,
       "content": "Llama 2's open release democratized LLM research. The 7B, 13B, and 70B models provide strong baselines for academic labs without massive compute budgets. The chat variants use RLHF similar to ChatGPT.",
       "page_number": 3,
       "position": {"highlight": "Model Variants", "section": "2"},
-      "parent": null
-    }
-  },
-  {
-    "model": "annotations.annotation",
-    "pk": 13,
-    "fields": {
-      "source": 7,
+      "parent_index": null
+    },
+    {
+      "source_index": 6,
       "content": "Constitutional AI (CAI) trains models to critique and revise their own outputs based on a 'constitution' of principles. This reduces reliance on human feedback and improves harmlessness without sacrificing helpfulness.",
       "page_number": 2,
       "position": {"highlight": "Method Overview", "section": "2.1"},
-      "parent": null
-    }
-  },
-  {
-    "model": "annotations.annotation",
-    "pk": 14,
-    "fields": {
-      "source": 7,
+      "parent_index": null
+    },
+    {
+      "source_index": 6,
       "content": "Cross-reference with RLHF (Reinforcement Learning from Human Feedback): CAI builds on RLHF but uses AI feedback for initial training, only using human feedback for final preference modeling. This could scale better as models improve.",
       "page_number": 5,
       "position": {"highlight": "AI vs Human Feedback", "section": "3.2"},
-      "parent": 13
-    }
-  },
-  {
-    "model": "annotations.annotation",
-    "pk": 15,
-    "fields": {
-      "source": 8,
+      "parent_index": 12
+    },
+    {
+      "source_index": 7,
       "content": "Chinchilla scaling laws: for compute-optimal training, model size and training tokens should scale equally. Most LLMs (including GPT-3) were undertrained—using more data with smaller models can be more efficient.",
       "page_number": 4,
       "position": {"highlight": "Scaling Laws", "section": "3"},
-      "parent": null
-    }
-  },
-  {
-    "model": "annotations.annotation",
-    "pk": 16,
-    "fields": {
-      "source": 8,
+      "parent_index": null
+    },
+    {
+      "source_index": 7,
       "content": "Practical implication: Chinchilla (70B params, 1.4T tokens) outperformed GPT-3 (175B, 300B tokens) with less inference cost. This reshaped how companies think about model training—Llama 2 and others followed these principles.",
       "page_number": 6,
       "position": {"highlight": "Results", "section": "4.1"},
-      "parent": 15
-    }
-  },
-  {
-    "model": "annotations.annotation",
-    "pk": 17,
-    "fields": {
-      "source": 10,
+      "parent_index": 14
+    },
+    {
+      "source_index": 8,
       "content": "Tree of Thoughts (ToT) extends chain-of-thought prompting by exploring multiple reasoning paths, backtracking when needed. It's like beam search for reasoning. Huge improvements on tasks requiring planning (Game of 24, creative writing).",
       "page_number": 2,
       "position": {"highlight": "Approach", "section": "2"},
-      "parent": null
-    }
-  },
-  {
-    "model": "annotations.annotation",
-    "pk": 18,
-    "fields": {
-      "source": 11,
+      "parent_index": null
+    },
+    {
+      "source_index": 9,
       "content": "BitNet's 1.58-bit quantization (ternary weights: -1, 0, +1) achieves performance near full-precision models. This could enable running large models on edge devices. Memory savings: ~10x, speed improvements on specialized hardware.",
       "page_number": 1,
       "position": {"highlight": "Abstract"},
-      "parent": null
+      "parent_index": null
     }
-  }
-]
+  ]
+}
