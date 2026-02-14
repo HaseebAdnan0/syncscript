@@ -87,7 +87,7 @@ Establish the Next.js 16 frontend foundation for SyncScript with a Bitcoin DeFi-
 **Description:** As a developer, I want TypeScript configured with strict mode and path aliases so that I have maximum type safety.
 
 **Acceptance Criteria:**
-- [ ] Update `tsconfig.json` with strict compiler options:
+- [x] Update `tsconfig.json` with strict compiler options:
   ```json
   {
     "compilerOptions": {
@@ -113,8 +113,8 @@ Establish the Next.js 16 frontend foundation for SyncScript with a Bitcoin DeFi-
     }
   }
   ```
-- [ ] `npm run type-check` (add script if missing: `"type-check": "tsc --noEmit"`) passes
-- [ ] Typecheck passes
+- [x] `npm run type-check` (add script if missing: `"type-check": "tsc --noEmit"`) passes
+- [x] Typecheck passes
 
 ---
 

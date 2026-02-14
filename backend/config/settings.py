@@ -35,6 +35,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     'django_filters',
+    'channels',
+    'daphne',
 
     # Local apps
     'apps.users',
@@ -190,3 +192,17 @@ CACHES = {
 # Rate limiting
 RATELIMIT_ENABLE = True
 RATELIMIT_USE_CACHE = 'default'
+
+# Channels (WebSocket)
+ASGI_APPLICATION = 'config.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [os.getenv('REDIS_URL', 'redis://localhost:6379/0')],
+            'capacity': 1500,
+            'expiry': 10,
+        },
+    },
+}

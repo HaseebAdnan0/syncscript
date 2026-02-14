@@ -33,3 +33,44 @@
   - Typecheck passes with 0 errors
 
 ---
+
+## Iteration 2 - US-002: Create Source model with SourceType enum
+- Created SourceType TextChoices enum with URL, PDF, BOOK, JOURNAL, DATASET options
+- Created Source model with all required fields:
+  - vault (FK to vaults.Vault, CASCADE)
+  - url (URLField max 2048)
+  - title (CharField max 512)
+  - description (TextField, blank=True)
+  - source_type (CharField with choices, default=URL)
+  - metadata (JSONField, default=dict)
+  - created_by (FK to User, SET_NULL, null=True)
+  - is_deleted (BooleanField, default=False)
+  - created_at, updated_at (auto timestamps)
+- Added Meta class with:
+  - ordering = ['-created_at']
+  - indexes on ['vault', 'is_deleted'], ['source_type'], ['created_at']
+  - UniqueConstraint for ['vault', 'url'] where is_deleted=False
+- Files changed:
+  - backend/apps/sources/models.py (implemented Source model)
+  - PRD3.md (marked US-002 complete)
+- Learnings for future iterations:
+  - Django models.Q() is used for conditional constraints
+  - UniqueConstraint with condition allows same URL if source is soft-deleted
+  - JSONField default must be callable (dict) not dict instance
+  - Typecheck passes with 0 errors
+
+---
+
+## Iteration 3 - US-003: Create Source migration and register admin
+- BLOCKED: Cannot proceed with US-003
+- Reason: Source model references 'vaults.Vault' which doesn't exist yet
+- Additional models found in sources/models.py: PDFUpload, VaultStorageUsage (also reference vaults.Vault)
+- Files checked:
+  - backend/apps/vaults/models.py (only has RoleChoices enum, no Vault model)
+  - PRD2.md shows Vault model is US-003 in that PRD (not yet implemented)
+- Learnings for future iterations:
+  - PRD3 has a dependency on PRD2 being completed first
+  - Must complete PRD2 (Vault model creation) before continuing with PRD3
+  - Django migrations will fail if FK target models don't exist
+  - Task NOT marked complete - will retry after PRD2 is done
+---

@@ -1,0 +1,18 @@
+## Iteration 1 - Create users app and generate initial migration (US-003)
+- Created empty `apps/users/__init__.py` file
+- Verified `apps/users/apps.py` exists with UsersConfig
+- Created empty `apps/users/admin.py` file
+- Verified migrations already exist (0001_initial.py and 0002_emailverificationtoken_alter_user_options_and_more.py)
+- All acceptance criteria met
+
+Files changed:
+- backend/apps/users/__init__.py (created - empty)
+- backend/apps/users/admin.py (created - empty)
+- PRD1.md (marked US-003 complete)
+
+Learnings for future iterations:
+- The users app structure was already partially set up from previous work
+- Migrations were already generated - just needed to verify they exist
+- Django's system check (`python manage.py check`) is the typecheck for Django projects
+- No database connection required for makemigrations or check commands
+---

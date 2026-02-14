@@ -37,16 +37,16 @@ Create a secure, collaborative Knowledge Vault system where researchers can crea
 **Description:** As a developer, I need the Vault model to store knowledge repository data.
 
 **Acceptance Criteria:**
-- [ ] UUID primary key with `default=uuid.uuid4`
-- [ ] `name` CharField max_length=255
-- [ ] `description` TextField blank=True
-- [ ] `owner` ForeignKey to User with CASCADE, related_name='owned_vaults'
-- [ ] `is_archived` BooleanField default=False
-- [ ] `created_at` DateTimeField auto_now_add=True
-- [ ] `updated_at` DateTimeField auto_now=True
-- [ ] Meta: ordering=['-created_at']
-- [ ] Index on ['owner', 'is_archived'] and ['created_at']
-- [ ] Typecheck passes
+- [x] UUID primary key with `default=uuid.uuid4`
+- [x] `name` CharField max_length=255
+- [x] `description` TextField blank=True
+- [x] `owner` ForeignKey to User with CASCADE, related_name='owned_vaults'
+- [x] `is_archived` BooleanField default=False
+- [x] `created_at` DateTimeField auto_now_add=True
+- [x] `updated_at` DateTimeField auto_now=True
+- [x] Meta: ordering=['-created_at']
+- [x] Index on ['owner', 'is_archived'] and ['created_at']
+- [x] Typecheck passes
 
 ### US-004: Create VaultMembership model
 **Description:** As a developer, I need the through model for vault members with roles.

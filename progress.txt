@@ -4,3 +4,28 @@
 (Patterns discovered during implementation)
 
 ---
+
+## Iteration 1 - Create custom User model and EmailVerificationToken model
+- Implemented User model with email as USERNAME_FIELD, added avatar_url, bio, institution, email_verified fields
+- Created EmailVerificationToken model as separate model (not inline fields)
+- Updated all references from is_email_verified to email_verified across serializers, views, permissions, admin
+- Removed generate_verification_token() method from User model (will be handled by separate token model)
+- Generated migration 0002 for model changes
+
+Files changed:
+- backend/apps/users/models.py
+- backend/apps/users/serializers.py
+- backend/apps/users/permissions.py
+- backend/apps/users/admin.py
+- backend/apps/users/views.py
+- backend/apps/users/migrations/0002_emailverificationtoken_alter_user_options_and_more.py
+- PRD1.md
+
+Learnings for future iterations:
+- The codebase had an existing User model that needed to be aligned with PRD spec
+- Field naming convention: use email_verified (not is_email_verified) per PRD
+- EmailVerificationToken should be a separate model, not inline fields on User
+- Always update all references when renaming model fields (serializers, views, permissions, admin)
+- Django check command is useful for quick validation before running tests
+
+---

@@ -11,3 +11,27 @@
   - All files should be created as empty initially per PRD requirements
   - VaultsConfig class uses default_auto_field = 'django.db.models.BigAutoField' to match project convention
 ---
+
+## Iteration 2 - US-002: Define RoleChoices enum and role weights
+- Added RoleChoices TextChoices enum with OWNER, CONTRIBUTOR, VIEWER
+- Added ROLE_WEIGHTS dict mapping to weights 3, 2, 1
+- Files changed:
+  - backend/apps/vaults/models.py (added RoleChoices and ROLE_WEIGHTS)
+  - PRD2.md (marked US-002 as complete)
+- Learnings for future iterations:
+  - Django check will fail with forward reference errors until dependent models are created (expected)
+  - Can verify code correctness by importing classes directly with python -c
+  - Sources app already has ForeignKey to 'vaults.Vault' (created in previous work)
+---
+
+## Iteration 3 - US-003: Create Vault model
+- Added complete Vault model with all required fields and indexes
+- Files changed:
+  - backend/apps/vaults/models.py (added uuid import, id field with UUID primary key, indexes in Meta)
+  - PRD2.md (marked US-003 as complete)
+- Learnings for future iterations:
+  - UUID primary key requires import uuid and models.UUIDField with default=uuid.uuid4
+  - Django indexes in Meta are defined as list of models.Index() objects
+  - Django check vaults (not apps.vaults) is the correct app label for system checks
+  - User model is already imported via get_user_model() from previous code
+---

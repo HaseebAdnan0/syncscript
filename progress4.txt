@@ -1,0 +1,15 @@
+## Iteration 1 - US-001: Project Initialization & Core Dependencies
+- Installed missing core dependencies (@tanstack/react-query, class-variance-authority, clsx, tailwind-merge, lucide-react, next-themes)
+- Installed Radix UI primitives (dialog, dropdown-menu, tabs, toast)
+- Installed prettier as dev dependency
+- Verified folder structure exists (components/ui, components/features, lib/, hooks/, styles/)
+- Verified .env.local.example and .gitignore are properly configured
+- Confirmed npm run dev starts without errors
+- Confirmed typecheck passes
+- Files changed: package.json, package-lock.json, PRD4.md
+- Learnings for future iterations:
+  - Frontend is a git submodule - must commit within frontend/ directory first, then update parent repo
+  - The project was partially initialized already, so mainly needed to install missing dependencies
+  - All folder structure was already in place
+  - npm run type-check script already exists in package.json
+---
