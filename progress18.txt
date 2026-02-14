@@ -68,3 +68,22 @@
   - Static methods on models can provide utility functions (hash_query for SHA-256)
   - Query normalization pattern: strip().lower() before hashing
 ---
+
+## Iteration 5 - US-005: Create Celery task to update Source search vectors
+- Created backend/apps/search/tasks.py with update_source_search_vector task
+- Task accepts source_id parameter and updates search_vector field
+- Weighted search vector: title (weight A), description (weight B), metadata values (weight C)
+- Uses PostgreSQL SearchVector with config='english'
+- Idempotent design - safe to retry on failures
+- Retry logic with exponential backoff (max 3 retries)
+- Returns status dict: source_id and status ('updated', 'not_found', or 'failed')
+- Files changed:
+  - backend/apps/search/tasks.py (created)
+  - PRD18.md (marked US-005 complete)
+- Learnings for future iterations:
+  - Celery shared_task decorator with bind=True for retry support
+  - SearchVector can be combined with + operator for weighted fields
+  - Import models inside task functions to avoid circular imports
+  - Exponential backoff: countdown=2 ** self.request.retries * 60
+  - Task should handle DoesNotExist exception gracefully and return status
+---
