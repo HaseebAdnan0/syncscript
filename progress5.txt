@@ -166,3 +166,27 @@
   - Redis sequence numbers provide monotonically increasing event ordering
   - Auto-commit hooks may commit files during edits - check git log to find commits
 ---
+
+## Iteration 11 - US-012: Implement Source signal handlers
+- Created apps/sources/signals.py with post_save and post_delete signal handlers
+  - post_save handler enqueues broadcast_source_created (created=True) or broadcast_source_updated (created=False)
+  - post_delete handler enqueues broadcast_source_deleted with minimal info (source_id, vault_id, deleted_by_id)
+  - All signals use Celery .delay() for async broadcasting to avoid blocking HTTP requests
+- Created apps/sources/apps.py with SourcesConfig.ready() to register signals
+- Updated apps/sources/__init__.py with default_app_config
+- Added stub Celery tasks to apps/sources/tasks.py (full implementation in US-013):
+  - broadcast_source_created(source_id)
+  - broadcast_source_updated(source_id, changed_fields)
+  - broadcast_source_deleted(source_id, vault_id, deleted_by_id)
+- Files changed: backend/apps/sources/signals.py (new), apps.py (new), __init__.py, tasks.py, PRD5.md
+- Verified signal registration: 1 post_save receiver, 1 post_delete receiver for Source model
+- Typecheck passes (0 errors, 0 warnings)
+- Learnings for future iterations:
+  - Signal handlers should import Celery tasks inside handler function to avoid circular imports
+  - Use type: ignore[attr-defined] for .delay() method - Celery adds it at runtime
+  - Creating stub tasks for forward references allows typecheck to pass before full implementation
+  - Apps must define AppConfig.ready() to register signals on Django startup
+  - Verify signal registration with: post_save._live_receivers(Model)
+  - Windows console Unicode errors: use [OK] instead of checkmarks
+  - Changed fields tracking can be added via model save() override or middleware
+---
