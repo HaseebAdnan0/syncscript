@@ -36,3 +36,28 @@ Learnings for future iterations:
   - Linters may interfere with configuration changes - consider disabling or using alternative methods
   - Settings.py modifications need careful handling due to auto-formatting
 ---
+
+## Iteration 1 (Completed) - US-001: Install and configure django-allauth
+- Added django-allauth[socialaccount]>=65.4.0 to requirements.txt
+- Configured allauth in settings.py by appending configuration at end of file
+- Added allauth apps to INSTALLED_APPS
+- Added AccountMiddleware to MIDDLEWARE
+- Added allauth AuthenticationBackend to AUTHENTICATION_BACKENDS  
+- Set account settings: EMAIL_REQUIRED=True, AUTHENTICATION_METHOD='email'
+- Set socialaccount settings: AUTO_SIGNUP=True, EMAIL_AUTHENTICATION=False
+- Added allauth URLs to urlpatterns at /api/v1/auth/
+- Ran migrations successfully (allauth tables created)
+- Typecheck passed
+
+Files changed:
+  - backend/requirements.txt (added django-allauth)
+  - backend/config/settings.py (appended allauth configuration)
+  - backend/config/urls.py (added allauth.urls)
+  - backend/config/allauth_settings.py (created but not needed - can delete)
+
+Learnings for future iterations:
+  - Linters may interfere with settings.py modifications - append config at end of file works best
+  - Use `+=` and `.append()` to modify existing lists/arrays in settings
+  - django-allauth deprecation warnings are acceptable per PRD requirements
+  - Migrations ran automatically when allauth apps were added
+---

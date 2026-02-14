@@ -231,3 +231,24 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         }
 
         return data
+
+
+class OnboardingSerializer(serializers.Serializer):
+    """
+    Serializer for onboarding progress (US-002).
+    Handles onboarding state updates for tracking user progress.
+    """
+    step = serializers.CharField(max_length=50, required=False, allow_null=True, allow_blank=True)
+    completed = serializers.BooleanField(required=False)
+    path = serializers.ChoiceField(
+        choices=[('guided', 'Guided'), ('demo', 'Demo'), ('skipped', 'Skipped')],
+        required=False,
+        allow_null=True
+    )
+    data = serializers.JSONField(required=False)
+
+    def validate_data(self, value):
+        """Ensure data is a dict if provided."""
+        if value is not None and not isinstance(value, dict):
+            raise serializers.ValidationError("Data must be a JSON object.")
+        return value

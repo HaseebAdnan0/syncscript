@@ -4,3 +4,15 @@
 (Patterns discovered during implementation)
 
 ---
+
+## Iteration 1 - Add onboarding fields to User model (US-001)
+- Added 4 onboarding fields to User model: onboarding_completed, onboarding_step, onboarding_data, onboarding_path
+- Generated migration: 0002_user_onboarding_completed_user_onboarding_data_and_more.py
+- Applied migration successfully
+- Files changed: backend/apps/users/models.py, migration file, PRD20.md
+- Learnings for future iterations:
+  - User model is in backend/apps/users/models.py
+  - Use `python manage.py check` for Django system validation (equivalent to typecheck)
+  - JSONField default=dict for flexible metadata storage
+  - CharField choices defined as tuples inline in model definition
+---

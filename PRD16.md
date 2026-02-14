@@ -19,12 +19,12 @@ Create SyncScript's production landing page following the Bitcoin DeFi aesthetic
 **Description:** As a developer, I need the marketing route group structure so landing page components are isolated from the app.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/app/(marketing)/layout.tsx` with marketing-specific layout
-- [ ] Create `frontend/src/app/(marketing)/page.tsx` as landing page entry
-- [ ] Layout includes marketing navbar (logo, nav links, "Sign In", "Get Started" buttons)
-- [ ] Layout includes basic footer placeholder
-- [ ] Route group does not use app authentication providers
-- [ ] Typecheck passes
+- [x] Create `frontend/src/app/(marketing)/layout.tsx` with marketing-specific layout
+- [x] Create `frontend/src/app/(marketing)/page.tsx` as landing page entry
+- [x] Layout includes marketing navbar (logo, nav links, "Sign In", "Get Started" buttons)
+- [x] Layout includes basic footer placeholder
+- [x] Route group does not use app authentication providers
+- [x] Typecheck passes
 
 ### US-002: Create Hero Section Background and Grid Pattern
 **Description:** As a user, I want to see an impressive dark background with grid pattern so the page feels premium and crypto-native.

@@ -83,6 +83,36 @@ def process_uploaded_pdf(self, pdf_upload_id: str) -> dict[str, Any]:
         pdf_author = metadata.get('/Author')
         page_count = len(reader.pages)
 
+        # Extract full text from all pages (US-002)
+        extracted_text_parts = []
+        for page_num, page in enumerate(reader.pages, start=1):
+            try:
+                page_text = page.extract_text()
+                if page_text:
+                    extracted_text_parts.append(f"\n--- Page {page_num} ---\n{page_text}")
+            except Exception as page_exc:
+                logger.warning(
+                    f"Failed to extract text from page {page_num} of PDF {pdf_upload_id}: {page_exc}"
+                )
+                continue
+
+        # Concatenate all text
+        extracted_text = ''.join(extracted_text_parts)
+
+        # Truncate to 500KB max to prevent DB bloat
+        max_text_size = 500 * 1024  # 500KB
+        if len(extracted_text) > max_text_size:
+            extracted_text = extracted_text[:max_text_size]
+            logger.info(
+                f"Truncated extracted text for PDF {pdf_upload_id} from "
+                f"{len(extracted_text)} to {max_text_size} bytes"
+            )
+
+        logger.info(
+            f"Extracted {len(extracted_text)} characters of text from "
+            f"{page_count} pages of PDF {pdf_upload_id}"
+        )
+
         # Generate thumbnail from first page
         thumbnail_url = None
         try:

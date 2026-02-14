@@ -19,16 +19,16 @@ Add social authentication to SyncScript using Google and GitHub OAuth providers.
 **Description:** As a developer, I need django-allauth installed and configured so OAuth providers can be added.
 
 **Acceptance Criteria:**
-- [ ] Add `django-allauth[socialaccount]` to requirements.txt
-- [ ] Add allauth apps to INSTALLED_APPS: `allauth`, `allauth.account`, `allauth.socialaccount`, `allauth.socialaccount.providers.google`, `allauth.socialaccount.providers.github`
-- [ ] Add `allauth.account.middleware.AccountMiddleware` to MIDDLEWARE
-- [ ] Configure AUTHENTICATION_BACKENDS to include allauth
-- [ ] Set `ACCOUNT_EMAIL_REQUIRED = True`, `ACCOUNT_AUTHENTICATION_METHOD = 'email'`
-- [ ] Set `SOCIALACCOUNT_AUTO_SIGNUP = True` for new users
-- [ ] Set `SOCIALACCOUNT_EMAIL_AUTHENTICATION = False` (we handle linking manually)
-- [ ] Add allauth URLs to urlpatterns (under `/api/v1/auth/`)
-- [ ] Run migrations for allauth tables
-- [ ] Typecheck passes
+- [x] Add `django-allauth[socialaccount]` to requirements.txt
+- [x] Add allauth apps to INSTALLED_APPS: `allauth`, `allauth.account`, `allauth.socialaccount`, `allauth.socialaccount.providers.google`, `allauth.socialaccount.providers.github`
+- [x] Add `allauth.account.middleware.AccountMiddleware` to MIDDLEWARE
+- [x] Configure AUTHENTICATION_BACKENDS to include allauth
+- [x] Set `ACCOUNT_EMAIL_REQUIRED = True`, `ACCOUNT_AUTHENTICATION_METHOD = 'email'`
+- [x] Set `SOCIALACCOUNT_AUTO_SIGNUP = True` for new users
+- [x] Set `SOCIALACCOUNT_EMAIL_AUTHENTICATION = False` (we handle linking manually)
+- [x] Add allauth URLs to urlpatterns (under `/api/v1/auth/`)
+- [x] Run migrations for allauth tables
+- [x] Typecheck passes
 
 ---
 

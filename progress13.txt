@@ -1,10 +1,13 @@
 # Progress Log - PRD 13: Cloudflare R2 File Storage
 
 ## Status
-Not started
+In progress - US-001 complete
 
 ## Learnings
-(Patterns discovered during implementation)
+- Django settings had missing `django.contrib.postgres` app - required for SearchVectorField
+- Non-existent `apps.dashboard` was in INSTALLED_APPS but not created
+- Allauth URLs were in config/urls.py but allauth wasn't properly configured - commented out for now
+- Migrations run successfully after cleaning up settings
 
 ---
 
@@ -32,6 +35,24 @@ vaults/{vault_id}/thumbnails/{uuid}.jpg
 ---
 
 ## Completed Stories
-(Mark stories as complete here)
+
+## Iteration 1 - Add extracted_text field to PDFUpload model (US-001)
+- Added `extracted_text = models.TextField(blank=True, default='')` to PDFUpload model in backend/apps/sources/models.py:115
+- Generated migration 0003_pdfupload_extracted_text successfully
+- Applied migration successfully
+- Fixed settings issues:
+  - Added `django.contrib.postgres` to INSTALLED_APPS (required for SearchVectorField)
+  - Removed non-existent `apps.dashboard` from INSTALLED_APPS
+  - Commented out incomplete allauth configuration in config/urls.py
+- Files changed:
+  - backend/apps/sources/models.py
+  - backend/apps/sources/migrations/0003_pdfupload_extracted_text.py
+  - backend/config/settings.py
+  - backend/config/urls.py
+  - PRD13.md
+- Learnings for future iterations:
+  - Check for missing Django contrib apps when SearchVectorField errors occur
+  - Clean up INSTALLED_APPS references to non-existent apps before running migrations
+  - Pre-existing type errors in models.py are expected (no type annotations on Django fields)
 
 ---
