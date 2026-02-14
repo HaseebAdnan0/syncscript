@@ -362,3 +362,29 @@ Learnings for future iterations:
 - Integer path parameters use <int:param_name> syntax
 - All AI routes properly namespaced under /api/v1/ prefix
 ---
+## Iteration 12 - US-012: Create AISummaryCard component
+- Discovered US-012 was already completed in commit 2ffb439 (previous work session)
+- Verified implementation in frontend/src/components/features/ai/AISummaryCard.tsx
+- Component properly implements all acceptance criteria:
+  - Expandable/collapsible sections for abstract, key findings, methodology, limitations, keywords
+  - Generate/Regenerate button functionality
+  - Quality flags displayed as warning badges
+  - Bitcoin DeFi design with glass cards and orange gradient accents
+  - Language indicator for non-English sources
+  - Timestamp showing when summary was generated
+- All props properly typed with TypeScript interfaces
+- Typecheck passes successfully
+- PRD15.md already marked US-012 complete
+
+Files verified:
+- frontend/src/components/features/ai/AISummaryCard.tsx (already exists, fully typed)
+- PRD15.md (US-012 already marked [x])
+
+Learnings for future iterations:
+- Always check git history before implementing - task may already be complete
+- Use `git log --oneline --follow -- <file>` to check file commit history
+- Component removed unused sourceId prop after initial typecheck identified it
+- Bitcoin DeFi design patterns: glass morphism with backdrop-blur-lg, orange gradient buttons, quality flags as badges
+- Expandable sections improve UX for dense academic content
+---
+

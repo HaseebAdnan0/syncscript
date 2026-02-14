@@ -415,3 +415,25 @@
   - Component follows existing auth page patterns (register, login)
   - useEffect cleanup function returns undefined when countdown reaches 0
 ---
+
+## Iteration 16 - US-016: Add resend verification API call to frontend (Already Complete)
+- Discovered US-016 was already implemented in commit 4527999
+- Implementation details verified - all acceptance criteria met:
+  - Added resendVerificationEmail(email: string) function to frontend/src/lib/api.ts
+  - Function POSTs to /api/v1/auth/resend-verification/ with email in body
+  - Handles 429 rate limit error with specific error message
+  - Returns typed ResendVerificationEmailResponse interface
+  - Interface has message: string property
+  - Uses try/catch with axios.isAxiosError() to check error status
+  - Throws descriptive error for rate limits: "Too many requests. Please wait a moment before trying again."
+  - Re-throws other errors for caller to handle
+- TypeScript async function with Promise return type
+- Follows existing API function patterns in api.ts
+- Function exported for use in components
+- Files already committed in previous session
+- PRD11.md marked complete
+- Learnings for future iterations:
+  - API functions follow consistent pattern: try/catch, axios.isAxiosError() for error handling
+  - Rate limit errors (429) should throw descriptive user-friendly messages
+  - Response interfaces defined above the function for type safety
+---

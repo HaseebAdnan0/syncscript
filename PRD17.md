@@ -299,17 +299,17 @@ Create a comprehensive user dashboard as the primary logged-in landing page for 
 **Description:** As a developer, I need React Query hooks for dashboard data so components have consistent caching and loading states.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/hooks/useDashboard.ts`
-- [ ] `useDashboardStats()` hook with appropriate stale time
-- [ ] `useRecentVaults()` hook
-- [ ] `useActivityFeed(limit?)` hook
-- [ ] `useSourcesTimeline()` hook
-- [ ] `useSourceTypes()` hook
-- [ ] `useTopCollaborators()` hook
-- [ ] `useNotifications()` hook
-- [ ] `useUnreadNotificationCount()` hook with short stale time for freshness
-- [ ] Mutations for mark read actions with cache invalidation
-- [ ] Typecheck passes
+- [x] Create `frontend/src/hooks/useDashboard.ts`
+- [x] `useDashboardStats()` hook with appropriate stale time
+- [x] `useRecentVaults()` hook
+- [x] `useActivityFeed(limit?)` hook
+- [x] `useSourcesTimeline()` hook
+- [x] `useSourceTypes()` hook
+- [x] `useTopCollaborators()` hook
+- [x] `useNotifications()` hook
+- [x] `useUnreadNotificationCount()` hook with short stale time for freshness
+- [x] Mutations for mark read actions with cache invalidation
+- [x] Typecheck passes
 
 ## Non-Goals
 

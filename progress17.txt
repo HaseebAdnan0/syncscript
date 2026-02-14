@@ -476,3 +476,36 @@
 - Notification functions re-exported for single import point
 - Typecheck passes with no errors
 
+
+## Iteration 21 - US-021: Add React Query hooks for dashboard data
+- Created comprehensive React Query hooks for all dashboard data
+- Files changed:
+  - frontend/src/hooks/useDashboard.ts (new file with all dashboard hooks)
+  - PRD17.md (marked US-021 complete)
+- Learnings for future iterations:
+  - Followed existing React Query patterns from useVaults.ts and useNotifications.ts
+  - Created query key factory pattern for cache invalidation (dashboardKeys object)
+  - useDashboardStats() - stale time 5 minutes (stats change infrequently)
+  - useRecentVaults() - stale time 2 minutes (moderate changes)
+  - useActivityFeed(limit?) - stale time 1 minute (should be fresh)
+  - useSourcesTimeline() - stale time 10 minutes (historical data)
+  - useSourceTypes() - stale time 10 minutes (distribution changes slowly)
+  - useTopCollaborators() - stale time 10 minutes (contributions gradual)
+  - useNotifications() already exists with polling, unread count, and mutations
+  - Notification hook includes markAsRead and markAllAsRead mutations with cache invalidation
+  - Notification hook polls every 60 seconds when tab visible (stops when hidden)
+  - Re-exported useNotifications for convenience (single import point)
+  - All hooks properly typed with TypeScript interfaces from dashboard.ts
+  - Query keys use factory pattern for consistent cache management
+  - Stale times optimized based on data volatility (1-10 minutes)
+  - Typecheck passes with no errors
+---
+
+## What Worked
+- Dashboard hooks created following TanStack Query best practices
+- All 6 dashboard data hooks implemented with optimized stale times
+- Notification hooks already existed with polling and mutations
+- Query key factory pattern enables easy cache invalidation
+- Re-exported useNotifications for single import point
+- Typecheck passes with no errors
+

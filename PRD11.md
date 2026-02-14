@@ -245,11 +245,11 @@ Replace stub email implementation with production-ready email system using Hosti
 **Description:** As a developer, I need frontend API function to resend verification emails.
 
 **Acceptance Criteria:**
-- [ ] Add `resendVerificationEmail(email: string)` to `frontend/src/lib/api.ts`
-- [ ] POST to `/api/v1/auth/resend-verification/` with email in body
-- [ ] Handle rate limit error (429) with appropriate message
-- [ ] Return typed response
-- [ ] Typecheck passes
+- [x] Add `resendVerificationEmail(email: string)` to `frontend/src/lib/api.ts`
+- [x] POST to `/api/v1/auth/resend-verification/` with email in body
+- [x] Handle rate limit error (429) with appropriate message
+- [x] Return typed response
+- [x] Typecheck passes
 
 ---
 

@@ -234,13 +234,13 @@ Enhance SyncScript's file storage system to production-ready status with Cloudfl
 **Description:** As a user, I want visual icons to identify file types at a glance.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/uploads/FileTypeIcon.tsx`
-- [ ] Props: `mimeType: string`, `size?: 'sm' | 'md' | 'lg'`
-- [ ] Return appropriate Lucide icon: `FileText` (PDF), `Image` (PNG/JPG), `File` (other)
-- [ ] Size variants: sm=16px, md=24px, lg=32px
-- [ ] Color: muted gray, or primary orange when active
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/features/uploads/FileTypeIcon.tsx`
+- [x] Props: `mimeType: string`, `size?: 'sm' | 'md' | 'lg'`
+- [x] Return appropriate Lucide icon: `FileText` (PDF), `Image` (PNG/JPG), `File` (other)
+- [x] Size variants: sm=16px, md=24px, lg=32px
+- [x] Color: muted gray, or primary orange when active
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 

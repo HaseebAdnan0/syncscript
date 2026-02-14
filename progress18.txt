@@ -383,3 +383,24 @@
   - Bitcoin aesthetic: use orange gradient for active state, white/60 for inactive
   - Typecheck passes when union types ('all' | 'vaults' | ...) are used consistently
 ---
+## Iteration 19 - US-022: Create SearchResultItem component
+- Created SearchResultItem.tsx with result display and highlighting
+- Implemented type-specific icons: FolderOpen (vault), FileText (source), StickyNote (annotation)
+- Custom renderHighlightedText function parses <mark> tags and applies orange background with black text
+- Shows title with highlights, breadcrumb context, and snippet preview (line-clamp-2)
+- Hover state uses bg-white/5 for subtle interaction feedback
+- Displays relevance score as percentage in top-right corner
+- Files changed:
+  - frontend/src/components/features/search/SearchResultItem.tsx (created)
+  - PRD18.md (marked US-022 complete)
+- Learnings for future iterations:
+  - lucide-react icons for vault (FolderOpen), source (FileText), annotation (StickyNote)
+  - Parse HTML-like <mark> tags manually by splitting on /<mark>|<\/mark>/ regex
+  - Track highlighted state in loop to apply conditional className to spans
+  - Orange highlight pattern: bg-[#F7931A] text-black px-1 rounded
+  - line-clamp-2 utility automatically truncates to 2 lines with ellipsis
+  - min-w-0 on flex child prevents text overflow issues in flex containers
+  - flex-shrink-0 on icon/score prevents them from being squeezed by long text
+  - Typecheck passes successfully with all SearchResult types properly typed
+---
+
