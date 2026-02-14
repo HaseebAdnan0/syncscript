@@ -7,6 +7,30 @@
 
 ---
 
+## Iteration 1 - US-001: Create Source TypeScript types and API client
+- Created `frontend/src/lib/types/sources.ts` with Source, SourceType, SourceMetadata types
+- Created `frontend/src/lib/types/annotations.ts` with Annotation, AnnotationReply types
+- Created `frontend/src/lib/api/sources.ts` with CRUD functions (getSources, getSource, createSource, updateSource, deleteSource)
+- Created `frontend/src/lib/api/annotations.ts` with CRUD functions (getAnnotations, createAnnotation, createReply, deleteAnnotation)
+- All API functions use axios instance from existing lib/api setup
+- Typecheck passes ✓
+
+Files changed:
+- frontend/src/lib/types/sources.ts (new)
+- frontend/src/lib/types/annotations.ts (new)
+- frontend/src/lib/api/sources.ts (new)
+- frontend/src/lib/api/annotations.ts (new)
+- PRD9.md (marked US-001 complete)
+
+Learnings for future iterations:
+- TypeScript types follow existing pattern from lib/types/api.ts with PaginatedResponse generic
+- API clients use axios instance from lib/api.ts with built-in error handling via handleApiError
+- Sources API returns paginated results, so getSources extracts response.data.results
+- Annotations include nested replies array in the response structure
+- All CRUD operations follow RESTful URL patterns: /vaults/{id}/sources/, /sources/{id}/annotations/
+- Files were committed in frontend submodule commit d89e7bf alongside vault types/API
+---
+
 ## Implementation Notes
 
 ### Dependencies to verify before starting:
