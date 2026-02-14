@@ -178,16 +178,16 @@ SyncScript needs a complete frontend authentication system that enables users to
 **Description:** As a user, I want the registration form to validate and submit so that I can create my account.
 
 **Acceptance Criteria:**
-- [ ] Name validation: required, minimum 2 characters
-- [ ] Email validation: required, valid email format
-- [ ] Password validation: required, min 8 chars, show strength indicator (weak/medium/strong)
-- [ ] Confirm password: must match password field
-- [ ] Inline error messages for all validation failures
-- [ ] On submit, call `useAuth().register()`
-- [ ] Show loading state during submission
-- [ ] On success, auto-login and redirect to `/dashboard`
-- [ ] On error, display error toast
-- [ ] Typecheck passes
+- [x] Name validation: required, minimum 2 characters
+- [x] Email validation: required, valid email format
+- [x] Password validation: required, min 8 chars, show strength indicator (weak/medium/strong)
+- [x] Confirm password: must match password field
+- [x] Inline error messages for all validation failures
+- [x] On submit, call `useAuth().register()`
+- [x] Show loading state during submission
+- [x] On success, auto-login and redirect to `/dashboard`
+- [x] On error, display error toast
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---
