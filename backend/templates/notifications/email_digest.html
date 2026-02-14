@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SyncScript Notifications</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #030304;
+            color: #FFFFFF;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #0F1115;
+        }
+        .header {
+            background: linear-gradient(135deg, #EA580C 0%, #F7931A 100%);
+            padding: 32px 24px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+            color: #FFFFFF;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .content {
+            padding: 24px;
+        }
+        .greeting {
+            font-size: 16px;
+            margin-bottom: 24px;
+            color: #94A3B8;
+        }
+        .notification-count {
+            font-size: 14px;
+            margin-bottom: 32px;
+            color: #94A3B8;
+        }
+        .notification-item {
+            background-color: #1E293B;
+            border-left: 4px solid #F7931A;
+            padding: 16px;
+            margin-bottom: 16px;
+            border-radius: 4px;
+        }
+        .notification-item:last-child {
+            margin-bottom: 0;
+        }
+        .notification-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #FFFFFF;
+        }
+        .notification-body {
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 8px;
+            color: #94A3B8;
+        }
+        .notification-time {
+            font-size: 12px;
+            color: #64748B;
+        }
+        .divider {
+            height: 1px;
+            background-color: #1E293B;
+            margin: 24px 0;
+        }
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #EA580C 0%, #F7931A 100%);
+            color: #FFFFFF;
+            text-decoration: none;
+            padding: 14px 32px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 14px;
+            margin: 24px 0;
+        }
+        .footer {
+            padding: 24px;
+            text-align: center;
+            background-color: #030304;
+            color: #64748B;
+            font-size: 12px;
+        }
+        .footer a {
+            color: #F7931A;
+            text-decoration: none;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>SyncScript</h1>
+        </div>
+
+        <div class="content">
+            <div class="greeting">
+                Hi {{ user.username }},
+            </div>
+
+            <div class="notification-count">
+                You have {{ notification_count }} new notification{% if notification_count != 1 %}s{% endif %}:
+            </div>
+
+            {% for notification in notifications %}
+            <div class="notification-item">
+                <div class="notification-title">{{ notification.title }}</div>
+                <div class="notification-body">{{ notification.body }}</div>
+                <div class="notification-time">{{ notification.created_at|date:"F j, Y g:i A" }}</div>
+            </div>
+            {% endfor %}
+
+            <div style="text-align: center;">
+                <a href="{{ site_url }}/notifications" class="cta-button">View All Notifications</a>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>
+                Manage your notification preferences at
+                <a href="{{ site_url }}/settings/notifications">Settings</a>
+            </p>
+            <p style="margin-top: 16px;">
+                &copy; 2026 SyncScript. All rights reserved.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

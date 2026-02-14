@@ -750,3 +750,82 @@ Learnings for future iterations:
 - Response data structure validation in tests: assertIn for all required keys
 - Tomorrow midnight calculation: (now + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
 ---
+## Iteration 25 - US-024: Integrate TokenUsageDisplay into user settings
+- Created AIUsageStats interface in frontend/src/lib/types/ai.ts matching backend schema
+- Created getAIUsage API function in frontend/src/lib/api/ai.ts for fetching usage stats
+- Integrated TokenUsageDisplay into settings page at top of settings sections:
+  - Added useState for aiUsage and isLoadingUsage
+  - Added useEffect to fetch usage on mount with error handling
+  - Created "AI Usage" section with Sparkles icon and proper heading
+  - Loading spinner during data fetch
+  - TokenUsageDisplay component rendering with fetched data
+  - Error state for failed API calls
+- Fixed import style: TokenUsageDisplay is default export, not named export
+- Added comprehensive manual verification checklist to .planning/MANUAL_VERIFICATION.md
+- All 5 acceptance criteria met
+- Typecheck passes with no errors
+- Commit successful: 61ce49e
+
+Files changed:
+- frontend/src/lib/types/ai.ts (created AIUsageStats interface)
+- frontend/src/lib/api/ai.ts (created getAIUsage function)
+- frontend/src/app/(app)/settings/page.tsx (integrated AI Usage section)
+- .planning/MANUAL_VERIFICATION.md (added US-024 verification checklist)
+- PRD15.md (marked US-024 complete)
+
+Learnings for future iterations:
+- Default exports require `import Component from` not `import { Component } from`
+- AI Usage section positioned at top of settings for prominence (important feature)
+- Settings page uses space-y-8 grid layout for consistent section spacing
+- Loading state prevents flash of empty content during API fetch
+- Error handling with toast notifications provides good UX feedback
+- Manual verification tasks must be documented per CLAUDE.md rules
+- Sparkles icon (lucide-react) perfect for AI-related features
+- Settings page follows Bitcoin DeFi design: glass cards (bg-[#0F1115]), orange gradients, border accents
+---
+## Iteration 26 - US-025 & US-026: Add academic prompt templates and handle non-English sources
+- Created comprehensive apps/ai/prompts.py file with three academic prompt templates
+- SOURCE_SUMMARY_PROMPT:
+  - Extracts abstract, key_findings, methodology, limitations, keywords
+  - Detects source language with ISO 639-1 codes (en, es, fr, de, zh, ja, ar, etc.)
+  - Quality flags: preprint, not_peer_reviewed, retracted, non_academic
+  - Instructions emphasize academic rigor and evidence-based analysis
+- VAULT_INSIGHTS_PROMPT:
+  - Identifies 3-8 major themes with weights (0.0-1.0) and source counts
+  - Finds research gaps, methodological issues, unexplored areas
+  - Cross-references for synthesis opportunities
+  - Suggested searches (4-8 specific queries)
+- QUESTION_ANSWER_PROMPT:
+  - Answers based ONLY on provided context chunks
+  - Citations array with chunk indices
+  - Confidence levels: high/medium/low
+  - Academic tone with uncertainty acknowledgment
+- Added helper functions for formatting prompts with text truncation:
+  - format_source_summary_prompt(text, source_type) - truncates to 50k chars
+  - format_vault_insights_prompt(sources_text) - truncates to 40k chars
+  - format_question_answer_prompt(question, context_text) - truncates to 45k chars
+- Updated ClaudeClient to import and use formatted prompts
+- Replaced inline prompts in summarize(), analyze_sources(), answer_question() methods
+- All ClaudeClient tests pass (8/8) - prompts work correctly
+- Verified US-026 requirements already implemented:
+  - AISummaryCard displays quality_flags as orange warning badges with AlertTriangle icon
+  - AISummaryCard displays language field when not English
+  - Both language and quality_flags fields already in frontend types
+- All acceptance criteria for both US-025 and US-026 met
+- Commit successful: 8a627ae
+
+Files changed:
+- backend/apps/ai/prompts.py (created with 3 prompts + 3 formatters)
+- backend/apps/ai/services/claude_client.py (updated to use prompts)
+- PRD15.md (marked US-025 and US-026 complete)
+
+Learnings for future iterations:
+- Extracting prompts to separate file improves maintainability and version control
+- Prompt templates should include explicit instructions for edge cases
+- Language detection using ISO 639-1 codes standardizes cross-language handling
+- Quality flags should be conservative: only flag when explicitly indicated
+- Truncation limits prevent context overflow: 50k for summaries, 40k for insights, 45k for Q&A
+- Helper functions encapsulate truncation logic and formatting
+- US-026 was largely already implemented from US-012 (AISummaryCard)
+- Frontend components were already prepared for quality_flags and language fields
+---

@@ -244,17 +244,16 @@ class CitationViewSet(viewsets.ViewSet):
         source.save()
 
 
-class VaultCitationExportViewSet(viewsets.ViewSet):
+class VaultCitationExportViewSet(viewsets.GenericViewSet):
     """
     ViewSet for vault-level citation export operations.
     Provides endpoint to export all citations from a vault.
     """
     permission_classes = [IsAuthenticated]
 
-    @action(detail=False, methods=['get'])
-    def export(self, request, vault_pk=None):
+    def list(self, request, vault_pk=None):
         """
-        GET /api/v1/vaults/{vault_pk}/citations/export/?format=<format>
+        GET /api/v1/vaults/{vault_pk}/citations/?format=<format>
 
         Export all citations from a vault in the specified format.
 

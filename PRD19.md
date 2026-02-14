@@ -258,13 +258,13 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a developer, I need a service to send notification emails.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/notifications/email.py`
-- [ ] Function `send_notification_email(user, notifications)` sends digest
-- [ ] Generate both HTML and plain text versions
-- [ ] HTML template with notification list, icons, action links
-- [ ] Plain text with simple list format
-- [ ] Use Django email backend from settings
-- [ ] Typecheck passes
+- [x] Create `apps/notifications/email.py`
+- [x] Function `send_notification_email(user, notifications)` sends digest
+- [x] Generate both HTML and plain text versions
+- [x] HTML template with notification list, icons, action links
+- [x] Plain text with simple list format
+- [x] Use Django email backend from settings
+- [x] Typecheck passes
 
 ---
 

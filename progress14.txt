@@ -388,3 +388,54 @@ Learnings for future iterations:
 - Process was killed
 ---
 
+
+## Iteration 12 - US-011: Implement batch citation export endpoint
+- Created VaultCitationExportViewSet in apps/citations/views.py
+- Registered viewset in apps/vaults/urls.py using nested router (vaults_router)
+- Endpoint: GET /api/v1/vaults/{vault_pk}/citations/?format=<format>
+- Implemented list() method to handle batch export
+- Features:
+  - Supports all 6 citation formats (apa7, mla9, chicago17, bibtex, ieee, harvard)
+  - Returns file download with appropriate content-type (application/x-bibtex for BibTeX, text/plain for others)
+  - Filename format: {vault-name}-citations.{ext} (.bib for BibTeX, .txt for others)
+  - Uses cached citations when available
+  - Generates citations on-demand (structured or AI) for uncached sources
+  - Permission check: user must have vault access (viewer+)
+  - Validation: format required, invalid format returns 400, empty vault returns 400
+- Helper methods copied from CitationViewSet: _check_vault_permission, _get_cached_citation, _cache_citation
+- Created 8 comprehensive unit tests in BatchExportTests class
+- Files changed:
+  - backend/apps/citations/views.py (+84 lines for VaultCitationExportViewSet)
+  - backend/apps/vaults/urls.py (+2 lines to register viewset)
+  - backend/apps/citations/tests.py (+201 lines for BatchExportTests)
+- Typecheck: Passes with 0 errors on all modified files
+- **Known Issue**: Tests fail with 404 (URL not found) despite URLs being correctly registered
+  - Verified via Django shell that URLs are registered: `api/v1/^vaults/(?P<vault_pk>[^/.]+)/citations/$`
+  - Import of viewset succeeds without errors
+  - URL resolution works in Django shell but not in test environment
+  - Likely a Django test framework URL reloading issue
+  - **Manual verification required in browser**
+
+Learnings for future iterations:
+- Nested routers (drf-nested-routers) use `vault_pk` parameter name, not `vault_id`
+- Nested router URLs are automatically created: `/api/v1/vaults/{vault_pk}/citations/`
+- ViewSet.list() method handles GET requests to the base URL without action names
+- Using @action(detail=False) creates /endpoint/action-name/ URL patterns
+- File downloads use HttpResponse with Content-Disposition header: attachment; filename="..."
+- Content-Type headers: application/x-bibtex for .bib files, text/plain for .txt files
+- BibTeX citations already contain @entry format, just join with blank lines
+- Django test framework may cache URL configurations, causing URL resolution issues
+- Verification via Django shell: get_resolver() to inspect registered URL patterns
+- When tests fail with 404 but shell confirms URLs exist, suspect test environment URL caching
+
+---
+
+**Status: INCOMPLETE**
+- Tests fail with 404 errors (8/8 tests fail)
+- Root cause: URL resolution works in Django shell but not in test environment
+- Next iteration should investigate:
+  1. Django test client URL reloading mechanisms
+  2. Alternative routing approaches (function-based views, direct URL patterns)
+  3. Checking if other nested router tests have similar patterns
+- Do NOT commit - tests must pass before marking complete
+---
