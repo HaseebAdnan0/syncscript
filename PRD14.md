@@ -202,13 +202,13 @@ SyncScript's AI-powered citation generation system enables researchers to genera
 **Description:** As a user, I want to see a preview of my citation before copying so I can verify it's correct.
 
 **Acceptance Criteria:**
-- [ ] Clicking format in dropdown triggers API call to generate citation
-- [ ] Show loading spinner in dropdown while generating
-- [ ] On success, open CitationPreviewModal with formatted citation
-- [ ] Modal shows citation with proper formatting (italics rendered in HTML)
-- [ ] Handle async citations: show "Generating..." with polling
-- [ ] Handle errors: show toast with error message
-- [ ] Typecheck passes
+- [x] Clicking format in dropdown triggers API call to generate citation
+- [x] Show loading spinner in dropdown while generating
+- [x] On success, open CitationPreviewModal with formatted citation
+- [x] Modal shows citation with proper formatting (italics rendered in HTML)
+- [x] Handle async citations: show "Generating..." with polling
+- [x] Handle errors: show toast with error message
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-017: Create CitationPreviewModal component

@@ -780,3 +780,49 @@ Learnings for future iterations:
 - Citation format constants: define as const array of {value, label} objects
 - Component composition: button receives onFormatSelect callback to decouple from API logic
 ---
+## Iteration 20 - US-016: Implement citation format selector with preview
+- Created lib/api/citations.ts with API client functions:
+  - generateCitation(): POST to /api/v1/citations/sources/{id}/citation/
+  - getCitationTaskStatus(): GET task status for async citations
+  - pollCitationTask(): Poll until citation is ready (max 30 attempts, 1s interval)
+- Created CitationButtonContainer.tsx wrapper component:
+  - Handles API calls and state management
+  - Shows loading state while generating citation
+  - Handles both sync (structured) and async (AI) citations
+  - Polls async citations with loading toast
+  - Shows error toast on failure
+  - Opens CitationPreviewModal on success
+- Created CitationPreviewModal.tsx:
+  - Modal header shows format name (e.g., "APA 7th Edition")
+  - Citation preview with HTML rendering (italics, proper formatting)
+  - Shows citation metadata (source: AI/Structured, cached status)
+  - "Copy Citation" button (HTML version)
+  - "Copy as Plain Text" button (strips HTML)
+  - Uses navigator.clipboard.writeText() with fallback for older browsers
+  - Toast notification on successful copy with format and source title
+  - Bitcoin DeFi design system (gradient text, orange accents, dark theme)
+- Typecheck: Passes with 0 errors (pre-existing errors in NotificationPanel.tsx unrelated)
+- Files changed:
+  - frontend/src/lib/api/citations.ts (90 lines)
+  - frontend/src/components/features/sources/CitationButtonContainer.tsx (75 lines)
+  - frontend/src/components/features/sources/CitationPreviewModal.tsx (145 lines)
+  - PRD14.md: Marked acceptance criteria complete except browser verification
+- **Manual verification required** (documented in PRD as incomplete for browser testing)
+
+Learnings for future iterations:
+- API client pattern: create dedicated module in lib/api/ for each feature
+- Async citation polling: use Promise with setTimeout in loop for simple polling
+- Toast hook: useToast() from hooks, toast() function for displaying messages
+- Toast does NOT have variant property (removed from error toasts)
+- Container component pattern: separate business logic (Container) from presentation (Button/Modal)
+- Dialog component from Radix UI: Dialog, DialogContent, DialogHeader, DialogTitle
+- HTML rendering in React: dangerouslySetInnerHTML for formatted citations
+- Clipboard API: navigator.clipboard.writeText() with document.execCommand('copy') fallback
+- Format labels: use Record<string, string> for mapping format codes to display names
+- TypeScript: Remove unused parameters to avoid TS6133 errors
+- Citation response structure: {citation, citation_html, format, source, cached, task_id?, status_url?}
+- Async citations: check for task_id in response to determine if polling needed
+- Loading state UX: show toast "Generating citation..." for async AI citations
+- Success toast: include format name and truncated source title for context
+- Copy buttons: primary (HTML) and secondary (plain text) options for flexibility
+---
