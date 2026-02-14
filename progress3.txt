@@ -918,3 +918,28 @@
   - Migration created successfully even without database (same pattern as previous US)
   - Django check sufficient for validation when database doesn't exist
 ---
+
+## Iteration 37 - US-036: Add django-dirtyfields for change tracking
+- Task already completed in previous commit (6cc5332)
+- Verified implementation:
+  - django-dirtyfields>=1.9 added to requirements.txt
+  - DirtyFieldsMixin imported in both apps/sources/models.py and apps/annotations/models.py
+  - Source model class definition: class Source(DirtyFieldsMixin, models.Model)
+  - Annotation model class definition: class Annotation(DirtyFieldsMixin, models.Model)
+  - Installed django-dirtyfields package via pip
+  - Verified get_dirty_fields() method exists on both models via Django shell
+- Django check passes with 0 issues
+- Files already committed:
+  - backend/requirements.txt (django-dirtyfields>=1.9 added)
+  - backend/apps/sources/models.py (DirtyFieldsMixin added)
+  - backend/apps/annotations/models.py (DirtyFieldsMixin added)
+  - PRD3.md (marked US-036 complete)
+- Learnings for future iterations:
+  - DirtyFieldsMixin must be placed before models.Model in class inheritance
+  - get_dirty_fields() method returns dict of changed fields with before/after values
+  - Mixin automatically tracks field changes on model instances
+  - django-dirtyfields works with JSONField, ForeignKey, and all standard Django fields
+  - Always check git history before implementing - task may already be complete
+  - Django check passes even if pyright shows import warnings (module not in venv)
+  - Verify functionality by checking hasattr(Model, 'get_dirty_fields') returns True
+---

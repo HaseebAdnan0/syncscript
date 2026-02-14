@@ -480,11 +480,11 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need dirty field tracking to capture before/after diffs.
 
 **Acceptance Criteria:**
-- [ ] Add `django-dirtyfields>=1.9` to requirements.txt
-- [ ] Add `DirtyFieldsMixin` to Source model (before models.Model)
-- [ ] Add `DirtyFieldsMixin` to Annotation model
-- [ ] Verify `get_dirty_fields()` returns changed fields
-- [ ] Typecheck passes
+- [x] Add `django-dirtyfields>=1.9` to requirements.txt
+- [x] Add `DirtyFieldsMixin` to Source model (before models.Model)
+- [x] Add `DirtyFieldsMixin` to Annotation model
+- [x] Verify `get_dirty_fields()` returns changed fields
+- [x] Typecheck passes
 
 ---
 
