@@ -68,16 +68,16 @@ class NotificationListTestCase(TestCase):
 
     def test_list_ordering(self) -> None:
         """Test notifications are ordered unread first, then by created_at desc."""
-        # Mark first notification as read
-        self.notif1.mark_as_read()
+        # Mark second notification as read (created later)
+        self.notif2.mark_as_read()
 
         response = self.client.get('/api/v1/notifications/')
         results = response.data['results']
 
         # Unread notification should come first
-        self.assertEqual(results[0]['id'], self.notif2.id)
+        self.assertEqual(results[0]['id'], self.notif1.id)
         self.assertTrue(results[0]['is_read'] is False)
-        self.assertEqual(results[1]['id'], self.notif1.id)
+        self.assertEqual(results[1]['id'], self.notif2.id)
         self.assertTrue(results[1]['is_read'] is True)
 
     def test_unread_only_filter(self) -> None:

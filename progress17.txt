@@ -46,3 +46,21 @@
   - Falls back to updated_at when last_accessed_at is None
   - All 4 tests passing (auth, ordering by last_accessed_at, fallback to updated_at, empty case)
 ---
+
+## Iteration 3 - US-003: Create activity feed API endpoint
+- Implemented GET /api/v1/dashboard/activity/ endpoint with limit query param
+- Created ActivityFeedSerializer with human-readable description formatting
+- Files changed:
+  - backend/apps/dashboard/serializers.py (added ActivityFeedSerializer with format logic)
+  - backend/apps/dashboard/views.py (added activity_feed view)
+  - backend/apps/dashboard/urls.py (added activity/ route)
+  - backend/apps/dashboard/tests.py (added ActivityFeedTests class with 7 tests)
+  - PRD17.md (marked US-003 complete)
+- Learnings for future iterations:
+  - Serializer methods can format descriptions dynamically based on action type and metadata
+  - Used string pattern matching (e.g., 'source' in action) to categorize actions
+  - Limit parameter clamped between 1-50 with error handling for invalid values
+  - select_related('vault', 'actor') optimizes queries to avoid N+1 problem
+  - Tests must clear auto-generated audit logs after vault creation (signals)
+  - All 7 tests passing (auth, success, formatting, limit params, empty, null actor, access control)
+---

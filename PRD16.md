@@ -110,15 +110,15 @@ Create SyncScript's production landing page following the Bitcoin DeFi aesthetic
 **Description:** As a user, I want to see impressive platform statistics so I trust the platform's credibility.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/marketing/StatsTicker.tsx`
-- [ ] Horizontal bar with `border-y border-white/10`
-- [ ] Three stats: "10,000+ Researchers", "50,000+ Sources", "1M+ Citations"
-- [ ] Each stat has Lucide icon
-- [ ] Numbers animate counting up when section enters viewport (Framer Motion)
-- [ ] Stats evenly distributed with flex justify-between
-- [ ] Stacks to 3 rows on mobile
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/marketing/StatsTicker.tsx`
+- [x] Horizontal bar with `border-y border-white/10`
+- [x] Three stats: "10,000+ Researchers", "50,000+ Sources", "1M+ Citations"
+- [x] Each stat has Lucide icon
+- [x] Numbers animate counting up when section enters viewport (Framer Motion)
+- [x] Stats evenly distributed with flex justify-between
+- [x] Stacks to 3 rows on mobile
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-009: Create Feature Card Component
 **Description:** As a developer, I need a reusable feature card component for the features grid.

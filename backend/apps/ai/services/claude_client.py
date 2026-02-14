@@ -58,7 +58,10 @@ Focus on academic rigor. If this is not an academic source, adapt the structure 
             )
 
             # Extract JSON from response
-            response_text = message.content[0].text
+            content_block = message.content[0]
+            if not hasattr(content_block, 'text'):
+                return {"error": "Invalid response format", "tokens_used": 0}
+            response_text = content_block.text
             tokens_used = message.usage.input_tokens + message.usage.output_tokens
 
             # Try to parse JSON from response
@@ -142,7 +145,10 @@ Focus on identifying conceptual themes, methodological gaps, and opportunities f
                 messages=[{"role": "user", "content": prompt}]
             )
 
-            response_text = message.content[0].text
+            content_block = message.content[0]
+            if not hasattr(content_block, 'text'):
+                return {"error": "Invalid response format", "tokens_used": 0}
+            response_text = content_block.text
             tokens_used = message.usage.input_tokens + message.usage.output_tokens
 
             # Parse JSON
@@ -220,7 +226,10 @@ Rules:
                 messages=[{"role": "user", "content": prompt}]
             )
 
-            response_text = message.content[0].text
+            content_block = message.content[0]
+            if not hasattr(content_block, 'text'):
+                return {"error": "Invalid response format", "tokens_used": 0}
+            response_text = content_block.text
             tokens_used = message.usage.input_tokens + message.usage.output_tokens
 
             # Parse JSON

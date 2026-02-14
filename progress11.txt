@@ -158,3 +158,26 @@
   - Plaintext version provides all key info without HTML formatting
   - Django shell with render_to_string is quick way to verify templates work
 ---
+
+## Iteration 6 - US-006: Create password reset email template
+- Updated templates/emails/password_reset.html to extend base.html
+- Replaced standalone HTML with table-based layout matching base.html pattern
+- Implemented all acceptance criteria:
+  - Preheader: "Reset your SyncScript password"
+  - Security notice about password reset request
+  - Orange gradient CTA button "Reset Password"
+  - "Link expires in 1 hour" notice
+  - Security text with IP address and timestamp
+  - Fallback text link for email clients blocking buttons
+- Created templates/emails/password_reset.txt plaintext version
+- Tested both templates render successfully with Django shell
+- Files changed:
+  - backend/templates/emails/password_reset.html (updated)
+  - backend/templates/emails/password_reset.txt (new)
+  - PRD11.md (marked US-006 complete)
+- Learnings for future iterations:
+  - Template context includes: user, reset_url, request_ip, request_time, site_url
+  - Consistent table-based layout ensures email client compatibility
+  - Security info (IP/timestamp) adds trust and transparency to password reset flow
+  - Django system check passes (only allauth deprecation warnings)
+---

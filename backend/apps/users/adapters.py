@@ -4,7 +4,6 @@ Custom allauth adapters for JWT-based OAuth authentication.
 Overrides default session-based authentication to use JWT tokens instead.
 """
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
-from allauth.account.adapter import DefaultAccountAdapter
 from allauth.socialaccount.models import SocialAccount
 from django.conf import settings
 from django.http import HttpResponseRedirect

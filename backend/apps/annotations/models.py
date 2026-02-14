@@ -12,7 +12,7 @@ class Annotation(DirtyFieldsMixin, models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='annotations')
     content = models.TextField()
     page_number = models.IntegerField(null=True, blank=True)
-    position = models.JSONField(default=dict)
+    position = models.JSONField(default=dict, blank=True)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='replies')
     search_vector = SearchVectorField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

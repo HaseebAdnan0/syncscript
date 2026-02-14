@@ -13,7 +13,6 @@ from .views import (
     ProfileView,
     OnboardingView,
     GoogleOAuthRedirectView,
-    GoogleOAuthCallbackView,
     GitHubOAuthRedirectView,
 )
 
@@ -42,6 +41,6 @@ urlpatterns = [
 
     # OAuth endpoints (PRD12)
     path('auth/google/', GoogleOAuthRedirectView.as_view(), name='google-oauth'),
-    path('auth/google/callback/', GoogleOAuthCallbackView.as_view(), name='google-oauth-callback'),
     path('auth/github/', GitHubOAuthRedirectView.as_view(), name='github-oauth'),
+    # Note: OAuth callbacks are handled by allauth URLs in config/urls.py
 ]
