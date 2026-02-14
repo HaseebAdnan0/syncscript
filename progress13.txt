@@ -491,3 +491,55 @@ vaults/{vault_id}/thumbnails/{uuid}.jpg
 
 ---
 
+## Iteration 17 - Create useFileUpload hook (US-017)
+- Created frontend/src/hooks/useFileUpload.ts with complete file upload management
+- Hook implementation:
+  - State management with Map<string, UploadState> for tracking multiple uploads
+  - UploadState includes: file, progress (0-100), status, error, uploadId, fileKey
+  - Status types: 'uploading' | 'processing' | 'complete' | 'error'
+  - XMLHttpRequest refs for progress tracking and cancellation
+- uploadFile method:
+  - Determines single vs multipart based on 20MB threshold
+  - Generates unique uploadId: `${Date.now()}-${file.name}`
+  - Updates state throughout upload lifecycle
+  - Returns uploadId for tracking
+- Single file upload (< 20MB):
+  - Calls /sources/pdfs/upload-url/ to get presigned URL
+  - Uploads to S3 via XMLHttpRequest with progress tracking
+  - xhr.upload.onprogress updates progress state in real-time
+- Multipart upload (> 20MB):
+  - Calls /sources/pdfs/multipart-upload/initiate/ to start
+  - Splits file into 5MB parts
+  - Gets presigned URL for each part via /multipart-upload/part-url/
+  - Tracks cumulative progress across all parts
+  - Calls /multipart-upload/complete/ with ETags after all parts uploaded
+- retryUpload method:
+  - Extracts vault ID from fileKey (format: vaults/{vault_id}/pdfs/{uuid}.pdf)
+  - Removes failed upload and creates new upload with same file
+- cancelUpload method:
+  - Aborts XMLHttpRequest if in progress
+  - Calls /multipart-upload/abort/ for multipart uploads
+  - Removes upload from state
+- Progress tracking:
+  - xhr.upload.onprogress provides real-time progress updates
+  - Multipart uploads calculate cumulative progress across parts
+  - Progress clamped to 0-100 range
+- Error handling:
+  - Network errors caught and set status to 'error'
+  - Error messages stored in upload state
+  - XHR abort, error, and load events handled
+- Files changed:
+  - frontend/src/hooks/useFileUpload.ts (new, 280 lines)
+  - PRD13.md
+  - progress13.txt
+- Learnings for future iterations:
+  - XMLHttpRequest needed for progress tracking (fetch API doesn't support upload progress)
+  - ETag header from S3 response needs quotes stripped: etag.replace(/"/g, '')
+  - Multipart threshold: 20MB, part size: 5MB (matches backend expectations)
+  - useRef needed to store XHR instances for cancellation without triggering re-renders
+  - Presigned URLs come from backend API, not generated client-side
+  - Upload transitions: uploading → processing → complete
+  - Typecheck passes (pre-existing errors in OnboardingFlow.tsx unrelated)
+
+---
+

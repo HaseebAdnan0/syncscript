@@ -18,6 +18,17 @@ export interface SourceMetadata {
   [key: string]: unknown;
 }
 
+export interface AISummary {
+  abstract: string;
+  key_findings: string[];
+  methodology: string;
+  limitations: string;
+  keywords: string[];
+  language?: string;
+  quality_flags?: string[];
+  generated_at: string;
+}
+
 export interface Source {
   id: number;
   vault: number;
@@ -25,6 +36,7 @@ export interface Source {
   url: string;
   title: string;
   metadata: SourceMetadata;
+  ai_summary?: AISummary | null;
   contributor: {
     id: number;
     username: string;
