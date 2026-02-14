@@ -105,13 +105,13 @@ Create the complete vault management interface for SyncScript, enabling research
 **Description:** As a user, I want to search my vaults by name so I can quickly find what I'm looking for.
 
 **Acceptance Criteria:**
-- [ ] Add search input to vaults listing page header
-- [ ] Input uses bottom-border style: `border-b-2 border-white/20 focus:border-[#F7931A]`
-- [ ] Search icon (Lucide `Search`) inside input
-- [ ] Debounce input by 300ms before triggering API call
-- [ ] Search query passed to useVaults hook for server-side filtering
-- [ ] Clear button appears when search has value
-- [ ] Typecheck passes
+- [x] Add search input to vaults listing page header
+- [x] Input uses bottom-border style: `border-b-2 border-white/20 focus:border-[#F7931A]`
+- [x] Search icon (Lucide `Search`) inside input
+- [x] Debounce input by 300ms before triggering API call
+- [x] Search query passed to useVaults hook for server-side filtering
+- [x] Clear button appears when search has value
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-009: Create vault modal dialog
