@@ -613,3 +613,33 @@ In Progress - US-004 complete
   - Integration point: create_notification() calls task after creating notification
   - Task filtering: only send if frequency == 'immediate', otherwise return False
 ---
+
+## Iteration 22 - US-023: Celery Beat Task for Daily/Weekly Email Digests
+- Created send_daily_digest() and send_weekly_digest() tasks in apps/notifications/tasks.py
+- Daily task runs at 9 AM UTC, weekly runs Monday 9 AM UTC (configured in config/celery.py)
+- Both tasks query users with matching email_digest_frequency preference
+- Tasks fetch un-emailed notifications using filter(emailed_at__isnull=True)
+- Batch all un-emailed notifications per user into single email via send_notification_email()
+- Mark all notifications as emailed using bulk update() after successful send
+- Returns count of users who received emails for monitoring
+- Added tasks to Celery beat schedule in config/celery.py
+- Created comprehensive test suite with 13 test cases:
+  - DailyDigestTaskTestCase (7 tests): sends to daily users, batches notifications, marks as emailed, skips already emailed, skips users with no notifications, ignores other frequencies, returns zero when no users
+  - WeeklyDigestTaskTestCase (6 tests): sends to weekly users, batches notifications, marks as emailed, skips already emailed, ignores other frequencies, returns zero when no users
+- All tests pass (13/13), mypy typecheck passes
+- Commit 7b7edcd
+- Files changed:
+  - backend/apps/notifications/tasks.py (added digest tasks)
+  - backend/config/celery.py (added beat schedule entries)
+  - backend/apps/notifications/test_digest_tasks.py (new test file)
+  - PRD19.md (marked US-023 complete)
+- Learnings for future iterations:
+  - Import models locally in task functions to avoid circular imports
+  - NotificationPreferences.objects.filter(email_digest_frequency='daily').select_related('user') for efficient query
+  - Use .exists() to check if queryset has results before processing
+  - Bulk update pattern: get list of IDs, then .filter(id__in=ids).update(field=value)
+  - list() conversion needed for queryset before passing to send_notification_email
+  - Celery beat schedule uses crontab(hour=9, minute=0) for daily, add day_of_week=1 for Monday
+  - Return count of emails sent for monitoring/logging purposes
+  - Print statements useful for debugging Celery task execution
+---

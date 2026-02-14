@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
+from datetime import timedelta
 from celery import shared_task  # type: ignore[import-untyped]
 from django.utils import timezone
 
@@ -156,3 +157,43 @@ def send_weekly_digest() -> int:
 
     print(f"Weekly digest: sent to {sent_count} users")
     return sent_count
+
+
+@shared_task
+def cleanup_old_notifications() -> dict:
+    """
+    Delete old notifications to manage storage.
+
+    - Read notifications older than 7 days are deleted
+    - Unread notifications older than 30 days are deleted
+
+    Returns:
+        Dictionary with counts of deleted notifications:
+        - read_deleted: number of read notifications deleted
+        - unread_deleted: number of unread notifications deleted
+        - total: total number of notifications deleted
+    """
+    now = timezone.now()
+    seven_days_ago = now - timedelta(days=7)
+    thirty_days_ago = now - timedelta(days=30)
+
+    # Delete read notifications older than 7 days
+    read_count, _ = Notification.objects.filter(
+        read_at__isnull=False,
+        read_at__lt=seven_days_ago
+    ).delete()
+
+    # Delete unread notifications older than 30 days
+    unread_count, _ = Notification.objects.filter(
+        read_at__isnull=True,
+        created_at__lt=thirty_days_ago
+    ).delete()
+
+    total = read_count + unread_count
+    print(f"Cleanup: deleted {read_count} read (>7 days) and {unread_count} unread (>30 days) notifications, total: {total}")
+
+    return {
+        'read_deleted': read_count,
+        'unread_deleted': unread_count,
+        'total': total
+    }

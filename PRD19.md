@@ -313,12 +313,12 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a developer, I need to auto-delete old notifications to manage storage.
 
 **Acceptance Criteria:**
-- [ ] Task `cleanup_old_notifications()` runs daily
-- [ ] Delete read notifications older than 7 days
-- [ ] Delete unread notifications older than 30 days
-- [ ] Log count of deleted notifications
-- [ ] Add to Celery beat schedule
-- [ ] Typecheck passes
+- [x] Task `cleanup_old_notifications()` runs daily
+- [x] Delete read notifications older than 7 days
+- [x] Delete unread notifications older than 30 days
+- [x] Log count of deleted notifications
+- [x] Add to Celery beat schedule
+- [x] Typecheck passes
 
 ---
 

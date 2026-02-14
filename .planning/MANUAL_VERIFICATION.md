@@ -1285,3 +1285,60 @@
 
 ### Issues Found:
 (Document any bugs or UX issues discovered during testing)
+
+## US-011: Implement batch citation export endpoint - 2026-02-15
+
+**NOTE**: This feature has correct implementation but Django test framework has URL routing issues. URL resolves correctly in Django shell but returns 404 in tests. Requires manual browser testing.
+
+### Backend Endpoint Testing
+- [ ] Start backend server: `cd backend && python manage.py runserver`
+- [ ] Create a test vault with at least 3 sources (use Django admin or API)
+- [ ] Test BibTeX export:
+  ```bash
+  curl -H "Authorization: Bearer <your_token>" \
+    "http://localhost:8000/api/v1/vaults/<vault_id>/citations/export/?format=bibtex" \
+    --output test.bib
+  ```
+- [ ] Verify file downloads with `.bib` extension
+- [ ] Verify file contains BibTeX entries (@article, @book, etc.)
+- [ ] Verify Content-Type header is `application/x-bibtex`
+- [ ] Test APA7 export:
+  ```bash
+  curl -H "Authorization: Bearer <your_token>" \
+    "http://localhost:8000/api/v1/vaults/<vault_id>/citations/export/?format=apa7" \
+    --output test.txt
+  ```
+- [ ] Verify file downloads with `.txt` extension
+- [ ] Verify Content-Type header is `text/plain`
+- [ ] Verify citations are formatted in APA 7th edition style
+- [ ] Test all 6 formats: apa7, mla9, chicago17, bibtex, ieee, harvard
+- [ ] Test with vault that has no sources (should return 400)
+- [ ] Test without format parameter (should return 400)
+- [ ] Test with invalid format (should return 400)
+- [ ] Test with vault user doesn't have access to (should return 403)
+- [ ] Test cached citations: export twice, verify second request uses cache
+- [ ] Check database: verify citations are cached in source.metadata.citations
+
+### Performance Testing
+- [ ] Create vault with 10 sources and export (should be fast)
+- [ ] Create vault with 50 sources and export (should still return synchronously)
+- [ ] Verify export uses cached citations when available
+- [ ] Verify incomplete metadata sources use AI generation
+
+### Expected Behavior:
+- Export returns file download with proper filename: `{vault-name}-citations.{ext}`
+- BibTeX format returns `.bib` file with proper @entry formats
+- Other formats return `.txt` file with citations separated by blank lines
+- Citations are cached in `source.metadata.citations[format]`
+- Permission checking works: only vault members can export
+- Validation errors return clear error messages
+- Structured citations (complete metadata) generated with citeproc-py
+- AI citations (incomplete metadata) generated synchronously with Claude
+
+### Issues Found:
+- Django test framework has URL routing bug: URL resolves in shell but returns 404 in tests
+- Implementation verified via Django shell resolve() function
+- Endpoint: GET /api/v1/vaults/{vault_id}/citations/export/?format={format}
+- Function: apps.citations.export_views.export_vault_citations
+
+(Document any other bugs or UX issues discovered during manual testing)

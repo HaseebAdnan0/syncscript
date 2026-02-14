@@ -2009,9 +2009,17 @@ class BatchExportTests(TestCase):
         # Authenticate
         self.client.force_authenticate(user=self.user)
 
+        # First verify vault access works
+        vault_detail_url = f'/api/v1/vaults/{self.vault.id}/'
+        vault_response = self.client.get(vault_detail_url)
+        print(f'\nVault detail URL: {vault_detail_url}')
+        print(f'Vault detail status: {vault_response.status_code}')
+        if vault_response.status_code != 200:
+            print(f'Vault detail error: {vault_response.data if hasattr(vault_response, "data") else vault_response.content}')
+
         # Export citations
         url = f'/api/v1/vaults/{self.vault.id}/citations/export/'
-        print(f'\nTesting URL: {url}')
+        print(f'Testing URL: {url}')
         print(f'Vault ID type: {type(self.vault.id)}')
         print(f'Vault ID value: {self.vault.id}')
         response = self.client.get(url, {'format': 'bibtex'})
