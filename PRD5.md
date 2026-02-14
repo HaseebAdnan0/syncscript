@@ -127,10 +127,10 @@ This PRD covers the full implementation: core infrastructure, event broadcasting
 **Description:** As a user, I want to see when collaborators join or leave so I know who's working on the vault.
 
 **Acceptance Criteria:**
-- [ ] After joining room, broadcast `presence.update` event to all room members
-- [ ] After leaving room, broadcast updated `presence.update` to remaining members
-- [ ] Payload includes `active_users` array with user_id, username, joined_at, status
-- [ ] Typecheck passes
+- [x] After joining room, broadcast `presence.update` event to all room members
+- [x] After leaving room, broadcast updated `presence.update` to remaining members
+- [x] Payload includes `active_users` array with user_id, username, joined_at, status
+- [x] Typecheck passes
 
 ---
 

@@ -241,3 +241,25 @@
   - Default queryset already filters is_deleted=False, so soft-deleted sources hidden automatically
   - Return status.HTTP_204_NO_CONTENT for successful delete (standard REST convention)
 ---
+
+## Iteration 12 - US-011: Add restore action to SourceViewSet
+- Added @action(detail=True, methods=['post']) restore endpoint to SourceViewSet
+- Implementation:
+  - Manually builds queryset including soft-deleted sources (is_deleted=True)
+  - Filters by accessible vaults (owned + member vaults)
+  - Uses get_object_or_404 to fetch source with is_deleted=True filter
+  - Checks OWNER permission manually (since not using get_object())
+  - Checks both VaultMembership.role==OWNER and Vault.owner==user
+  - Sets instance.is_deleted = False and saves
+  - Returns serialized source with HTTP 200
+- Django check passes with 0 issues
+- Files changed:
+  - backend/apps/sources/views.py (added restore() action method)
+  - PRD3.md (marked US-011 complete)
+- Learnings for future iterations:
+  - @action methods need to manually handle queryset filtering when bypassing default get_queryset()
+  - Use get_object_or_404 instead of get_object() when manually fetching objects in actions
+  - Permission checks must be manual when not using ModelViewSet's get_object() method
+  - Check both VaultMembership role AND Vault.owner for complete permission coverage
+  - Restore actions should filter for is_deleted=True to prevent restoring already-active sources
+---

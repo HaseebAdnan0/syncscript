@@ -268,3 +268,25 @@ Learnings for future iterations:
 - Git lock contention requires sleep/retry when multiple Ralph processes run
 ---
 
+## Iteration 15 - Create LogoutView endpoint (US-017)
+- Created LogoutView as class-based APIView in apps/users/views.py
+- POST /api/v1/auth/logout/ requires authentication (IsAuthenticated permission)
+- Accepts refresh token in request body
+- Blacklists refresh token using RefreshToken(refresh_token).blacklist()
+- Returns success message on successful logout
+- Handles TokenError for invalid/expired tokens with 400 error response
+- Imported IsAuthenticated permission and TokenError exception
+- Django system check passes
+
+Files changed:
+- backend/apps/users/views.py (added LogoutView class, imported IsAuthenticated and TokenError)
+- PRD1.md (marked US-017 complete)
+
+Learnings for future iterations:
+- LogoutView requires authentication (IsAuthenticated) to ensure only authenticated users can logout
+- RefreshToken(token_string).blacklist() is the method to blacklist a token in SimpleJWT
+- TokenError exception must be caught when validating/blacklisting tokens
+- Logout doesn't require rate limiting (users should be able to logout freely)
+- Token blacklisting requires the token_blacklist app in INSTALLED_APPS (already configured in US-004)
+---
+
