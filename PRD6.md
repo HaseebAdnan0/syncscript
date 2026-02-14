@@ -174,10 +174,10 @@ Implement cloud file storage for SyncScript using Cloudflare R2 (S3-compatible).
 **Description:** As a vault owner, I want to see storage usage in vault details so I can manage resources.
 
 **Acceptance Criteria:**
-- [ ] Add `storage_used_bytes`, `storage_file_count`, `storage_user_breakdown` to VaultDetailSerializer
-- [ ] Source from related VaultStorageUsage model
-- [ ] Handle case where VaultStorageUsage doesn't exist (return 0/empty)
-- [ ] Typecheck passes
+- [x] Add `storage_used_bytes`, `storage_file_count`, `storage_user_breakdown` to VaultDetailSerializer
+- [x] Source from related VaultStorageUsage model
+- [x] Handle case where VaultStorageUsage doesn't exist (return 0/empty)
+- [x] Typecheck passes
 
 ### US-016: Create soft-delete endpoint
 **Description:** As a vault owner, I want to delete PDFs so I can keep my vault organized.
