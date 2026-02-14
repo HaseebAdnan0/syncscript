@@ -16,7 +16,7 @@ from datetime import datetime
 
 
 @api_view(['GET'])
-# @permission_classes([IsAuthenticated])  # Temporarily disabled for debugging
+@permission_classes([IsAuthenticated])
 def export_vault_citations(request, vault_id):
     """
     GET /api/v1/citations/vaults/{vault_id}/export/?format=<format>
@@ -32,8 +32,6 @@ def export_vault_citations(request, vault_id):
 
     Permission: User must have vault access (viewer+)
     """
-    # DEBUG: Print to confirm view is being called
-    print(f'DEBUG: export_vault_citations called with vault_id={vault_id}')
     user = request.user
 
     # Get vault and check permission

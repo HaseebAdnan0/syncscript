@@ -351,13 +351,13 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a user, I want each notification to display clearly with icon, content, and time.
 
 **Acceptance Criteria:**
-- [ ] Create `components/features/notifications/NotificationItem.tsx`
-- [ ] Icon based on notification type (different icons for invite, source, mention, etc.)
-- [ ] Title in bold, body preview below (truncated)
-- [ ] Relative timestamp (e.g., "2 hours ago")
-- [ ] Blue dot indicator for unread
-- [ ] Hover state with subtle background
-- [ ] Typecheck passes
+- [x] Create `components/features/notifications/NotificationItem.tsx`
+- [x] Icon based on notification type (different icons for invite, source, mention, etc.)
+- [x] Title in bold, body preview below (truncated)
+- [x] Relative timestamp (e.g., "2 hours ago")
+- [x] Blue dot indicator for unread
+- [x] Hover state with subtle background
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---
