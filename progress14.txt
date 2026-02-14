@@ -23,3 +23,19 @@ The stories are ordered for dependency resolution:
 - Settings hierarchy: Vault override > User preference > None
 
 ---
+
+## Iteration 1 - US-001: Create citations app structure
+- Created apps/citations/ Django app with all required scaffolding
+- Added CitationFormat TextChoices enum with 6 academic formats (APA7, MLA9, CHICAGO17, BIBTEX, IEEE, HARVARD)
+- Created empty service files: services.py, views.py, serializers.py, tasks.py
+- Registered app in config/settings.py INSTALLED_APPS
+- Added path('api/v1/citations/', include('apps.citations.urls')) to main urlconf
+- Files changed: backend/apps/citations/*, backend/config/settings.py, backend/config/urls.py
+- Tests: Django check passes, Pyright typecheck passes with 0 errors
+
+Learnings for future iterations:
+- Django app structure is clean and follows project conventions (apps/*)
+- TextChoices enum provides type safety for citation formats
+- Empty files created for future services (doi_lookup, isbn_lookup, ai_citation, structured_citation)
+
+---
