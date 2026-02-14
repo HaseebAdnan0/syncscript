@@ -1,5 +1,5 @@
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchHeadline
-from django.db.models import Q, F, Value, CharField
+from django.db.models import Q, F, Value, Count
 from django.db.models.functions import Coalesce
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
@@ -9,7 +9,6 @@ from rest_framework.response import Response
 from apps.sources.models import Source
 from apps.annotations.models import Annotation
 from apps.vaults.models import Vault
-from .serializers import SearchResultSerializer
 
 
 @api_view(['GET'])
@@ -187,3 +186,79 @@ def search_view(request):
     )
 
     return Response(results)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def suggestions_view(request):
+    """
+    Get search suggestions for typeahead.
+
+    Query params:
+    - q (required): Search query string (min 2 chars)
+
+    Returns top 5 suggestions based on Source titles and Annotation content.
+    """
+    query_string = request.GET.get('q', '').strip()
+
+    # Validate query length
+    if len(query_string) < 2:
+        return Response(
+            {'error': 'Search query must be at least 2 characters'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # Get user's accessible vaults
+    accessible_vault_ids = list(
+        request.user.vault_memberships.values_list('vault_id', flat=True)
+    )
+    owned_vault_ids = list(
+        Vault.objects.filter(owner=request.user).values_list('id', flat=True)
+    )
+    accessible_vault_ids.extend(owned_vault_ids)
+    accessible_vault_ids = list(set(accessible_vault_ids))
+
+    suggestions = []
+
+    # Get suggestions from Source titles (case-insensitive prefix matching)
+    source_suggestions = (
+        Source.objects
+        .filter(vault_id__in=accessible_vault_ids, is_deleted=False)
+        .filter(title__icontains=query_string)
+        .values('title')
+        .annotate(count=Count('id'))
+        .order_by('-count', 'title')[:3]
+    )
+
+    for suggestion in source_suggestions:
+        suggestions.append({
+            'text': suggestion['title'],
+            'type': 'source',
+            'count': suggestion['count']
+        })
+
+    # Get suggestions from Annotation content (first 100 chars, prefix matching)
+    # Limited to reduce response time
+    if len(suggestions) < 5:
+        annotation_suggestions = (
+            Annotation.objects
+            .filter(source__vault_id__in=accessible_vault_ids, source__is_deleted=False)
+            .filter(content__icontains=query_string)
+            .values('content')
+            .order_by('-created_at')[:2]
+        )
+
+        for suggestion in annotation_suggestions:
+            # Extract first sentence or 50 chars as suggestion text
+            content = suggestion['content']
+            snippet = content[:50] + '...' if len(content) > 50 else content
+            suggestions.append({
+                'text': snippet,
+                'type': 'annotation',
+                'count': 1
+            })
+
+    # Limit to 5 total suggestions
+    suggestions = suggestions[:5]
+
+    return Response({'suggestions': suggestions})

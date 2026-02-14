@@ -231,3 +231,30 @@
   - Using semantic section IDs (id="features") enables smooth scroll anchor navigation
   - Text gradient pattern: bg-gradient-to-r from-[#F7931A] to-[#FFD600] bg-clip-text text-transparent
 ---
+
+## Iteration 11 - US-011: Create How It Works Timeline Component
+- Verified HowItWorksSection.tsx already exists and is complete (created in previous session)
+- Component implements all acceptance criteria:
+  - Section heading centered with gradient text on "Works"
+  - Vertical gradient line from #F7931A to transparent (desktop only, hidden on mobile)
+  - 3 steps with circular gradient nodes containing icons (FolderPlus, Link2, Users)
+  - Step cards with corner border accents (top-left and bottom-right using absolute positioning)
+  - Steps: 1) Create Your Vault, 2) Add Sources, 3) Collaborate in Real-Time
+  - Alternating left/right layout on desktop using grid-cols-2 with conditional col-start
+  - Stacked centered layout on mobile (icons shown in card headers)
+  - Framer Motion fade-in on scroll with staggered delays (0s, 0.2s, 0.4s)
+- Component already integrated into landing page between FeaturesSection and next section
+- Typecheck passes, dev server runs successfully on port 3002
+- Files changed:
+  - HowItWorksSection.tsx already existed and was committed previously in commit af403ab
+  - page.tsx already had the import and integration
+  - PRD16.md was already marked complete
+- Learnings for future iterations:
+  - Vertical gradient line uses `bg-gradient-to-b from-[#F7931A] via-[#F7931A]/50 to-transparent`
+  - Alternating layout achieved with grid-cols-2 and conditional col-start-1/col-start-2
+  - Numbered nodes use absolute positioning at `left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2`
+  - Corner border accents use absolute positioned divs with border-t/border-l and border-b/border-r
+  - Different layouts for mobile (icons in card) vs desktop (icons in center nodes) provides better UX
+  - Outer glow ring (blur-xl) adds depth to gradient nodes
+  - border-4 with background color creates clean separation between node and timeline line
+---

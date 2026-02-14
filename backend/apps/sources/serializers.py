@@ -136,6 +136,21 @@ class MultipartUploadCompleteRequestSerializer(serializers.Serializer):
         return value
 
 
+class MultipartUploadAbortRequestSerializer(serializers.Serializer):
+    """
+    Serializer for multipart upload abort request (US-009).
+    Validates the upload_id and file_key for aborting a failed multipart upload.
+    """
+    upload_id = serializers.CharField(
+        required=True,
+        help_text="S3 multipart upload ID from initiate endpoint"
+    )
+    file_key = serializers.CharField(
+        required=True,
+        help_text="S3 object key where file was being uploaded"
+    )
+
+
 class SourceSerializer(serializers.ModelSerializer):
     """
     Serializer for Source model (US-007).

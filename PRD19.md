@@ -109,10 +109,10 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a user, I want to quickly fetch my unread notification count for the badge.
 
 **Acceptance Criteria:**
-- [ ] GET `/api/v1/notifications/unread-count/` returns `{ "count": N }`
-- [ ] Only count authenticated user's notifications
-- [ ] Efficient query (COUNT, not fetching all)
-- [ ] Typecheck passes
+- [x] GET `/api/v1/notifications/unread-count/` returns `{ "count": N }`
+- [x] Only count authenticated user's notifications
+- [x] Efficient query (COUNT, not fetching all)
+- [x] Typecheck passes
 
 ---
 

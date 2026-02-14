@@ -1152,3 +1152,167 @@ Unknown. (n.d.). <i>Web Article</i>. Retrieved from https://example.com/web"""
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self.assertIn('citation', data)
+
+
+class CitationCacheInvalidationTests(TestCase):
+    """Tests for citation cache invalidation via signals and utilities"""
+
+    def setUp(self):
+        """Set up test fixtures"""
+        from django.contrib.auth import get_user_model
+        from apps.vaults.models import Vault
+        from apps.sources.models import Source
+
+        User = get_user_model()
+        self.user = User.objects.create_user(
+            email='test@example.com',
+            username='testuser',
+            password='testpass123'
+        )
+        self.vault = Vault.objects.create(
+            name='Test Vault',
+            owner=self.user
+        )
+        self.source = Source.objects.create(
+            vault=self.vault,
+            url='https://example.com/article',
+            title='Test Article',
+            metadata={
+                'authors': 'Smith, J.',
+                'publication_date': '2024',
+                'journal': 'Test Journal'
+            },
+            created_by=self.user
+        )
+
+    def test_invalidate_citation_cache_utility(self):
+        """Test invalidate_citation_cache utility function removes citations"""
+        from apps.citations.utils import invalidate_citation_cache
+
+        # Add cached citation
+        self.source.metadata['citations'] = {
+            'apa7': {
+                'text': 'Smith, J. (2024). Test Article.',
+                'html': 'Smith, J. (2024). <i>Test Article</i>.',
+                'generated_at': '2024-01-01T00:00:00',
+                'source': 'structured'
+            }
+        }
+        self.source.save()
+
+        # Reload source to verify cache was saved
+        self.source.refresh_from_db()
+        self.assertIn('citations', self.source.metadata)
+
+        # Invalidate cache
+        invalidate_citation_cache(self.source)
+
+        # Reload and verify citations removed
+        self.source.refresh_from_db()
+        self.assertNotIn('citations', self.source.metadata)
+
+    def test_invalidate_citation_cache_no_metadata(self):
+        """Test invalidate_citation_cache handles source with no metadata gracefully"""
+        from apps.citations.utils import invalidate_citation_cache
+
+        # Create source with no metadata
+        self.source.metadata = None
+        self.source.save()
+
+        # Should not raise error
+        invalidate_citation_cache(self.source)
+
+    def test_invalidate_citation_cache_no_citations(self):
+        """Test invalidate_citation_cache handles source with no citations key gracefully"""
+        from apps.citations.utils import invalidate_citation_cache
+
+        # Source has metadata but no citations
+        self.source.metadata = {'some_key': 'some_value'}
+        self.source.save()
+
+        # Should not raise error
+        invalidate_citation_cache(self.source)
+
+        # Metadata should still exist
+        self.source.refresh_from_db()
+        self.assertEqual(self.source.metadata, {'some_key': 'some_value'})
+
+    def test_signal_invalidates_cache_on_metadata_change(self):
+        """Test that signal invalidates cache when source metadata is updated"""
+        # Add cached citation
+        self.source.metadata['citations'] = {
+            'apa7': {
+                'text': 'Smith, J. (2024). Test Article.',
+                'html': 'Smith, J. (2024). <i>Test Article</i>.',
+                'generated_at': '2024-01-01T00:00:00',
+                'source': 'structured'
+            }
+        }
+        self.source.save()
+
+        # Reload source to verify cache was saved
+        self.source.refresh_from_db()
+        self.assertIn('citations', self.source.metadata)
+
+        # Update metadata (trigger signal)
+        self.source.metadata['authors'] = 'Doe, J.'
+        self.source.save()
+
+        # Reload and verify citations were invalidated
+        self.source.refresh_from_db()
+        self.assertNotIn('citations', self.source.metadata)
+
+    def test_signal_does_not_invalidate_cache_on_other_field_change(self):
+        """Test that signal does NOT invalidate cache when non-metadata fields change"""
+        # Add cached citation
+        self.source.metadata = {
+            'authors': 'Smith, J.',
+            'citations': {
+                'apa7': {
+                    'text': 'Smith, J. (2024). Test Article.',
+                    'html': 'Smith, J. (2024). <i>Test Article</i>.',
+                    'generated_at': '2024-01-01T00:00:00',
+                    'source': 'structured'
+                }
+            }
+        }
+        self.source.save()
+
+        # Reload source
+        self.source.refresh_from_db()
+        self.assertIn('citations', self.source.metadata)
+
+        # Update title (not metadata, so signal should not trigger cache invalidation)
+        self.source.title = 'Updated Title'
+        self.source.save()
+
+        # Reload and verify citations still exist
+        self.source.refresh_from_db()
+        self.assertIn('citations', self.source.metadata)
+
+    def test_signal_does_not_trigger_on_new_source(self):
+        """Test that signal does not trigger on source creation"""
+        from apps.sources.models import Source
+
+        # Create new source with metadata and citations
+        new_source = Source.objects.create(
+            vault=self.vault,
+            url='https://example.com/new-article',
+            title='New Article',
+            metadata={
+                'authors': 'Johnson, K.',
+                'citations': {
+                    'apa7': {
+                        'text': 'Johnson, K. (2024). New Article.',
+                        'html': 'Johnson, K. (2024). <i>New Article</i>.',
+                        'generated_at': '2024-01-01T00:00:00',
+                        'source': 'structured'
+                    }
+                }
+            },
+            created_by=self.user
+        )
+
+        # Reload and verify citations were NOT invalidated (signal should not run on create)
+        new_source.refresh_from_db()
+        self.assertIn('citations', new_source.metadata)

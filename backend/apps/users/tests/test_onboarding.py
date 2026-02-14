@@ -264,3 +264,158 @@ class DemoVaultResetAPITests(TestCase):
 
         # Verify user is owner
         self.assertEqual(vault_data['user_role'], 'OWNER')
+
+
+class DemoVaultStatusAPITests(TestCase):
+    """Tests for demo vault status API endpoint (US-006)."""
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            email='test@example.com',
+            username='testuser',
+            password='TestPass123!'
+        )
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.user)
+        self.url = reverse('users:demo-vault-status')
+
+    def test_status_vault_exists(self):
+        """Test status endpoint when demo vault exists."""
+        from apps.users.services import create_demo_vault
+
+        # Create demo vault
+        vault = create_demo_vault(self.user)
+
+        # Get status
+        response = self.client.get(self.url)
+
+        # Verify response
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['exists'], True)
+        self.assertEqual(response.data['vault_id'], str(vault.id))
+
+    def test_status_vault_not_exists(self):
+        """Test status endpoint when demo vault doesn't exist."""
+        from apps.vaults.models import Vault
+
+        # Ensure no demo vault exists
+        Vault.objects.filter(
+            owner=self.user,
+            name="AI Research Papers 2025"
+        ).delete()
+
+        # Get status
+        response = self.client.get(self.url)
+
+        # Verify response
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['exists'], False)
+        self.assertIsNone(response.data['vault_id'])
+
+    def test_status_unauthenticated(self):
+        """Test status endpoint requires authentication."""
+        # Logout
+        self.client.force_authenticate(user=None)
+
+        # Attempt to get status
+        response = self.client.get(self.url)
+
+        # Verify unauthorized
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+class DemoVaultCreateAPITests(TestCase):
+    """Tests for demo vault create API endpoint (US-006)."""
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            email='test@example.com',
+            username='testuser',
+            password='TestPass123!'
+        )
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.user)
+        self.url = reverse('users:demo-vault-create')
+
+    def test_create_vault_success(self):
+        """Test creating demo vault when it doesn't exist."""
+        from apps.vaults.models import Vault
+
+        # Ensure no demo vault exists
+        Vault.objects.filter(
+            owner=self.user,
+            name="AI Research Papers 2025"
+        ).delete()
+
+        # Create demo vault
+        response = self.client.post(self.url)
+
+        # Verify response
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertIn('message', response.data)
+        self.assertIn('vault', response.data)
+
+        # Verify vault was created
+        vault = Vault.objects.get(
+            owner=self.user,
+            name="AI Research Papers 2025"
+        )
+        self.assertIsNotNone(vault)
+
+        # Verify vault data in response
+        self.assertEqual(response.data['vault']['id'], str(vault.id))
+        self.assertEqual(response.data['vault']['name'], "AI Research Papers 2025")
+
+    def test_create_vault_already_exists(self):
+        """Test creating demo vault when it already exists."""
+        from apps.users.services import create_demo_vault
+
+        # Create existing demo vault
+        create_demo_vault(self.user)
+
+        # Attempt to create again
+        response = self.client.post(self.url)
+
+        # Verify error
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('error', response.data)
+        self.assertIn('already exists', response.data['error'].lower())
+
+    def test_create_vault_unauthenticated(self):
+        """Test creating demo vault requires authentication."""
+        # Logout
+        self.client.force_authenticate(user=None)
+
+        # Attempt to create
+        response = self.client.post(self.url)
+
+        # Verify unauthorized
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_create_vault_full_data(self):
+        """Test created vault has all sources and annotations."""
+        from apps.vaults.models import Vault
+        from apps.sources.models import Source
+        from apps.annotations.models import Annotation
+
+        # Ensure no demo vault exists
+        Vault.objects.filter(
+            owner=self.user,
+            name="AI Research Papers 2025"
+        ).delete()
+
+        # Create demo vault
+        response = self.client.post(self.url)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # Verify vault has all data
+        vault = Vault.objects.get(
+            owner=self.user,
+            name="AI Research Papers 2025"
+        )
+
+        sources = Source.objects.filter(vault=vault)
+        annotations = Annotation.objects.filter(source__vault=vault)
+
+        self.assertEqual(sources.count(), 10)
+        self.assertEqual(annotations.count(), 18)

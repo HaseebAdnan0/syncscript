@@ -17,12 +17,14 @@ from .serializers import (
     MultipartUploadRequestSerializer,
     MultipartUploadResponseSerializer,
     MultipartUploadCompleteRequestSerializer,
+    MultipartUploadAbortRequestSerializer,
 )
 from .storage import (
     generate_presigned_upload_url,
     generate_presigned_download_url,
     initiate_multipart_upload,
     complete_multipart_upload,
+    abort_multipart_upload,
 )
 from .services import extract_metadata
 from .permissions import VaultSourcePermission
@@ -425,6 +427,67 @@ class PDFUploadViewSet(viewsets.ModelViewSet):
             'pdf_id': pdf_upload.id,
             'status': pdf_upload.processing_status,
             'message': 'Multipart upload completed. Processing will begin shortly.'
+        }, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['post'], url_path='multipart-upload/abort')
+    def multipart_upload_abort(self, request):
+        """
+        POST /api/v1/sources/pdfs/multipart-upload/abort/
+
+        Abort a failed multipart upload to free S3 resources.
+        Called by client when upload fails or is cancelled.
+
+        Request body:
+        - upload_id (str): S3 multipart upload ID from initiate endpoint
+        - file_key (str): S3 object key where file was being uploaded
+
+        Response:
+        - message (str): Success message
+        """
+        # Validate request
+        request_serializer = MultipartUploadAbortRequestSerializer(data=request.data)
+        request_serializer.is_valid(raise_exception=True)
+
+        upload_id = request_serializer.validated_data['upload_id']
+        file_key = request_serializer.validated_data['file_key']
+
+        # Extract vault_id from file_key (format: vaults/{vault_id}/pdfs/{uuid}.pdf)
+        try:
+            parts = file_key.split('/')
+            if len(parts) >= 2 and parts[0] == 'vaults':
+                vault_id = parts[1]
+            else:
+                return Response(
+                    {'error': 'Invalid file_key format'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        except Exception:
+            return Response(
+                {'error': 'Invalid file_key format'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Verify user has permission to abort (owns the vault or is contributor)
+        try:
+            vault = get_object_or_404(Vault, id=vault_id)
+            self._check_vault_permission(vault_id, request.user)
+        except Exception:
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied("You do not have permission to abort this upload.")
+
+        # Abort the multipart upload
+        try:
+            abort_multipart_upload(file_key=file_key, upload_id=upload_id)
+            logger.info(f"User {request.user.id} aborted multipart upload {upload_id} for {file_key}")
+        except Exception as e:
+            logger.error(f"Failed to abort multipart upload {upload_id}: {str(e)}", exc_info=True)
+            return Response(
+                {'error': f'Failed to abort upload: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+        return Response({
+            'message': 'Multipart upload aborted successfully.'
         }, status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):

@@ -1,14 +1,13 @@
 """
 Django signals for citation cache invalidation.
 """
+from typing import Any
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
-from apps.sources.models import Source
-from apps.citations.utils import invalidate_citation_cache
 
 
-@receiver(pre_save, sender=Source)
-def invalidate_cache_on_metadata_change(sender, instance, **kwargs):
+@receiver(pre_save, sender='sources.Source')
+def invalidate_cache_on_metadata_change(sender: Any, instance: Any, **kwargs: Any) -> None:
     """
     Invalidate citation cache when source metadata is updated.
 

@@ -13,6 +13,8 @@ from .views import (
     ProfileView,
     OnboardingView,
     DemoVaultResetView,
+    DemoVaultStatusView,
+    DemoVaultCreateView,
     GoogleOAuthRedirectView,
     GitHubOAuthRedirectView,
     LinkOAuthAccountView,
@@ -38,9 +40,11 @@ urlpatterns = [
     # User profile endpoint
     path('users/profile/', ProfileView.as_view(), name='profile'),
 
-    # Onboarding endpoints (US-002, US-005)
+    # Onboarding endpoints (US-002, US-005, US-006)
     path('users/me/onboarding/', OnboardingView.as_view(), name='onboarding'),
     path('users/me/demo-vault/reset/', DemoVaultResetView.as_view(), name='demo-vault-reset'),
+    path('users/me/demo-vault/status/', DemoVaultStatusView.as_view(), name='demo-vault-status'),
+    path('users/me/demo-vault/create/', DemoVaultCreateView.as_view(), name='demo-vault-create'),
 
     # OAuth endpoints (PRD12)
     path('auth/google/', GoogleOAuthRedirectView.as_view(), name='google-oauth'),
