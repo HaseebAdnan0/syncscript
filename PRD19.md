@@ -592,14 +592,14 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a developer, I need tests to ensure notification system reliability.
 
 **Acceptance Criteria:**
-- [ ] Test Notification model creation
-- [ ] Test signal handlers create correct notifications
-- [ ] Test API endpoints (list, read, read-all, count, preferences)
-- [ ] Test muted vault filtering
-- [ ] Test mention extraction utility
-- [ ] Test email digest generation
-- [ ] All tests pass
-- [ ] Typecheck passes
+- [x] Test Notification model creation
+- [x] Test signal handlers create correct notifications
+- [x] Test API endpoints (list, read, read-all, count, preferences)
+- [x] Test muted vault filtering
+- [x] Test mention extraction utility
+- [x] Test email digest generation
+- [x] All tests pass
+- [x] Typecheck passes
 
 ---
 
