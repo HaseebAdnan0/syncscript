@@ -196,17 +196,17 @@ SyncScript needs a complete frontend authentication system that enables users to
 **Description:** As a user, I want a forgot password page so that I can request a password reset link.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/app/(auth)/forgot-password/page.tsx`
-- [ ] Glass card with title "Reset Password"
-- [ ] Email input field
-- [ ] Gradient submit button "Send Reset Link"
-- [ ] Link back to login page
-- [ ] Email validation: required, valid format
-- [ ] On submit, POST to `/auth/password-reset/`
-- [ ] On success, show success message "Check your email for reset link"
-- [ ] On error, show error toast
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/app/(auth)/forgot-password/page.tsx`
+- [x] Glass card with title "Reset Password"
+- [x] Email input field
+- [x] Gradient submit button "Send Reset Link"
+- [x] Link back to login page
+- [x] Email validation: required, valid format
+- [x] On submit, POST to `/auth/password-reset/`
+- [x] On success, show success message "Check your email for reset link"
+- [x] On error, show error toast
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 
