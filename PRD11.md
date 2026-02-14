@@ -148,14 +148,14 @@ Replace stub email implementation with production-ready email system using Hosti
 **Description:** As a user, I want to receive notifications about vault activity.
 
 **Acceptance Criteria:**
-- [ ] Create `templates/emails/collaboration_notification.html` extending base.html
-- [ ] Preheader: "New activity in {{ vault.name }}"
-- [ ] Support notification types: source_added, annotation_created, member_joined
-- [ ] Show actor name, action, and target (e.g., "John added a new source")
-- [ ] Orange CTA button: "View in SyncScript"
-- [ ] Unsubscribe link in footer (using unsubscribe token)
-- [ ] Create `templates/emails/collaboration_notification.txt` plaintext version
-- [ ] Typecheck passes
+- [x] Create `templates/emails/collaboration_notification.html` extending base.html
+- [x] Preheader: "New activity in {{ vault.name }}"
+- [x] Support notification types: source_added, annotation_created, member_joined
+- [x] Show actor name, action, and target (e.g., "John added a new source")
+- [x] Orange CTA button: "View in SyncScript"
+- [x] Unsubscribe link in footer (using unsubscribe token)
+- [x] Create `templates/emails/collaboration_notification.txt` plaintext version
+- [x] Typecheck passes
 
 ---
 
