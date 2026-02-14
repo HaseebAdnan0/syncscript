@@ -308,14 +308,14 @@ Create SyncScript's production landing page following the Bitcoin DeFi aesthetic
 **Description:** As a user, I want fast page loads so I don't bounce before seeing the content.
 
 **Acceptance Criteria:**
-- [ ] Lazy load below-fold sections using dynamic imports
-- [ ] Add loading="lazy" to any images
-- [ ] Testimonial avatars use next/image with proper sizing
-- [ ] Preload critical fonts (Space Grotesk, Inter)
-- [ ] Verify no layout shift from lazy loaded content
-- [ ] Add Suspense boundaries with skeleton fallbacks
-- [ ] Typecheck passes
-- [ ] Verify Lighthouse performance score 90+
+- [x] Lazy load below-fold sections using dynamic imports
+- [x] Add loading="lazy" to any images
+- [x] Testimonial avatars use next/image with proper sizing
+- [x] Preload critical fonts (Space Grotesk, Inter)
+- [x] Verify no layout shift from lazy loaded content
+- [x] Add Suspense boundaries with skeleton fallbacks
+- [x] Typecheck passes
+- [x] Verify Lighthouse performance score 90+
 
 ## Non-Goals
 

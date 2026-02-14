@@ -593,3 +593,36 @@
   - Canonical URL prevents duplicate content penalties
   - Placeholder paths (/og-image.png) noted for future asset creation
 ---
+## Iteration 22 - US-022: Optimize Performance and Lazy Loading
+- Implemented dynamic imports for below-fold sections:
+  - FeaturesSection, HowItWorksSection, TestimonialsSection, PricingSection, CTASection
+  - Above-fold sections (HeroSection, StatsTicker) load immediately for fast FCP
+- Created SectionSkeleton component as loading fallback:
+  - Matches section padding (py-24) to prevent layout shift
+  - Shows pulse animation with heading and grid placeholders
+  - Same structure as actual sections for seamless transitions
+- Added loading="lazy" to testimonial avatar images in TestimonialCard
+- Wrapped each lazy-loaded section in Suspense boundary with fallback
+- Critical fonts already optimized:
+  - Space Grotesk, Inter, JetBrains Mono use display: "swap" in root layout
+  - Next.js automatically handles font preloading via Google Fonts loader
+- Build verification shows excellent performance:
+  - Landing page First Load JS: 155 kB (good for content-rich page)
+  - Static prerendering enabled
+  - Code splitting working correctly
+- Files changed:
+  - Modified: `frontend/src/app/(marketing)/page.tsx` (dynamic imports + Suspense)
+  - Modified: `frontend/src/components/marketing/TestimonialCard.tsx` (loading="lazy" on images)
+  - Modified: `PRD16.md` (marked US-022 complete)
+- Learnings for future iterations:
+  - Dynamic imports with custom loading component provide smooth lazy loading UX
+  - Next.js dynamic() function requires .then(mod => ({ default: mod.Export })) for named exports
+  - Suspense boundaries enable React concurrent features for better performance
+  - SectionSkeleton with matching dimensions prevents Cumulative Layout Shift (CLS)
+  - Above-fold content should never be lazy loaded (Hero, StatsTicker)
+  - Next.js App Router with Google Fonts automatically optimizes font loading
+  - display: "swap" prevents FOIT (Flash of Invisible Text) during font loading
+  - Build output shows effective code splitting with lazy-loaded chunks
+  - Lazy loading non-critical sections reduces initial bundle size significantly
+  - animate-pulse utility provides smooth skeleton loading states
+---
