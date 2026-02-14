@@ -189,30 +189,30 @@ Establish the Next.js 16 frontend foundation for SyncScript with a Bitcoin DeFi-
 **Description:** As a UI developer, I want core interactive components styled with Bitcoin DeFi aesthetic so that I can build consistent interfaces.
 
 **Acceptance Criteria:**
-- [ ] **Button** (`src/components/ui/button.tsx`):
+- [x] **Button** (`src/components/ui/button.tsx`):
   - Uses CVA for variants: `primary`, `outline`, `ghost`
   - Sizes: `sm`, `md`, `lg`
   - Primary: `bg-gradient-to-r from-secondary to-primary rounded-full shadow-glow-orange hover:scale-105 transition-all`
   - Outline: `border-2 border-primary text-primary rounded-full hover:bg-primary/10`
   - Ghost: `text-muted hover:text-foreground hover:bg-white/5`
   - Exports `Button` component and `ButtonProps` type
-- [ ] **Card** (`src/components/ui/card.tsx`):
+- [x] **Card** (`src/components/ui/card.tsx`):
   - Base: `bg-surface border border-white/10 rounded-2xl p-8`
   - Hover: `hover:-translate-y-1 hover:border-primary/50 transition-all duration-300`
   - Exports: `Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, `CardFooter`
-- [ ] **Input** (`src/components/ui/input.tsx`):
+- [x] **Input** (`src/components/ui/input.tsx`):
   - Base: `bg-black/50 border-b-2 border-white/20 h-12 px-4 text-foreground`
   - Focus: `focus:border-primary focus:outline-none transition-colors`
   - Exports `Input` component and `InputProps` type
-- [ ] **Badge** (`src/components/ui/badge.tsx`):
+- [x] **Badge** (`src/components/ui/badge.tsx`):
   - Variants: `default`, `success`, `warning`, `error`
   - Default: `bg-primary/20 text-primary border border-primary/30 rounded-full px-3 py-1 text-xs font-mono uppercase`
   - Success: `bg-green-500/20 text-green-400 border-green-500/30`
   - Warning: `bg-accent/20 text-accent border-accent/30`
   - Error: `bg-red-500/20 text-red-400 border-red-500/30`
   - Exports `Badge` component and `BadgeProps` type
-- [ ] All components use `cn()` from `@/lib/utils`
-- [ ] Typecheck passes
+- [x] All components use `cn()` from `@/lib/utils`
+- [x] Typecheck passes
 
 ---
 
