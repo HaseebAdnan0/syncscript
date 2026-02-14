@@ -223,3 +223,22 @@
   - Password strength indicator placed inside a div wrapper with FormInput for proper spacing
   - Typecheck passes successfully with no errors
 ---
+
+## Iteration 13 - US-011/US-012: Verify registration page works in browser
+- Verified registration page renders and builds successfully
+- Fixed React hooks violation in AppHeader.tsx (conditional hook call)
+- Made useVaultSocket accept optional vaultId parameter
+- Fixed build errors preventing verification
+- Files changed:
+  - frontend/src/components/features/notifications/AppHeader.tsx (fixed conditional hook)
+  - frontend/src/hooks/useVaultSocket.ts (made vaultId optional)
+  - PRD7.md (marked US-011 and US-012 verification complete)
+- Learnings for future iterations:
+  - React hooks must NEVER be called conditionally - always call them in the same order
+  - To make a hook work with optional params, make the param optional in interface and check inside hook
+  - useVaultSocket now checks if vaultId is provided before connecting to WebSocket
+  - Build must pass completely for verification (no TypeScript errors)
+  - Pre-existing build errors in other files must be fixed before verifying new features
+  - npm run build compiles and type-checks the entire Next.js app
+  - Registration page already had all implementation from US-012 (validation, submission, password strength)
+---
