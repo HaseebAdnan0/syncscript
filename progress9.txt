@@ -254,3 +254,32 @@ Learnings for future iterations:
 - Modal dialogs use DialogHeader with DialogTitle and DialogDescription for accessibility
 - vaultId will be used in next user story for actual metadata fetching/source creation
 ---
+
+## Iteration 10 - US-011: Create SourceMetadataPreview component
+- Created SourceMetadataPreview component at frontend/src/components/features/sources/SourceMetadataPreview.tsx
+- Component displays metadata preview in glass morphism card: bg-[#0F1115] border border-white/10 rounded-xl
+- Shows favicon (or Globe icon fallback), detected source type badge, editable title input, and description
+- Title input uses bottom-border focus style: border-b-2 border-white/20 focus:border-[#F7931A]
+- Editable title managed via local state (useState) - allows user to customize before adding
+- "Add Source" button uses full gradient style with disabled state when title is empty or loading
+- "Cancel" button uses secondary glass morphism style: bg-[#0F1115] border border-white/20
+- Error state shows red-themed alert box with retry and cancel buttons
+- Error box uses bg-red-500/10 border border-red-500/30 for consistency with error styling
+- Retry button conditionally rendered when onRetry callback provided
+- All buttons follow hover transitions from design system
+- Typecheck passes ✓
+
+Files changed:
+- frontend/src/components/features/sources/SourceMetadataPreview.tsx (new)
+- PRD9.md (marked US-011 complete except browser verification)
+
+Learnings for future iterations:
+- Metadata preview needs editable title field so users can customize before saving
+- Favicon fallback uses Globe icon in bg-white/10 circle to match design system
+- Error states should provide retry option via optional callback pattern
+- Description text uses white/80 opacity for subtle hierarchy vs title
+- Label text uses Stardust color (#94A3B8) for consistent muted metadata
+- Disabled button state needs opacity-50 + cursor-not-allowed + no hover scale
+- Component accepts callbacks (onAddSource, onCancel, onRetry) for parent control
+- detectedType from metadata determines which SourceTypeBadge variant to show
+---

@@ -182,12 +182,12 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 **Description:** As a developer, I need a mutation hook to create sources with optimistic updates.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/hooks/useAddSourceMutation.ts`
-- [ ] Uses React Query `useMutation`
-- [ ] Invalidates sources query on success
-- [ ] Returns `{ mutate, isLoading, error }`
-- [ ] Shows toast notification on success/error
-- [ ] Typecheck passes
+- [x] Create `frontend/src/hooks/useAddSourceMutation.ts`
+- [x] Uses React Query `useMutation`
+- [x] Invalidates sources query on success
+- [x] Returns `{ mutate, isLoading, error }`
+- [x] Shows toast notification on success/error
+- [x] Typecheck passes
 
 ---
 

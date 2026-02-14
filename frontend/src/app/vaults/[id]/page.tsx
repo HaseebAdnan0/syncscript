@@ -2,7 +2,9 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import { useVault } from '@/hooks/useVaults';
+import { useSources } from '@/hooks/useSources';
 import { useVaultsStore } from '@/stores/vaultsStore';
+import { SourcesList } from '@/components/features/vaults/SourcesList';
 import * as Tabs from '@radix-ui/react-tabs';
 import { ArrowLeft } from 'lucide-react';
 
@@ -13,6 +15,9 @@ export default function VaultDetailPage() {
 
   // Fetch vault data
   const { data: vault, isLoading: vaultLoading, error: vaultError } = useVault(vaultId);
+
+  // Fetch sources to get count
+  const { data: sources = [] } = useSources(vaultId);
 
   // Active tab from Zustand store
   const { activeTab, setActiveTab } = useVaultsStore();
@@ -72,7 +77,9 @@ export default function VaultDetailPage() {
               value="sources"
               className="pb-4 px-2 text-[#94A3B8] hover:text-white transition-colors relative data-[state=active]:text-white"
             >
-              <span className="text-lg font-medium">Sources</span>
+              <span className="text-lg font-medium">
+                Sources {sources.length > 0 && <span className="text-sm">({sources.length})</span>}
+              </span>
               {/* Active indicator */}
               <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#F7931A] opacity-0 data-[state=active]:opacity-100 transition-opacity" />
             </Tabs.Trigger>
@@ -98,7 +105,7 @@ export default function VaultDetailPage() {
 
           {/* Tab content */}
           <Tabs.Content value="sources">
-            <div className="text-[#94A3B8]">Sources tab content (to be implemented)</div>
+            <SourcesList vaultId={vaultId} />
           </Tabs.Content>
 
           <Tabs.Content value="members">
