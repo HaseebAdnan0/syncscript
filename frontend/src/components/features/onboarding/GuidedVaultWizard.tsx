@@ -390,6 +390,7 @@ const GuidedVaultWizard: React.FC = () => {
               onChange={(e) => {
                 setCollaboratorEmail(e.target.value);
                 setEmailError(null);
+                setCreationError(null);
               }}
               onKeyDown={handleKeyDown}
               placeholder="colleague@university.edu"
@@ -398,6 +399,11 @@ const GuidedVaultWizard: React.FC = () => {
             />
             {emailError && (
               <p className="mt-2 text-sm text-red-400">{emailError}</p>
+            )}
+            {creationError && (
+              <div className="mt-4 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
+                <p className="text-sm text-red-400">{creationError}</p>
+              </div>
             )}
           </div>
 
