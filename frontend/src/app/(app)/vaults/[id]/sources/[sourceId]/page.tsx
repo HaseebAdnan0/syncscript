@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { useVault } from '@/hooks/useVaults';
 import { useSourcesQuery } from '@/hooks/useSourcesQuery';
+import { useAnnotationsWebSocket } from '@/hooks/useAnnotationsWebSocket';
 import { SourceTypeBadge } from '@/components/features/sources/SourceTypeBadge';
 
 export default function SourceDetailPage() {
@@ -18,6 +19,10 @@ export default function SourceDetailPage() {
 
   // Find the specific source from the sources list
   const source = sourcesResponse?.find((s) => s.id === sourceId);
+
+  // Real-time annotation updates via WebSocket
+  // Toast notifications are handled automatically by the hook
+  useAnnotationsWebSocket({ vaultId, sourceId });
 
   // Extract citation as string for type safety
   const citation = source?.metadata?.citation;

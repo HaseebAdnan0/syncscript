@@ -438,12 +438,12 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 **Description:** As a user, I want annotations to update in real-time when collaborators add notes.
 
 **Acceptance Criteria:**
-- [ ] Import and activate `useAnnotationsWebSocket` in SourceDetailPage
-- [ ] New annotations appear without manual refresh
-- [ ] New replies appear under their parent annotation
-- [ ] "New annotation by [name]" toast appears briefly
+- [x] Import and activate `useAnnotationsWebSocket` in SourceDetailPage
+- [x] New annotations appear without manual refresh
+- [x] New replies appear under their parent annotation
+- [x] "New annotation by [name]" toast appears briefly
 - [ ] Scroll indicator if new annotation added below fold
-- [ ] Typecheck passes
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---
