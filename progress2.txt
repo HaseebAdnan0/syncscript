@@ -1,0 +1,13 @@
+## Iteration 1 - US-001: Create vaults Django app structure
+- Implemented complete Django app scaffolding for vaults
+- Files changed:
+  - Created backend/apps/vaults/ directory structure
+  - Added all required module files (__init__.py, apps.py, admin.py, models.py, etc.)
+  - Created tests directory with test file placeholders
+  - Updated backend/config/settings.py to register apps.vaults in INSTALLED_APPS
+  - Updated PRD2.md to mark US-001 as complete
+- Learnings for future iterations:
+  - Django system check (python manage.py check) is sufficient for verifying app structure
+  - All files should be created as empty initially per PRD requirements
+  - VaultsConfig class uses default_auto_field = 'django.db.models.BigAutoField' to match project convention
+---

@@ -35,12 +35,12 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need the Source model to store research sources linked to vaults.
 
 **Acceptance Criteria:**
-- [ ] Create `SourceType` TextChoices enum: URL, PDF, BOOK, JOURNAL, DATASET
-- [ ] Create `Source` model with fields: `vault` (FK to vaults.Vault), `url` (URLField max 2048), `title` (CharField max 512), `description` (TextField blank), `source_type` (default URL), `metadata` (JSONField default dict), `created_by` (FK to users.User, SET_NULL), `is_deleted` (BooleanField default False), `created_at`, `updated_at`
-- [ ] Add `ordering = ['-created_at']` to Meta
-- [ ] Add indexes on `['vault', 'is_deleted']`, `['source_type']`, `['created_at']`
-- [ ] Add UniqueConstraint for `['vault', 'url']` where `is_deleted=False` named `unique_active_source_per_vault`
-- [ ] Typecheck passes
+- [x] Create `SourceType` TextChoices enum: URL, PDF, BOOK, JOURNAL, DATASET
+- [x] Create `Source` model with fields: `vault` (FK to vaults.Vault), `url` (URLField max 2048), `title` (CharField max 512), `description` (TextField blank), `source_type` (default URL), `metadata` (JSONField default dict), `created_by` (FK to users.User, SET_NULL), `is_deleted` (BooleanField default False), `created_at`, `updated_at`
+- [x] Add `ordering = ['-created_at']` to Meta
+- [x] Add indexes on `['vault', 'is_deleted']`, `['source_type']`, `['created_at']`
+- [x] Add UniqueConstraint for `['vault', 'url']` where `is_deleted=False` named `unique_active_source_per_vault`
+- [x] Typecheck passes
 
 ---
 
