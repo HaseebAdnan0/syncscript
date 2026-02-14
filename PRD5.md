@@ -263,13 +263,13 @@ This PRD covers the full implementation: core infrastructure, event broadcasting
 **Description:** As a developer, I need to throttle client messages to prevent spam.
 
 **Acceptance Criteria:**
-- [ ] Track message timestamps in Redis sorted set `conn_{channel}:messages`
-- [ ] On each message, check if > 60 messages in last 60 seconds
-- [ ] First offense: send warning message
-- [ ] Second offense: disconnect with code 1008
-- [ ] Third offense within 1 hour: set temporary ban in `user_{id}:banned`
-- [ ] Check ban status on connect, reject banned users
-- [ ] Typecheck passes
+- [x] Track message timestamps in Redis sorted set `conn_{channel}:messages`
+- [x] On each message, check if > 60 messages in last 60 seconds
+- [x] First offense: send warning message
+- [x] Second offense: disconnect with code 1008
+- [x] Third offense within 1 hour: set temporary ban in `user_{id}:banned`
+- [x] Check ban status on connect, reject banned users
+- [x] Typecheck passes
 
 ---
 
