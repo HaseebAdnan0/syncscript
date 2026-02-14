@@ -279,3 +279,28 @@
   - Events stored as JSON strings for easy replay
   - Buffering enables reconnection with replay (US-017 will consume this buffer)
 ---
+## Iteration 16 - US-017: Implement replay request handler in consumer
+- Implemented _replay_events method in VaultConsumer
+  - Accepts since_seq parameter to filter events
+  - Fetches events from Redis list vault_{id}:events using lrange
+  - Parses JSON events and filters where event seq > since_seq
+  - Reverses events to chronological order (Redis stores newest-first with lpush)
+  - Sends filtered events to client one by one
+  - Logs replay count for debugging
+- Added replay_request handling to receive method
+  - Handles {"type": "replay_request", "since_seq": N} messages
+  - Extracts since_seq from payload (defaults to 0)
+  - Calls _replay_events with sequence number
+- Files changed: backend/apps/vaults/consumers.py, PRD5.md
+- Created test_us017.py verification script - all tests pass
+- Typecheck passes (0 errors, 0 warnings)
+- Committed in 1d7ea8c
+- Learnings for future iterations:
+  - Events stored in Redis with lpush (newest at head, index 0)
+  - lrange(key, 0, -1) fetches all events from list
+  - Must reverse events to get chronological order for replay
+  - JSON parsing in loop should catch JSONDecodeError for robustness
+  - Event replay enables seamless reconnection after brief disconnects
+  - Client responsibility: track last received seq, request replay on reconnect
+  - Replay only sends events client hasn't seen (seq > since_seq)
+---
