@@ -244,14 +244,14 @@ class CitationViewSet(viewsets.ViewSet):
         source.save()
 
 
-class VaultCitationExportViewSet(viewsets.GenericViewSet):
+class VaultCitationExportViewSet(viewsets.ViewSet):
     """
     ViewSet for vault-level citation export operations.
     Provides endpoint to export all citations from a vault.
     """
     permission_classes = [IsAuthenticated]
 
-    def list(self, request, vault_pk=None):
+    def list(self, request, **kwargs):
         """
         GET /api/v1/vaults/{vault_pk}/citations/?format=<format>
 
@@ -266,6 +266,9 @@ class VaultCitationExportViewSet(viewsets.GenericViewSet):
 
         Permission: User must have vault access (viewer+)
         """
+        # Get vault_pk from kwargs
+        vault_pk = kwargs.get('vault_pk')
+
         # Get vault and verify it exists
         vault = get_object_or_404(Vault, id=vault_pk, is_deleted=False)
 

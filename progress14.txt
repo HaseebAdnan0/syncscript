@@ -439,3 +439,45 @@ Learnings for future iterations:
   3. Checking if other nested router tests have similar patterns
 - Do NOT commit - tests must pass before marking complete
 ---
+
+## Iteration 13 - US-011 continued: Debug and refactor export endpoint
+- Spent extensive time debugging URL routing issues with nested ViewSet
+- Tried multiple approaches:
+  1. Basic viewsets.ViewSet with list() method - 404 errors
+  2. viewsets.GenericViewSet with queryset - 404 errors  
+  3. Changed method signature to use **kwargs - 404 errors
+  4. Verified URL registration via Django shell - URLs exist and resolve correctly
+  5. Moved endpoint to VaultViewSet as @action(detail=True) with url_path='citations/export'
+- Current implementation:
+  - Added export_citations() action to VaultViewSet in apps/vaults/views.py
+  - URL: GET /api/v1/vaults/{id}/citations/export/?format=<format>
+  - Removed VaultCitationExportViewSet from nested router registration
+  - Updated all test URLs to use /citations/export/ endpoint
+- Tests still failing with 404 errors despite:
+  - URL pattern registered and verifiable via shell: ^vaults/(?P<pk>[^/.]+)/citations/export/$
+  - URL resolution working: resolves to vault-export-citations action
+  - Queryset including test vault (owner check in get_queryset)
+- Files changed:
+  - backend/apps/vaults/views.py: Added export_citations action (+120 lines)
+  - backend/apps/vaults/urls.py: Removed VaultCitationExportViewSet registration
+  - backend/apps/citations/views.py: Tried multiple ViewSet configurations
+  - backend/apps/citations/tests.py: Updated test URLs
+  - backend/test_export_simple.py: Created standalone debug script (ALLOWED_HOSTS issue)
+
+Learnings for future iterations:
+- Basic ViewSet and GenericViewSet behave differently with nested routers
+- @action(detail=True) on ModelViewSet creates URL pattern: vaults/{pk}/action-url-path/
+- URL resolution via Django shell != actual request routing in tests
+- ALLOWED_HOSTS='testserver' issue affects standalone scripts, not Django TestCase
+- ModelViewSet.get_object() calls get_queryset() then filters by pk, returns 404 if not found
+- Vault queryset filters: Q(owner=user) | Q(members=user) for access control
+- Members field is ManyToMany through VaultMembership, owner not auto-added to members
+- DisallowedHost vs 404: different error sources (middleware vs DRF view)
+
+**Status: INCOMPLETE - continuing debugging**
+- Tests: 8/8 failing with 404
+- Root cause unknown - URL routing issue persists despite multiple approaches
+- Next steps: Try function-based view or alternative DRF patterns
+- Time spent: ~40 minutes on debugging
+---
+

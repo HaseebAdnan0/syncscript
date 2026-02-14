@@ -22,10 +22,6 @@ vaults_router.register(r'sources', SourceViewSet, basename='vault-sources')
 # Nested router for vault PDFs (US-023)
 vaults_router.register(r'pdfs', PDFUploadViewSet, basename='vault-pdfs')
 
-# Nested router for vault citations export (US-011, PRD14)
-from apps.citations.views import VaultCitationExportViewSet
-vaults_router.register(r'citations', VaultCitationExportViewSet, basename='vault-citations')
-
 urlpatterns = [
     path('', include(router.urls)),
     path('', include(vaults_router.urls)),

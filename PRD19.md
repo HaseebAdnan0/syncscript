@@ -299,13 +299,13 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a user, I want to receive batched email digests based on my preference.
 
 **Acceptance Criteria:**
-- [ ] Task `send_daily_digest()` runs at 9 AM UTC
-- [ ] Task `send_weekly_digest()` runs Monday 9 AM UTC
-- [ ] Query users with matching preference and un-emailed notifications
-- [ ] Batch notifications per user into single email
-- [ ] Mark all as emailed after sending
-- [ ] Add to Celery beat schedule in settings
-- [ ] Typecheck passes
+- [x] Task `send_daily_digest()` runs at 9 AM UTC
+- [x] Task `send_weekly_digest()` runs Monday 9 AM UTC
+- [x] Query users with matching preference and un-emailed notifications
+- [x] Batch notifications per user into single email
+- [x] Mark all as emailed after sending
+- [x] Add to Celery beat schedule in settings
+- [x] Typecheck passes
 
 ---
 

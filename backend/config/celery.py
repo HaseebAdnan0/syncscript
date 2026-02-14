@@ -41,6 +41,14 @@ app.conf.beat_schedule = {
         'task': 'apps.vaults.tasks.cleanup_stale_connections',
         'schedule': 60.0,  # Every 60 seconds
     },
+    'send-daily-notification-digest': {
+        'task': 'apps.notifications.tasks.send_daily_digest',
+        'schedule': crontab(hour=9, minute=0),  # Daily at 9:00 AM UTC
+    },
+    'send-weekly-notification-digest': {
+        'task': 'apps.notifications.tasks.send_weekly_digest',
+        'schedule': crontab(hour=9, minute=0, day_of_week=1),  # Monday at 9:00 AM UTC
+    },
 }
 
 
