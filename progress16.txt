@@ -3,4 +3,22 @@
 ## Learnings
 (Patterns discovered during implementation)
 
+- Marketing route group files were previously created at `(marketing)/layout.tsx` and `(marketing)/page.tsx`
+- Removed conflicting root `app/page.tsx` (backed up as `page.tsx.backup`) to allow marketing page to be the landing page
+- Next.js route groups in parentheses `()` don't affect URL paths - files in `(marketing)/page.tsx` serve at `/`
+- When multiple page.tsx files target the same route, the one outside the route group takes precedence
+
+---
+
+## Iteration 1 - US-001: Setup Marketing Route Group and Layout
+- Verified marketing layout and page already existed from previous session
+- Confirmed navbar includes logo, nav links (Features, How It Works, Pricing), Sign In, and Get Started buttons
+- Confirmed footer includes copyright placeholder
+- Removed conflicting root page.tsx to allow marketing page to serve at `/`
+- Layout properly isolated from app authentication providers
+- Learnings for future iterations:
+  - The marketing route group structure works correctly
+  - Root `/` now shows the landing page instead of redirect logic
+  - Typecheck passes after cleanup
+  - Verified in browser at http://localhost:3000
 ---
