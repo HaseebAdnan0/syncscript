@@ -297,12 +297,12 @@ Create the complete vault management interface for SyncScript, enabling research
 **Description:** As a user, I want to see loading skeletons while data loads so the page doesn't flash empty.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/vaults/VaultCardSkeleton.tsx`
-- [ ] Create `frontend/src/components/features/vaults/VaultDetailSkeleton.tsx`
-- [ ] Skeletons use `animate-pulse` with `bg-white/5` placeholder blocks
-- [ ] Skeletons match layout dimensions of actual components
-- [ ] Integrate into listing page and detail page
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/vaults/VaultCardSkeleton.tsx`
+- [x] Create `frontend/src/components/features/vaults/VaultDetailSkeleton.tsx`
+- [x] Skeletons use `animate-pulse` with `bg-white/5` placeholder blocks
+- [x] Skeletons match layout dimensions of actual components
+- [x] Integrate into listing page and detail page
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ## Non-Goals

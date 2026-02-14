@@ -1,13 +1,25 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Bell } from 'lucide-react';
+import { Bell, User, LogOut } from 'lucide-react';
 import { useNotifications } from '@/hooks/useNotifications';
 import { UnreadBadge } from './UnreadBadge';
 import { NotificationPanel } from './NotificationPanel';
 import { ConnectionStatus } from './ConnectionStatus';
 import { useVaultSocket } from '@/hooks/useVaultSocket';
+import { useAuthStore } from '@/stores/authStore';
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/useToast';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface AppHeaderProps {
   /** Optional vault ID to show connection status for */
