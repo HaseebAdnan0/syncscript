@@ -321,6 +321,9 @@ class ActivityFeedTests(TestCase):
         """Test human-readable description formatting for different action types."""
         vault = Vault.objects.create(name='Test Vault', owner=self.user)
 
+        # Clear auto-generated audit logs from vault creation
+        AuditLog.objects.all().delete()
+
         # Create logs with different actions
         AuditLog.objects.create(
             vault=vault,
@@ -365,6 +368,9 @@ class ActivityFeedTests(TestCase):
     def test_activity_feed_limit_param(self):
         """Test limit query parameter."""
         vault = Vault.objects.create(name='Test Vault', owner=self.user)
+
+        # Clear auto-generated audit logs from vault creation
+        AuditLog.objects.all().delete()
 
         # Create 15 audit logs
         for i in range(15):
@@ -411,6 +417,10 @@ class ActivityFeedTests(TestCase):
     def test_activity_feed_no_actor(self):
         """Test activity feed with null actor (system action)."""
         vault = Vault.objects.create(name='Test Vault', owner=self.user)
+
+        # Clear auto-generated audit logs from vault creation
+        AuditLog.objects.all().delete()
+
         AuditLog.objects.create(
             vault=vault,
             actor=None,  # System action

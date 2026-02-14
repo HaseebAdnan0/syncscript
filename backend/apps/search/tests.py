@@ -65,7 +65,7 @@ class SearchSignalsTest(TestCase):
         # Verify task was called
         mock_task.assert_called_once_with(source.id)
 
-    @patch('apps.search.signals.update_source_search_vector.delay')
+    @patch('apps.search.tasks.update_source_search_vector.delay')
     def test_source_update_irrelevant_field_skips_signal(self, mock_task):
         """Updating non-relevant fields should not trigger update."""
         source = Source.objects.create(
@@ -86,7 +86,7 @@ class SearchSignalsTest(TestCase):
         # Verify task was NOT called
         mock_task.assert_not_called()
 
-    @patch('apps.search.signals.update_annotation_search_vector.delay')
+    @patch('apps.search.tasks.update_annotation_search_vector.delay')
     def test_annotation_create_triggers_signal(self, mock_task):
         """Creating an Annotation should trigger search vector update."""
         source = Source.objects.create(
@@ -107,7 +107,7 @@ class SearchSignalsTest(TestCase):
         # Verify task was called with annotation ID
         mock_task.assert_called_once_with(annotation.id)
 
-    @patch('apps.search.signals.update_annotation_search_vector.delay')
+    @patch('apps.search.tasks.update_annotation_search_vector.delay')
     def test_annotation_update_content_triggers_signal(self, mock_task):
         """Updating content field should trigger update."""
         source = Source.objects.create(
@@ -135,7 +135,7 @@ class SearchSignalsTest(TestCase):
         # Verify task was called
         mock_task.assert_called_once_with(annotation.id)
 
-    @patch('apps.search.signals.update_annotation_search_vector.delay')
+    @patch('apps.search.tasks.update_annotation_search_vector.delay')
     def test_annotation_update_irrelevant_field_skips_signal(self, mock_task):
         """Updating non-relevant fields should not trigger update."""
         source = Source.objects.create(

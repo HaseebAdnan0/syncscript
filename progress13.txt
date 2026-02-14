@@ -99,3 +99,33 @@ vaults/{vault_id}/thumbnails/{uuid}.jpg
   - python-magic library works for both PDF and image validation
 
 ---
+## Iteration 4 - Create FileUpload model for images (US-004)
+- Created `FileUpload` model in backend/apps/sources/models.py (lines 138-186)
+- Model includes all required fields:
+  - UUID primary key with uuid4 default
+  - ForeignKey to Vault (file_uploads related_name)
+  - FileField with upload_to pattern
+  - original_filename, file_size, mime_type
+  - file_type CharField with choices ('image', 'document')
+  - ForeignKey to User (uploaded_files related_name)
+  - uploaded_at with auto_now_add
+  - thumbnail_url URLField
+  - deleted_at for soft delete
+- Added indexes on: vault+deleted_at, uploaded_by+deleted_at, file_type
+- Generated migration 0005_fileupload successfully
+- Applied migration successfully
+- Verified model loads in Django shell
+- Verified database table `file_uploads` exists
+- Files changed:
+  - backend/apps/sources/models.py
+  - backend/apps/sources/migrations/0005_fileupload.py
+  - PRD13.md
+  - progress13.txt
+- Learnings for future iterations:
+  - Pre-existing test failures unrelated to new model (missing signals, AWS settings)
+  - Django model field type errors in mypy are expected (Django doesn't use type annotations)
+  - FileUpload follows same pattern as PDFUpload for consistency
+  - db_table set to 'file_uploads' for clarity
+
+---
+
