@@ -451,3 +451,129 @@ class TokenRefreshAPITests(APITestCase):
         response = self.client.post(self.refresh_url, payload, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+@override_settings(RATELIMIT_ENABLE=False)
+class OnboardingAPITests(APITestCase):
+    """Tests for onboarding API endpoints (US-002)."""
+
+    def setUp(self):
+        self.onboarding_url = reverse('users:onboarding')
+        self.user = User.objects.create_user(
+            email='test@example.com',
+            username='testuser',
+            password='TestPass123!'
+        )
+        self.user.email_verified = True
+        self.user.save()
+        self.client.force_authenticate(user=self.user)
+
+    def test_get_onboarding_initial_state(self):
+        """Test GET onboarding returns initial state for new user."""
+        response = self.client.get(self.onboarding_url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertFalse(response.data['completed'])
+        self.assertIsNone(response.data['step'])
+        self.assertIsNone(response.data['path'])
+        self.assertEqual(response.data['data'], {})
+
+    def test_patch_onboarding_update_step(self):
+        """Test PATCH onboarding updates step."""
+        payload = {'step': 'welcome'}
+        response = self.client.patch(self.onboarding_url, payload, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['step'], 'welcome')
+        self.assertFalse(response.data['completed'])
+
+        # Verify in database
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.onboarding_step, 'welcome')
+
+    def test_patch_onboarding_update_path(self):
+        """Test PATCH onboarding updates path."""
+        payload = {'path': 'guided'}
+        response = self.client.patch(self.onboarding_url, payload, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['path'], 'guided')
+
+        # Verify in database
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.onboarding_path, 'guided')
+
+    def test_patch_onboarding_mark_completed(self):
+        """Test PATCH onboarding marks completed."""
+        payload = {'completed': True}
+        response = self.client.patch(self.onboarding_url, payload, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data['completed'])
+
+        # Verify in database
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.onboarding_completed)
+
+    def test_patch_onboarding_update_data(self):
+        """Test PATCH onboarding updates data field."""
+        payload = {'data': {'vault_name': 'My Research'}}
+        response = self.client.patch(self.onboarding_url, payload, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['data']['vault_name'], 'My Research')
+
+        # Verify in database
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.onboarding_data['vault_name'], 'My Research')
+
+    def test_patch_onboarding_merges_data(self):
+        """Test PATCH onboarding merges data instead of replacing."""
+        # Set initial data
+        self.user.onboarding_data = {'key1': 'value1'}
+        self.user.save()
+
+        # Update with new data
+        payload = {'data': {'key2': 'value2'}}
+        response = self.client.patch(self.onboarding_url, payload, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['data']['key1'], 'value1')
+        self.assertEqual(response.data['data']['key2'], 'value2')
+
+    def test_patch_onboarding_update_multiple_fields(self):
+        """Test PATCH onboarding updates multiple fields."""
+        payload = {
+            'step': 'guided-2',
+            'path': 'guided',
+            'data': {'vault_name': 'AI Research'}
+        }
+        response = self.client.patch(self.onboarding_url, payload, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['step'], 'guided-2')
+        self.assertEqual(response.data['path'], 'guided')
+        self.assertEqual(response.data['data']['vault_name'], 'AI Research')
+
+    def test_patch_onboarding_invalid_path(self):
+        """Test PATCH onboarding rejects invalid path."""
+        payload = {'path': 'invalid'}
+        response = self.client.patch(self.onboarding_url, payload, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('path', response.data)
+
+    def test_patch_onboarding_invalid_data_type(self):
+        """Test PATCH onboarding rejects non-dict data."""
+        payload = {'data': 'not-a-dict'}
+        response = self.client.patch(self.onboarding_url, payload, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('data', response.data)
+
+    def test_onboarding_requires_authentication(self):
+        """Test onboarding endpoints require authentication."""
+        self.client.force_authenticate(user=None)
+        response = self.client.get(self.onboarding_url)
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)

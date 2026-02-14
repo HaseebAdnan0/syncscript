@@ -36,7 +36,7 @@ class Notification(models.Model):
         ]
 
     def __str__(self) -> str:
-        return f"{self.user.username} - {self.type} - {self.title}"
+        return f"{self.user.username} - {self.type} - {self.title}"  # type: ignore[attr-defined]
 
     @property
     def is_read(self) -> bool:

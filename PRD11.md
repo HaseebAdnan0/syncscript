@@ -20,15 +20,15 @@ Replace stub email implementation with production-ready email system using Hosti
 **Description:** As a developer, I need Django configured with Hostinger SMTP so emails are sent through production mail servers.
 
 **Acceptance Criteria:**
-- [ ] Update `config/settings.py` EMAIL settings for Hostinger:
+- [x] Update `config/settings.py` EMAIL settings for Hostinger:
   - `EMAIL_HOST = 'smtp.hostinger.com'`
   - `EMAIL_PORT = 465`
   - `EMAIL_USE_SSL = True` (not TLS)
   - `EMAIL_USE_TLS = False`
-- [ ] Add `EMAIL_USE_SSL` env var support
-- [ ] Add email connection test management command: `python manage.py test_email`
-- [ ] Command sends test email to specified address and reports success/failure
-- [ ] Typecheck passes
+- [x] Add `EMAIL_USE_SSL` env var support
+- [x] Add email connection test management command: `python manage.py test_email`
+- [x] Command sends test email to specified address and reports success/failure
+- [x] Typecheck passes
 
 ---
 

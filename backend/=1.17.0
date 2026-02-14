@@ -1,0 +1,10 @@
+Defaulting to user installation because normal site-packages is not writeable
+Collecting pdf2image
+  Downloading pdf2image-1.17.0-py3-none-any.whl.metadata (6.2 kB)
+Requirement already satisfied: pillow in c:\users\user\appdata\roaming\python\python314\site-packages (from pdf2image) (12.1.0)
+Downloading pdf2image-1.17.0-py3-none-any.whl (11 kB)
+Installing collected packages: pdf2image
+Successfully installed pdf2image-1.17.0
+
+[notice] A new release of pip is available: 25.3 -> 26.0.1
+[notice] To update, run: python.exe -m pip install --upgrade pip

@@ -4,3 +4,31 @@
 (Patterns discovered during implementation)
 
 ---
+
+## Iteration 1 - US-001: Create AI app with core models
+- Created apps/ai/ Django app with models.py, views.py, urls.py, serializers.py, apps.py
+- Implemented AIUsageLog model with user FK, request_type enum (summary/insights/question), tokens_used, created_at
+- Implemented ChatConversation model with vault/user FKs, timestamps
+- Implemented ChatMessage model with conversation FK, role enum (user/assistant), content, sources_cited JSONField
+- Added ai_summary JSONField to Source model (already existed in migration 0004)
+- Added ai_insights_cache and ai_insights_updated_at to Vault model
+- Generated migrations for AI app and Vault model changes
+- Registered apps.ai in INSTALLED_APPS
+- All files changed: backend/apps/ai/models.py, backend/apps/vaults/models.py, backend/config/settings.py
+
+Files changed:
+- backend/apps/ai/models.py (created)
+- backend/apps/ai/views.py (created placeholder)
+- backend/apps/ai/urls.py (created placeholder)
+- backend/apps/ai/serializers.py (created placeholder)
+- backend/apps/ai/apps.py (configured)
+- backend/apps/vaults/models.py (added AI fields)
+- backend/config/settings.py (registered app)
+
+Learnings for future iterations:
+- Source.ai_summary field was already added in previous migrations (0004_add_search_vector_to_source.py)
+- PDFUpload.extracted_text field was already added in migration 0003
+- Migration dependencies can get out of sync when regenerating - always check existing migrations first
+- apps.ai app label must be configured in apps.py with name='apps.ai' and label='ai'
+- Use placeholder files for views/urls/serializers to avoid import errors while keeping the structure clean
+---

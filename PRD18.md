@@ -29,11 +29,11 @@ Implement a global full-text search system for SyncScript that enables researche
 **Description:** As a developer, I need searchable tsvector columns on the Source model so PostgreSQL can perform fast full-text search.
 
 **Acceptance Criteria:**
-- [ ] Add `search_vector` field to Source model: `SearchVectorField(null=True)`
-- [ ] Create migration adding the column
-- [ ] Add GIN index on `search_vector` column
-- [ ] Migration runs successfully
-- [ ] Typecheck passes
+- [x] Add `search_vector` field to Source model: `SearchVectorField(null=True)`
+- [x] Create migration adding the column
+- [x] Add GIN index on `search_vector` column
+- [x] Migration runs successfully
+- [x] Typecheck passes
 
 ---
 

@@ -294,3 +294,66 @@ Will be configured when implementing real-time collaboration (US-008)
 - `PUSHER_KEY`: Your key
 - `PUSHER_SECRET`: Your secret
 - `PUSHER_CLUSTER`: Your cluster (e.g., us2)
+
+---
+
+## Google OAuth 2.0
+### Required For: OAuth authentication (Google login)
+### Steps:
+
+1. **Go to Google Cloud Console:**
+   - Navigate to https://console.cloud.google.com/
+   - Sign in with your Google account
+
+2. **Create a new project (or use existing):**
+   - Click "Select a project" → "New Project"
+   - Enter project name: "SyncScript" (or any name)
+   - Click "Create"
+
+3. **Enable Google+ API:**
+   - In the left sidebar, go to "APIs & Services" → "Library"
+   - Search for "Google+ API"
+   - Click on it and press "Enable"
+
+4. **Configure OAuth consent screen:**
+   - Go to "APIs & Services" → "OAuth consent screen"
+   - Select "External" user type (for testing)
+   - Click "Create"
+   - Fill in required fields:
+     - App name: SyncScript
+     - User support email: your email
+     - Developer contact: your email
+   - Click "Save and Continue"
+   - On "Scopes" page, click "Save and Continue" (default scopes are fine)
+   - On "Test users" page, add your email for testing
+   - Click "Save and Continue"
+
+5. **Create OAuth 2.0 credentials:**
+   - Go to "APIs & Services" → "Credentials"
+   - Click "Create Credentials" → "OAuth client ID"
+   - Select "Web application"
+   - Enter name: "SyncScript Web Client"
+   - Under "Authorized redirect URIs", add:
+     - Development: `http://localhost:8000/api/v1/auth/google/callback/`
+     - Production: `https://api.yourdomain.com/api/v1/auth/google/callback/`
+   - Click "Create"
+   - Copy the **Client ID** and **Client Secret**
+
+6. **Add credentials to .env file:**
+   ```
+   GOOGLE_CLIENT_ID=your-client-id-here.apps.googleusercontent.com
+   GOOGLE_CLIENT_SECRET=your-client-secret-here
+   ```
+
+### Environment Variables:
+- `GOOGLE_CLIENT_ID`: OAuth 2.0 Client ID from Google Cloud Console
+- `GOOGLE_CLIENT_SECRET`: OAuth 2.0 Client Secret from Google Cloud Console
+
+### Callback URL Pattern:
+- Development: `http://localhost:8000/api/v1/auth/google/callback/`
+- Production: `https://api.yourdomain.com/api/v1/auth/google/callback/`
+
+**Important Notes:**
+- Keep your Client Secret confidential
+- For production, move the OAuth consent screen from "Testing" to "Published" status
+- Add your production domain to authorized redirect URIs before deploying
