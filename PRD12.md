@@ -117,13 +117,13 @@ Add social authentication to SyncScript using Google and GitHub OAuth providers.
 **Description:** As a user returning from GitHub, I need the callback to create/link my account and log me in.
 
 **Acceptance Criteria:**
-- [ ] Create `GET /api/v1/auth/github/callback/` endpoint
-- [ ] Extract user info: email (from user:email scope), username, avatar URL
-- [ ] If email is available and new: create User + SocialAccount, generate JWT, redirect
-- [ ] If email is available and exists: same logic as Google (link_required or login)
-- [ ] If email is unavailable (private): redirect to frontend with `email_required=true` and temp token
-- [ ] Store GitHub OAuth data in session for email prompt flow
-- [ ] Typecheck passes
+- [x] Create `GET /api/v1/auth/github/callback/` endpoint
+- [x] Extract user info: email (from user:email scope), username, avatar URL
+- [x] If email is available and new: create User + SocialAccount, generate JWT, redirect
+- [x] If email is available and exists: same logic as Google (link_required or login)
+- [x] If email is unavailable (private): redirect to frontend with `email_required=true` and temp token
+- [x] Store GitHub OAuth data in session for email prompt flow
+- [x] Typecheck passes
 
 ---
 
