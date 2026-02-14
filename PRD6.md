@@ -43,11 +43,11 @@ Implement cloud file storage for SyncScript using Cloudflare R2 (S3-compatible).
 **Description:** As a developer, I need S3-compatible storage configured so files can be stored in the cloud.
 
 **Acceptance Criteria:**
-- [ ] Add `django-storages[s3]` and `boto3` to requirements.txt
-- [ ] Configure `DEFAULT_FILE_STORAGE` in settings.py
-- [ ] Add settings: AWS_S3_FILE_OVERWRITE=False, AWS_QUERYSTRING_AUTH=True, AWS_QUERYSTRING_EXPIRE=900
-- [ ] Document required env vars in `.planning/USER_SETUP.md`: AWS_S3_ENDPOINT_URL, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_STORAGE_BUCKET_NAME, AWS_S3_REGION_NAME
-- [ ] Typecheck passes
+- [x] Add `django-storages[s3]` and `boto3` to requirements.txt
+- [x] Configure `DEFAULT_FILE_STORAGE` in settings.py
+- [x] Add settings: AWS_S3_FILE_OVERWRITE=False, AWS_QUERYSTRING_AUTH=True, AWS_QUERYSTRING_EXPIRE=900
+- [x] Document required env vars in `.planning/USER_SETUP.md`: AWS_S3_ENDPOINT_URL, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_STORAGE_BUCKET_NAME, AWS_S3_REGION_NAME
+- [x] Typecheck passes
 
 ### US-004: Create PDF validation function
 **Description:** As a developer, I need strict PDF validation so malicious files are rejected.
