@@ -1,0 +1,47 @@
+# Progress Log - PRD7: Frontend Authentication & User Flows
+
+## Status: In Progress
+
+## User Stories (22 total)
+- [x] US-001: Create Zustand auth store
+- [ ] US-002: Create axios instance with interceptors
+- [ ] US-003: Create useAuth hook with auth operations
+- [ ] US-004: Create AuthProvider for app initialization
+- [ ] US-005: Create reusable form input component (Bitcoin DeFi style)
+- [ ] US-006: Create gradient button component
+- [ ] US-007: Create glass card container component
+- [ ] US-008: Create auth layout with centered card
+- [ ] US-009: Build login page UI
+- [ ] US-010: Add login form validation and submission
+- [ ] US-011: Build registration page UI
+- [ ] US-012: Add registration form validation and submission
+- [ ] US-013: Build forgot password page
+- [ ] US-014: Build reset password page
+- [ ] US-015: Create ProtectedRoute wrapper component
+- [ ] US-016: Create toast notification system
+- [ ] US-017: Build profile page layout with tabs
+- [ ] US-018: Build profile info form
+- [ ] US-019: Build security tab with password change
+- [ ] US-020: Add logout functionality to app header
+- [ ] US-021: Add password strength indicator component
+- [ ] US-022: Integration test - complete auth flow
+
+## Dependencies
+- Backend Users & Auth API (PRD1) - Required
+- Frontend Design System - Required
+
+## Learnings
+(Patterns discovered during implementation)
+
+---
+
+## Iteration 1 - US-001: Create Zustand auth store
+- Created `frontend/src/stores/authStore.ts` with proper TypeScript types
+- Files changed: frontend/src/stores/authStore.ts (new file)
+- Learnings for future iterations:
+  - Frontend is a git submodule - must commit changes inside frontend/ directory first
+  - PRD specifies NO token storage (backend uses httpOnly cookies), NO persistence middleware
+  - Store exports User interface and useAuthStore hook
+  - Initial isLoading state is true (for auth check on app load)
+  - setUser automatically derives isAuthenticated from user presence
+---
