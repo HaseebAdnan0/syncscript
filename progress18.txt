@@ -232,3 +232,29 @@
   - URL with <int:id> parameter maps to function parameter name (search_id)
 ---
 
+## Iteration 12 - US-012: Implement search analytics tracking
+- Created backend/apps/search/services.py with track_search_analytics function
+- Function normalizes query (lowercase, strip), hashes with SHA-256 via SearchAnalytics.hash_query()
+- Uses get_or_create pattern: creates new record with search_count=0, or increments existing count
+- Updates last_searched timestamp on every call
+- Integrated into search_view: calls track_search_analytics(query_string) after preparing results
+- Created comprehensive test suite in backend/apps/search/test_services.py with 7 tests
+- Added integration test in test_views.py verifying analytics tracking from search endpoint
+- All 40 tests pass
+- Files changed:
+  - backend/apps/search/services.py (created)
+  - backend/apps/search/views.py (added import and call to track_search_analytics)
+  - backend/apps/search/test_services.py (created comprehensive test suite)
+  - backend/apps/search/test_views.py (added test_search_tracks_analytics test)
+  - PRD18.md (marked US-012 complete)
+- Learnings for future iterations:
+  - get_or_create() returns (instance, created) tuple - check 'created' to determine action
+  - auto_now=True fields update automatically on save(), but can also manually set with timezone.now()
+  - update_fields parameter in save() optimizes database updates to only specified fields
+  - Analytics tracking should be called AFTER results are prepared (not before) to avoid tracking failed searches
+  - Empty/whitespace queries should be ignored to avoid polluting analytics
+  - Test both creation and increment paths separately
+  - Integration tests should verify service functions are actually called from views
+  - Track_search_analytics is synchronous (not async) - runs in same request/response cycle
+---
+
