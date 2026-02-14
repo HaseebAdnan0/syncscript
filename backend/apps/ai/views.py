@@ -10,7 +10,9 @@ from apps.vaults.models import Vault, VaultMembership, RoleChoices
 from .decorators import ai_rate_limit
 from .services.claude_client import ClaudeClient
 from .services.usage import log_usage
-from .serializers import SummarizeRequestSerializer
+from .services.chunking import chunk_text, get_relevant_chunks
+from .serializers import SummarizeRequestSerializer, AskQuestionSerializer
+from .models import ChatConversation, ChatMessage
 import logging
 
 logger = logging.getLogger(__name__)
@@ -266,5 +268,210 @@ def vault_insights(request, vault_id):
         logger.error(f"Error generating insights for vault {vault_id}: {e}", exc_info=True)
         return Response(
             {"error": "An unexpected error occurred during analysis."},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@ai_rate_limit
+def ask_question(request, vault_id):
+    """
+    POST /api/v1/vaults/{id}/ask/
+
+    Ask a question about vault contents and get cited answers.
+
+    Request body:
+    - question (str): The question to ask
+    - conversation_id (uuid, optional): Existing conversation to continue
+
+    Returns:
+    - answer (str): AI-generated answer
+    - citations (list): [{source_id, source_title, excerpt}]
+    - conversation_id (uuid): Conversation ID for follow-up questions
+    """
+    # Validate request
+    serializer = AskQuestionSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    question = serializer.validated_data['question']
+    conversation_id = serializer.validated_data.get('conversation_id')
+
+    # Get vault and verify permissions
+    vault = get_object_or_404(Vault, id=vault_id, is_archived=False)
+
+    # Check if user has read permission on vault
+    has_permission = False
+    if vault.owner == request.user:
+        has_permission = True
+    else:
+        membership = VaultMembership.objects.filter(
+            vault=vault,
+            user=request.user
+        ).first()
+        has_permission = membership is not None
+
+    if not has_permission:
+        from rest_framework.exceptions import PermissionDenied
+        raise PermissionDenied("You do not have permission to access this vault.")
+
+    # Get or create conversation
+    if conversation_id:
+        conversation = get_object_or_404(
+            ChatConversation,
+            id=conversation_id,
+            vault=vault,
+            user=request.user
+        )
+    else:
+        conversation = ChatConversation.objects.create(
+            vault=vault,
+            user=request.user
+        )
+
+    # Gather text from all sources in vault
+    sources = Source.objects.filter(vault=vault, is_deleted=False).select_related('vault')
+
+    if sources.count() == 0:
+        return Response(
+            {"error": "Vault has no sources. Add sources to ask questions."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # Extract and chunk text from all sources
+    all_chunks = []
+    source_map = {}  # Map chunk indices to source info
+
+    for source in sources:
+        text_content = ""
+
+        # Get source text
+        if source.source_type == 'PDF':
+            pdf_upload = PDFUpload.objects.filter(
+                source=source,
+                processing_status='completed',
+                deleted_at__isnull=True
+            ).first()
+            if pdf_upload and pdf_upload.extracted_text:
+                text_content = pdf_upload.extracted_text
+        elif source.ai_summary:
+            # Use AI summary if available
+            summary = source.ai_summary
+            text_content = f"{summary.get('abstract', '')} {' '.join(summary.get('key_findings', []))}"
+        else:
+            # Fallback to description or metadata
+            text_content = source.description or ''
+            if source.metadata:
+                text_content += f" {source.metadata.get('abstract', '')}"
+
+        # Skip sources with no content
+        if not text_content.strip():
+            continue
+
+        # Chunk this source's text
+        source_chunks = chunk_text(text_content, max_tokens=2000, overlap=200)
+
+        # Track which source each chunk belongs to
+        start_idx = len(all_chunks)
+        for i, chunk in enumerate(source_chunks):
+            chunk_idx = start_idx + i
+            source_map[chunk_idx] = {
+                'source_id': str(source.id),
+                'source_title': source.title,
+                'source_type': source.source_type
+            }
+
+        all_chunks.extend(source_chunks)
+
+    if not all_chunks:
+        return Response(
+            {"error": "No content available in vault sources. Please process PDFs or add source descriptions."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # Get relevant chunks for the question
+    relevant_chunks = get_relevant_chunks(question, all_chunks, max_chunks=5)
+
+    # Build context for Claude
+    context_chunks = []
+    for chunk in relevant_chunks:
+        chunk_info = source_map.get(chunk['chunk_id'], {})
+        context_chunks.append({
+            'text': chunk['text'],
+            'source_id': chunk_info.get('source_id', ''),
+            'source_title': chunk_info.get('source_title', 'Unknown'),
+        })
+
+    # Call Claude to answer question
+    try:
+        claude_client = ClaudeClient()
+        result = claude_client.answer_question(question, context_chunks)
+
+        # Check for errors
+        if 'error' in result:
+            logger.error(f"Claude API error for vault {vault_id} question: {result['error']}")
+            return Response(
+                {"error": f"AI answer failed: {result['error']}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+        # Extract tokens used
+        tokens_used = result.pop('tokens_used', 0)
+
+        # Build citations from chunk indices
+        citation_indices = result.get('citations', [])
+        citations = []
+        seen_sources = set()  # Avoid duplicate citations from same source
+
+        for idx in citation_indices:
+            if idx < len(relevant_chunks):
+                chunk = relevant_chunks[idx]
+                chunk_info = source_map.get(chunk['chunk_id'], {})
+                source_id = chunk_info.get('source_id', '')
+
+                # Skip if we already cited this source
+                if source_id in seen_sources:
+                    continue
+
+                seen_sources.add(source_id)
+                citations.append({
+                    'source_id': source_id,
+                    'source_title': chunk_info.get('source_title', 'Unknown'),
+                    'excerpt': chunk['text'][:200] + '...' if len(chunk['text']) > 200 else chunk['text']
+                })
+
+        # Save user message
+        ChatMessage.objects.create(
+            conversation=conversation,
+            role='user',
+            content=question,
+            sources_cited=[]
+        )
+
+        # Save assistant message with citations
+        ChatMessage.objects.create(
+            conversation=conversation,
+            role='assistant',
+            content=result.get('answer', ''),
+            sources_cited=citations
+        )
+
+        # Update conversation timestamp
+        conversation.save()  # Auto-updates updated_at
+
+        # Log token usage
+        log_usage(request.user, 'question', tokens_used)
+
+        logger.info(f"Answered question for vault {vault_id}, tokens: {tokens_used}")
+
+        return Response({
+            'answer': result.get('answer', ''),
+            'citations': citations,
+            'conversation_id': str(conversation.id)
+        }, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        logger.error(f"Error answering question for vault {vault_id}: {e}", exc_info=True)
+        return Response(
+            {"error": "An unexpected error occurred while processing your question."},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )

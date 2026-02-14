@@ -173,16 +173,16 @@ Create a comprehensive new user onboarding experience for SyncScript that guides
 **Description:** As a new user completing the wizard, I want my vault created with the source and invite applied.
 
 **Acceptance Criteria:**
-- [ ] On "Create Vault" click:
+- [x] On "Create Vault" click:
   - Creates vault via API
   - Adds source if URL provided
   - Sends invite if email provided
-- [ ] Shows loading state during creation
-- [ ] On success: advances to tutorial step
-- [ ] On error: shows error message, allows retry
-- [ ] Updates onboarding state to 'tutorial' step
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Shows loading state during creation
+- [x] On success: advances to tutorial step
+- [x] On error: shows error message, allows retry
+- [x] Updates onboarding state to 'tutorial' step
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-014: Install and configure react-joyride
 **Description:** As a developer, I need react-joyride installed and configured so we can build the interactive tutorial.

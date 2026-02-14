@@ -2,6 +2,7 @@
 Serializers for vault RBAC system.
 """
 from rest_framework import serializers
+from django.conf import settings
 from .models import Vault, VaultMembership, AuditLog
 
 
@@ -16,13 +17,15 @@ class VaultSerializer(serializers.ModelSerializer):
     storage_used_bytes = serializers.SerializerMethodField()
     storage_file_count = serializers.SerializerMethodField()
     storage_user_breakdown = serializers.SerializerMethodField()
+    storage_usage = serializers.SerializerMethodField()
 
     class Meta:
         model = Vault
         fields = [
             'id', 'name', 'description', 'owner', 'owner_username',
             'is_archived', 'created_at', 'updated_at', 'member_count', 'user_role',
-            'storage_used_bytes', 'storage_file_count', 'storage_user_breakdown'
+            'storage_used_bytes', 'storage_file_count', 'storage_user_breakdown',
+            'storage_usage'
         ]
         read_only_fields = ['id', 'owner', 'created_at', 'updated_at']
 
@@ -72,6 +75,38 @@ class VaultSerializer(serializers.ModelSerializer):
             return obj.storage_usage.user_breakdown
         except Exception:
             return {}
+
+    def get_storage_usage(self, obj):
+        """
+        Returns complete storage quota information for the vault.
+        Includes: used_bytes, limit_bytes, percentage, warning, file_count
+        """
+        from apps.sources.models import VaultStorageUsage
+
+        # Get or create storage usage record
+        storage_usage, _ = VaultStorageUsage.objects.get_or_create(
+            vault_id=obj.id,
+            defaults={'total_bytes': 0, 'file_count': 0}
+        )
+
+        used_bytes = storage_usage.total_bytes
+        limit_bytes = settings.VAULT_STORAGE_LIMIT
+        file_count = storage_usage.file_count
+
+        # Calculate percentage (can exceed 1.0)
+        percentage = used_bytes / limit_bytes if limit_bytes > 0 else 0.0
+
+        # Determine warning state
+        warning_threshold = settings.VAULT_STORAGE_WARNING_THRESHOLD
+        warning = percentage >= warning_threshold
+
+        return {
+            'used_bytes': used_bytes,
+            'limit_bytes': limit_bytes,
+            'percentage': percentage,
+            'warning': warning,
+            'file_count': file_count,
+        }
 
 
 class VaultMembershipSerializer(serializers.ModelSerializer):

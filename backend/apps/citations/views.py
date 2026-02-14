@@ -132,7 +132,7 @@ class CitationViewSet(viewsets.ViewSet):
             return Response(response_serializer.data, status=status.HTTP_200_OK)
         else:
             # Use AI citation (asynchronous via Celery)
-            task = generate_ai_citation_task.delay(source.id, citation_format_str)
+            task = generate_ai_citation_task.delay(source.id, citation_format_str)  # type: ignore[misc]
 
             # Return 202 Accepted with task ID and status URL
             return Response({

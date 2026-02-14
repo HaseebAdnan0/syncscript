@@ -109,13 +109,13 @@ SyncScript's AI-powered citation generation system enables researchers to genera
 **Description:** As a developer, I need AI citation generation to run asynchronously via Celery so users aren't blocked waiting for Claude API responses.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/citations/tasks.py` with `generate_ai_citation_task`
-- [ ] Task accepts source_id and format, generates citation, updates cache
-- [ ] Endpoint returns 202 with `{"task_id": "...", "status_url": "/api/v1/tasks/{id}/"}` for AI citations
-- [ ] Create `GET /api/v1/citations/tasks/{task_id}/` to poll status
-- [ ] Status response: `{"status": "pending|completed|failed", "result": {...}}`
-- [ ] Task timeout: 30 seconds
-- [ ] Typecheck passes
+- [x] Create `apps/citations/tasks.py` with `generate_ai_citation_task`
+- [x] Task accepts source_id and format, generates citation, updates cache
+- [x] Endpoint returns 202 with `{"task_id": "...", "status_url": "/api/v1/tasks/{id}/"}` for AI citations
+- [x] Create `GET /api/v1/citations/tasks/{task_id}/` to poll status
+- [x] Status response: `{"status": "pending|completed|failed", "result": {...}}`
+- [x] Task timeout: 30 seconds
+- [x] Typecheck passes
 
 ### US-009: Add rate limiting for AI citations
 **Description:** As a platform operator, I need to rate limit AI citation generation to control costs and prevent abuse.

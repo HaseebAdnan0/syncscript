@@ -185,12 +185,12 @@ Implement a global full-text search system for SyncScript that enables researche
 **Description:** As a developer, I need to record search queries in user history for recent searches feature.
 
 **Acceptance Criteria:**
-- [ ] Create `record_search_history` function in services.py
-- [ ] Store query, user, and result count
-- [ ] Limit to 10 most recent per user (delete oldest on insert)
-- [ ] Deduplicate: if same query exists, update timestamp instead
-- [ ] Call from search endpoint after returning results
-- [ ] Typecheck passes
+- [x] Create `record_search_history` function in services.py
+- [x] Store query, user, and result count
+- [x] Limit to 10 most recent per user (delete oldest on insert)
+- [x] Deduplicate: if same query exists, update timestamp instead
+- [x] Call from search endpoint after returning results
+- [x] Typecheck passes
 
 ---
 

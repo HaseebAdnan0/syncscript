@@ -258,3 +258,29 @@
   - Track_search_analytics is synchronous (not async) - runs in same request/response cycle
 ---
 
+## Iteration 13 - US-013: Create search history recording
+- Created record_search_history function in backend/apps/search/services.py
+- Function accepts user, query, and result_count parameters
+- Strips whitespace from query before storing
+- Implements deduplication: if user already searched for same query, updates timestamp and result_count instead of creating duplicate
+- Limits to 10 most recent searches per user: when creating 11th entry, deletes oldest entries beyond 10
+- Ignores empty/whitespace-only queries
+- Integrated into search_view: calls record_search_history(request.user, query_string, results['total_count']) after preparing results
+- Created comprehensive test suite with 7 tests covering all behaviors
+- All 47 search app tests pass
+- Files changed:
+  - backend/apps/search/services.py (added record_search_history function and SearchHistory import)
+  - backend/apps/search/views.py (added import and call to record_search_history)
+  - backend/apps/search/test_services.py (added RecordSearchHistoryTest class with 7 tests)
+  - PRD18.md (marked US-013 complete)
+- Learnings for future iterations:
+  - filter().first() pattern is safer than get() when record may not exist
+  - When updating created_at field, need to manually set with timezone.now() (auto_now_add only works on creation)
+  - update_fields in save() is important for performance - only updates specified fields
+  - Limit deletion pattern: query.order_by('-created_at').values_list('id', flat=True)[10:] gets IDs beyond limit
+  - Then delete using filter(id__in=oldest_ids).delete() to remove in bulk
+  - Deduplication by checking existing record first, then either update or create
+  - User isolation: separate history per user by filtering on user field
+  - Test user isolation: create second user and verify histories are separate
+---
+

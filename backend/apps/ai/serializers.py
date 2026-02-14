@@ -22,3 +22,10 @@ class SummarizeResponseSerializer(serializers.Serializer):
     language = serializers.CharField(default='en')
     quality_flags = serializers.ListField(child=serializers.CharField(), default=list)
     generated_at = serializers.DateTimeField()
+
+
+class AskQuestionSerializer(serializers.Serializer):
+    """
+    Serializer for AI question request parameters.
+    """
+    question = serializers.CharField()

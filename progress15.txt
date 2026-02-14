@@ -216,3 +216,31 @@ Learnings for future iterations:
 - Sources without AI summaries should be handled gracefully by passing description and metadata instead
 - Cache age check: timezone.now() - vault.ai_insights_updated_at < timedelta(hours=24)
 ---
+
+## Iteration 8 - US-008: Add cache invalidation for vault insights
+- Created apps/ai/signals.py with post_save and post_delete signal handlers for Source model
+- Signals detect when source's vault has ai_insights_cache and invalidate ai_insights_updated_at
+- Connected signals in apps/ai/apps.py ready() method with import statement
+- Used string-based sender reference 'sources.Source' to avoid circular import issues
+- Created comprehensive test suite with 6 tests in CacheInvalidationSignalsTestCase:
+  - Cache invalidation on source save/create/delete
+  - No errors when vault has no cache
+  - Isolation between vaults (only affected vault is invalidated)
+  - Handling of already-null cache timestamps
+- All 54 AI app tests pass successfully
+- Typecheck passes with full type annotations
+
+Files changed:
+- backend/apps/ai/signals.py (created with 2 signal handlers)
+- backend/apps/ai/apps.py (added ready() method)
+- backend/apps/ai/tests.py (added CacheInvalidationSignalsTestCase with 6 tests)
+- PRD15.md (marked US-008 complete)
+
+Learnings for future iterations:
+- Django signals can use string-based sender ('app_label.ModelName') to avoid import cycles
+- Signal handlers triggered by post_save fire for BOTH create and update operations
+- When testing signals that fire in setUp, create fixtures in the right order to avoid premature invalidation
+- Cache invalidation strategy: set timestamp to null but preserve cached data (for fallback)
+- Type annotations on signal handlers: sender: Any, instance: Any, **kwargs: Any
+- Test fixture ordering matters: create Source BEFORE setting cache to avoid signal firing in setUp
+---

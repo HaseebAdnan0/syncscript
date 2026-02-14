@@ -187,15 +187,15 @@ Create a comprehensive user dashboard as the primary logged-in landing page for 
 **Description:** As a user, I want to see my top collaborators so I recognize who contributes most to shared research.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/dashboard/TopCollaborators.tsx`
-- [ ] Section title: "Top Collaborators"
-- [ ] Avatar list with top 5 collaborators
-- [ ] Each shows: avatar, name, contribution count
-- [ ] Avatar has fallback to initials if no image
-- [ ] Contribution count styled as badge
-- [ ] Fetches from `/api/v1/dashboard/analytics/top-collaborators/`
-- [ ] Empty state: "Invite collaborators to see who contributes most"
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/dashboard/TopCollaborators.tsx`
+- [x] Section title: "Top Collaborators"
+- [x] Avatar list with top 5 collaborators
+- [x] Each shows: avatar, name, contribution count
+- [x] Avatar has fallback to initials if no image
+- [x] Contribution count styled as badge
+- [x] Fetches from `/api/v1/dashboard/analytics/top-collaborators/`
+- [x] Empty state: "Invite collaborators to see who contributes most"
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-014: Create analytics section container

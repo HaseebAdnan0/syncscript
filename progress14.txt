@@ -265,3 +265,39 @@ Learnings for future iterations:
 
 ---
 
+## Iteration 8 - US-008: Implement async task for AI citations
+- Created `apps/citations/tasks.py` with Celery task `generate_ai_citation_task`
+- Task decorated with `@shared_task(bind=True, max_retries=2, default_retry_delay=30, time_limit=30)`
+- Task generates AI citation using Claude API and caches result in source metadata
+- Modified `apps/citations/views.py` to return 202 Accepted for AI citations (incomplete metadata)
+- Added task status endpoint: `GET /api/v1/citations/tasks/{task_id}/`
+- Task status endpoint returns `{"status": "pending|completed|failed", "result": {...}}`
+- Structured citations (complete metadata) remain synchronous (200 OK)
+- AI citations (incomplete metadata) are async (202 Accepted with task_id and status_url)
+- Added 9 comprehensive tests:
+  - 4 tests for Celery task (success, different formats, API error, source not found)
+  - 5 tests for endpoints (async 202 response, sync 200 response, task status pending/completed/failed)
+- Updated existing test `test_generate_citation_ai` to expect 202 instead of 200
+- Tests: All 87 citation tests pass
+- Typecheck: 0 errors
+- Files changed: backend/apps/citations/tasks.py (108 lines), backend/apps/citations/views.py (modified), backend/apps/citations/tests.py (+230 lines), PRD14.md
+- Committed: (next)
+
+Learnings for future iterations:
+- Celery task decorators: `@shared_task(bind=True, max_retries=2, default_retry_delay=30, time_limit=30)`
+- `bind=True` gives access to `self.retry()` for retry logic
+- `time_limit` enforces hard timeout (30s as per requirements)
+- Celery `.delay()` returns AsyncResult with `.id` property for task tracking
+- AsyncResult states: PENDING, SUCCESS, FAILURE, RETRY, STARTED
+- Task status endpoint uses `AsyncResult(task_id)` from `celery.result`
+- DRF @action with custom URL pattern: `url_path=r'tasks/(?P<task_id>[a-f0-9\-]+)'`
+- Celery task IDs are UUIDs, must use UUID pattern in tests
+- When changing API behavior (sync to async), must update all existing tests
+- Progressive approach: structured citations stay sync, only AI citations go async
+- Task caching helper can be shared between view and task (_cache_citation utility)
+- Pyright needs `type: ignore[misc]` for Celery `.delay()` call
+- Task error handling: `raise self.retry(exc=exc)` for automatic retry with exponential backoff
+- HTTP 202 Accepted: standard status for accepted async operations
+- Return task_id and status_url in 202 response for client polling
+---
+

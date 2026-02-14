@@ -335,3 +335,26 @@
   - Test database issues solved with --keepdb flag
 ---
 
+## Iteration 13 - US-013: Update password reset to use Celery email task (Already Complete)
+- Discovered US-013 was already implemented in previous commits:
+  - fbb1e16: Updated send_password_reset_email_task signature with request_ip and request_time
+  - b37c595: Updated PasswordResetRequestView to use async task
+- Implementation details verified:
+  - Added get_client_ip helper function to extract client IP
+  - Modified PasswordResetRequestView to extract request IP and timestamp
+  - Queues async task with send_password_reset_email_task.delay()
+  - Includes fallback to sync email if Celery unavailable
+  - Logs warning when falling back to sync
+- All 6 password reset flow tests pass
+- Django system check passes (only pre-existing allauth warnings)
+- Files already committed:
+  - backend/apps/users/views.py
+  - backend/apps/users/tasks.py
+  - PRD11.md (marked US-013 complete)
+- Learnings for future iterations:
+  - Always check git log to see if task already completed in previous session
+  - Task was correctly implemented with IP/timestamp security notice
+  - Exception handling ensures graceful fallback if Celery down
+  - get_client_ip handles X-Forwarded-For header for proxy/load balancer scenarios
+---
+

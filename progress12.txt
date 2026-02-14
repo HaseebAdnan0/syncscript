@@ -454,3 +454,33 @@ Learnings for future iterations:
   - Dynamic provider name in message improves UX clarity
   - Bitcoin Orange (#F7931A) used for spinner to match project design system
 ---
+## Iteration 17 - US-017: Create OAuth callback landing page
+- Created /auth/callback page in frontend/src/app/(auth)/callback/page.tsx
+- Parses query params: success, error, link_required, email_required, provider
+- Success case: shows success message with green checkmark, redirects to /vaults after 1s
+- Link required case: stores provider in sessionStorage, redirects to /login?link_oauth=true after 500ms
+- Email required case: stores provider in sessionStorage, redirects to /register?email_required=true after 500ms
+- Error case: shows error message with red X icon, displays "Try Again" button
+- Error message mappings for common OAuth errors (access_denied, invalid_request, email_exists, provider_error)
+- Three visual states: loading (spinner), success (checkmark), error (X icon)
+- Styled with Bitcoin DeFi aesthetic: dark cards, orange spinner, gradient buttons
+- Backend sets httpOnly cookie automatically (no frontend token handling needed)
+- Frontend typecheck passes (pre-existing errors in GuidedVaultWizard unrelated)
+- Committed successfully
+
+Files changed:
+  - frontend/src/app/(auth)/callback/page.tsx (created)
+  - PRD12.md (marked US-017 complete except browser verification)
+
+Learnings for future iterations:
+  - useSearchParams() from next/navigation provides access to URL query parameters
+  - useEffect with searchParams dependency handles callback parameter parsing on mount
+  - sessionStorage is appropriate for temporary OAuth state during redirect flows
+  - Three-state pattern (loading/success/error) provides clear UX feedback
+  - setTimeout delays allow user to see status messages before redirect
+  - Error message mapping object provides user-friendly messages for error codes
+  - Backend sets httpOnly cookies automatically, no frontend token handling needed
+  - OAuth callback page should handle all edge cases: success, linking, email prompt, errors
+  - Visual feedback (spinner, checkmark, X) improves perceived performance
+---
+
