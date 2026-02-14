@@ -7,11 +7,13 @@ generating thumbnails, and processing PDF files after upload.
 import io
 import logging
 import uuid
+from datetime import timedelta
 from typing import Any
 
 import boto3
 from celery import shared_task
 from django.conf import settings
+from django.utils import timezone
 from pdf2image import convert_from_bytes
 from PIL import Image
 from pypdf import PdfReader

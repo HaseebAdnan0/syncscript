@@ -190,13 +190,13 @@ This PRD covers the full implementation: core infrastructure, event broadcasting
 **Description:** As a developer, I need Annotation changes to broadcast so collaborators see new annotations instantly.
 
 **Acceptance Criteria:**
-- [ ] Create/update `apps/annotations/signals.py`
-- [ ] Connect `post_save` signal for Annotation model (created=True only)
-- [ ] Enqueue `broadcast_annotation_created` Celery task
-- [ ] Create `apps/annotations/tasks.py` with broadcast task
-- [ ] Payload includes annotation id, source_id, text, page_number, created_by
-- [ ] Register signals in apps.py
-- [ ] Typecheck passes
+- [x] Create/update `apps/annotations/signals.py`
+- [x] Connect `post_save` signal for Annotation model (created=True only)
+- [x] Enqueue `broadcast_annotation_created` Celery task
+- [x] Create `apps/annotations/tasks.py` with broadcast task
+- [x] Payload includes annotation id, source_id, text, page_number, created_by
+- [x] Register signals in apps.py
+- [x] Typecheck passes
 
 ---
 

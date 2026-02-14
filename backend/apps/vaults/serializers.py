@@ -89,6 +89,33 @@ class VaultMembershipSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ['id', 'added_at', 'added_by']
 
+    def validate(self, attrs):
+        """
+        Validate that the vault has at least one owner (US-033).
+        Prevents downgrading/removing the last owner.
+        """
+        from .models import RoleChoices
+
+        # Only validate on updates (instance exists)
+        if self.instance:
+            vault = self.instance.vault
+            role = attrs.get('role', self.instance.role)
+
+            # Check if this is the last owner being downgraded
+            if self.instance.role == RoleChoices.OWNER and role != RoleChoices.OWNER:
+                # Count how many owners exist in this vault
+                owner_count = VaultMembership.objects.filter(
+                    vault=vault,
+                    role=RoleChoices.OWNER
+                ).count()
+
+                if owner_count <= 1:
+                    raise serializers.ValidationError(
+                        "Vault must have at least one owner"
+                    )
+
+        return attrs
+
 
 class AuditLogSerializer(serializers.ModelSerializer):
     """

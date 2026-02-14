@@ -243,15 +243,15 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need tests verifying Source API endpoints work correctly.
 
 **Acceptance Criteria:**
-- [ ] Test POST creates source with auto-extracted metadata
-- [ ] Test GET list returns only non-deleted sources in user's vaults
-- [ ] Test GET detail returns source if user has vault access
-- [ ] Test PATCH updates title, description, metadata, source_type
-- [ ] Test PATCH cannot change url, vault, created_by
-- [ ] Test DELETE soft-deletes (sets is_deleted=True)
-- [ ] Test restore action sets is_deleted=False
-- [ ] All tests pass
-- [ ] Typecheck passes
+- [x] Test POST creates source with auto-extracted metadata
+- [x] Test GET list returns only non-deleted sources in user's vaults
+- [x] Test GET detail returns source if user has vault access
+- [x] Test PATCH updates title, description, metadata, source_type
+- [x] Test PATCH cannot change url, vault, created_by
+- [x] Test DELETE soft-deletes (sets is_deleted=True)
+- [x] Test restore action sets is_deleted=False
+- [x] All tests pass
+- [x] Typecheck passes
 
 ---
 

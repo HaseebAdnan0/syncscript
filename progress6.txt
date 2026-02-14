@@ -347,3 +347,46 @@
   - Django system check passes validates all serializer configuration
   - Testing with mock objects useful to verify error handling without database
 ---
+
+## Iteration 16 - US-016: Create soft-delete endpoint
+- Implemented destroy() method in PDFUploadViewSet in backend/apps/sources/views.py
+- Endpoint: DELETE /api/v1/sources/pdfs/{pdf_id}/
+- Permission validation: Allows vault owner OR uploader OR vault admin (owner role via membership)
+- Three permission checks:
+  1. Direct vault owner (vault.owner == user)
+  2. Original uploader (uploaded_by == user)
+  3. Admin via membership (VaultMembership with role=OWNER)
+- Soft-delete via deleted_at timestamp using timezone.now()
+- Calls update_vault_storage_usage() to recalculate storage after deletion
+- Returns: message, pdf_id, permanent_deletion_date (deleted_at + 30 days)
+- Files changed:
+  - backend/apps/sources/views.py (added destroy method, imports for timezone, timedelta, update_vault_storage_usage)
+  - PRD6.md (marked US-016 complete)
+- Learnings for future iterations:
+  - ViewSet destroy() method signature: destroy(self, request, *args, **kwargs)
+  - Use timezone.now() not datetime.now() for Django timezone-aware timestamps
+  - timedelta(days=30) for calculating future dates
+  - get_object() uses queryset filtering (deleted_at__isnull=True) from ViewSet definition
+  - Permission can be multi-layered: owner OR uploader OR admin role
+  - Django system check passes (6 security warnings expected in dev mode)
+  - Python syntax check passes (py_compile validation)
+---
+## Iteration 16 - US-016: Create soft-delete endpoint
+- Implemented destroy() method in PDFUploadViewSet
+- Permission validation: allows vault owner OR uploader to delete (either one is sufficient)
+- Also allows vault OWNER role members (via VaultMembership) to delete
+- Sets deleted_at timestamp using timezone.now() for soft-delete
+- Calls update_vault_storage_usage() to recalculate storage after deletion
+- Returns success message, pdf_id, and permanent_deletion_date (30 days from now)
+- Files changed:
+  - backend/apps/sources/views.py (added destroy method to PDFUploadViewSet)
+  - PRD6.md (marked US-016 complete)
+- Learnings for future iterations:
+  - Soft-delete: set deleted_at timestamp, don't actually delete from DB
+  - Permission check needs OR logic: vault owner OR uploader OR vault admin member
+  - Storage usage must be recalculated after deletion (affects vault quota tracking)
+  - timedelta(days=30) adds 30 days to current timestamp for retention period
+  - .isoformat() converts datetime to ISO 8601 string format (YYYY-MM-DDTHH:MM:SS)
+  - Django system check passes with 6 security warnings (expected in dev mode)
+  - ViewSet.destroy() uses self.get_object() which automatically filters by queryset
+---
