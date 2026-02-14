@@ -481,3 +481,26 @@ Learnings for future iterations:
 - Rate limiting requires RATELIMIT_ENABLE=True and RATELIMIT_USE_CACHE='default' in settings (already configured in US-005)
 ---
 
+## Iteration 25 - Create rate limit exceeded response handler (US-027)
+- Created apps/users/exceptions.py with custom_exception_handler function
+- Handler catches Ratelimited exception from django_ratelimit.exceptions
+- Returns 429 HTTP_429_TOO_MANY_REQUESTS status with JSON error message
+- Includes Retry-After header set to 60 seconds
+- Registered handler in REST_FRAMEWORK settings as 'EXCEPTION_HANDLER': 'apps.users.exceptions.custom_exception_handler'
+- Django system check passes
+
+Files changed:
+- backend/apps/users/exceptions.py (created)
+- backend/config/settings.py (added EXCEPTION_HANDLER to REST_FRAMEWORK config)
+- PRD1.md (marked US-027 complete)
+
+Learnings for future iterations:
+- DRF exception handlers take (exc, context) parameters and return Response objects
+- Always call drf_exception_handler first to get standard error response for other exceptions
+- Ratelimited exception from django-ratelimit must be caught explicitly
+- Retry-After header should be a string (seconds) per HTTP spec
+- django-ratelimit doesn't provide exact retry time, so use sensible default (60 seconds)
+- Custom exception handler registered via REST_FRAMEWORK['EXCEPTION_HANDLER'] setting
+- Exception handler applies globally to all DRF views
+---
+

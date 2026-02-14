@@ -420,3 +420,16 @@
   - Task completion can verify existing code if it meets acceptance criteria
 ---
 
+## Iteration 32 - US-031: Configure nested routes for members and audit-logs
+- Verified existing URL configuration already meets all acceptance criteria
+- Files verified:
+  - backend/apps/vaults/urls.py (nested routes configured using rest_framework_nested)
+  - PRD2.md (marked US-031 as complete)
+- Django check passed with no issues
+- Learnings for future iterations:
+  - Nested routes use NestedDefaultRouter from rest_framework_nested package
+  - Routes registered with lookup='vault' to create vault_pk URL parameter
+  - Both members and audit-logs routes properly configured with appropriate ViewSets
+  - Task verification completed - existing implementation meets all requirements
+---
+

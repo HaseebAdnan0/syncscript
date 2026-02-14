@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'apps.users',
     'apps.sources',
     'apps.vaults',
+    'apps.annotations',
 ]
 
 MIDDLEWARE = [

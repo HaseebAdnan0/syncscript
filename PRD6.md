@@ -183,12 +183,12 @@ Implement cloud file storage for SyncScript using Cloudflare R2 (S3-compatible).
 **Description:** As a vault owner, I want to delete PDFs so I can keep my vault organized.
 
 **Acceptance Criteria:**
-- [ ] Add `DELETE /api/v1/sources/pdfs/{pdf_id}/` endpoint
-- [ ] Validate user has owner permission or is the uploader
-- [ ] Set deleted_at timestamp (soft-delete)
-- [ ] Update vault storage usage
-- [ ] Return: message, pdf_id, permanent_deletion_date (30 days later)
-- [ ] Typecheck passes
+- [x] Add `DELETE /api/v1/sources/pdfs/{pdf_id}/` endpoint
+- [x] Validate user has owner permission or is the uploader
+- [x] Set deleted_at timestamp (soft-delete)
+- [x] Update vault storage usage
+- [x] Return: message, pdf_id, permanent_deletion_date (30 days later)
+- [x] Typecheck passes
 
 ### US-017: Create cleanup_deleted_pdfs Celery task
 **Description:** As a system, I need to permanently delete soft-deleted files after 30 days.
