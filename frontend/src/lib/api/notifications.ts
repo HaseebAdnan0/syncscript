@@ -1,19 +1,8 @@
 import { api } from '@/lib/api';
 import type { PaginatedResponse } from '@/lib/types/api';
+import type { Notification } from '@/types/notifications';
 
-export interface Notification {
-  id: number;
-  user_id: number;
-  vault_id?: number;
-  type: 'source.created' | 'source.updated' | 'source.deleted' |
-        'annotation.created' | 'annotation.updated' | 'annotation.deleted' |
-        'member.joined' | 'member.left' | 'mention.created' | 'vault.updated';
-  title: string;
-  message: string;
-  data?: Record<string, any>;
-  is_read: boolean;
-  created_at: string;
-}
+export type { Notification };
 
 export type NotificationListResponse = PaginatedResponse<Notification>;
 
@@ -36,7 +25,7 @@ export async function getNotifications(params?: {
 /**
  * Mark a single notification as read
  */
-export async function markAsRead(notificationId: number): Promise<Notification> {
+export async function markAsRead(notificationId: string | number): Promise<Notification> {
   const response = await api.patch<Notification>(`/notifications/${notificationId}/read/`);
   return response.data;
 }

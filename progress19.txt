@@ -948,3 +948,37 @@ In Progress - US-004 complete
   - Fixed positioning with z-50 ensures toasts appear above all content
 ---
 
+
+## Iteration 33 - US-034: Integrate Toast Notifications with Pusher
+- Extended usePusherNotifications hook to accept optional onNotification callback
+- Integrated NotificationToastContainer into app layout (frontend/src/app/(app)/layout.tsx)
+- Added state management for toast notifications (add, dismiss, navigate)
+- Implemented conditional toast display logic:
+  - Don't show if notification panel is open (tracked via window custom events)
+  - Don't show if page is hidden (document.hidden check)
+- Updated AppHeader to emit 'notification-panel-opened' and 'notification-panel-closed' events
+  - Emits on toggle, click outside, and Escape key
+- Created navigation handler that maps notification types to routes:
+  - vault_invite → /vaults/{vault_id}
+  - member_joined → /vaults/{vault_id}/members
+  - source_added → /vaults/{vault_id}/sources/{source_id}
+  - annotation_reply → /vaults/{vault_id}/sources/{source_id}#annotation-{annotation_id}
+  - mention → same as annotation_reply
+- Toast callback triggered in usePusherNotifications after cache update
+- All acceptance criteria met, TypeScript typecheck passes
+- Commit 810cc7b
+- Files changed:
+  - frontend/src/app/(app)/layout.tsx (added toast integration)
+  - frontend/src/hooks/usePusherNotifications.ts (added onNotification callback)
+  - frontend/src/components/features/notifications/AppHeader.tsx (emit panel state events)
+  - PRD19.md (marked US-034 complete except browser verification)
+- Learnings for future iterations:
+  - Window custom events pattern for cross-component state tracking
+  - CustomEvent API: new CustomEvent(name) and window.dispatchEvent(event)
+  - Listen with window.addEventListener() and cleanup with removeEventListener()
+  - Check document.hidden to detect if page is visible/hidden (tab switching)
+  - Notification type to route mapping via Record<string, string> dictionary
+  - Optional callback in hooks enables flexible integration patterns
+  - Add callback to useEffect dependencies to avoid stale closures
+  - State tracking via events decouples components (no prop drilling)
+---

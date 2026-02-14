@@ -173,6 +173,7 @@ def annotation_created(sender, instance, created, **kwargs):  # type: ignore[mis
                 title=f"Reply to your annotation",
                 body=f"{instance.user.username} replied to your annotation: {preview}",
                 data={
+                    "vault_id": str(instance.source.vault.id),
                     "source_id": instance.source.id,
                     "annotation_id": instance.id,
                     "parent_id": instance.parent.id,
@@ -220,6 +221,7 @@ def annotation_created(sender, instance, created, **kwargs):  # type: ignore[mis
                 title=f"{instance.user.username} mentioned you",
                 body=f"{instance.user.username} mentioned you in an annotation: {preview}",
                 data={
+                    "vault_id": str(instance.source.vault.id),
                     "source_id": instance.source.id,
                     "annotation_id": instance.id,
                     "mentioner_name": instance.user.username,

@@ -3,9 +3,11 @@
 import { Bell } from 'lucide-react';
 import { useNotifications } from '@/hooks/useNotifications';
 import { formatDistanceToNow } from 'date-fns';
-import type { Notification } from '@/lib/api/notifications';
+import { useRouter } from 'next/navigation';
+import type { Notification } from '@/types/notifications';
 
 export function NotificationPanel() {
+  const router = useRouter();
   const {
     notifications,
     isLoadingNotifications,
@@ -14,9 +16,47 @@ export function NotificationPanel() {
     isMarkingAllAsRead
   } = useNotifications();
 
+  /**
+   * Map notification type to route
+   */
+  const getNotificationRoute = (notification: Notification): string | null => {
+    const { type, data } = notification;
+
+    if (!data) return null;
+
+    switch (type) {
+      case 'vault_invite':
+        return data.vault_id ? `/vaults/${data.vault_id}` : null;
+
+      case 'member_joined':
+        return data.vault_id ? `/vaults/${data.vault_id}/members` : null;
+
+      case 'source_added':
+        return data.vault_id && data.source_id
+          ? `/vaults/${data.vault_id}/sources/${data.source_id}`
+          : null;
+
+      case 'annotation_reply':
+      case 'mention':
+        return data.vault_id && data.source_id && data.annotation_id
+          ? `/vaults/${data.vault_id}/sources/${data.source_id}#annotation-${data.annotation_id}`
+          : null;
+
+      default:
+        return null;
+    }
+  };
+
   const handleNotificationClick = (notification: Notification) => {
+    // Mark as read
     if (!notification.is_read) {
       markAsRead(notification.id);
+    }
+
+    // Navigate to notification target
+    const route = getNotificationRoute(notification);
+    if (route) {
+      router.push(route);
     }
   };
 
@@ -75,7 +115,7 @@ export function NotificationPanel() {
                     <p className={`text-sm ${
                       notification.is_read ? 'text-muted' : 'text-white font-medium'
                     }`}>
-                      {notification.message}
+                      {notification.title}
                     </p>
                     <p className="text-xs text-muted mt-1">
                       {formatDistanceToNow(new Date(notification.created_at), {

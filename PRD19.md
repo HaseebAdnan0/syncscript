@@ -465,15 +465,15 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a user, I want clicking a notification to take me to the relevant item.
 
 **Acceptance Criteria:**
-- [ ] Each notification type maps to a route:
+- [x] Each notification type maps to a route:
   - `vault_invite` → `/vaults/{vault_id}`
   - `member_joined` → `/vaults/{vault_id}/members`
   - `source_added` → `/vaults/{vault_id}/sources/{source_id}`
   - `annotation_reply` → `/vaults/{vault_id}/sources/{source_id}#annotation-{annotation_id}`
   - `mention` → same as annotation_reply
-- [ ] Mark as read on click
-- [ ] Close dropdown after navigation
-- [ ] Typecheck passes
+- [x] Mark as read on click
+- [x] Close dropdown after navigation
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---
