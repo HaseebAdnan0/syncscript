@@ -114,3 +114,19 @@
   - Clean up stale presence entries when user no longer exists (User.DoesNotExist)
   - Auto-commit hooks may commit changes during file edits
 ---
+## Iteration 8 - US-009: Broadcast presence updates on join/leave
+- Implemented _broadcast_presence_update method in VaultConsumer
+- Method calls _get_presence_list to fetch current active users
+- Broadcasts presence.update event via channel_layer.group_send
+- Presence update sent after user joins room (in connect method)
+- Presence update sent after user leaves room (in disconnect method)
+- Payload includes active_users array with user_id, username, joined_at, status
+- Files changed: backend/apps/vaults/consumers.py, PRD5.md
+- Typecheck passes (0 errors, 0 warnings)
+- Learnings for future iterations:
+  - channel_layer.group_send requires 'type' field that maps to consumer method name
+  - vault_event method receives group messages and forwards to WebSocket clients
+  - Presence broadcasts happen asynchronously via channel layer
+  - Added type: ignore[attr-defined] for user.username to satisfy Pyright
+  - Broadcast happens AFTER user is added/removed from presence sorted set
+---

@@ -229,6 +229,40 @@ Simply don't set the AWS environment variables, and Django will use local filesy
 
 ---
 
+## System Dependencies: Poppler Utils
+### Required For: PDF thumbnail generation (pdf2image library)
+### Steps:
+
+**Windows:**
+1. Download poppler for Windows from: https://github.com/oschwartz10612/poppler-windows/releases
+2. Extract the archive (e.g., `poppler-24.08.0.zip`)
+3. Add the `bin` folder to your system PATH:
+   - Search for "Environment Variables" in Windows
+   - Edit "Path" variable under System Variables
+   - Add the full path to poppler's `bin` folder (e.g., `C:\Program Files\poppler\bin`)
+4. Restart your terminal/IDE to pick up the PATH changes
+5. Verify installation:
+   ```bash
+   pdftoppm -v
+   # Should output version information
+   ```
+
+**Linux (Ubuntu/Debian):**
+```bash
+sudo apt-get update
+sudo apt-get install poppler-utils
+```
+
+**macOS:**
+```bash
+brew install poppler
+```
+
+**Why Needed:**
+The `pdf2image` Python library uses poppler's `pdftoppm` tool to convert PDF pages to images for thumbnail generation. Without poppler installed, PDF processing will fail during thumbnail generation (though metadata extraction will still work).
+
+---
+
 ## Optional: Pusher (Real-time Notifications)
 ### Required For: WebSocket notifications (future feature)
 ### Steps:

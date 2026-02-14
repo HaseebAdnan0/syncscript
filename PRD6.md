@@ -129,13 +129,13 @@ Implement cloud file storage for SyncScript using Cloudflare R2 (S3-compatible).
 **Description:** As a user, I want to see PDF thumbnails so I can visually identify files.
 
 **Acceptance Criteria:**
-- [ ] Add `pdf2image` and `Pillow` to requirements.txt
-- [ ] In `process_uploaded_pdf`, generate JPEG thumbnail from first page (max 300px width, 80% quality)
-- [ ] Upload thumbnail to S3 at `vaults/{vault_id}/thumbnails/{uuid}.jpg`
-- [ ] Generate presigned URL for thumbnail (7-day expiry)
-- [ ] Store thumbnail_url in PDFUpload record
-- [ ] Document system dependencies (poppler-utils) in `.planning/USER_SETUP.md`
-- [ ] Typecheck passes
+- [x] Add `pdf2image` and `Pillow` to requirements.txt
+- [x] In `process_uploaded_pdf`, generate JPEG thumbnail from first page (max 300px width, 80% quality)
+- [x] Upload thumbnail to S3 at `vaults/{vault_id}/thumbnails/{uuid}.jpg`
+- [x] Generate presigned URL for thumbnail (7-day expiry)
+- [x] Store thumbnail_url in PDFUpload record
+- [x] Document system dependencies (poppler-utils) in `.planning/USER_SETUP.md`
+- [x] Typecheck passes
 
 ### US-012: Create multipart upload initiate endpoint
 **Description:** As a researcher, I want to upload large PDFs (>20MB) reliably via multipart upload.

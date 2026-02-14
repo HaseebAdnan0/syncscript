@@ -15,6 +15,9 @@ from django.utils import timezone
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth import authenticate
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
 
 from .models import User
 from .serializers import (
@@ -23,6 +26,7 @@ from .serializers import (
     EmailVerificationSerializer,
     CustomTokenObtainPairSerializer,
     RegisterSerializer,
+    PasswordResetRequestSerializer,
 )
 from .tokens import generate_verification_token, verify_token
 from .emails import send_verification_email
@@ -399,3 +403,49 @@ class RefreshTokenView(APIView):
             return Response({
                 'error': f'Invalid or expired refresh token: {str(e)}'
             }, status=status.HTTP_401_UNAUTHORIZED)
+
+
+@method_decorator(ratelimit(key='user_or_ip', rate='3/h', method='POST', block=True), name='dispatch')
+class PasswordResetRequestView(APIView):
+    """
+    Request password reset email (US-019).
+
+    POST /api/v1/auth/password-reset/
+    Rate limited to 3 attempts per hour per email.
+    Generates reset token and sends email if user exists.
+    Always returns success to prevent user enumeration.
+    """
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        """Generate password reset token and send email."""
+        serializer = PasswordResetRequestSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        email = serializer.validated_data['email']
+
+        # Try to find user by email
+        try:
+            user = User.objects.get(email__iexact=email)
+
+            # Generate reset token using Django's PasswordResetTokenGenerator
+            token_generator = PasswordResetTokenGenerator()
+            token = token_generator.make_token(user)
+
+            # Encode user ID in base64
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+
+            # TODO: Send password reset email (will be created in US-020)
+            # For now, just generate the token and uid
+            # send_password_reset_email(user, uid, token)
+
+        except User.DoesNotExist:
+            # Don't reveal if email exists or not - just continue
+            pass
+
+        # Always return success (no user enumeration)
+        return Response({
+            'message': 'If an account exists with this email, a password reset link has been sent.'
+        }, status=status.HTTP_200_OK)

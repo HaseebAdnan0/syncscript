@@ -114,6 +114,32 @@ class VaultConsumer(AsyncWebsocketConsumer):
         if hasattr(self, 'user') and hasattr(self, 'vault_id'):
             logger.info(f"User {self.user.id} disconnected from vault {self.vault_id} (code: {code})")
 
+    async def receive(self, text_data: str | None = None, bytes_data: bytes | None = None) -> None:
+        """
+        Handle incoming WebSocket messages from clients.
+
+        Args:
+            text_data: JSON string containing the message
+            bytes_data: Binary data (not used in this implementation)
+        """
+        if not text_data:
+            return
+
+        try:
+            data = json.loads(text_data)
+            message_type = data.get('type')
+
+            if message_type == 'heartbeat':
+                # Update user's timestamp in presence tracking
+                await self._update_presence(self.user.id, self.vault_id)
+            else:
+                logger.warning(f"Unknown message type: {message_type}")
+
+        except json.JSONDecodeError:
+            logger.error(f"Invalid JSON received: {text_data}")
+        except Exception as e:
+            logger.error(f"Error processing message: {e}")
+
     @database_sync_to_async
     def _check_vault_membership(self, user_id: int, vault_id: int) -> bool:
         """
@@ -193,6 +219,23 @@ class VaultConsumer(AsyncWebsocketConsumer):
         # Remove from sorted set
         redis_conn = cache.client.get_client()  # type: ignore[attr-defined]
         redis_conn.zrem(presence_key, str(user_id))
+
+    async def _update_presence(self, user_id: int, vault_id: int) -> None:
+        """
+        Update user's timestamp in Redis sorted set for presence tracking.
+
+        This is called on heartbeat to keep the connection alive.
+
+        Args:
+            user_id: User ID to update
+            vault_id: Vault ID for the presence set
+        """
+        presence_key = f"vault_{vault_id}:presence"
+        timestamp = time.time()
+
+        # Update timestamp in sorted set
+        redis_conn = cache.client.get_client()  # type: ignore[attr-defined]
+        redis_conn.zadd(presence_key, {str(user_id): timestamp})
 
     @database_sync_to_async
     def _get_presence_list(self, vault_id: int) -> list[dict]:

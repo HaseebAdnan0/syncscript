@@ -226,9 +226,9 @@ Create a secure, collaborative Knowledge Vault system where researchers can crea
 **Description:** As a system, I need proper access control for member management.
 
 **Acceptance Criteria:**
-- [ ] `get_permissions` returns [IsVaultOwner()] for create, update, partial_update, destroy
-- [ ] List/retrieve uses [IsVaultMember()]
-- [ ] Typecheck passes
+- [x] `get_permissions` returns [IsVaultOwner()] for create, update, partial_update, destroy
+- [x] List/retrieve uses [IsVaultMember()]
+- [x] Typecheck passes
 
 ### US-022: Add perform_create to membership viewset
 **Description:** As a system, I need to auto-set vault and added_by on member creation.

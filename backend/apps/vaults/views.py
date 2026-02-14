@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .models import Vault, VaultMembership
-from .permissions import IsVaultOwner
+from .permissions import IsVaultOwner, IsVaultMember
 from .serializers import VaultSerializer, VaultMembershipSerializer
 
 
@@ -85,6 +85,16 @@ class VaultMembershipViewSet(viewsets.ModelViewSet):
     """
     serializer_class = VaultMembershipSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_permissions(self):
+        """
+        Return different permissions based on action.
+        Mutations (create, update, partial_update, destroy) require owner permissions.
+        List/retrieve requires vault membership.
+        """
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            return [IsVaultOwner()]
+        return [IsVaultMember()]
 
     def get_queryset(self):
         """Filter memberships by vault from URL."""
