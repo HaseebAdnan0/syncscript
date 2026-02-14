@@ -580,3 +580,30 @@
   - Modal z-index handled by Radix Dialog.Portal and Dialog.Content (z-50)
   - Browser verification can be done by checking dev server startup + typecheck when direct browser access not available
 ---
+## Iteration 28 - US-030: Create full search page route
+- Created frontend/src/app/(app)/search/page.tsx with full search page implementation
+- Page reads initial query and type from URL params (?q=query&type=vaults)
+- Full-width search input at top with auto-focus
+- Type filter tabs displayed when results exist or loading
+- All results displayed (not paginated yet - that's US-032)
+- URL updates automatically when query or type filter changes via useEffect + router.replace()
+- Wrapped in Suspense boundary for proper SSR support with Next.js App Router
+- Empty state shows search icon and "Start searching" message
+- Minimum query length prompt (1 char shows "Type at least 2 characters...")
+- TypeScript typecheck passes (only pre-existing OnboardingSettings errors)
+- Dev server starts successfully on port 3006
+- Files changed:
+  - frontend/src/app/(app)/search/page.tsx (created)
+  - PRD18.md (marked US-030 complete)
+- Learnings for future iterations:
+  - Next.js App Router requires useSearchParams() in 'use client' component
+  - Wrap components using useSearchParams in Suspense for proper SSR hydration
+  - router.replace() updates URL without adding history entry (better UX than push())
+  - URLSearchParams().toString() pattern builds query strings cleanly
+  - URL updates should be in useEffect with dependencies [query, selectedType, router]
+  - Search page reuses all modal components: SearchInput, SearchTypeFilter, SearchResultsList, etc.
+  - Full page layout follows dashboard pattern: max-w-7xl mx-auto with p-6 lg:p-8
+  - Empty state pattern: circular icon bg + heading + description for better UX
+  - Note: Pagination not implemented yet - displaying all results for now (US-032 will add pagination)
+---
+

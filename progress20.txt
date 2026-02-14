@@ -507,3 +507,45 @@
   - Manual verification checklist appended to .planning/MANUAL_VERIFICATION.md per CLAUDE.md
 ---
 
+
+## Iteration 23 - Add reset demo vault to settings (US-022)
+- Enhanced OnboardingSettings component with demo vault management
+- Added demo vault status fetching via getDemoVaultStatus() on component mount
+- Implemented handleResetDemoVault() function:
+  - Calls resetDemoVault() if vault exists (restores to original state)
+  - Calls createDemoVault() if vault deleted (recreates from template)
+  - Shows appropriate success toast based on action
+  - Refreshes page to update vault list
+- Created Demo Vault UI section with:
+  - Status-aware description (exists/deleted/loading/error states)
+  - Dynamic button label: "Reset" vs "Recreate" based on vault status
+  - Database icon from lucide-react
+  - Orange styling matching Bitcoin DeFi aesthetic
+  - Border-top separator from Restart Tutorial section
+- Implemented confirmation dialog:
+  - Context-aware title and description (Reset vs Recreate)
+  - Warning about data loss when resetting
+  - Loading states: "Resetting..." or "Creating..."
+  - Cancel and action buttons with proper styling
+- State management:
+  - demoVaultExists: boolean | null for vault status
+  - isLoadingStatus: boolean for initial status fetch
+  - isDemoConfirmOpen: boolean for dialog visibility
+  - isResettingDemo: boolean for API call loading state
+- Error handling with toast notifications
+- Manual verification checklist appended to .planning/MANUAL_VERIFICATION.md
+- Files changed: OnboardingSettings.tsx, .planning/MANUAL_VERIFICATION.md, PRD20.md, progress20.txt
+- Commit: 5f8a953 (already committed)
+- Typecheck passes
+- Learnings for future iterations:
+  - Status fetch pattern: useEffect with async function + try/catch + finally for loading state
+  - Conditional API calls: check existence flag to determine reset vs create endpoint
+  - Dynamic UI pattern: status-aware descriptions and button labels improve UX
+  - Database icon semantic meaning: represents vault storage/data
+  - Border-top separator: border-t border-white/10 pt-6 for visual section division
+  - Dual-purpose handler: single function handles both reset and recreate based on state
+  - Status display states: loading, exists, deleted, error (null) all need distinct messages
+  - Button disable during status load prevents premature clicks
+  - router.refresh() updates vault list sidebar after vault creation/reset
+  - Confirmation dialog should explain action impact clearly (data loss warning)
+---

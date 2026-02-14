@@ -418,14 +418,14 @@ Implement a global full-text search system for SyncScript that enables researche
 **Description:** As a user, I want a dedicated search page for advanced filtering and browsing all results.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/app/search/page.tsx`
-- [ ] Reads initial query from URL: `/search?q=query`
-- [ ] Full-width search input at top
-- [ ] Type filter tabs below input
-- [ ] Paginated results list
-- [ ] URL updates as filters change
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/app/search/page.tsx`
+- [x] Reads initial query from URL: `/search?q=query`
+- [x] Full-width search input at top
+- [x] Type filter tabs below input
+- [x] Paginated results list
+- [x] URL updates as filters change
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 

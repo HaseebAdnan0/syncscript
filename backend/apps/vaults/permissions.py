@@ -1,4 +1,5 @@
 from rest_framework.permissions import BasePermission
+from rest_framework.exceptions import PermissionDenied
 from .models import Vault, VaultMembership, RoleChoices, ROLE_WEIGHTS
 
 
@@ -11,6 +12,18 @@ def _get_vault_from_view(view):
         except Vault.DoesNotExist:
             return None
     return None
+
+
+def _check_email_verified(user):
+    """
+    Check if user's email is verified.
+    Raises PermissionDenied with email_verification_required flag if not verified.
+    """
+    if not user.email_verified:
+        error = PermissionDenied('You must verify your email to access vault content.')
+        # Add custom attribute for frontend to detect verification requirement
+        error.email_verification_required = True  # type: ignore
+        raise error
 
 
 class IsVaultOwner(BasePermission):
@@ -75,6 +88,9 @@ class IsVaultMember(BasePermission):
     """
     def has_permission(self, request, view):
         """Check permission for list views on nested routes."""
+        # Check email verification first
+        _check_email_verified(request.user)
+
         vault = _get_vault_from_view(view)
         if vault is None:
             return True  # Let object permission handle it
@@ -84,6 +100,9 @@ class IsVaultMember(BasePermission):
         ).exists()
 
     def has_object_permission(self, request, view, obj):
+        # Check email verification first
+        _check_email_verified(request.user)
+
         # Get the vault - either the object itself or via .vault attribute
         vault = obj if hasattr(obj, 'members') else getattr(obj, 'vault', None)
 
