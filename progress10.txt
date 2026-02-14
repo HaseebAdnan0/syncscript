@@ -401,3 +401,27 @@
   - Space-y-8 between sections for clean vertical rhythm
   - Typecheck passes without errors
 ---
+
+## Iteration 18 - US-018: Handle WebSocket reconnection with state recovery
+- Implemented automatic state recovery on WebSocket reconnection
+- Files changed:
+  - Modified `frontend/src/hooks/useVaultSocket.ts` (added reconnected event emission in ws.onopen)
+  - Created `frontend/src/hooks/useReconnectionHandler.ts` (reconnection recovery hook)
+  - Modified `frontend/src/app/(app)/vaults/[id]/page.tsx` (integrated useReconnectionHandler)
+  - Updated `PRD10.md` (marked US-018 acceptance criteria complete except browser verification)
+- Learnings for future iterations:
+  - useVaultSocket now tracks previous status to detect reconnection (status === 'reconnecting' || 'disconnected')
+  - When reconnection occurs (wasReconnecting = true), emits 'reconnected' event with { vaultId } data
+  - useReconnectionHandler hook listens for 'reconnected' event and performs recovery actions
+  - Toast notification shown: "Reconnected - Syncing latest changes..."
+  - Toast only shown once per reconnection using hasShownToastRef (prevents duplicate toasts)
+  - Toast flag reset after 5 seconds to allow future reconnection notifications
+  - QueryClient.invalidateQueries used to refetch vault data for reconciliation
+  - Invalidates queries for: vault, sources, annotations, vaultMembers with matching vaultId
+  - Presence heartbeat re-sent immediately after reconnect if currentUserId available
+  - Hook accepts enabled flag to conditionally activate (checks if vaultId is valid)
+  - Re-subscription happens automatically through useVaultSocket's reconnection logic
+  - Event listeners clean up properly when vault changes or component unmounts
+  - toast() function from useToast doesn't accept 'variant' prop (removed from call)
+  - Typecheck passes without errors
+---

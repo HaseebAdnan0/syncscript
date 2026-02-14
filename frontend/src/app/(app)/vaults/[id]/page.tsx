@@ -6,6 +6,7 @@ import { useSources } from '@/hooks/useSources';
 import { useVaultMembers } from '@/hooks/useVaultMembers';
 import { useVaultsStore } from '@/stores/vaultsStore';
 import { useAuthStore } from '@/stores/authStore';
+import { useReconnectionHandler } from '@/hooks/useReconnectionHandler';
 import { SourcesList } from '@/components/features/vaults/SourcesList';
 import { MembersList } from '@/components/features/vaults/MembersList';
 import { PresenceIndicator } from '@/components/features/notifications/PresenceIndicator';
@@ -17,6 +18,13 @@ export default function VaultDetailPage() {
   const router = useRouter();
   const vaultId = parseInt(params.id as string, 10);
   const { user } = useAuthStore();
+
+  // Handle WebSocket reconnection with state recovery
+  useReconnectionHandler({
+    vaultId: vaultId.toString(),
+    currentUserId: user?.id,
+    enabled: !isNaN(vaultId),
+  });
 
   // Fetch vault data
   const { data: vault, isLoading: vaultLoading, error: vaultError } = useVault(vaultId);

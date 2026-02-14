@@ -470,3 +470,36 @@ Learnings for future iterations:
 - Page input validation: parseInt with isNaN check and range validation (1 to numPages)
 - Worker configuration must happen before any Document rendering
 ---
+
+## Iteration 17 - US-018: Create PDFViewerControls component
+- Created PDFViewerControls component at frontend/src/components/features/sources/PDFViewerControls.tsx
+- Fixed position controls bar at top of viewer area (fixed top-20 with z-20 for layering)
+- Controls use glass morphism pill style: bg-[#0F1115] border border-white/10 backdrop-blur-lg rounded-full
+- Zoom controls: ZoomIn/ZoomOut buttons with percentage display (50% to 200% range)
+- Zoom buttons disabled at min/max limits (50% and 200%) with opacity-50 + cursor-not-allowed
+- Fit mode toggles: "Fit Width" and "Fit Page" buttons with active state highlighting
+- Active fit mode button uses gradient: from-[#EA580C] to-[#F7931A] with orange shadow
+- Inactive fit mode buttons use glass morphism with muted text (#94A3B8)
+- Download button with Download icon for downloading original PDF
+- Fullscreen toggle button switches between Maximize/Minimize icons based on state
+- All control buttons use rounded-full shape with hover effects (border-[#F7931A]/50)
+- Dividers (vertical lines) separate button groups for visual organization
+- Component accepts comprehensive props: zoom, callbacks for all actions, fitMode state, isFullscreen state
+- Typecheck passes ✓
+
+Files changed:
+- frontend/src/components/features/sources/PDFViewerControls.tsx (new)
+- PRD9.md (marked US-018 complete except browser verification)
+
+Learnings for future iterations:
+- Fixed controls use z-20 to appear above PDF content but below modals
+- Pill-shaped control bar (rounded-full) provides distinctive, modern look
+- Zoom range typically 50% to 200% for PDF viewers - good balance between readability and context
+- Disabled buttons need hover state override (disabled:hover:bg-white/5) to prevent hover effects
+- Active state for toggle buttons uses same gradient as primary action buttons for consistency
+- Fit mode as controlled state allows parent to manage zoom behavior
+- Fullscreen icon switches (Maximize/Minimize) provide clear visual feedback of current state
+- Control groups separated by dividers (w-px h-6 bg-white/10) improve scannability
+- lucide-react icons: ZoomIn, ZoomOut, Download, Maximize, Minimize
+- Fixed positioning at top-20 accounts for app header height
+---

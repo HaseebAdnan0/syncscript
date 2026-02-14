@@ -227,11 +227,11 @@ Integrate SyncScript's frontend with the existing backend WebSocket system and n
 **Description:** As a user, I want the app to recover gracefully from connection interruptions so I don't lose sync with my team.
 
 **Acceptance Criteria:**
-- [ ] On reconnect, fetch latest vault state via API to reconcile
-- [ ] Show toast: "Reconnected - syncing latest changes"
-- [ ] Re-subscribe to all active rooms after reconnect
-- [ ] Re-send presence heartbeat immediately after reconnect
-- [ ] Typecheck passes
+- [x] On reconnect, fetch latest vault state via API to reconcile
+- [x] Show toast: "Reconnected - syncing latest changes"
+- [x] Re-subscribe to all active rooms after reconnect
+- [x] Re-send presence heartbeat immediately after reconnect
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ## Non-Goals

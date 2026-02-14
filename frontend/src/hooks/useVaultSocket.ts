@@ -50,9 +50,27 @@ export function useVaultSocket({ vaultId }: VaultSocketOptions): VaultSocketRetu
 
       ws.onopen = () => {
         if (isUnmountedRef.current) return;
+
+        // Check if this is a reconnection (was previously disconnected/reconnecting)
+        const wasReconnecting = status === 'reconnecting' || status === 'disconnected';
+
         setStatus('connected');
         reconnectDelayRef.current = 1000; // Reset reconnect delay on successful connection
         console.log(`WebSocket connected to vault ${vaultId}`);
+
+        // Emit reconnected event if this was a reconnection
+        if (wasReconnecting) {
+          const handlers = eventHandlersRef.current.get('reconnected');
+          if (handlers) {
+            handlers.forEach((handler) => {
+              try {
+                handler({ vaultId });
+              } catch (error) {
+                console.error('Error in reconnected event handler:', error);
+              }
+            });
+          }
+        }
       };
 
       ws.onmessage = (event) => {
