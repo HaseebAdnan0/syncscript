@@ -621,3 +621,16 @@
   - This represents the maximum autonomous progress possible without environment setup
   - 42 iterations reached same blocker - database creation is external dependency
 ---
+## Iteration 44 - Fixed annotations signal blocking Django system checks
+- Discovered annotations app signal was using lazy reference incorrectly
+- Fixed annotations/signals.py to import Annotation model directly instead of lazy reference
+- Files changed:
+  - backend/apps/annotations/signals.py (changed sender from 'annotations.Annotation' to Annotation with direct import)
+- Django system check now passes successfully
+- Learnings for future iterations:
+  - Lazy string references in @receiver can fail if model registration timing is off
+  - Direct model import in signals.py is more reliable: from apps.annotations.models import Annotation
+  - System check error (signals.E001) indicates lazy reference cannot be resolved
+  - This was not a PRD2 task but blocked all Django check commands
+  - All remaining PRD2 tasks (US-007, US-035-038) still blocked by missing database
+---

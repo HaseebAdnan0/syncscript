@@ -26,10 +26,13 @@ from .services import extract_metadata
 from .permissions import VaultSourcePermission
 from .filters import SourceFilter
 from .utils import update_vault_storage_usage
-from apps.vaults.models import Vault, VaultMembership, RoleChoices
+from apps.vaults.models import Vault, VaultMembership, RoleChoices, AuditLog
 from datetime import datetime, timedelta
 from django.utils import timezone
 from core.websocket_utils import broadcast_to_vault
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class PDFUploadViewSet(viewsets.ModelViewSet):
@@ -216,6 +219,24 @@ class PDFUploadViewSet(viewsets.ModelViewSet):
             file_key=pdf_upload.file.name,  # S3 object key
             original_filename=pdf_upload.original_filename
         )
+
+        # Log pdf.downloaded event to audit log (US-021)
+        try:
+            AuditLog.objects.create(
+                vault=pdf_upload.vault,
+                actor=request.user,
+                action='pdf.downloaded',
+                metadata={
+                    'pdf_id': str(pdf_upload.id),
+                    'filename': pdf_upload.original_filename,
+                }
+            )
+        except Exception as audit_exc:
+            # Log but don't fail the request if audit logging fails
+            logger.warning(
+                f"Failed to create audit log for PDF download {pdf_upload.id}: {audit_exc}",
+                exc_info=True,
+            )
 
         return Response({
             'download_url': download_url,

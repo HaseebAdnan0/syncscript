@@ -19,6 +19,7 @@ from PIL import Image
 from pypdf import PdfReader
 
 from apps.sources.models import PDFUpload
+from apps.vaults.models import AuditLog
 from core.websocket_utils import broadcast_to_vault
 
 logger = logging.getLogger(__name__)
@@ -198,11 +199,31 @@ def process_uploaded_pdf(self, pdf_upload_id: str) -> dict[str, Any]:
             exc_info=True,
         )
 
-        # Mark as failed in database
+        # Mark as failed in database and log to audit
         try:
             pdf_upload = PDFUpload.objects.get(id=pdf_upload_id)
             pdf_upload.processing_status = 'failed'
             pdf_upload.save(update_fields=['processing_status'])
+
+            # Log pdf.processing_failed event to audit log (US-021)
+            try:
+                AuditLog.objects.create(
+                    vault=pdf_upload.vault,
+                    actor=pdf_upload.uploaded_by,
+                    action='pdf.processing_failed',
+                    metadata={
+                        'pdf_id': str(pdf_upload.id),
+                        'filename': pdf_upload.original_filename,
+                        'error': str(exc),
+                        'retries': self.request.retries,
+                    }
+                )
+            except Exception as audit_exc:
+                # Log but don't fail further if audit logging fails
+                logger.warning(
+                    f"Failed to create audit log for failed PDF {pdf_upload_id}: {audit_exc}",
+                    exc_info=True,
+                )
         except Exception:
             pass
 

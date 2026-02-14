@@ -304,3 +304,34 @@
   - Client responsibility: track last received seq, request replay on reconnect
   - Replay only sends events client hasn't seen (seq > since_seq)
 ---
+---
+## Iteration 17 - US-018: Implement connection limit per user (Layer 1)
+- Implemented Layer 1 rate limiting to prevent connection abuse
+- Added _check_and_enforce_connection_limit method to check user connection count
+  - Checks Redis sorted set user_{id}:connections for connection count
+  - If >= 5 connections, closes oldest connection (lowest timestamp)
+  - Sends close_connection message via channel layer with code 1008
+- Added _add_user_connection method to track new connections
+  - Adds channel_name to sorted set with timestamp score
+  - Sets 1-hour TTL on connection tracking set
+- Added _remove_user_connection method for cleanup on disconnect
+  - Removes channel_name from sorted set
+- Added close_connection handler method for channel layer messages
+  - Receives close_connection message when rate limit exceeded
+  - Sends error message to client before closing
+  - Closes connection with policy violation code (1008)
+- Updated connect method to enforce connection limit before accepting
+- Updated disconnect method to clean up connection tracking
+- Files changed: backend/apps/vaults/consumers.py, PRD5.md
+- Typecheck passes (0 errors, 0 warnings)
+- Committed in 7dc5b2b
+- Learnings for future iterations:
+  - Connection tracking uses sorted sets (zadd/zrem/zrange) like presence tracking
+  - Channel name uniquely identifies WebSocket connection
+  - channel_layer.send() sends message to specific channel (vs group_send for all)
+  - close_connection handler method name matches 'type' field in channel message
+  - Always set TTL on temporary tracking data to prevent Redis memory bloat
+  - Auto-commit hooks may commit code changes during file editing
+  - Connection limit enforced BEFORE accept() to prevent race conditions
+  - Closing oldest connection allows new connection to succeed (user stays connected)
+---

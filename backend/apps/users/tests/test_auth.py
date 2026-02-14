@@ -289,3 +289,115 @@ class LoginAndLogoutFlowTests(TestCase):
         # Should return 401 Unauthorized (blacklisted token)
         self.assertEqual(refresh_response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertIn('error', refresh_response.data)
+
+
+class TokenRefreshFlowTests(TestCase):
+    """Test token refresh flow."""
+
+    def setUp(self):
+        self.client = APIClient()
+        self.login_url = reverse('users:login')
+        self.refresh_url = reverse('users:refresh')
+
+        # Create a verified user for testing
+        self.user = User.objects.create_user(
+            email='refreshtest@example.com',
+            username='refreshuser',
+            password='TestP@ss123',
+            email_verified=True
+        )
+
+    def test_valid_refresh_token_returns_new_access_token(self):
+        """Test that valid refresh token returns new access token."""
+        # Login to get tokens
+        login_data = {
+            'email': 'refreshtest@example.com',
+            'password': 'TestP@ss123'
+        }
+        login_response = self.client.post(self.login_url, login_data, format='json')
+        self.assertEqual(login_response.status_code, status.HTTP_200_OK)
+
+        refresh_token = login_response.data['refresh']
+
+        # Use refresh token to get new access token
+        refresh_data = {'refresh': refresh_token}
+        refresh_response = self.client.post(self.refresh_url, refresh_data, format='json')
+
+        self.assertEqual(refresh_response.status_code, status.HTTP_200_OK)
+        self.assertIn('access', refresh_response.data)
+        # Token rotation enabled, so new refresh token should be returned
+        self.assertIn('refresh', refresh_response.data)
+
+    def test_expired_refresh_token_returns_error(self):
+        """Test that expired refresh token returns error."""
+        # For this test, we need to create an expired token
+        # We'll use a token that was created long ago (simulated by manipulating JWT)
+        from rest_framework_simplejwt.tokens import RefreshToken
+        from datetime import datetime, timedelta
+        import time
+
+        # Create a refresh token
+        refresh = RefreshToken.for_user(self.user)
+
+        # Manually expire the token by setting exp claim to past
+        refresh.set_exp(lifetime=timedelta(seconds=-3600))  # Expired 1 hour ago
+
+        expired_token = str(refresh)
+
+        # Try to use expired token
+        refresh_data = {'refresh': expired_token}
+        refresh_response = self.client.post(self.refresh_url, refresh_data, format='json')
+
+        self.assertEqual(refresh_response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertIn('error', refresh_response.data)
+
+    def test_blacklisted_refresh_token_returns_error(self):
+        """Test that blacklisted refresh token returns error."""
+        # Login to get tokens
+        login_data = {
+            'email': 'refreshtest@example.com',
+            'password': 'TestP@ss123'
+        }
+        login_response = self.client.post(self.login_url, login_data, format='json')
+        refresh_token = login_response.data['refresh']
+
+        # Blacklist the token via logout
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {login_response.data["access"]}')
+        logout_url = reverse('users:logout')
+        logout_data = {'refresh': refresh_token}
+        self.client.post(logout_url, logout_data, format='json')
+
+        # Try to use blacklisted token
+        refresh_data = {'refresh': refresh_token}
+        refresh_response = self.client.post(self.refresh_url, refresh_data, format='json')
+
+        self.assertEqual(refresh_response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertIn('error', refresh_response.data)
+
+    def test_token_rotation_invalidates_old_refresh_token(self):
+        """Test that token rotation invalidates the old refresh token."""
+        # Login to get tokens
+        login_data = {
+            'email': 'refreshtest@example.com',
+            'password': 'TestP@ss123'
+        }
+        login_response = self.client.post(self.login_url, login_data, format='json')
+        old_refresh_token = login_response.data['refresh']
+
+        # Use refresh token to get new tokens
+        refresh_data = {'refresh': old_refresh_token}
+        refresh_response = self.client.post(self.refresh_url, refresh_data, format='json')
+        self.assertEqual(refresh_response.status_code, status.HTTP_200_OK)
+
+        new_refresh_token = refresh_response.data['refresh']
+
+        # Verify that old and new refresh tokens are different (rotation occurred)
+        self.assertNotEqual(old_refresh_token, new_refresh_token)
+
+        # Try to use the old refresh token again (should fail because it's blacklisted)
+        old_token_data = {'refresh': old_refresh_token}
+        old_token_response = self.client.post(self.refresh_url, old_token_data, format='json')
+
+        # Old token should be blacklisted after rotation
+        self.assertEqual(old_token_response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertIn('error', old_token_response.data)
