@@ -526,3 +526,55 @@ In Progress - US-004 complete
   - Mock get_pusher_client in tests to avoid requiring actual Pusher credentials
   - @action(detail=False, methods=['post']) for non-resource-specific POST endpoints
 ---
+
+## Iteration 20 - US-020: Create Email Notification Service
+- Created apps/notifications/email.py with send_notification_email() function
+- Implemented TYPE_CHECKING pattern to fix mypy type annotation issues with User model
+- Function takes user and list of notifications, returns boolean for success
+- Returns False immediately for empty notification lists (no email sent)
+- Generates both HTML and plain text email versions using Django templates
+- Created email_digest.html template with Bitcoin DeFi aesthetic:
+  - Gradient orange header (#EA580C to #F7931A)
+  - Dark background (#030304, #0F1115)
+  - Notification items with left orange border accent
+  - Mobile-responsive design with max-width container
+  - Call-to-action button with gradient background
+  - Footer with preferences link
+- Created email_digest.txt template for plain text fallback
+- Subject line logic: single notification shows title, multiple shows count
+- EmailMultiAlternatives for both HTML and plain text in one message
+- Graceful error handling with try/except (logs but doesn't raise)
+- Created comprehensive test suite with 6 test cases:
+  - Single notification email format
+  - Multiple notifications email format
+  - Empty list returns False
+  - Both HTML and plain text versions included
+  - Correct subject line for single notification
+  - Correct subject line for multiple notifications
+- All tests pass (6/6), mypy typecheck passes
+- Commit 7dffeb1
+- Files changed:
+  - backend/apps/notifications/email.py (new)
+  - backend/templates/notifications/email_digest.html (new)
+  - backend/templates/notifications/email_digest.txt (new)
+  - backend/apps/notifications/test_email.py (new)
+  - PRD19.md (marked US-020 complete)
+- Learnings for future iterations:
+  - Use TYPE_CHECKING pattern for Django User model type annotations:
+    ```python
+    from typing import TYPE_CHECKING
+    if TYPE_CHECKING:
+        from django.contrib.auth.models import User
+    else:
+        User = get_user_model()
+    ```
+  - Then use quoted string in function signature: def func(user: "User")
+  - EmailMultiAlternatives for sending HTML + plain text emails
+  - attach_alternative(html_content, "text/html") adds HTML version
+  - Django templates in backend/templates/ directory
+  - render_to_string() for rendering templates to strings
+  - Email tests use Django's mail.outbox to inspect sent emails
+  - Test both email.body (plain text) and email.alternatives[0] (HTML)
+  - Fail gracefully in email sending (return False, don't raise exception)
+  - Log errors with print() for debugging (could use Django logging in production)
+---

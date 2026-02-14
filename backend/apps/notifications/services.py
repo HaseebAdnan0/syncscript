@@ -101,6 +101,10 @@ def create_notification(
     # Send real-time notification via Pusher
     _send_pusher_notification(user, notification)
 
+    # Queue immediate email notification if user preference is set
+    from apps.notifications.tasks import send_immediate_notification_email
+    send_immediate_notification_email.delay(notification.id)  # type: ignore[attr-defined]
+
     return notification
 
 

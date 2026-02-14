@@ -27,6 +27,7 @@ class Notification(models.Model):
     body: models.TextField = models.TextField()
     data: models.JSONField = models.JSONField(default=dict, blank=True)
     read_at: models.DateTimeField = models.DateTimeField(null=True, blank=True)
+    emailed_at: models.DateTimeField = models.DateTimeField(null=True, blank=True)
     created_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
 
     class Meta:

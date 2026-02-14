@@ -272,13 +272,13 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a user, I want notification emails to look professional and be easy to read.
 
 **Acceptance Criteria:**
-- [ ] Create `templates/notifications/email_digest.html`
-- [ ] Header with SyncScript branding (Bitcoin DeFi aesthetic)
-- [ ] List of notifications with icon, title, body preview, timestamp
-- [ ] Action button linking to notification source
-- [ ] Unsubscribe/preferences link in footer
-- [ ] Mobile-responsive design
-- [ ] Typecheck passes
+- [x] Create `templates/notifications/email_digest.html`
+- [x] Header with SyncScript branding (Bitcoin DeFi aesthetic)
+- [x] List of notifications with icon, title, body preview, timestamp
+- [x] Action button linking to notification source
+- [x] Unsubscribe/preferences link in footer
+- [x] Mobile-responsive design
+- [x] Typecheck passes
 
 ---
 
@@ -286,12 +286,12 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a user with immediate email preference, I want emails sent right away.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/notifications/tasks.py`
-- [ ] Task `send_immediate_notification_email(notification_id)` sends single notification
-- [ ] Only send if user preference is `immediate`
-- [ ] Call from `create_notification()` service
-- [ ] Mark notification as emailed (add `emailed_at` field to model)
-- [ ] Typecheck passes
+- [x] Create `apps/notifications/tasks.py`
+- [x] Task `send_immediate_notification_email(notification_id)` sends single notification
+- [x] Only send if user preference is `immediate`
+- [x] Call from `create_notification()` service
+- [x] Mark notification as emailed (add `emailed_at` field to model)
+- [x] Typecheck passes
 
 ---
 
