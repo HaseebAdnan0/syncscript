@@ -43,18 +43,10 @@ export default function LandingPage() {
     <div className="min-h-screen scroll-smooth">
       <HeroSection />
       <StatsTicker />
-      <section id="features" className="py-24">
-        <FeaturesSection />
-      </section>
-      <section id="how-it-works" className="py-24">
-        <HowItWorksSection />
-      </section>
-      <section className="py-24">
-        <TestimonialsSection />
-      </section>
-      <section id="pricing" className="py-24">
-        <PricingSection />
-      </section>
+      <FeaturesSection />
+      <HowItWorksSection />
+      <TestimonialsSection />
+      <PricingSection />
       <CTASection />
     </div>
   );

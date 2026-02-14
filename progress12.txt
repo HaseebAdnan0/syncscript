@@ -696,3 +696,39 @@ Learnings for future iterations:
   - POST endpoints return response objects with message/tokens/flags
 ---
 
+## Iteration 25 - US-025: Write backend tests for OAuth flows
+- Created backend/apps/users/tests/test_oauth.py with 8 comprehensive integration tests
+- Added django.contrib.sites to INSTALLED_APPS (required dependency for allauth)
+- Set SITE_ID = 1 configuration for django.contrib.sites
+- Fixed migration dependency issue by manually adding sites migration record
+- Tests cover:
+  - AccountLinkingTests: password validation (correct/wrong password)
+  - UnlinkOAuthTests: preventing removal of last auth method
+  - ConnectedAccountsTests: fetching connected providers with metadata
+  - CompleteOAuthEmailTests: creating user when email is new, link_required when exists
+- All 8 tests pass successfully
+- Backend typecheck passes (pre-existing model errors unrelated)
+- Fixed test assertion: response returns 'access_token' not 'access'
+- Committed successfully
+
+Files changed:
+  - backend/apps/users/tests/test_oauth.py (created)
+  - backend/config/settings.py (added django.contrib.sites and SITE_ID)
+  - PRD12.md (marked US-025 complete)
+
+Learnings for future iterations:
+  - django.contrib.sites is required by django-allauth for multi-site support
+  - SITE_ID setting must be configured when using django.contrib.sites
+  - Use SocialApp.objects.create() in tests to mock OAuth providers (Google/GitHub)
+  - SocialApp.sites.add() links provider to current site
+  - Use APIClient.force_authenticate() to simulate authenticated requests in tests
+  - Store OAuth data in session (self.client.session) to test linking/email flows
+  - session.save() required after modifying session data in tests
+  - Test database migrations can have dependency conflicts - drop and recreate if needed
+  - CompleteOAuthEmailView returns 'access_token' and 'refresh_token' (not 'access' and 'refresh')
+  - DRF's status.HTTP_* constants provide readable status code assertions
+  - Use TestCase base class for integration tests with database access
+  - --keepdb flag preserves test database between runs for faster iteration
+  - OAuthFlowTestCase base class reduces setup duplication across test classes
+---
+

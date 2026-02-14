@@ -321,6 +321,21 @@ export const disconnectOAuthProvider = async (provider: OAuthProvider): Promise<
 };
 
 /**
+ * Verify email response
+ */
+export interface VerifyEmailResponse {
+  message: string;
+}
+
+/**
+ * Verify email with token from email link
+ */
+export const verifyEmail = async (token: string): Promise<VerifyEmailResponse> => {
+  const response = await api.post('/auth/verify-email/', { token });
+  return response.data;
+};
+
+/**
  * Resend verification email response
  */
 export interface ResendVerificationEmailResponse {

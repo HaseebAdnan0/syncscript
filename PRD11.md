@@ -257,14 +257,14 @@ Replace stub email implementation with production-ready email system using Hosti
 **Description:** As a user, I want to see a success page after clicking the verification link.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/app/auth/verify-email/page.tsx`
-- [ ] Read `token` from URL search params
-- [ ] Call verification API on mount
-- [ ] Show loading state while verifying
-- [ ] On success: show checkmark icon, "Email Verified!" message, "Continue to Login" button
-- [ ] On error: show error icon, error message, "Resend Verification" button
-- [ ] Bitcoin DeFi dark theme styling
-- [ ] Typecheck passes
+- [x] Create `frontend/src/app/auth/verify-email/page.tsx`
+- [x] Read `token` from URL search params
+- [x] Call verification API on mount
+- [x] Show loading state while verifying
+- [x] On success: show checkmark icon, "Email Verified!" message, "Continue to Login" button
+- [x] On error: show error icon, error message, "Resend Verification" button
+- [x] Bitcoin DeFi dark theme styling
+- [x] Typecheck passes
 
 ---
 

@@ -336,12 +336,12 @@ Implement a global full-text search system for SyncScript that enables researche
 **Description:** As a user, I want to see loading skeletons while search results load so I know the search is working.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/search/SearchResultsSkeleton.tsx`
-- [ ] Shows 5 skeleton items with pulsing animation
-- [ ] Matches SearchResultItem dimensions
-- [ ] Uses `bg-white/10` for skeleton blocks
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/features/search/SearchResultsSkeleton.tsx`
+- [x] Shows 5 skeleton items with pulsing animation
+- [x] Matches SearchResultItem dimensions
+- [x] Uses `bg-white/10` for skeleton blocks
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 

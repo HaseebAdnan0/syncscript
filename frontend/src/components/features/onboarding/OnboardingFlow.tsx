@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useOnboarding } from '@/providers/OnboardingProvider';
+import { useAuthStore } from '@/stores/authStore';
 import { useRouter } from 'next/navigation';
 import WelcomeModal from './WelcomeModal';
 import PathSelection from './PathSelection';
@@ -15,12 +16,16 @@ import CompletionCelebration from './CompletionCelebration';
  */
 export default function OnboardingFlow() {
   const { step, completed, updateOnboarding, completeOnboarding } = useOnboarding();
+  const { user } = useAuthStore();
   const router = useRouter();
 
-  // Don't render if onboarding is already completed
-  if (completed) {
+  // Don't render if onboarding is already completed or user not loaded
+  if (completed || !user) {
     return null;
   }
+
+  // Get user's display name
+  const userName = user.first_name || user.username || 'there';
 
   // Render appropriate component based on current step
   const renderCurrentStep = () => {
@@ -28,6 +33,8 @@ export default function OnboardingFlow() {
       case 'welcome':
         return (
           <WelcomeModal
+            isOpen={true}
+            userName={userName}
             onGetStarted={async () => {
               await updateOnboarding({ step: 'path' });
             }}
@@ -35,7 +42,14 @@ export default function OnboardingFlow() {
         );
 
       case 'path':
-        return <PathSelection />;
+        return (
+          <PathSelection
+            onPathSelected={() => {
+              // Path selection already handles state updates
+              // This callback is just for any additional orchestration if needed
+            }}
+          />
+        );
 
       case 'guided-1':
       case 'guided-2':
@@ -85,7 +99,7 @@ export default function OnboardingFlow() {
       const { getDemoVaultStatus, createDemoVault } = await import('@/lib/api');
       const status = await getDemoVaultStatus();
 
-      let vaultId = status.vault_id;
+      let vaultId: string | number | null = status.vault_id;
 
       // Create demo vault if it doesn't exist
       if (!status.exists) {
