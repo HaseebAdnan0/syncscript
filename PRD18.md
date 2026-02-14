@@ -211,11 +211,11 @@ Implement a global full-text search system for SyncScript that enables researche
 **Description:** As a developer, I need TypeScript types and API functions for the search feature.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/lib/types/search.ts` with `SearchResult`, `SearchResultType`, `SearchSuggestion`, `SearchHistory` types
-- [ ] Create `frontend/src/lib/api/search.ts` with functions: `search`, `getSuggestions`, `getRecentSearches`, `clearRecentSearches`, `deleteRecentSearch`
-- [ ] All functions properly typed with generics
-- [ ] Uses existing axios instance
-- [ ] Typecheck passes
+- [x] Create `frontend/src/lib/types/search.ts` with `SearchResult`, `SearchResultType`, `SearchSuggestion`, `SearchHistory` types
+- [x] Create `frontend/src/lib/api/search.ts` with functions: `search`, `getSuggestions`, `getRecentSearches`, `clearRecentSearches`, `deleteRecentSearch`
+- [x] All functions properly typed with generics
+- [x] Uses existing axios instance
+- [x] Typecheck passes
 
 ---
 
