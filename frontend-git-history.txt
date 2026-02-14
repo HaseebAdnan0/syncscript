@@ -1,0 +1,16 @@
+c9446b4 feat: Create useAuth hook with login/register/logout/refreshUser operations (US-003)
+267de6b feat: Create ConnectionStatus indicator component (US-002)
+d89e7bf feat: Add vault TypeScript types and API client (US-001)
+ab6d24e feat: Implement axios instance with httpOnly cookie support and token refresh interceptor (US-002)
+552d809 feat: Create Zustand auth store (US-001)
+231e0de feat: Configure ESLint and Prettier (US-010)
+8118af4 feat: Implement React Query provider with sensible defaults (US-009)
+077b5ae feat: Create Zustand auth store with localStorage persistence (US-008)
+d58463b feat: Create API types for common response structures (US-007)
+b997e84 feat: Add layout components and theme provider (US-006)
+823cd35 feat: Create base UI component library (Button, Card, Input, Badge) (US-005)
+1a83b1f feat: Initialize ShadCN UI with default style and neutral base color (US-004)
+e98a8e1 feat: Configure Tailwind CSS with Bitcoin DeFi design tokens (US-003)
+d710737 feat: Configure TypeScript with strict mode and enhanced compiler options (US-002)
+7227356 feat: Complete US-001 Project Initialization & Core Dependencies
+af4fd87 Initial commit from Create Next App
