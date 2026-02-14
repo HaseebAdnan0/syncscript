@@ -1,0 +1,18 @@
+SyncScript - New Activity in {{ vault_name }}
+
+{% if notification_type == 'source_added' %}{{ actor_name }} added a new source: {{ target_name }}{% elif notification_type == 'annotation_created' %}{{ actor_name }} added an annotation on: {{ target_name }}{% elif notification_type == 'member_joined' %}{{ actor_name }} joined the vault as a {{ role }}{% else %}{{ actor_name }} performed an action in this vault{% endif %}
+
+{% if context_message %}
+"{{ context_message }}"
+{% endif %}
+
+View in SyncScript:
+{{ vault_url }}
+
+{% if unsubscribe_url %}
+Don't want these notifications? Unsubscribe: {{ unsubscribe_url }}
+{% endif %}
+
+---
+SyncScript - Collaborative Research & Citation Engine
+© {% now "Y" %} SyncScript. All rights reserved.

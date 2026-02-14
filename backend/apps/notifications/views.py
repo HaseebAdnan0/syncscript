@@ -2,6 +2,7 @@
 ViewSet for notifications API endpoints.
 """
 from typing import Any
+from django.db.models import F
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
@@ -39,7 +40,7 @@ class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
         if self.request.query_params.get('unread_only') == 'true':
             queryset = queryset.filter(read_at__isnull=True)
 
-        # Order by unread first (NULL read_at comes first), then newest first
-        queryset = queryset.order_by('read_at', '-created_at')
+        # Order by unread first (NULL read_at comes first with nulls_first), then newest first
+        queryset = queryset.order_by(F('read_at').asc(nulls_first=True), '-created_at')
 
         return queryset

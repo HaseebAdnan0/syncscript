@@ -19,6 +19,7 @@ from PIL import Image
 from pypdf import PdfReader
 
 from apps.sources.models import PDFUpload, FileUpload
+from apps.sources.services.virus_scanner import VirusScanner
 from apps.vaults.models import AuditLog
 from core.websocket_utils import broadcast_to_vault
 
@@ -73,6 +74,71 @@ def process_uploaded_pdf(self, pdf_upload_id: str) -> dict[str, Any]:
             Fileobj=pdf_bytes,
         )
         pdf_bytes.seek(0)  # Reset to beginning
+
+        # Virus scan the file (US-007)
+        if getattr(settings, 'CLAMAV_ENABLED', False):
+            virus_scanner = VirusScanner()
+            scan_result = virus_scanner.scan_file(pdf_bytes.getvalue())
+
+            logger.info(
+                f"Virus scan for PDF {pdf_upload_id}: is_clean={scan_result.is_clean}, "
+                f"threat={scan_result.threat_name}, scan_time={scan_result.scan_time_ms}ms"
+            )
+
+            if not scan_result.is_clean:
+                # File is infected - mark as failed and delete from S3
+                pdf_upload.processing_status = 'failed'
+                pdf_upload.save(update_fields=['processing_status'])
+
+                # Delete infected file from S3
+                try:
+                    s3_client.delete_object(
+                        Bucket=settings.AWS_STORAGE_BUCKET_NAME,
+                        Key=file_key
+                    )
+                    logger.warning(
+                        f"Deleted infected PDF {pdf_upload_id} from S3. Threat: {scan_result.threat_name}"
+                    )
+                except Exception as delete_exc:
+                    logger.error(
+                        f"Failed to delete infected PDF {pdf_upload_id} from S3: {delete_exc}",
+                        exc_info=True
+                    )
+
+                # Create audit log for virus detection
+                try:
+                    AuditLog.objects.create(
+                        vault=pdf_upload.vault,
+                        actor=pdf_upload.uploaded_by,
+                        action='pdf.virus_detected',
+                        metadata={
+                            'pdf_id': str(pdf_upload.id),
+                            'filename': pdf_upload.original_filename,
+                            'threat_name': scan_result.threat_name,
+                        }
+                    )
+                except Exception as audit_exc:
+                    logger.warning(
+                        f"Failed to create audit log for virus detection {pdf_upload_id}: {audit_exc}",
+                        exc_info=True
+                    )
+
+                return {
+                    'pdf_id': str(pdf_upload.id),
+                    'status': 'failed',
+                    'error': f'Virus detected: {scan_result.threat_name}'
+                }
+
+            # Reset stream position after reading for virus scan
+            pdf_bytes.seek(0)
+        else:
+            # Virus scanning disabled - log stub message
+            virus_scanner = VirusScanner()
+            scan_result = virus_scanner.scan_file(pdf_bytes.getvalue())
+            logger.info(
+                f"Virus scan stub for PDF {pdf_upload_id}: {scan_result.scan_time_ms}ms"
+            )
+            pdf_bytes.seek(0)
 
         # Parse PDF and extract metadata
         reader = PdfReader(pdf_bytes)
@@ -337,6 +403,70 @@ def process_uploaded_image(self, file_upload_id: str) -> dict[str, Any]:
             Fileobj=image_bytes,
         )
         image_bytes.seek(0)  # Reset to beginning
+
+        # Virus scan the file (US-007)
+        if getattr(settings, 'CLAMAV_ENABLED', False):
+            virus_scanner = VirusScanner()
+            scan_result = virus_scanner.scan_file(image_bytes.getvalue())
+
+            logger.info(
+                f"Virus scan for image {file_upload_id}: is_clean={scan_result.is_clean}, "
+                f"threat={scan_result.threat_name}, scan_time={scan_result.scan_time_ms}ms"
+            )
+
+            if not scan_result.is_clean:
+                # File is infected - delete from S3
+                try:
+                    s3_client.delete_object(
+                        Bucket=settings.AWS_STORAGE_BUCKET_NAME,
+                        Key=file_key
+                    )
+                    logger.warning(
+                        f"Deleted infected image {file_upload_id} from S3. Threat: {scan_result.threat_name}"
+                    )
+                except Exception as delete_exc:
+                    logger.error(
+                        f"Failed to delete infected image {file_upload_id} from S3: {delete_exc}",
+                        exc_info=True
+                    )
+
+                # Delete FileUpload record
+                file_upload.delete()
+
+                # Create audit log for virus detection
+                try:
+                    AuditLog.objects.create(
+                        vault=file_upload.vault,
+                        actor=file_upload.uploaded_by,
+                        action='file.virus_detected',
+                        metadata={
+                            'file_id': str(file_upload.id),
+                            'filename': file_upload.original_filename,
+                            'threat_name': scan_result.threat_name,
+                        }
+                    )
+                except Exception as audit_exc:
+                    logger.warning(
+                        f"Failed to create audit log for virus detection {file_upload_id}: {audit_exc}",
+                        exc_info=True
+                    )
+
+                return {
+                    'file_id': str(file_upload.id),
+                    'status': 'failed',
+                    'error': f'Virus detected: {scan_result.threat_name}'
+                }
+
+            # Reset stream position after reading for virus scan
+            image_bytes.seek(0)
+        else:
+            # Virus scanning disabled - log stub message
+            virus_scanner = VirusScanner()
+            scan_result = virus_scanner.scan_file(image_bytes.getvalue())
+            logger.info(
+                f"Virus scan stub for image {file_upload_id}: {scan_result.scan_time_ms}ms"
+            )
+            image_bytes.seek(0)
 
         # Generate thumbnail (300px wide, proportional height)
         thumbnail_url = None

@@ -133,3 +133,62 @@ Learnings for future iterations:
 
 ---
 
+## Iteration 5 - US-005: Implement Claude AI citation service
+- Created apps/citations/services/ai_citation.py with comprehensive AI-powered citation generation
+- Implemented generate_ai_citation() function:
+  - Returns tuple of (plain_text, html) for flexible rendering
+  - Uses Claude 3.5 Sonnet model for accuracy
+  - Validates ANTHROPIC_API_KEY environment variable
+  - Handles API errors gracefully
+- Implemented _build_system_prompt() helper:
+  - Format-specific citation rules for all 6 formats (APA7, MLA9, CHICAGO17, BIBTEX, IEEE, HARVARD)
+  - Detailed examples of correct citations for each format
+  - Missing field handling rules (n.d., Unknown, Anonymous)
+  - Italicization rules (journals, books) for HTML version
+  - Instructs Claude to return TWO versions separated by "---SPLIT---"
+- Implemented _build_user_prompt() helper:
+  - Structured prompt with all available metadata fields
+  - Handles authors as string or list
+  - Includes all fields: title, url, authors, journal, volume, issue, pages, publisher, doi, isbn
+  - Shows "Not provided" for missing fields so Claude can handle gracefully
+- Implemented _parse_response() helper:
+  - Splits response on "---SPLIT---" separator
+  - Fallback to same content if separator not found
+  - Returns tuple of (plain_text, html)
+- Added 12 comprehensive unit tests:
+  - 2 tests for response parsing (with/without separator)
+  - 3 tests for system prompt building (APA7, MLA9, BibTeX)
+  - 3 tests for user prompt building (complete metadata, incomplete metadata, authors as string)
+  - 2 tests for full citation generation with mocked Claude API (APA7, BibTeX)
+  - 1 test for missing API key error
+  - 1 test for incomplete metadata handling
+- Tests: All 12 tests pass
+- Typecheck: Passes with 0 errors (used type: ignore for Anthropic SDK ContentBlock typing)
+- anthropic SDK already present in requirements.txt (>=0.40.0)
+- Files changed: backend/apps/citations/services/ai_citation.py (353 lines), backend/apps/citations/tests.py (+194 lines)
+- Committed: b90ef6a
+
+Learnings for future iterations:
+- Claude API uses Anthropic SDK with client.messages.create()
+- Model: claude-3-5-sonnet-20241022 is most accurate for academic citations
+- System prompt should include:
+  - Format rules with specific examples
+  - Punctuation and spacing rules
+  - Missing field handling conventions
+  - "---SPLIT---" instruction for plain text and HTML versions
+- User prompt should list all available metadata fields with "Not provided" for missing ones
+- Response parsing needs fallback if Claude doesn't include separator
+- Each citation format has different conventions:
+  - APA7: Author, A. A. (Year). Title. Journal, volume(issue), pages.
+  - MLA9: Author. "Article Title." Journal, vol. X, no. Y, Year, pp. Z-ZZ.
+  - Chicago17: Author. Year. "Article Title." Journal volume (issue): pages.
+  - BibTeX: @entry{key, author={...}, title={...}, ...}
+  - IEEE: F. I. Lastname, "Article title," Journal, vol. X, no. Y, pp. Z-ZZ, Year.
+  - Harvard: Author, F.I., Year. 'Article title', Journal, volume(issue), pp. pages.
+- HTML version uses <i> tags for italics (journals, books)
+- Plain text version has no HTML tags
+- Access date for web sources: datetime.now().strftime("%B %d, %Y")
+- Anthropic SDK ContentBlock typing is complex, use type: ignore for .text attribute
+
+---
+

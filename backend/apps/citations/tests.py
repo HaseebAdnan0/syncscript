@@ -920,3 +920,233 @@ Unknown. (n.d.). Untitled source. Retrieved February 14, 2026 from https://examp
         self.assertIn("Unknown", plain)
         self.assertIn("n.d.", plain)
         self.assertIn("example.com", plain)
+
+
+class CitationEndpointTests(TestCase):
+    """Tests for citation generation API endpoint"""
+
+    def setUp(self):
+        """Set up test fixtures"""
+        from django.contrib.auth import get_user_model
+        from apps.vaults.models import Vault
+        from apps.sources.models import Source
+
+        User = get_user_model()
+
+        # Create test users
+        self.user1 = User.objects.create_user(
+            email='user1@test.com',
+            password='testpass123'
+        )
+        self.user2 = User.objects.create_user(
+            email='user2@test.com',
+            password='testpass123'
+        )
+
+        # Create vault owned by user1
+        self.vault = Vault.objects.create(
+            name='Test Vault',
+            description='Test vault for citations',
+            owner=self.user1
+        )
+
+        # Create source with complete metadata
+        self.source_complete = Source.objects.create(
+            vault=self.vault,
+            url='https://example.com/article',
+            title='Complete Article',
+            metadata={
+                'authors': ['Smith, John', 'Doe, Jane'],
+                'publication_date': '2024',
+                'journal': 'Test Journal',
+                'volume': '10',
+                'issue': '2',
+                'pages': '123-145',
+            },
+            created_by=self.user1
+        )
+
+        # Create source with incomplete metadata
+        self.source_incomplete = Source.objects.create(
+            vault=self.vault,
+            url='https://example.com/web',
+            title='Web Article',
+            metadata={},
+            created_by=self.user1
+        )
+
+    def test_generate_citation_structured(self):
+        """Test generating citation with complete metadata (structured)"""
+        from rest_framework.test import APIClient
+
+        client = APIClient()
+        client.force_authenticate(user=self.user1)
+
+        response = client.post(
+            f'/api/v1/citations/sources/{self.source_complete.id}/citation/',
+            {'format': 'bibtex'},
+            format='json'
+        )
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+
+        self.assertIn('citation', data)
+        self.assertIn('citation_html', data)
+        self.assertEqual(data['format'], 'bibtex')
+        self.assertEqual(data['source'], 'structured')
+        self.assertEqual(data['cached'], False)
+
+        # Verify citation content
+        self.assertIn('@', data['citation'])
+        self.assertIn('Smith, John', data['citation'])
+
+    @patch.dict('os.environ', {'ANTHROPIC_API_KEY': 'test-key'})
+    @patch('apps.citations.services.ai_citation.Anthropic')
+    def test_generate_citation_ai(self, mock_anthropic):
+        """Test generating citation with incomplete metadata (AI)"""
+        from rest_framework.test import APIClient
+
+        # Mock Claude API response
+        mock_message = MagicMock()
+        mock_content = MagicMock()
+        mock_content.text = """Unknown. (n.d.). Web Article. Retrieved from https://example.com/web
+---SPLIT---
+Unknown. (n.d.). <i>Web Article</i>. Retrieved from https://example.com/web"""
+        mock_message.content = [mock_content]
+
+        mock_client = MagicMock()
+        mock_client.messages.create.return_value = mock_message
+        mock_anthropic.return_value = mock_client
+
+        client = APIClient()
+        client.force_authenticate(user=self.user1)
+
+        response = client.post(
+            f'/api/v1/citations/sources/{self.source_incomplete.id}/citation/',
+            {'format': 'apa7'},
+            format='json'
+        )
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+
+        self.assertIn('citation', data)
+        self.assertIn('citation_html', data)
+        self.assertEqual(data['format'], 'apa7')
+        self.assertEqual(data['source'], 'ai')
+        self.assertEqual(data['cached'], False)
+
+    def test_generate_citation_caching(self):
+        """Test citation caching"""
+        from rest_framework.test import APIClient
+
+        client = APIClient()
+        client.force_authenticate(user=self.user1)
+
+        # First request generates citation
+        response1 = client.post(
+            f'/api/v1/citations/sources/{self.source_complete.id}/citation/',
+            {'format': 'bibtex'},
+            format='json'
+        )
+
+        self.assertEqual(response1.status_code, 200)
+        data1 = response1.json()
+        self.assertEqual(data1['cached'], False)
+
+        # Second request should use cache
+        response2 = client.post(
+            f'/api/v1/citations/sources/{self.source_complete.id}/citation/',
+            {'format': 'bibtex'},
+            format='json'
+        )
+
+        self.assertEqual(response2.status_code, 200)
+        data2 = response2.json()
+        self.assertEqual(data2['cached'], True)
+        self.assertEqual(data1['citation'], data2['citation'])
+
+    def test_generate_citation_unauthenticated(self):
+        """Test generating citation without authentication"""
+        from rest_framework.test import APIClient
+
+        client = APIClient()
+
+        response = client.post(
+            f'/api/v1/citations/sources/{self.source_complete.id}/citation/',
+            {'format': 'apa7'},
+            format='json'
+        )
+
+        self.assertEqual(response.status_code, 401)
+
+    def test_generate_citation_no_permission(self):
+        """Test generating citation without vault access"""
+        from rest_framework.test import APIClient
+
+        client = APIClient()
+        client.force_authenticate(user=self.user2)
+
+        response = client.post(
+            f'/api/v1/citations/sources/{self.source_complete.id}/citation/',
+            {'format': 'apa7'},
+            format='json'
+        )
+
+        self.assertEqual(response.status_code, 403)
+
+    def test_generate_citation_invalid_format(self):
+        """Test generating citation with invalid format"""
+        from rest_framework.test import APIClient
+
+        client = APIClient()
+        client.force_authenticate(user=self.user1)
+
+        response = client.post(
+            f'/api/v1/citations/sources/{self.source_complete.id}/citation/',
+            {'format': 'invalid'},
+            format='json'
+        )
+
+        self.assertEqual(response.status_code, 400)
+
+    def test_generate_citation_source_not_found(self):
+        """Test generating citation for non-existent source"""
+        from rest_framework.test import APIClient
+
+        client = APIClient()
+        client.force_authenticate(user=self.user1)
+
+        response = client.post(
+            '/api/v1/citations/sources/99999/citation/',
+            {'format': 'apa7'},
+            format='json'
+        )
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_generate_citation_with_vault_member(self):
+        """Test generating citation as vault member (viewer)"""
+        from rest_framework.test import APIClient
+        from apps.vaults.models import VaultMembership, RoleChoices
+
+        # Add user2 as viewer
+        VaultMembership.objects.create(
+            vault=self.vault,
+            user=self.user2,
+            role=RoleChoices.VIEWER
+        )
+
+        client = APIClient()
+        client.force_authenticate(user=self.user2)
+
+        response = client.post(
+            f'/api/v1/citations/sources/{self.source_complete.id}/citation/',
+            {'format': 'bibtex'},
+            format='json'
+        )
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn('citation', data)

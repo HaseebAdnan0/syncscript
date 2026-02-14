@@ -124,15 +124,15 @@ Create SyncScript's production landing page following the Bitcoin DeFi aesthetic
 **Description:** As a developer, I need a reusable feature card component for the features grid.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/marketing/FeatureCard.tsx`
-- [ ] Props: icon, title, description
-- [ ] Card style: `bg-[#0F1115] border border-white/10 rounded-2xl`
-- [ ] Icon container with orange glow effect
-- [ ] Large watermark icon in background (opacity-5)
-- [ ] Watermark reveals more on hover (opacity-10)
-- [ ] Hover: `-translate-y-1` and `border-[#F7931A]/50`
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/marketing/FeatureCard.tsx`
+- [x] Props: icon, title, description
+- [x] Card style: `bg-[#0F1115] border border-white/10 rounded-2xl`
+- [x] Icon container with orange glow effect
+- [x] Large watermark icon in background (opacity-5)
+- [x] Watermark reveals more on hover (opacity-10)
+- [x] Hover: `-translate-y-1` and `border-[#F7931A]/50`
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-010: Create Features Grid Section
 **Description:** As a user, I want to see SyncScript's key features so I understand what the platform offers.

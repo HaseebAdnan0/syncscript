@@ -73,12 +73,12 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a user, I want to fetch my notifications so I can see recent activity.
 
 **Acceptance Criteria:**
-- [ ] GET `/api/v1/notifications/` returns paginated notifications
-- [ ] Filter to authenticated user only
-- [ ] Order by: unread first, then by created_at descending
-- [ ] Support `?unread_only=true` query param
-- [ ] Page size: 20
-- [ ] Typecheck passes
+- [x] GET `/api/v1/notifications/` returns paginated notifications
+- [x] Filter to authenticated user only
+- [x] Order by: unread first, then by created_at descending
+- [x] Support `?unread_only=true` query param
+- [x] Page size: 20
+- [x] Typecheck passes
 
 ---
 

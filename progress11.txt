@@ -202,3 +202,27 @@
   - Used bullet points with orange circle markers for features list
   - Pre-existing import error in sources app (unrelated to email work)
 ---
+
+## Iteration 8 - US-008: Create vault invitation email template
+- Created templates/emails/vault_invite.html extending base.html
+- Implemented all acceptance criteria:
+  - Preheader: "{{ inviter.username }} invited you to collaborate"
+  - Prominent display of inviter and vault name with orange highlighting
+  - Role badge (Contributor/Viewer) with styled background
+  - Conditional vault description in quote block if provided
+  - Role-specific explanation text
+  - Orange gradient CTA button "Accept Invitation"
+  - Fallback text link below button
+- Created templates/emails/vault_invite.txt plaintext version
+- Tested both templates render successfully with Django shell
+- Files changed:
+  - backend/templates/emails/vault_invite.html (new)
+  - backend/templates/emails/vault_invite.txt (new)
+  - PRD11.md (marked US-008 complete)
+- Learnings for future iterations:
+  - Template context includes: user, inviter, vault, role, vault_url, site_url
+  - Used role badge with semi-transparent orange background for visual emphasis
+  - Conditional vault description block only shows if description exists
+  - Role-specific explanation helps recipients understand their permissions
+  - Consistent table-based layout and orange gradient patterns across all email templates
+---
