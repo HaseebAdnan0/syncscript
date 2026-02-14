@@ -32,3 +32,27 @@
   - When implementing related models together, mark all corresponding US as complete
   - VaultStorageUsage uses OneToOneField as primary_key (no separate id field)
 ---
+
+## Iteration 3 - US-003: Configure django-storages with Cloudflare R2
+- Added boto3>=1.35 to backend/requirements.txt (django-storages[s3] was already present)
+- Configured S3-compatible storage in backend/config/settings.py:
+  - Conditional storage: uses S3Boto3Storage if AWS credentials provided, else local filesystem
+  - AWS_S3_FILE_OVERWRITE=False (don't overwrite same-name files)
+  - AWS_QUERYSTRING_AUTH=True (use presigned URLs)
+  - AWS_QUERYSTRING_EXPIRE=900 (15-minute expiry)
+  - AWS_S3_SIGNATURE_VERSION=s3v4 (required for some S3-compatible services)
+- Updated .planning/USER_SETUP.md with comprehensive setup guide:
+  - Cloudflare R2 setup (recommended)
+  - AWS S3 setup (alternative)
+  - Local filesystem fallback (no cloud credentials needed for dev)
+- Files changed:
+  - backend/requirements.txt (added boto3)
+  - backend/config/settings.py (added S3 storage configuration)
+  - .planning/USER_SETUP.md (updated cloud storage section)
+  - PRD6.md (marked US-003 complete)
+- Learnings for future iterations:
+  - Django settings can check environment variables to conditionally enable features
+  - USE_S3 flag pattern allows graceful fallback to local storage for development
+  - Settings loaded successfully confirms no syntax errors
+  - Pyright typecheck passed with 0 errors on modified files (pre-existing errors in other files not related)
+---

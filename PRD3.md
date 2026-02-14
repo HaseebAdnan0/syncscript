@@ -61,13 +61,13 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need tests to verify Source model constraints work correctly.
 
 **Acceptance Criteria:**
-- [ ] Test creating a valid Source with all fields
-- [ ] Test unique constraint prevents duplicate vault+url for active sources
-- [ ] Test unique constraint allows same url if one is soft-deleted
-- [ ] Test SourceType enum values are correct
-- [ ] Test default values (is_deleted=False, source_type=URL, metadata={})
-- [ ] All tests pass with `python manage.py test apps.sources.tests.test_models`
-- [ ] Typecheck passes
+- [x] Test creating a valid Source with all fields
+- [x] Test unique constraint prevents duplicate vault+url for active sources
+- [x] Test unique constraint allows same url if one is soft-deleted
+- [x] Test SourceType enum values are correct
+- [x] Test default values (is_deleted=False, source_type=URL, metadata={})
+- [x] All tests pass with `python manage.py test apps.sources.tests.test_models`
+- [x] Typecheck passes
 
 ---
 

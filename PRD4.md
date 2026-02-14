@@ -122,8 +122,8 @@ Establish the Next.js 16 frontend foundation for SyncScript with a Bitcoin DeFi-
 **Description:** As a frontend developer, I want Tailwind CSS configured with Bitcoin DeFi design tokens so that all components follow the brand aesthetic.
 
 **Acceptance Criteria:**
-- [ ] Tailwind CSS v4 is installed (comes with create-next-app)
-- [ ] Update `tailwind.config.ts` to extend theme with:
+- [x] Tailwind CSS v4 is installed (comes with create-next-app)
+- [x] Update `tailwind.config.ts` to extend theme with:
   ```typescript
   colors: {
     background: '#030304',
@@ -145,7 +145,7 @@ Establish the Next.js 16 frontend foundation for SyncScript with a Bitcoin DeFi-
     'glow-gold': '0 0 30px -10px rgba(255, 214, 0, 0.4)',
   }
   ```
-- [ ] Load Google Fonts in `app/layout.tsx` via `next/font/google`:
+- [x] Load Google Fonts in `app/layout.tsx` via `next/font/google`:
   - Space Grotesk (weights: 400, 700)
   - Inter (weights: 400, 500, 600)
   - JetBrains Mono (weights: 400, 500)

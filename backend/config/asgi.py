@@ -17,15 +17,14 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 django_asgi_app = get_asgi_application()
 
 # Import WebSocket middleware and routing after Django is initialized
-# from apps.vaults.middleware import JWTAuthMiddleware
-# from apps.vaults.routing import websocket_urlpatterns
+# from apps.vaults.middleware import JWTAuthMiddleware  # Will be implemented in US-005
+from apps.vaults.routing import websocket_urlpatterns
 
 application = ProtocolTypeRouter({
     "http": django_asgi_app,
     "websocket": AllowedHostsOriginValidator(
-        # JWTAuthMiddleware(
-        #     URLRouter(websocket_urlpatterns)
+        # JWTAuthMiddleware(  # Will be implemented in US-005
+        URLRouter(websocket_urlpatterns)
         # )
-        django_asgi_app  # Placeholder until middleware and routing are implemented
     ),
 })

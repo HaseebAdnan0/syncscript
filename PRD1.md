@@ -101,10 +101,10 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a developer, I need a serializer for returning user profile data in API responses.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/users/serializers.py`
-- [ ] Create UserSerializer with fields: id, email, username, avatar_url, bio, institution, email_verified, created_at
-- [ ] Mark email and created_at as read_only
-- [ ] Typecheck passes
+- [x] Create `apps/users/serializers.py`
+- [x] Create UserSerializer with fields: id, email, username, avatar_url, bio, institution, email_verified, created_at
+- [x] Mark email and created_at as read_only
+- [x] Typecheck passes
 
 ---
 

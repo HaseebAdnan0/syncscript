@@ -59,3 +59,15 @@
   - In this case: through_fields=('vault', 'user') to use vault and user FKs (not added_by)
   - Django check error E335 indicates missing through_fields when ambiguous
 ---
+
+## Iteration 6 - US-006: Create AuditLog model
+- Added AuditLog model for immutable audit trail
+- Files changed:
+  - backend/apps/vaults/models.py (added AuditLog class with indexes)
+  - PRD2.md (marked US-006 as complete)
+- Learnings for future iterations:
+  - JSONField default=dict provides empty dict for new instances
+  - Index with negative field (e.g., '-created_at') creates descending index for efficient reverse chronological queries
+  - AuditLog uses related_name='audit_actions' for actor to avoid conflicts
+  - All tests passed with python manage.py check vaults
+---

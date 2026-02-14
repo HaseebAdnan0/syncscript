@@ -12,11 +12,12 @@ class SourceModelTest(TestCase):
 
     def setUp(self):
         """Set up test fixtures."""
-        self.user = User.objects.create_user(
+        self.user = User.objects.create(
             username='testuser',
-            email='test@example.com',
-            password='testpass123'
+            email='test@example.com'
         )
+        self.user.set_password('testpass123')
+        self.user.save()
         self.vault = Vault.objects.create(
             name='Test Vault',
             description='A test vault',
