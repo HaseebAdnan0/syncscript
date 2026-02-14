@@ -281,15 +281,15 @@ Create SyncScript's production landing page following the Bitcoin DeFi aesthetic
 **Description:** As a user, I want smooth reveal animations so the page feels polished and professional.
 
 **Acceptance Criteria:**
-- [ ] Install framer-motion if not present
-- [ ] Create `frontend/src/components/marketing/ScrollReveal.tsx` wrapper component
-- [ ] Fade up animation when elements enter viewport
-- [ ] Stagger children animation for grids/lists
-- [ ] Apply to: Features grid, How It Works steps, Testimonials, Pricing cards
-- [ ] Animations trigger once (not on every scroll)
-- [ ] Respect reduced motion preferences
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Install framer-motion if not present
+- [x] Create `frontend/src/components/marketing/ScrollReveal.tsx` wrapper component
+- [x] Fade up animation when elements enter viewport
+- [x] Stagger children animation for grids/lists
+- [x] Apply to: Features grid, How It Works steps, Testimonials, Pricing cards
+- [x] Animations trigger once (not on every scroll)
+- [x] Respect reduced motion preferences
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-021: Add SEO Metadata and OG Tags
 **Description:** As a marketer, I need proper SEO so the page ranks well and shares nicely on social.

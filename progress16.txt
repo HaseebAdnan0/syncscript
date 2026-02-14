@@ -520,3 +520,41 @@
   - Default exports vs named exports must match between declaration and import
   - useToast hook returns { toast } object, not toast directly
 ---
+
+## Iteration 20 - US-020: Add Framer Motion Scroll Animations
+- Created `frontend/src/components/marketing/ScrollReveal.tsx` wrapper component
+- Verified framer-motion already installed (v12.34.0)
+- Implemented ScrollReveal component with:
+  - Default fade-up animation (opacity 0 → 1, y 50 → 0)
+  - Configurable delay, custom variants, and stagger support
+  - useInView hook with once: true (animation triggers only once)
+  - margin: '-100px' to trigger slightly before element enters viewport
+- Created ScrollRevealItem companion component for staggered children
+- Added reduced motion media query to globals.css:
+  - All animations/transitions disabled when user prefers reduced motion
+  - animation-duration and transition-duration set to 0.01ms
+  - scroll-behavior set to auto (disables smooth scroll)
+  - Applies to all elements with !important to ensure preference is respected
+- Verified all existing animated sections already have required features:
+  - FeaturesSection: viewport={{ once: true, margin: '-100px' }} ✓
+  - HowItWorksSection: viewport={{ once: true, margin: '-100px' }} ✓
+  - TestimonialsSection: viewport={{ once: true, margin: '-100px' }} ✓
+  - PricingSection: viewport={{ once: true, margin: '-100px' }} ✓
+  - StatsTicker: useInView with once: true ✓
+- Framer Motion automatically respects prefers-reduced-motion by default
+- Typecheck passes successfully
+- Build succeeds with all components working
+- Files changed:
+  - Created: `frontend/src/components/marketing/ScrollReveal.tsx`
+  - Modified: `frontend/src/app/globals.css` (added reduced motion media query)
+  - Modified: `PRD16.md` (marked US-020 complete)
+- Learnings for future iterations:
+  - Framer Motion's useInView hook with once: true prevents re-triggering on scroll
+  - margin parameter on useInView allows early animation triggers for smoother UX
+  - Reduced motion media query should disable all animations, not just reduce them
+  - !important needed on reduced motion rules to override component-level animations
+  - Stagger animations use container/item variant pattern with staggerChildren property
+  - ScrollReveal component provides reusable animation wrapper for future sections
+  - All major sections already had proper animations from previous iterations
+  - Build verification confirms no runtime errors with animation setup
+---
