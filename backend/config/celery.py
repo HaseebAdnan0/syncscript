@@ -25,13 +25,17 @@ app.autodiscover_tasks()
 
 # Celery Beat schedule for periodic tasks
 app.conf.beat_schedule = {
-    'cleanup-deleted-pdfs-daily': {
-        'task': 'apps.sources.tasks.cleanup_deleted_pdfs',
-        'schedule': crontab(hour=2, minute=0),  # Daily at 2:00 AM
+    'cleanup-orphaned-files-daily': {
+        'task': 'apps.sources.tasks.cleanup_orphaned_files',
+        'schedule': crontab(hour=3, minute=0),  # Daily at 3:00 AM
     },
     'cleanup-orphaned-multipart-uploads-daily': {
         'task': 'apps.sources.tasks.cleanup_orphaned_multipart_uploads',
-        'schedule': crontab(hour=3, minute=0),  # Daily at 3:00 AM
+        'schedule': crontab(hour=4, minute=0),  # Daily at 4:00 AM
+    },
+    'cleanup-deleted-pdfs-daily': {
+        'task': 'apps.sources.tasks.cleanup_deleted_pdfs',
+        'schedule': crontab(hour=5, minute=0),  # Daily at 5:00 AM
     },
     'cleanup-stale-websocket-connections': {
         'task': 'apps.vaults.tasks.cleanup_stale_connections',

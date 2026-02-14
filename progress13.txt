@@ -677,3 +677,30 @@ vaults/{vault_id}/thumbnails/{uuid}.jpg
   - Integration tested successfully in browser
 ---
 
+## Iteration 21 - Add storage usage to vault settings page (US-021)
+- Found that StorageUsage type and VaultSettings integration were already implemented in HEAD
+- Verified StorageUsageIndicator component already exists (created in US-018)
+- Implementation includes:
+  - StorageUsage interface added to frontend/src/lib/types/vault.ts (lines 21-27)
+  - Vault.storage_usage optional field added to Vault type (line 39)
+  - StorageUsageIndicator imported in VaultSettings.tsx
+  - Storage Usage section added to VaultSettings with conditional rendering
+  - Warning message at 80-95% usage (orange)
+  - Critical warning at 95%+ usage (red)
+- Updated PRD13.md to mark all acceptance criteria complete
+- Typecheck passes (npm run type-check successful)
+- Dev server starts successfully
+- Files changed:
+  - PRD13.md (marked US-021 complete)
+  - frontend/src/lib/types/vault.ts (already in HEAD)
+  - frontend/src/components/features/vaults/VaultSettings.tsx (already in HEAD)
+  - progress13.txt
+- Learnings for future iterations:
+  - Check HEAD before assuming work is needed - implementation may already be complete
+  - git show HEAD:<file> useful for checking committed versions
+  - StorageUsage type follows same pattern as backend (used_bytes, limit_bytes, percentage, warning, file_count)
+  - Warning thresholds: 80% = yellow warning, 95% = red critical
+  - storage_usage is optional field (vault API may not always include it)
+  - VaultSettings displays storage section only when storage_usage is present
+---
+

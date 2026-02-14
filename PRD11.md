@@ -317,11 +317,11 @@ Replace stub email implementation with production-ready email system using Hosti
 **Description:** As an unverified user, I should be redirected to verification page instead of dashboard.
 
 **Acceptance Criteria:**
-- [ ] Update `frontend/src/providers/AuthProvider.tsx`
-- [ ] Check `user.email_verified` status after login/auth check
-- [ ] If `email_verified === false`, redirect to `/auth/verify-email/pending?email={email}`
-- [ ] Store redirect intent so user goes to original destination after verification
-- [ ] Typecheck passes
+- [x] Update `frontend/src/providers/AuthProvider.tsx`
+- [x] Check `user.email_verified` status after login/auth check
+- [x] If `email_verified === false`, redirect to `/auth/verify-email/pending?email={email}`
+- [x] Store redirect intent so user goes to original destination after verification
+- [x] Typecheck passes
 
 ---
 

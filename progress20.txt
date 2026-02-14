@@ -478,3 +478,32 @@
   - Manual verification checklist should cover: resume scenarios, fresh start, completed state, toast behavior
 ---
 
+
+## Iteration 22 - Add restart tutorial to settings (US-021)
+- Added Onboarding section to settings page with GraduationCap icon
+- Created OnboardingSettings component in components/features/settings/
+- Implemented "Restart Tutorial" button with confirmation dialog
+- Confirmation dialog uses Radix UI Dialog component with Bitcoin DeFi styling
+- Restart functionality:
+  - Updates onboarding state via updateOnboarding({ completed: false, step: 'tutorial', data: {} })
+  - Shows success toast notification
+  - Calls router.refresh() to reload page and trigger tutorial
+- Loading state: button shows "Restarting..." text during API call
+- Error handling with toast notification (removed variant prop - not supported)
+- OnboardingSettings positioned before ConnectedAccounts in settings page
+- Files changed: OnboardingSettings.tsx (new), settings/page.tsx, .planning/MANUAL_VERIFICATION.md, PRD20.md, progress20.txt
+- Commit: d0ce806
+- Typecheck passes
+- Learnings for future iterations:
+  - Import GraduationCap icon from lucide-react for education/tutorial features
+  - Settings sections follow pattern: icon container with gradient + heading + description + component
+  - Dialog pattern: useState for open state, Dialog + DialogContent + DialogHeader + DialogFooter
+  - router.refresh() from next/navigation forces page reload to trigger context updates
+  - OnboardingProvider refetches state on mount, so refresh picks up new state
+  - updateOnboarding({ completed: false, step: 'tutorial', data: {} }) resets to tutorial start
+  - Toast hook doesn't support variant prop - just title and description
+  - Confirmation dialogs should have clear Cancel and Action buttons
+  - Loading states use disabled prop and conditional text: isRestarting ? 'Restarting...' : 'Restart'
+  - Manual verification checklist appended to .planning/MANUAL_VERIFICATION.md per CLAUDE.md
+---
+
