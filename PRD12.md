@@ -189,15 +189,15 @@ Add social authentication to SyncScript using Google and GitHub OAuth providers.
 **Description:** As a user, I want visually distinct OAuth buttons following brand guidelines.
 
 **Acceptance Criteria:**
-- [ ] Create `components/features/auth/OAuthButtons.tsx`
-- [ ] Google button: white background, Google "G" logo, "Continue with Google" text
-- [ ] GitHub button: dark background (#24292e), GitHub logo, "Continue with GitHub" text
-- [ ] Both buttons full-width, consistent height (48px), rounded corners
-- [ ] Hover states with subtle shadow/brightness change
-- [ ] Accept `disabled` prop to disable both buttons
-- [ ] Accept `loading` prop to show loading state
-- [ ] Clicking triggers redirect to respective OAuth endpoint
-- [ ] Typecheck passes
+- [x] Create `components/features/auth/OAuthButtons.tsx`
+- [x] Google button: white background, Google "G" logo, "Continue with Google" text
+- [x] GitHub button: dark background (#24292e), GitHub logo, "Continue with GitHub" text
+- [x] Both buttons full-width, consistent height (48px), rounded corners
+- [x] Hover states with subtle shadow/brightness change
+- [x] Accept `disabled` prop to disable both buttons
+- [x] Accept `loading` prop to show loading state
+- [x] Clicking triggers redirect to respective OAuth endpoint
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---
