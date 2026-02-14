@@ -125,14 +125,14 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 **Description:** As a user, I want to see all sources in my selected view mode with active filters applied.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/sources/SourcesList.tsx`
-- [ ] Reads view preference from hook, renders grid or table accordingly
-- [ ] Grid uses CSS grid: `grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6`
-- [ ] Table renders with sticky header and scrollable body
-- [ ] Shows loading skeleton while fetching
-- [ ] Shows empty state with illustration when no sources
-- [ ] Empty state includes "Add your first source" CTA
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/sources/SourcesList.tsx`
+- [x] Reads view preference from hook, renders grid or table accordingly
+- [x] Grid uses CSS grid: `grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6`
+- [x] Table renders with sticky header and scrollable body
+- [x] Shows loading skeleton while fetching
+- [x] Shows empty state with illustration when no sources
+- [x] Empty state includes "Add your first source" CTA
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---

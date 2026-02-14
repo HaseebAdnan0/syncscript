@@ -129,16 +129,16 @@ SyncScript needs a complete frontend authentication system that enables users to
 **Description:** As a user, I want a login page so that I can access my account.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/app/(auth)/login/page.tsx`
-- [ ] Glass card container with logo/title
-- [ ] Email input with FormInput component
-- [ ] Password input with FormInput component (type="password")
-- [ ] "Forgot password?" link to `/forgot-password`
-- [ ] Gradient submit button "Sign In"
-- [ ] Link to register page: "Don't have an account? Sign up"
-- [ ] Form is presentational only (no logic yet)
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/app/(auth)/login/page.tsx`
+- [x] Glass card container with logo/title
+- [x] Email input with FormInput component
+- [x] Password input with FormInput component (type="password")
+- [x] "Forgot password?" link to `/forgot-password`
+- [x] Gradient submit button "Sign In"
+- [x] Link to register page: "Don't have an account? Sign up"
+- [x] Form is presentational only (no logic yet)
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 
