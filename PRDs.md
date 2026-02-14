@@ -207,3 +207,236 @@
   │  (Frontend)     │  (Frontend)     │  (Frontend)     │ Notifs    │
   │  needs: 1,4     │  needs: 2,4     │  needs: 3,4,8   │ needs:5,* │
   └─────────────────┴─────────────────┴─────────────────┴───────────┘
+---
+
+# PRD Summaries
+
+## PRD 1: Backend Users & Authentication
+**Status:** Complete (40/40 user stories)
+
+**Overview:** Secure, production-ready authentication system for SyncScript using Django REST Framework with JWT-based auth, email verification, password reset, and rate limiting.
+
+**Key Features:**
+- Custom User model with email as primary identifier (avatar_url, bio, institution fields)
+- JWT tokens: 15min access, 7-day refresh with rotation and blacklisting
+- Email verification flow with 24-hour tokens
+- Password reset via email (1-hour tokens)
+- User profile CRUD (GET/PATCH)
+- Redis-backed rate limiting: 5/min for auth endpoints, 3/hour for password reset
+- Comprehensive test coverage (model, serializer, auth flow, profile, rate limiting)
+
+**API Endpoints:**
+| Endpoint | Method | Rate Limit |
+|----------|--------|------------|
+| /api/v1/auth/register/ | POST | 5/min |
+| /api/v1/auth/verify-email/ | POST | 10/min |
+| /api/v1/auth/login/ | POST | 5/min |
+| /api/v1/auth/logout/ | POST | - |
+| /api/v1/auth/refresh/ | POST | 20/min |
+| /api/v1/auth/password-reset/ | POST | 3/hour |
+| /api/v1/users/profile/ | GET/PATCH | - |
+
+---
+
+## PRD 2: Backend Vaults & RBAC
+**Status:** Mostly Complete (34/38 user stories - tests pending)
+
+**Overview:** Knowledge Vault system with role-based access control enabling researchers to create shared repositories with granular permission controls and audit logging.
+
+**Key Features:**
+- Vault model: name, description, owner, is_archived, timestamps
+- VaultMembership through model with roles: OWNER (3), CONTRIBUTOR (2), VIEWER (1)
+- Custom permissions: IsVaultOwner, IsVaultContributor, IsVaultMember
+- Archive/restore functionality for vaults
+- Member management: invite, update role, remove (prevents last owner removal)
+- Ownership transfer logic
+- Comprehensive audit logging via signals (vault.created, membership.added, role_changed, etc.)
+
+**API Endpoints:**
+- GET/POST /api/v1/vaults/ - List/create vaults
+- GET/PATCH/DELETE /api/v1/vaults/{id}/ - Vault CRUD
+- POST /api/v1/vaults/{id}/archive/ - Archive vault
+- POST /api/v1/vaults/{id}/restore/ - Restore vault
+- GET/POST /api/v1/vaults/{id}/members/ - Member management
+- GET /api/v1/vaults/{id}/audit-logs/ - Audit history
+
+---
+
+## PRD 3: Backend Sources & Annotations
+**Status:** Mostly Complete (36/43 user stories - audit signals pending)
+
+**Overview:** Source and annotation management system for collaborative research with URL metadata extraction, threaded annotations, and comprehensive filtering.
+
+**Key Features:**
+- Source model: vault FK, URL, title, description, source_type (URL/PDF/BOOK/JOURNAL/DATASET), metadata JSON
+- Annotation model: source FK, user FK, content, page_number, position JSON, parent (2-level threading max)
+- newspaper3k integration for auto-extracting metadata (title, authors, abstract)
+- Bulk import up to 50 URLs with validation and duplicate detection
+- Soft-delete for sources with restore capability
+- django-filter integration for vault, type, date range, tags, and search filters
+- IsAuthorOrReadOnly permission for annotations
+
+**API Endpoints:**
+- GET/POST /api/v1/sources/ - Source CRUD
+- GET/POST /api/v1/vaults/{id}/sources/ - Nested source creation
+- POST /api/v1/sources/bulk_import/ - Bulk import URLs
+- POST /api/v1/sources/{id}/restore/ - Restore soft-deleted source
+- GET/POST /api/v1/annotations/ - Annotation CRUD
+- GET/POST /api/v1/sources/{id}/annotations/ - Nested annotation endpoints
+
+---
+
+## PRD 4: Frontend Project Setup & Design System
+**Status:** Complete (10/10 user stories)
+
+**Overview:** Next.js 16 App Router foundation with Bitcoin DeFi-inspired design system, component library, and API/state management infrastructure.
+
+**Key Features:**
+- Next.js 16 with TypeScript strict mode
+- Tailwind CSS v4 with design tokens (background #030304, primary #F7931A, accent #FFD600)
+- Google Fonts: Space Grotesk (headings), Inter (body), JetBrains Mono (code)
+- ShadCN UI with Radix primitives customized for Bitcoin DeFi aesthetic
+- Core components: Button (primary/outline/ghost), Card, Input, Badge
+- Glass morphism utilities, grid pattern backgrounds, glow effects
+- Axios API client with JWT auto-refresh interceptors
+- Zustand auth store with localStorage persistence
+- React Query provider with sensible defaults
+- ESLint 10 + Prettier configuration
+
+---
+
+## PRD 5: Backend Real-time WebSockets
+**Status:** Complete (28/28 user stories)
+
+**Overview:** Real-time collaboration infrastructure using Django Channels and Redis for live updates, presence tracking, and event broadcasting.
+
+**Key Features:**
+- Django Channels with Daphne ASGI server
+- Redis channel layer (1500 capacity, 10s expiry)
+- JWT authentication middleware for WebSocket connections
+- VaultConsumer for vault room management
+- Presence tracking with Redis sorted sets (active/idle status)
+- Event types: source.created/updated/deleted, annotation.created, member.added, presence.update
+- Event buffering in Redis (last 100 events, 1-hour TTL)
+- Replay request handler for missed events after reconnection
+- 4-layer rate limiting: connection limit per user (5), room limit (100), message throttling (60/min), heartbeat timeout (5min)
+- Celery tasks for async broadcasting
+
+**WebSocket Endpoint:** ws://localhost:8000/ws/vault/{id}/?token={jwt}
+
+---
+
+## PRD 6: Backend File Storage & Cloud Integration
+**Status:** Complete (26/26 user stories)
+
+**Overview:** Cloud file storage using Cloudflare R2 (S3-compatible) for secure PDF uploads, downloads, metadata extraction, and storage tracking.
+
+**Key Features:**
+- PDFUpload model: vault FK, file, original_filename, file_size, mime_type, processing_status
+- VaultStorageUsage model for cached storage metrics per vault
+- django-storages with boto3 for S3-compatible storage
+- Presigned URL generation (1hr upload, 15min download)
+- Strict PDF validation (MIME, magic number, structure, 50MB max)
+- Multipart upload support for large files
+- Celery task for post-upload processing: metadata extraction (pypdf), thumbnail generation (pdf2image)
+- Soft-delete with 30-day retention
+- Cleanup tasks for deleted PDFs and orphaned multipart uploads
+- WebSocket notifications for upload/delete events
+- Rate limiting: 10/min upload-url, 30/min download-url
+
+**API Endpoints:**
+- POST /api/v1/sources/pdfs/upload-url/ - Get presigned upload URL
+- POST /api/v1/sources/pdfs/{id}/complete/ - Upload completion callback
+- GET /api/v1/sources/pdfs/{id}/download-url/ - Get presigned download URL
+- POST /api/v1/sources/pdfs/multipart-upload/initiate/ - Start multipart upload
+- POST /api/v1/sources/pdfs/multipart-upload/{id}/complete/ - Complete multipart upload
+- DELETE /api/v1/sources/pdfs/{id}/ - Soft-delete PDF
+- GET /api/v1/vaults/{id}/pdfs/ - List vault PDFs
+
+---
+
+## PRD 7: Frontend Authentication & User Flows
+**Status:** Complete (22/22 user stories)
+
+**Overview:** Complete frontend authentication system with login, register, password reset, profile management, and protected routes.
+
+**Key Features:**
+- Zustand auth store with persist middleware
+- Axios interceptors for auto token refresh
+- useAuth hook: login, register, logout, refreshUser
+- AuthProvider for session hydration on app load
+- Bitcoin DeFi styled components: FormInput, GradientButton, GlassCard
+- Auth layout with centered glass cards
+- Login page with validation and remember-me
+- Registration with password strength indicator
+- Forgot/reset password flow
+- ProtectedRoute wrapper with returnUrl support
+- Toast notification system (Radix Toast)
+- Profile page with tabs: Profile info + Security (password change)
+- User dropdown with logout in header
+
+---
+
+## PRD 8: Frontend Vaults Management UI
+**Status:** Complete (22/22 user stories - browser verification pending)
+
+**Overview:** Vault management interface with responsive grid listing, vault detail pages, member management, and role-based UI rendering.
+
+**Key Features:**
+- TypeScript types and API client for vaults
+- React Query hooks: useVaults, useVault, useCreateVault, useUpdateVault, useDeleteVault
+- Vault members hooks: useVaultMembers, useAddMember, useInviteMember, useUpdateRole, useRemoveMember
+- VaultCard component with role badges (Owner/Contributor/Viewer)
+- Responsive grid: 1 col mobile, 2 tablet, 3 desktop
+- Create vault modal with glass morphism
+- Vault detail page with tabs: Sources, Members, Settings
+- Member management: add existing users, invite by email, change roles, remove
+- Settings: rename, archive, delete with type-to-confirm
+- useVaultPermissions hook for role-based UI rendering
+- Loading skeletons and empty states
+- Server-side search with debounce
+
+---
+
+## PRD 9: Frontend Sources & Annotations UI
+**Status:** Complete (32/32 user stories)
+
+**Overview:** Source and annotation management interface with grid/table views, PDF viewer, threaded annotations, and real-time collaboration.
+
+**Key Features:**
+- SourceCard and SourceTableRow with SourceTypeBadge
+- View toggle (grid/table) with localStorage persistence
+- SourcesFilterBar: type, date, contributor filters with URL params
+- AddSourceModal with metadata preview
+- BulkImportModal for multiple URLs
+- react-pdf integration for PDF viewing with zoom/navigation controls
+- AnnotationSidebar with glass morphism cards
+- AnnotationCard with reply threading (single level)
+- AddAnnotationForm and AddReplyForm
+- React Query hooks: useSourcesQuery, useAnnotationsQuery
+- Mutation hooks with optimistic updates
+- WebSocket hooks: useSourcesWebSocket, useAnnotationsWebSocket
+- Keyboard shortcuts: n (add), b (bulk), g (grid), t (table), ? (help)
+- Loading skeletons for sources and annotations
+
+---
+
+## PRD 10: Frontend Real-time & Notifications
+**Status:** Complete (18/18 user stories - browser verification pending)
+
+**Overview:** Real-time updates and notification system integration with WebSocket connection management, presence indicators, and push notifications.
+
+**Key Features:**
+- useVaultSocket hook with auto-reconnect (exponential backoff)
+- ConnectionStatus indicator (green/yellow/red dot)
+- useRealtimeUpdates hook for optimistic updates with server reconciliation
+- Real-time source and annotation updates via WebSocket
+- usePresence hook with 30s heartbeat
+- PresenceIndicator with animate-ping effect for active members
+- Toast notifications for vault events
+- UnreadBadge in header with pulse animation
+- NotificationPanel dropdown with mark-as-read
+- NotificationPreferences: enable/disable, push, sound toggles
+- Pusher integration for browser push notifications
+- Sound notifications with global toggle
+- WebSocket reconnection with state recovery

@@ -1,0 +1,75 @@
+# Progress Log - PRD 19: Notification System
+
+## Current Status
+Not started
+
+## Learnings
+(Patterns discovered during implementation)
+
+---
+
+## Story Progress
+
+### Backend Foundation
+- [ ] US-001: Notification model
+- [ ] US-002: NotificationPreferences model
+- [ ] US-003: MutedVault model
+- [ ] US-004: Serializers
+
+### Backend API
+- [ ] US-005: List endpoint
+- [ ] US-006: Mark read endpoint
+- [ ] US-007: Mark all read endpoint
+- [ ] US-008: Unread count endpoint
+- [ ] US-009: Preferences endpoints
+- [ ] US-010: Muted vaults endpoints
+
+### Backend Services & Signals
+- [ ] US-011: Notification helper service
+- [ ] US-012: vault_invite signal
+- [ ] US-013: member_joined signal
+- [ ] US-014: source_added signal
+- [ ] US-015: annotation_reply signal
+- [ ] US-016: @mention utility
+- [ ] US-017: mention signal
+
+### Real-time & Email
+- [ ] US-018: Pusher integration
+- [ ] US-019: Pusher auth endpoint
+- [ ] US-020: Email service
+- [ ] US-021: HTML email template
+- [ ] US-022: Immediate email task
+- [ ] US-023: Daily/weekly digest task
+- [ ] US-024: Cleanup task
+
+### Frontend Core
+- [ ] US-025: Types & API client
+- [ ] US-026: NotificationBell component
+- [ ] US-027: NotificationItem component
+- [ ] US-028: NotificationDropdown component
+- [ ] US-029: useNotifications hook
+- [ ] US-030: Header integration
+
+### Frontend Real-time
+- [ ] US-031: Pusher client setup
+- [ ] US-032: usePusherNotifications hook
+- [ ] US-033: Toast system
+- [ ] US-034: Toast + Pusher integration
+- [ ] US-035: Click navigation
+
+### Frontend Preferences
+- [ ] US-036: Preferences page layout
+- [ ] US-037: Email toggles
+- [ ] US-038: Email frequency selector
+- [ ] US-039: Push notification controls
+- [ ] US-040: Muted vaults management
+- [ ] US-041: Mute vault button
+
+### Mentions UI
+- [ ] US-042: MentionAutocomplete component
+- [ ] US-043: Annotation editor integration
+
+### Testing
+- [ ] US-044: Comprehensive tests
+
+---

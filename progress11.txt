@@ -1,0 +1,60 @@
+# Progress Log - PRD 11: Production Email System & Verification
+
+## Status: Not Started
+
+## Learnings
+(Patterns discovered during implementation)
+
+---
+
+## Story Progress
+
+### Backend - Email Configuration
+- [ ] US-001: Configure Hostinger SMTP email backend
+- [ ] US-002: Create Celery email tasks module
+- [ ] US-003: Update emails.py with all email sender functions
+
+### Backend - Email Templates
+- [ ] US-004: Create base email template with Bitcoin DeFi styling
+- [ ] US-005: Create verification email template
+- [ ] US-006: Create password reset email template
+- [ ] US-007: Create welcome email template
+- [ ] US-008: Create vault invitation email template
+- [ ] US-009: Create collaboration notification email template
+
+### Backend - Preferences & Unsubscribe
+- [ ] US-010: Add EmailPreference model for unsubscribe
+- [ ] US-011: Create unsubscribe endpoint
+
+### Backend - Integration
+- [ ] US-012: Update registration to use Celery email task
+- [ ] US-013: Update password reset to use Celery email task
+- [ ] US-014: Send welcome email after verification
+
+### Frontend - Verification Flow
+- [ ] US-015: Create verification pending page
+- [ ] US-016: Add resend verification API call
+- [ ] US-017: Create email verification success page
+
+### Frontend - Password Reset Flow
+- [ ] US-018: Create password reset request page
+- [ ] US-019: Add password reset API calls
+- [ ] US-020: Create password reset form page
+
+### Frontend - Integration
+- [ ] US-021: Redirect unverified users to verification pending page
+- [ ] US-022: Add "Forgot Password" link to login page
+- [ ] US-023: Handle vault invites for unverified users
+
+### Testing
+- [ ] US-024: Write tests for email verification flow
+- [ ] US-025: Write tests for password reset flow
+
+---
+
+## Notes
+- Hostinger SMTP: smtp.hostinger.com:465 (SSL, not TLS)
+- Email templates use Bitcoin DeFi dark theme (#030304 bg, #F7931A orange)
+- All emails sent async via Celery tasks
+- Unverified users blocked from login, redirected to pending page
+- Vault invites work for unverified users, but content access requires verification

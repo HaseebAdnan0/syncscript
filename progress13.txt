@@ -1,0 +1,37 @@
+# Progress Log - PRD 13: Cloudflare R2 File Storage
+
+## Status
+Not started
+
+## Learnings
+(Patterns discovered during implementation)
+
+---
+
+## Implementation Notes
+
+### Existing Infrastructure (DO NOT RECREATE)
+- `apps/sources/storage.py` - Presigned URLs, multipart initiate/complete
+- `apps/sources/validators.py` - PDF validation with magic numbers
+- `apps/sources/tasks.py` - PDF processing, cleanup tasks
+- `apps/sources/models.py` - PDFUpload, VaultStorageUsage models
+
+### Key Dependencies
+- pypdf - PDF text extraction
+- Pillow - Image processing/thumbnails
+- python-magic - MIME type detection
+- boto3 - S3/R2 operations
+
+### File Path Convention
+```
+vaults/{vault_id}/pdfs/{uuid}.pdf
+vaults/{vault_id}/images/{uuid}.{png|jpg}
+vaults/{vault_id}/thumbnails/{uuid}.jpg
+```
+
+---
+
+## Completed Stories
+(Mark stories as complete here)
+
+---

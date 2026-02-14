@@ -1,0 +1,23 @@
+# Progress Log - PRD 12: OAuth Authentication (Google + GitHub)
+
+## Learnings
+(Patterns discovered during implementation)
+
+---
+
+## Implementation Notes
+
+### Decisions Made
+- Using django-allauth (full-featured with social adapters)
+- Password confirmation required for linking OAuth to existing accounts
+- At least one auth method required (prevent lockout)
+- Prompt for email when GitHub email is private
+- Redirect-based OAuth flow (not popup)
+
+### Story Count
+- Total: 25 user stories
+- Backend: 12 stories (US-001 to US-012)
+- Frontend: 12 stories (US-013 to US-024)
+- Testing: 1 story (US-025)
+
+---

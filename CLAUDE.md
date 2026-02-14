@@ -254,26 +254,81 @@ Events: `source.created`, `source.updated`, `annotation.created`, `member.added`
 
 ### Backend (.env)
 ```
+# Core
 SECRET_KEY=
-DEBUG=True
+DEBUG=False
+ALLOWED_HOSTS=syncscript.yourdomain.com,localhost
 DATABASE_URL=postgres://user:pass@localhost:5432/syncscript
 REDIS_URL=redis://localhost:6379/0
-AWS_ACCESS_KEY_ID=
-AWS_SECRET_ACCESS_KEY=
-AWS_STORAGE_BUCKET_NAME=
+
+# Cloudflare R2 (S3-compatible)
+AWS_ACCESS_KEY_ID=           # R2 Access Key ID
+AWS_SECRET_ACCESS_KEY=       # R2 Secret Access Key
+AWS_STORAGE_BUCKET_NAME=syncscript-files
+AWS_S3_ENDPOINT_URL=https://<account_id>.r2.cloudflarestorage.com
+AWS_S3_REGION_NAME=auto
+AWS_S3_CUSTOM_DOMAIN=files.yourdomain.com  # Optional: custom domain for R2
+
+# Email (Hostinger SMTP)
+EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
+EMAIL_HOST=smtp.hostinger.com
+EMAIL_PORT=465
+EMAIL_USE_SSL=True
+EMAIL_HOST_USER=noreply@yourdomain.com
+EMAIL_HOST_PASSWORD=
+DEFAULT_FROM_EMAIL=SyncScript <noreply@yourdomain.com>
+
+# OAuth
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=
+
+# AI Services
+ANTHROPIC_API_KEY=           # Claude API for summaries/citations
+OPENAI_API_KEY=              # Optional fallback
+
+# Pusher (Real-time)
 PUSHER_APP_ID=
 PUSHER_KEY=
 PUSHER_SECRET=
 PUSHER_CLUSTER=
+
+# Sentry (Error Tracking)
+SENTRY_DSN=
 ```
 
 ### Frontend (.env.local)
 ```
-NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
-NEXT_PUBLIC_WS_URL=ws://localhost:8000/ws
+NEXT_PUBLIC_API_URL=https://api.yourdomain.com/api/v1
+NEXT_PUBLIC_WS_URL=wss://api.yourdomain.com/ws
 NEXT_PUBLIC_PUSHER_KEY=
 NEXT_PUBLIC_PUSHER_CLUSTER=
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=
+NEXT_PUBLIC_SENTRY_DSN=
 ```
+
+## Production Infrastructure
+
+### Cloudflare R2 Setup (5 min)
+1. Create R2 bucket: `syncscript-files`
+2. Generate API token with Object Read/Write permissions
+3. Optional: Add custom domain `files.yourdomain.com` for public access
+4. Configure CORS for your frontend domain
+
+### Hostinger Email Setup (5 min)
+1. Create email: `noreply@yourdomain.com`
+2. Use SMTP settings: `smtp.hostinger.com:465` (SSL)
+3. Test with Django's `send_mail()` in shell
+
+### Google OAuth Setup (10 min)
+1. Google Cloud Console → Create OAuth 2.0 credentials
+2. Add authorized redirect: `https://api.yourdomain.com/api/v1/auth/google/callback/`
+3. Enable Google+ API
+
+### GitHub OAuth Setup (5 min)
+1. GitHub Settings → Developer settings → OAuth Apps
+2. Add callback: `https://api.yourdomain.com/api/v1/auth/github/callback/`
 
 ## Task Management Rules
 

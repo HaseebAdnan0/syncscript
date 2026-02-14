@@ -1,0 +1,6 @@
+# Progress Log - PRD 15: AI Research Assistant
+
+## Learnings
+(Patterns discovered during implementation)
+
+---

@@ -1,0 +1,6 @@
+# Progress Log - PRD 16: Landing Page & Marketing Site
+
+## Learnings
+(Patterns discovered during implementation)
+
+---

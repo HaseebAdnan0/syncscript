@@ -1,0 +1,25 @@
+# Progress Log - PRD 14: AI Citation Generator
+
+## Learnings
+(Patterns discovered during implementation)
+
+---
+
+## Session Notes
+
+### Implementation Order
+The stories are ordered for dependency resolution:
+1. US-001 to US-005: Backend services (app structure, lookups, citation engines)
+2. US-006 to US-012: Backend API endpoints and caching
+3. US-013 to US-014: Settings/preferences backend
+4. US-015 to US-020: Frontend components
+5. US-021 to US-022: Polish and enrichment
+
+### Key Technical Decisions
+- Hybrid sync/async: Structured citations sync, AI citations async via Celery
+- Progressive batch export: Small (sync), Medium (cached+sync), Large (background job)
+- Rate limiting: 50/user/day, 200/vault/day for AI citations
+- Caching: Citations stored in source.metadata.citations JSON
+- Settings hierarchy: Vault override > User preference > None
+
+---
