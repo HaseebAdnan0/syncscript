@@ -521,3 +521,36 @@ Learnings for future iterations:
 - Trash2 icon from Lucide for delete actions (consistent with design system)
 - Permission logic: canRemove same as canChangeRole (Owner, not targeting Owner, not self)
 ---
+
+## Iteration 19 - US-018: Settings tab - rename vault
+- Verified that VaultSettings component was already created in commit f729666 (mislabeled as PRD9 US-022)
+- Component implementation matches all requirements:
+  - Created `frontend/src/components/features/vaults/VaultSettings.tsx`
+  - Form section "Vault Details" with name input and description textarea
+  - Pre-populated with current vault values using useEffect
+  - "Save Changes" button disabled when no changes or during mutation
+  - Uses useUpdateVault(vault.id) mutation from hooks
+  - Success toast: "Vault updated" with description
+  - Only editable fields shown to Owner role (isOwner check)
+  - Non-owners see read-only message
+- Component already integrated into vault detail page settings tab
+- Typecheck passes successfully
+- All acceptance criteria already complete from previous commit
+
+Files changed:
+- All files were already committed in f729666 (vault settings already existed)
+- PRD8.md (US-018 already marked complete)
+- progress8.txt (this file - documenting completion)
+
+Learnings for future iterations:
+- VaultSettings component follows same pattern as other settings forms (local state + mutation)
+- useEffect updates local form state when vault prop changes (handles optimistic updates)
+- hasChanges check: compare current input values with original vault values
+- Form fields use Bitcoin DeFi styling: bottom-border for inputs, border for textareas
+- GradientButton disabled state: disabled={!hasChanges || updateVault.isPending}
+- isOwner check enables/disables fields with disabled prop + opacity-50 styling
+- Non-owner message uses info panel: bg-white/5 border border-white/10 rounded-2xl
+- updateVault.mutateAsync() for async/await pattern in form handlers
+- Toast notifications provide user feedback for success/error states
+- Vault name/description updated in cache automatically via React Query invalidation
+---
