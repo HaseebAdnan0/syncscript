@@ -192,3 +192,43 @@ Learnings for future iterations:
 
 ---
 
+## Iteration 6 - US-006: Create citation generation endpoint
+- Created POST /api/v1/citations/sources/{id}/citation/ endpoint
+- Implemented CitationViewSet with generate_citation action
+- Request serializer: CitationRequestSerializer validates format enum (apa7, mla9, chicago17, bibtex, ieee, harvard)
+- Response serializer: CitationResponseSerializer with citation, citation_html, format, source, cached fields
+- Endpoint logic:
+  - Validates user has vault permission (viewer+)
+  - Checks cache first (source.metadata.citations[format])
+  - Determines generation method: structured (complete metadata) or AI (incomplete)
+  - Structured: uses citeproc-py synchronously
+  - AI: uses Claude API synchronously (async in US-008)
+  - Caches generated citation in source.metadata
+- URL routing: /api/v1/citations/sources/{id}/citation/ via DRF router
+- Created 8 comprehensive endpoint tests:
+  - test_generate_citation_structured: complete metadata, BibTeX format
+  - test_generate_citation_ai: incomplete metadata, APA7 format with mocked Claude
+  - test_generate_citation_caching: verify cache hit on second request
+  - test_generate_citation_unauthenticated: 401 error
+  - test_generate_citation_no_permission: 403 error for non-member
+  - test_generate_citation_invalid_format: 400 error for invalid format
+  - test_generate_citation_source_not_found: 404 error
+  - test_generate_citation_with_vault_member: viewer role can generate citations
+- All 8 tests pass
+- Typecheck passes with 0 errors (added type: ignore for ChoiceField assignment)
+- Files changed: backend/apps/citations/views.py (156 lines), backend/apps/citations/serializers.py (33 lines), backend/apps/citations/urls.py (12 lines), backend/apps/citations/tests.py (+212 lines)
+- Committed: 5baadc4
+
+Learnings for future iterations:
+- Citation format comes from serializer as string, must convert to CitationFormat enum before passing to services
+- Cache key is the string format value (e.g., 'apa7'), not the enum
+- User creation in tests requires username parameter: User.objects.create_user(email, username, password)
+- DRF ChoiceField with list of tuples causes pyright error, use type: ignore[assignment]
+- Vault permission checking pattern: check owner first, then membership with required roles
+- Citation caching structure: source.metadata['citations'][format] = {text, html, generated_at, source}
+- Custom action with URL parameter: @action(detail=False, url_path=r'sources/(?P<source_id>\d+)/citation')
+- REST framework test client: force_authenticate(user) for authenticated requests
+- Django test database: use --keepdb flag to preserve test database between runs
+
+---
+
