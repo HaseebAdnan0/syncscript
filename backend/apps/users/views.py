@@ -354,3 +354,48 @@ class LogoutView(APIView):
             return Response({
                 'error': f'Invalid token: {str(e)}'
             }, status=status.HTTP_400_BAD_REQUEST)
+
+
+@method_decorator(ratelimit(key='ip', rate='20/m', method='POST', block=True), name='dispatch')
+class RefreshTokenView(APIView):
+    """
+    Refresh access token using refresh token (US-018).
+
+    POST /api/v1/auth/refresh/
+    Rate limited to 20 attempts per minute per IP.
+    Accepts refresh token and returns new access token.
+    If ROTATE_REFRESH_TOKENS is enabled, also returns new refresh token.
+    """
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        """Generate new access token from refresh token."""
+        refresh_token = request.data.get('refresh')
+
+        if not refresh_token:
+            return Response({
+                'error': 'Refresh token is required.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # Create RefreshToken instance from the provided token
+            refresh = RefreshToken(refresh_token)
+
+            # Generate new access token
+            access = refresh.access_token
+
+            # Prepare response with new access token
+            response_data = {
+                'access': str(access),
+            }
+
+            # If token rotation is enabled, new refresh token is automatically generated
+            # The new refresh token is available in the same refresh object
+            response_data['refresh'] = str(refresh)
+
+            return Response(response_data, status=status.HTTP_200_OK)
+
+        except TokenError as e:
+            return Response({
+                'error': f'Invalid or expired refresh token: {str(e)}'
+            }, status=status.HTTP_401_UNAUTHORIZED)

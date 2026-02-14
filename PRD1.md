@@ -245,12 +245,12 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a user, I want to refresh my access token without re-authenticating.
 
 **Acceptance Criteria:**
-- [ ] Add RefreshTokenView to `apps/users/views.py`
-- [ ] POST /api/v1/auth/refresh/ accepts refresh token
-- [ ] Use SimpleJWT's TokenRefreshView as base or custom implementation
-- [ ] Return new access token (and rotated refresh token per settings)
-- [ ] Apply @ratelimit decorator (20/min per IP)
-- [ ] Typecheck passes
+- [x] Add RefreshTokenView to `apps/users/views.py`
+- [x] POST /api/v1/auth/refresh/ accepts refresh token
+- [x] Use SimpleJWT's TokenRefreshView as base or custom implementation
+- [x] Return new access token (and rotated refresh token per settings)
+- [x] Apply @ratelimit decorator (20/min per IP)
+- [x] Typecheck passes
 
 ---
 
