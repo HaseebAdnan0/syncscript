@@ -60,3 +60,23 @@
   - Verify routing with: from apps.vaults.routing import websocket_urlpatterns
   - AsyncWebsocketConsumer.disconnect parameter must be named 'code' not 'close_code'
 ---
+## Iteration 5 - US-005: Implement JWT authentication middleware for WebSockets
+- Created apps/vaults/middleware.py with JWTAuthMiddleware class
+  - Extends BaseMiddleware from channels.middleware
+  - Extracts JWT token from query string parameter (?token=xxx)
+  - Validates token using rest_framework_simplejwt.tokens.AccessToken
+  - Sets scope["user"] to authenticated User or AnonymousUser
+  - Handles TokenError, User.DoesNotExist, and generic exceptions gracefully
+- Updated config/asgi.py to wrap URLRouter with JWTAuthMiddleware
+- Files changed: backend/apps/vaults/middleware.py (new), backend/config/asgi.py, PRD5.md
+- Verified middleware imports successfully and ASGI application loads
+- Tested token handling: empty, invalid, and malformed tokens all return AnonymousUser
+- Typecheck passes (0 errors, 0 warnings)
+- Learnings for future iterations:
+  - BaseMiddleware.__call__ signature requires type: ignore[override] and type: ignore[arg-type] for Pyright compatibility
+  - Must use django.setup() before importing models in standalone test scripts
+  - AccessToken constructor needs type: ignore[arg-type] annotation
+  - Use type: ignore[import-not-found] for local app imports, type: ignore[import-untyped] for third-party untyped packages
+  - Parse query string with urllib.parse.parse_qs, returns dict[str, list[str]]
+  - database_sync_to_async decorator enables async database queries in middleware
+---
