@@ -53,3 +53,34 @@ Learnings for future iterations:
 
 ---
 
+## Iteration 3 - US-003: Implement ISBN metadata lookup service
+- Created apps/citations/services/isbn_lookup.py with OpenLibrary API integration
+- Implemented normalize_isbn() function:
+  - Handles ISBN-10 and ISBN-13 formats
+  - Removes hyphens and spaces automatically
+  - Validates 978/979 prefix for ISBN-13
+  - Accepts check digit X for ISBN-10
+- Implemented fetch_isbn_metadata() function:
+  - Calls OpenLibrary API with urllib (standard library)
+  - Extracts: title, authors, publication_date, publisher, edition, pages, ISBN-10, ISBN-13
+  - Returns None on API failure or invalid ISBN (graceful error handling)
+  - Handles various date formats and extracts year
+  - Handles publisher as both string and dict
+- Added 17 comprehensive unit tests:
+  - ISBN normalization tests (10 tests)
+  - Metadata fetch tests with mocked API (7 tests)
+  - All edge cases covered: missing fields, API errors, invalid ISBNs
+- Tests: All 17 tests pass
+- Typecheck: Passes with 0 errors
+- Files changed: backend/apps/citations/services/isbn_lookup.py, backend/apps/citations/tests.py
+- Committed: 6b8b31b
+
+Learnings for future iterations:
+- OpenLibrary API uses simple REST, no external library needed (urllib.request)
+- Publisher field can be string or dict, need to handle both formats
+- Publication dates come in various formats, extract year with regex for consistency
+- ISBN-10 can have X as check digit (uppercase normalized)
+- Using context manager with urlopen for proper resource cleanup
+
+---
+

@@ -46,11 +46,11 @@ This feature uses Claude as the AI backbone with a simple chunking strategy (no 
 **Description:** As a developer, I need to rate limit AI requests so we control API costs.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/ai/decorators.py` with `@ai_rate_limit` decorator
-- [ ] Decorator checks `get_remaining_requests(user)` before allowing request
-- [ ] Returns 429 with `{"error": "AI request limit reached", "resets_at": "<timestamp>", "cached_available": true}` when exceeded
-- [ ] Decorator is reusable across all AI views
-- [ ] Typecheck passes
+- [x] Create `apps/ai/decorators.py` with `@ai_rate_limit` decorator
+- [x] Decorator checks `get_remaining_requests(user)` before allowing request
+- [x] Returns 429 with `{"error": "AI request limit reached", "resets_at": "<timestamp>", "cached_available": true}` when exceeded
+- [x] Decorator is reusable across all AI views
+- [x] Typecheck passes
 
 ### US-004: Implement Claude client service
 **Description:** As a developer, I need a wrapper for Claude API calls with consistent error handling.
