@@ -558,3 +558,38 @@
   - All major sections already had proper animations from previous iterations
   - Build verification confirms no runtime errors with animation setup
 ---
+
+## Iteration 21 - US-021: Add SEO Metadata and OG Tags
+- Added comprehensive metadata export to (marketing)/layout.tsx (Server Component)
+- Metadata configuration includes:
+  - Page title: "SyncScript - Collaborative Research Reimagined"
+  - Meta description: 157 characters (under 160 char limit)
+  - Keywords array for SEO targeting
+  - Robots meta allowing indexing with specific googleBot settings
+  - Open Graph tags for rich social media previews:
+    - og:type, og:locale, og:url, og:siteName
+    - og:title, og:description
+    - og:image with 1200x630 dimensions (placeholder /og-image.png)
+  - Twitter Card tags (summary_large_image):
+    - twitter:card, twitter:title, twitter:description
+    - twitter:images, twitter:creator (@syncscript)
+  - Canonical URL: https://syncscript.com
+  - Google verification code placeholder
+- Page.tsx uses 'use client' directive, so metadata must be in layout.tsx (Server Component)
+- Next.js App Router requires metadata exports from Server Components only
+- Typecheck passes successfully
+- Files changed:
+  - Modified: `frontend/src/app/(marketing)/layout.tsx` (added metadata export)
+  - Modified: `PRD16.md` (marked US-021 complete)
+- Learnings for future iterations:
+  - Next.js metadata API requires Server Components (can't use with 'use client')
+  - Metadata in layout.tsx applies to all child pages in the route group
+  - Open Graph image should be 1200x630 for optimal social sharing
+  - Twitter card type 'summary_large_image' provides best previews
+  - Robots meta with googleBot config allows fine-grained control over indexing
+  - Description should be compelling and under 160 chars for search engine truncation
+  - Metadata type import from 'next' provides full TypeScript support
+  - Keywords still useful for some search engines despite Google deprecation
+  - Canonical URL prevents duplicate content penalties
+  - Placeholder paths (/og-image.png) noted for future asset creation
+---

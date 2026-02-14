@@ -36,6 +36,8 @@ class User(AbstractUser):
             ('skipped', 'Skipped'),
         ]
     )
+    onboarding_started_at = models.DateTimeField(blank=True, null=True)
+    onboarding_completed_at = models.DateTimeField(blank=True, null=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']

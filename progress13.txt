@@ -727,3 +727,49 @@ vaults/{vault_id}/thumbnails/{uuid}.jpg
   - Django shell can verify task imports: from apps.sources.tasks import task_name
 ---
 
+## Iteration 23 - Add upload API tests (US-023)
+- Added comprehensive test suite for new upload functionality
+- Test implementation in backend/apps/sources/tests/test_validators.py:
+  - TestImageValidation class with 4 tests:
+    - test_valid_png_passes_validation: Uses minimal valid PNG (1x1 pixel)
+    - test_valid_jpg_passes_validation: Uses minimal valid JPEG (1x1 pixel)
+    - test_non_image_file_raises_validation_error: Rejects text files
+    - test_image_exceeding_size_limit_raises_validation_error: Validates 10MB limit
+  - All image validation tests follow same pattern as existing PDF validation tests
+- Test implementation in backend/apps/sources/tests/test_views.py:
+  - MultipartAbortTest class with 3 tests:
+    - test_abort_multipart_upload_success: Mocks abort function, verifies 200 response
+    - test_abort_multipart_upload_invalid_file_key: Tests 400 for invalid format
+    - test_abort_multipart_upload_permission_denied: Tests 403 for unauthorized users
+  - StorageQuotaTest class with 4 tests:
+    - test_check_storage_quota_under_limit: Tests 50% usage (no warning)
+    - test_check_storage_quota_warning_threshold: Tests 85% usage (warning=True)
+    - test_check_storage_quota_exceeded: Tests 105% usage (exceeded=True)
+    - test_upload_blocked_when_quota_exceeded: Mocks quota check, verifies 413 response
+  - VirusScannerTest class with 1 test:
+    - test_virus_scanner_stub_returns_clean: Verifies stub returns is_clean=True
+- Test fixes and discoveries:
+  - VaultStorageUsage uses total_bytes field (not used_bytes)
+  - abort_multipart_upload called with keyword arguments in views
+  - Mock assertions need keyword arguments to match actual calls
+  - scan_time_ms can be int or float (stub returns 0)
+  - Response message has period: 'Multipart upload aborted successfully.'
+- All 12 new tests pass successfully
+- Pre-existing test failures in sources app are unrelated to US-023 changes
+- Typecheck passes (no errors in test files, only pre-existing Django model issues)
+- Files changed:
+  - backend/apps/sources/tests/test_validators.py (added TestImageValidation class)
+  - backend/apps/sources/tests/test_views.py (added 3 test classes)
+  - PRD13.md (marked US-023 complete)
+  - progress13.txt
+- Learnings for future iterations:
+  - Test minimal valid image files (PNG/JPEG) can be created with binary literals
+  - PNG signature: b'\x89PNG\r\n\x1a\n'
+  - JPEG signature: b'\xff\xd8\xff\xe0'
+  - VaultStorageUsage.total_bytes is the correct field name (documented in model)
+  - Mock.assert_called_once_with() requires exact match including keyword arguments
+  - Storage quota tests should use model field names directly from VaultStorageUsage
+  - Image validation follows same pattern as PDF validation (magic numbers, size checks)
+  - Test database can be preserved with --keepdb flag for faster iteration
+---
+

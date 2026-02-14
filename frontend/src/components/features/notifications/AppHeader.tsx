@@ -112,6 +112,22 @@ export function AppHeader({ vaultId, onSearchClick }: AppHeaderProps) {
             </h1>
           </Link>
 
+          {/* Search Button */}
+          {onSearchClick && (
+            <button
+              onClick={onSearchClick}
+              className="group relative flex items-center gap-3 px-4 py-2 rounded-full backdrop-blur-lg bg-white/5 border border-white/10 hover:border-[#F7931A]/50 hover:bg-white/10 transition-all focus:outline-none focus:ring-2 focus:ring-[#F7931A] focus:ring-offset-2 focus:ring-offset-[#0F1115]"
+              aria-label="Search"
+            >
+              <Search className="h-5 w-5 text-white/80 group-hover:text-[#F7931A] transition-colors" />
+              <span className="text-sm text-white/60 hidden sm:block">Search...</span>
+              <kbd className="hidden lg:flex items-center gap-1 px-2 py-1 text-xs font-mono text-white/40 bg-white/5 rounded border border-white/10">
+                <span>{typeof navigator !== 'undefined' && navigator.platform.toUpperCase().indexOf('MAC') >= 0 ? '⌘' : 'Ctrl'}</span>
+                <span>K</span>
+              </kbd>
+            </button>
+          )}
+
           {/* Right section: Notifications + User Menu + Connection Status */}
           <div className="flex items-center gap-6">
             {/* Notification Bell */}

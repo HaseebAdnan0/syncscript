@@ -17,7 +17,7 @@ interface AppLayoutProps {
 export default function AppLayout({ children }: AppLayoutProps) {
   const router = useRouter();
   const { user, isLoading } = useAuthStore();
-  const { isOpen, close } = useGlobalSearchShortcut();
+  const { isOpen, open, close } = useGlobalSearchShortcut();
   const [showVerificationModal, setShowVerificationModal] = useState(false);
 
   // Listen for email verification requirement from API interceptor
@@ -63,7 +63,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
 
   return (
     <div className="min-h-screen bg-[#030304]">
-      <AppHeader />
+      <AppHeader onSearchClick={open} />
       <div className="flex">
         <Sidebar />
         <main className="flex-1 min-h-[calc(100vh-72px)]">{children}</main>

@@ -437,3 +437,27 @@ In Progress - US-004 complete
 - Process was killed
 ---
 
+
+## Iteration 17 - US-017: Signal Handler for Mention Notifications (Verification)
+- Task was already completed in previous session
+- Verified mention notification logic integrated into annotation_created signal handler (signals.py lines 195-239)
+- Signal extracts @mentions using extract_mentions() from mentions.py
+- Creates mention notification for each mentioned vault member via resolve_mentions()
+- Prevents self-mentions (instance.user.id check)
+- Prevents duplicate notifications if mentioned user is also annotation reply recipient
+- Comprehensive test suite exists in test_mention_signal.py with 7 test cases:
+  - Single and multiple mentions
+  - Self-mention prevention
+  - Duplicate prevention when mentioned user is parent annotation author
+  - Respects email_mentions preference
+  - Ignores non-vault members
+  - Handles both annotation_reply and mention in same annotation
+- All acceptance criteria met
+- Files: backend/apps/notifications/signals.py, test_mention_signal.py, PRD19.md
+- Learnings for future iterations:
+  - Mention notification signal integrated into annotation_created handler (not separate handler)
+  - already_notified_user_id tracks annotation_reply recipient to prevent duplicates
+  - resolve_mentions() automatically filters to vault members only
+  - Both annotation_reply and mention notifications can be created from same annotation
+  - Always check existing signal handlers before creating new ones
+---
