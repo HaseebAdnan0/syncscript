@@ -911,3 +911,49 @@ Learnings for future iterations:
 - Info boxes: bg-[#F7931A]/10 with border-[#F7931A]/20 for tips and warnings
 - Vault update form: track multiple fields for hasChanges detection
 ---
+
+## Iteration 23 - US-021: Handle BibTeX special character escaping
+- Created apps/citations/bibtex_utils.py with comprehensive BibTeX utilities
+- Implemented escape_bibtex() function:
+  - Escapes special LaTeX characters: &, %, $, #, _, {, }, ~, ^, \
+  - Prevents LaTeX compilation errors
+- Implemented escape_unicode() function:
+  - Converts Unicode diacritics to LaTeX macros: é → {\'e}, ü → {\"u}
+  - Supports 60+ common Unicode characters: acute, grave, circumflex, umlaut, tilde, cedilla, Nordic, German ß
+  - Handles smart quotes, dashes, ellipsis for academic citations
+- Implemented generate_bibtex_key() function:
+  - Generates valid BibTeX keys in AuthorYear format (e.g., "Smith2024")
+  - Handles multiple authors: 2-3 authors concatenate surnames, >3 authors add "Etal" suffix
+  - Extracts last names from "Last, First" or "First Last" formats
+  - Handles duplicates with a/b/c suffixes (e.g., "Smith2024a", "Smith2024b")
+  - Uses first word of title when no author provided
+  - Extracts 4-digit year from various date formats
+- Implemented format_bibtex_value() function:
+  - Combines escape_bibtex and escape_unicode for complete formatting
+  - Order matters: escape special chars BEFORE Unicode to avoid escaping LaTeX commands
+  - Optional escape_special parameter for cases where braces should remain unescaped
+- Created 37 comprehensive unit tests covering:
+  - 11 tests for escape_bibtex (all special characters, edge cases)
+  - 10 tests for escape_unicode (all diacritic types, smart quotes, dashes, ellipsis)
+  - 11 tests for generate_bibtex_key (single/multiple authors, duplicates, special chars)
+  - 5 tests for format_bibtex_value (combined escaping, Unicode, special chars)
+- All 37 tests pass
+- Typecheck: 0 errors on bibtex_utils.py
+- Files changed:
+  - backend/apps/citations/bibtex_utils.py (new, 262 lines)
+  - backend/apps/citations/tests.py (+193 lines, 37 new tests)
+  - PRD14.md: Marked US-021 complete
+- Committed: (next)
+
+Learnings for future iterations:
+- Raw strings vs regular strings: r"{\'e}" creates TWO backslashes (\'), regular "{\'e}" creates one (\')
+- Python string escaping in tests: must match actual output, not LaTeX source format
+- Order of operations matters: escape special chars BEFORE Unicode conversion to avoid double-escaping LaTeX commands
+- Unicode characters in source code can have encoding issues, use \uXXXX escape sequences instead
+- BibTeX key format: AuthorYear (e.g., Smith2024), multiple authors concatenate or add "Etal"
+- LaTeX diacritics: {\'e} for acute, {\"u} for umlaut, {\~n} for tilde, {\aa} for å
+- Smart quotes/dashes: use Unicode escape sequences (\u201c, \u2014) for cross-platform compatibility
+- BibTeX escaping is critical for LaTeX compilation - missing escapes cause compilation errors
+- Author name parsing: handle both "Last, First" and "First Last" formats by checking for comma
+- Duplicate key handling: append a-z suffixes, then numeric if all letters exhausted
+---

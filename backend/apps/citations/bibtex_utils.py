@@ -76,47 +76,47 @@ def escape_unicode(text: str) -> str:
     # Common Unicode to LaTeX mappings for academic citations
     unicode_map = {
         # Acute accents
-        'á': r"{\\'a}", 'é': r"{\\'e}", 'í': r"{\\'i}", 'ó': r"{\\'o}", 'ú': r"{\\'u}",
-        'Á': r"{\\'A}", 'É': r"{\\'E}", 'Í': r"{\\'I}", 'Ó': r"{\\'O}", 'Ú': r"{\\'U}",
-        'ý': r"{\\'y}", 'Ý': r"{\\'Y}",
+        'á': "{\\'a}", 'é': "{\\'e}", 'í': "{\\'i}", 'ó': "{\\'o}", 'ú': "{\\'u}",
+        'Á': "{\\'A}", 'É': "{\\'E}", 'Í': "{\\'I}", 'Ó': "{\\'O}", 'Ú': "{\\'U}",
+        'ý': "{\\'y}", 'Ý': "{\\'Y}",
 
         # Grave accents
-        'à': r"{\\`a}", 'è': r"{\\`e}", 'ì': r"{\\`i}", 'ò': r"{\\`o}", 'ù': r"{\\`u}",
-        'À': r"{\\`A}", 'È': r"{\\`E}", 'Ì': r"{\\`I}", 'Ò': r"{\\`O}", 'Ù': r"{\\`U}",
+        'à': "{\\`a}", 'è': "{\\`e}", 'ì': "{\\`i}", 'ò': "{\\`o}", 'ù': "{\\`u}",
+        'À': "{\\`A}", 'È': "{\\`E}", 'Ì': "{\\`I}", 'Ò': "{\\`O}", 'Ù': "{\\`U}",
 
         # Circumflex
-        'â': r"{\\^a}", 'ê': r"{\\^e}", 'î': r"{\\^i}", 'ô': r"{\\^o}", 'û': r"{\\^u}",
-        'Â': r"{\\^A}", 'Ê': r"{\\^E}", 'Î': r"{\\^I}", 'Ô': r"{\\^O}", 'Û': r"{\\^U}",
+        'â': "{\\^a}", 'ê': "{\\^e}", 'î': "{\\^i}", 'ô': "{\\^o}", 'û': "{\\^u}",
+        'Â': "{\\^A}", 'Ê': "{\\^E}", 'Î': "{\\^I}", 'Ô': "{\\^O}", 'Û': "{\\^U}",
 
         # Umlaut
-        'ä': r'{\\"a}', 'ë': r'{\\"e}', 'ï': r'{\\"i}', 'ö': r'{\\"o}', 'ü': r'{\\"u}',
-        'Ä': r'{\\"A}', 'Ë': r'{\\"E}', 'Ï': r'{\\"I}', 'Ö': r'{\\"O}', 'Ü': r'{\\"U}',
-        'ÿ': r'{\\"y}', 'Ÿ': r'{\\"Y}',
+        'ä': '{\\"a}', 'ë': '{\\"e}', 'ï': '{\\"i}', 'ö': '{\\"o}', 'ü': '{\\"u}',
+        'Ä': '{\\"A}', 'Ë': '{\\"E}', 'Ï': '{\\"I}', 'Ö': '{\\"O}', 'Ü': '{\\"U}',
+        'ÿ': '{\\"y}', 'Ÿ': '{\\"Y}',
 
         # Tilde
-        'ñ': r'{\\~n}', 'Ñ': r'{\\~N}',
-        'ã': r'{\\~a}', 'õ': r'{\\~o}',
-        'Ã': r'{\\~A}', 'Õ': r'{\\~O}',
+        'ñ': '{\\~n}', 'Ñ': '{\\~N}',
+        'ã': '{\\~a}', 'õ': '{\\~o}',
+        'Ã': '{\\~A}', 'Õ': '{\\~O}',
 
         # Cedilla
-        'ç': r'{\\c{c}}', 'Ç': r'{\\c{C}}',
+        'ç': '{\\c{c}}', 'Ç': '{\\c{C}}',
 
         # Nordic
-        'å': r'{\\aa}', 'Å': r'{\\AA}',
-        'ø': r'{\\o}', 'Ø': r'{\\O}',
-        'æ': r'{\\ae}', 'Æ': r'{\\AE}',
+        'å': '{\\aa}', 'Å': '{\\AA}',
+        'ø': '{\\o}', 'Ø': '{\\O}',
+        'æ': '{\\ae}', 'Æ': '{\\AE}',
 
         # German sharp s
-        'ß': r'{\\ss}',
+        'ß': '{\\ss}',
 
         # Other common academic characters
-        '–': r'--',  # En dash
-        '—': r'---',  # Em dash
-        ''': r"`",  # Left single quote
-        ''': r"'",  # Right single quote
-        '"': r"``",  # Left double quote
-        '"': r"''",  # Right double quote
-        '…': r'{\\ldots}',  # Ellipsis
+        '\u2013': '--',  # En dash
+        '\u2014': '---',  # Em dash
+        '\u2018': "`",  # Left single quote
+        '\u2019': "'",  # Right single quote
+        '\u201c': "``",  # Left double quote
+        '\u201d': "''",  # Right double quote
+        '\u2026': '{\\ldots}',  # Ellipsis
     }
 
     result = text
@@ -252,11 +252,12 @@ def format_bibtex_value(value: str, escape_special: bool = True) -> str:
 
     result = value
 
-    # First handle Unicode characters
-    result = escape_unicode(result)
-
-    # Then escape special characters (if enabled)
+    # First escape special characters (if enabled), BEFORE Unicode conversion
+    # This prevents escaping LaTeX commands created by Unicode conversion
     if escape_special:
         result = escape_bibtex(result)
+
+    # Then handle Unicode characters (creates LaTeX commands with braces)
+    result = escape_unicode(result)
 
     return result

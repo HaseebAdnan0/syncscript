@@ -270,12 +270,12 @@ SyncScript's AI-powered citation generation system enables researchers to genera
 **Description:** As a researcher, I need BibTeX exports to properly escape special characters so they compile correctly in LaTeX.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/citations/utils/bibtex.py` with escape utilities
-- [ ] Escape: `&` → `\&`, `%` → `\%`, `$` → `\$`, `#` → `\#`, `_` → `\_`, `{` → `\{`, `}` → `\}`
-- [ ] Handle Unicode characters (é → `{\'e}`, ü → `{\"u}`, etc.)
-- [ ] Generate valid BibTeX keys: `AuthorYear` format, handle duplicates with a/b/c suffix
-- [ ] Unit tests for escaping edge cases
-- [ ] Typecheck passes
+- [x] Create `apps/citations/bibtex_utils.py` with escape utilities
+- [x] Escape: `&` → `\&`, `%` → `\%`, `$` → `\$`, `#` → `\#`, `_` → `\_`, `{` → `\{`, `}` → `\}`
+- [x] Handle Unicode characters (é → `{\'e}`, ü → `{\"u}`, etc.)
+- [x] Generate valid BibTeX keys: `AuthorYear` format, handle duplicates with a/b/c suffix
+- [x] Unit tests for escaping edge cases (37 tests pass)
+- [x] Typecheck passes
 
 ### US-022: Add metadata enrichment on source creation
 **Description:** As a researcher, I want sources with DOIs or ISBNs to automatically fetch metadata when added so citations are accurate from the start.
