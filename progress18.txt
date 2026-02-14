@@ -634,3 +634,33 @@
   - Dev server starts successfully with no build errors
 ---
 
+## Iteration 30 - US-032: Create SearchPagination component
+- Created SearchPagination.tsx with pagination controls for search results
+- Shows "Showing page X of Y · Z total results" info
+- Previous/Next buttons with ChevronLeft/Right icons
+- Page number buttons for nearby pages (max 7 visible)
+- Active page highlighted with orange gradient background and shadow
+- Disabled state styling for Previous (page 1) and Next (last page) buttons
+- Smart page number display: always show first/last, show ellipsis (...) when pages exceed max visible
+- Pagination calculation: current page ± 1 range with ellipsis for gaps
+- onPageChange callback updates parent state and scrolls to top with smooth behavior
+- Returns null when totalPages <= 1 or totalResults === 0 (hide pagination when not needed)
+- Responsive design: hide "Previous"/"Next" text on small screens, show only icons
+- Bitcoin aesthetic: orange gradient for active page, white/80 hover states, border-white/10
+- Files changed:
+  - frontend/src/components/features/search/SearchPagination.tsx (created)
+  - PRD18.md (marked US-032 complete)
+- Learnings for future iterations:
+  - Pagination pattern: getPageNumbers() function generates array with numbers and 'ellipsis' markers
+  - Smart page display logic: if totalPages <= maxVisible show all, else show first + range around current + last with ellipses
+  - Ellipsis rendering: map over page array, check for 'ellipsis' string, render ... with text-white/40
+  - Active page styling: conditional className checks page === currentPage for gradient background
+  - Disabled button pattern: disabled prop + opacity-40 + cursor-not-allowed in className
+  - window.scrollTo({ top: 0, behavior: 'smooth' }) for smooth scroll to top on page change
+  - Pagination hidden when not needed: early return null if totalPages <= 1 || totalResults === 0
+  - ARIA labels: aria-label for buttons, aria-current="page" for active page button
+  - ChevronLeft/Right icons from lucide-react for navigation arrows
+  - Typecheck passes successfully with no errors
+  - Component is ready for integration into search page (US-030)
+---
+

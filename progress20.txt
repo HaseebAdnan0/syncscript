@@ -572,3 +572,46 @@
   - Deletion flow proceeds normally after custom message (no special handling needed)
   - Manual verification checklist covers: demo detection, custom message display, styling, standard flow
 ---
+
+## Iteration 25 - Mobile-responsive onboarding modals (US-024)
+- Enhanced WelcomeModal with mobile-first responsive design:
+  - Full-screen on mobile: max-md:w-screen max-md:h-screen max-md:max-w-none
+  - Responsive text sizes: text-2xl md:text-4xl for headings
+  - Touch-friendly button targets: min-h-[44px] on all buttons
+- Enhanced PathSelection with mobile optimizations:
+  - Responsive padding: p-4 md:p-6
+  - Touch-friendly card sizes: min-h-[200px]
+  - Active state feedback: active:scale-95 for touch feedback
+  - Responsive text: text-xl md:text-2xl for titles
+- Enhanced GuidedVaultWizard with mobile stacking:
+  - Responsive padding throughout: p-6 md:p-8
+  - Progress indicator sizing: w-7 h-7 md:w-8 md:h-8
+  - Button layout stacks on mobile: flex-col md:flex-row
+  - Order control for better UX: order-1 md:order-2 (primary actions first on mobile)
+  - All buttons have min-h-[44px] for touch targets
+- Enhanced CompletionCelebration with mobile scrolling:
+  - Scrollable container: max-h-[90vh] overflow-y-auto
+  - Responsive padding: p-6 md:p-12
+  - Touch-friendly action cards: min-h-[120px] active:scale-95
+  - Responsive grid gaps: gap-4 md:gap-6
+- Enhanced TutorialProvider with dynamic mobile sizing:
+  - Dynamic tooltip width: 300px on mobile, 380px on desktop
+  - Dynamic padding and font sizes based on window.innerWidth < 768
+  - Touch-friendly button targets: minHeight: '44px' on all buttons
+  - Responsive button padding: 0.625rem 1.25rem on mobile
+- All components tested with responsive breakpoints (md: 768px)
+- Files changed: WelcomeModal.tsx, PathSelection.tsx, GuidedVaultWizard.tsx, CompletionCelebration.tsx, TutorialProvider.tsx, PRD20.md, progress20.txt
+- Typecheck passes
+- Learnings for future iterations:
+  - Mobile-first pattern: max-md: modifiers for mobile-specific overrides
+  - Full-screen modal on mobile: max-md:w-screen max-md:h-screen max-md:max-w-none max-md:rounded-none
+  - Touch target size: min-h-[44px] is iOS/Android standard for accessibility
+  - Active state feedback: active:scale-95 provides tactile feedback on touch
+  - Button stacking on mobile: flex-col md:flex-row with order-1/order-2 for primary action first
+  - Responsive text pattern: text-base md:text-lg for progressive enhancement
+  - Dynamic styles in TutorialProvider: typeof window !== 'undefined' && window.innerWidth check
+  - Confetti already performs well on mobile (no changes needed)
+  - Grid gap responsive: gap-4 md:gap-6 maintains spacing on small screens
+  - Scrollable container: max-h-[90vh] overflow-y-auto prevents content cutoff
+  - Padding reduction on mobile: p-6 md:p-8 saves screen space
+---

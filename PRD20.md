@@ -324,14 +324,14 @@ Create a comprehensive new user onboarding experience for SyncScript that guides
 **Description:** As a mobile user, I want onboarding to work well on my device.
 
 **Acceptance Criteria:**
-- [ ] All onboarding modals are full-screen on mobile (< 768px)
-- [ ] Touch-friendly button sizes (min 44px tap targets)
-- [ ] Wizard steps stack vertically on mobile
-- [ ] Tutorial tooltips position correctly on mobile
-- [ ] Confetti animation performs well on mobile
-- [ ] Test on iOS Safari and Android Chrome viewports
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] All onboarding modals are full-screen on mobile (< 768px)
+- [x] Touch-friendly button sizes (min 44px tap targets)
+- [x] Wizard steps stack vertically on mobile
+- [x] Tutorial tooltips position correctly on mobile
+- [x] Confetti animation performs well on mobile
+- [x] Test on iOS Safari and Android Chrome viewports
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-025: Basic onboarding analytics tracking
 **Description:** As a product owner, I want to track basic onboarding metrics so I can measure effectiveness.

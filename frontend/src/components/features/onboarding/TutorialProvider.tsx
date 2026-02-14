@@ -71,14 +71,14 @@ export function TutorialProvider({
     },
     tooltipTitle: {
       color: '#FFFFFF',
-      fontSize: '1.125rem',
+      fontSize: typeof window !== 'undefined' && window.innerWidth < 768 ? '1rem' : '1.125rem',
       fontWeight: '700',
       marginBottom: '0.5rem',
       fontFamily: 'var(--font-heading, "Space Grotesk", sans-serif)',
     },
     tooltipContent: {
       color: '#94A3B8', // Stardust (muted text)
-      fontSize: '0.875rem',
+      fontSize: typeof window !== 'undefined' && window.innerWidth < 768 ? '0.8125rem' : '0.875rem',
       lineHeight: '1.5',
       padding: '0.5rem 0',
       fontFamily: 'var(--font-body, "Inter", sans-serif)',
@@ -90,12 +90,13 @@ export function TutorialProvider({
       color: '#FFFFFF',
       fontSize: '0.875rem',
       fontWeight: '700',
-      padding: '0.625rem 1.5rem',
+      padding: typeof window !== 'undefined' && window.innerWidth < 768 ? '0.625rem 1.25rem' : '0.625rem 1.5rem',
       textTransform: 'uppercase',
       letterSpacing: '0.05em',
       border: 'none',
       boxShadow: '0 0 20px -5px rgba(234, 88, 12, 0.5)',
       transition: 'transform 0.2s',
+      minHeight: '44px',
     },
     buttonBack: {
       color: '#94A3B8',
@@ -104,6 +105,8 @@ export function TutorialProvider({
       marginRight: '1rem',
       border: 'none',
       background: 'transparent',
+      minHeight: '44px',
+      padding: '0.5rem 1rem',
     },
     buttonSkip: {
       color: '#94A3B8',
@@ -111,6 +114,8 @@ export function TutorialProvider({
       fontWeight: '600',
       border: 'none',
       background: 'transparent',
+      minHeight: '44px',
+      padding: '0.5rem 1rem',
     },
     buttonClose: {
       color: '#94A3B8',

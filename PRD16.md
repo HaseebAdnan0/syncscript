@@ -295,14 +295,14 @@ Create SyncScript's production landing page following the Bitcoin DeFi aesthetic
 **Description:** As a marketer, I need proper SEO so the page ranks well and shares nicely on social.
 
 **Acceptance Criteria:**
-- [ ] Add metadata export to `(marketing)/page.tsx`
-- [ ] Title: "SyncScript - Collaborative Research Reimagined"
-- [ ] Description: compelling meta description under 160 chars
-- [ ] OG image placeholder (1200x630 dimensions noted)
-- [ ] Twitter card meta tags
-- [ ] Canonical URL
-- [ ] Add robots meta allowing indexing
-- [ ] Typecheck passes
+- [x] Add metadata export to `(marketing)/page.tsx`
+- [x] Title: "SyncScript - Collaborative Research Reimagined"
+- [x] Description: compelling meta description under 160 chars
+- [x] OG image placeholder (1200x630 dimensions noted)
+- [x] Twitter card meta tags
+- [x] Canonical URL
+- [x] Add robots meta allowing indexing
+- [x] Typecheck passes
 
 ### US-022: Optimize Performance and Lazy Loading
 **Description:** As a user, I want fast page loads so I don't bounce before seeing the content.

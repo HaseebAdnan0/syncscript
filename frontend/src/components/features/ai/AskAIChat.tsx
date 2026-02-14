@@ -2,36 +2,26 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Send, Sparkles } from 'lucide-react';
-
-// Types matching backend ChatMessage model
-interface Citation {
-  source_id: number;
-  source_title: string;
-  excerpt: string;
-}
-
-interface ChatMessageType {
-  id: number;
-  role: 'user' | 'assistant';
-  content: string;
-  sources_cited: Citation[];
-  created_at: string;
-}
+import { ChatMessage as ChatMessageType } from '@/lib/types/vault';
 
 interface AskAIChatProps {
   vaultId: number;
   conversationId?: number;
   onNewConversation?: (conversationId: number) => void;
+  messages: ChatMessageType[];
+  onSendMessage: (question: string) => Promise<void>;
+  isLoading: boolean;
 }
 
 export default function AskAIChat({
-  vaultId: _vaultId, // Will be used in US-021 API integration
-  conversationId,
-  onNewConversation
+  vaultId: _vaultId, // Keep for future use
+  conversationId: _conversationId, // Keep for future use
+  onNewConversation: _onNewConversation, // Keep for future use
+  messages,
+  onSendMessage,
+  isLoading
 }: AskAIChatProps) {
-  const [messages, setMessages] = useState<ChatMessageType[]>([]);
   const [inputValue, setInputValue] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to latest message
@@ -44,44 +34,8 @@ export default function AskAIChat({
 
     const userMessage = inputValue.trim();
     setInputValue('');
-    setIsLoading(true);
 
-    // Optimistically add user message to UI
-    const optimisticUserMessage: ChatMessageType = {
-      id: Date.now(), // temporary ID
-      role: 'user',
-      content: userMessage,
-      sources_cited: [],
-      created_at: new Date().toISOString(),
-    };
-    setMessages((prev) => [...prev, optimisticUserMessage]);
-
-    try {
-      // TODO: Replace with actual API call in US-021
-      // const response = await askQuestion(vaultId, userMessage, conversationId);
-
-      // Simulated response for now
-      const mockAssistantMessage: ChatMessageType = {
-        id: Date.now() + 1,
-        role: 'assistant',
-        content: 'This is a placeholder response. The actual API integration will be added in US-021.',
-        sources_cited: [],
-        created_at: new Date().toISOString(),
-      };
-
-      setMessages((prev) => [...prev, mockAssistantMessage]);
-
-      // Call onNewConversation if conversation was just created
-      if (!conversationId && onNewConversation) {
-        onNewConversation(123); // Mock conversation ID
-      }
-    } catch (error) {
-      console.error('Error sending message:', error);
-      // Remove optimistic message on error
-      setMessages((prev) => prev.slice(0, -1));
-    } finally {
-      setIsLoading(false);
-    }
+    await onSendMessage(userMessage);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -92,13 +46,7 @@ export default function AskAIChat({
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#0F1115] border border-white/10 rounded-2xl">
-      {/* Header */}
-      <div className="flex items-center gap-3 px-6 py-4 border-b border-white/10">
-        <Sparkles className="w-5 h-5 text-[#F7931A]" />
-        <h3 className="text-lg font-heading font-bold text-white">Ask AI</h3>
-      </div>
-
+    <div className="flex flex-col h-full">
       {/* Messages List */}
       <div className="flex-1 overflow-y-auto p-6 space-y-4">
         {messages.length === 0 ? (
