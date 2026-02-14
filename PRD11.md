@@ -103,15 +103,15 @@ Replace stub email implementation with production-ready email system using Hosti
 **Description:** As a user, I want to receive a branded password reset email with security notice.
 
 **Acceptance Criteria:**
-- [ ] Create `templates/emails/password_reset.html` extending base.html
-- [ ] Preheader: "Reset your SyncScript password"
-- [ ] Security notice: "We received a request to reset your password"
-- [ ] Orange CTA button: "Reset Password" linking to reset URL
-- [ ] "Link expires in 1 hour" notice
-- [ ] "If you didn't request this, ignore this email" security text
-- [ ] IP address and timestamp of request (passed as context)
-- [ ] Create `templates/emails/password_reset.txt` plaintext version
-- [ ] Typecheck passes
+- [x] Create `templates/emails/password_reset.html` extending base.html
+- [x] Preheader: "Reset your SyncScript password"
+- [x] Security notice: "We received a request to reset your password"
+- [x] Orange CTA button: "Reset Password" linking to reset URL
+- [x] "Link expires in 1 hour" notice
+- [x] "If you didn't request this, ignore this email" security text
+- [x] IP address and timestamp of request (passed as context)
+- [x] Create `templates/emails/password_reset.txt` plaintext version
+- [x] Typecheck passes
 
 ---
 
