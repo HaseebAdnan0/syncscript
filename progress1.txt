@@ -555,3 +555,27 @@ Learnings for future iterations:
 - Email uniqueness validation is case-insensitive (emails lowercased before storage)
 - CharField with blank=True but no null=True defaults to empty string, not None
 ---
+## Iteration 28 - Create registration flow tests (US-030)
+- Created test_auth.py with RegistrationFlowTests class
+- 4 tests: successful registration (201), unverified user creation, duplicate email (400), weak password (400)
+- Added dummy cache backend for tests in settings.py to avoid Redis dependency (checks 'test' in sys.argv)
+- Fixed duplicate send_verification_email function in views.py (was shadowing the correct import from emails.py)
+- All 4 tests pass successfully
+- Django system check passes
+
+Files changed:
+- backend/apps/users/tests/test_auth.py (created with 4 tests)
+- backend/config/settings.py (added test cache override)
+- backend/apps/users/views.py (removed duplicate send_verification_email function)
+- PRD1.md (marked US-030 complete)
+
+Learnings for future iterations:
+- Tests require Redis or dummy cache backend to work with django-ratelimit
+- Use DummyCache backend for tests: CACHES = {'default': {'BACKEND': 'django.core.cache.backends.dummy.DummyCache'}}
+- Check for 'test' in sys.argv to override settings for test runs
+- Duplicate function names can shadow imports - use grep to find all definitions before debugging
+- --keepdb flag preserves test database between runs for faster test execution
+- Integration tests should test complete flows including rate limiting, validation, and database state
+- EmailVerificationToken created automatically by RegisterView after user creation
+---
+

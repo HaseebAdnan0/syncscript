@@ -228,11 +228,11 @@ This PRD covers the full implementation: core infrastructure, event broadcasting
 **Description:** As a user, I want missed events replayed after reconnection so I don't miss collaborator changes.
 
 **Acceptance Criteria:**
-- [ ] Handle incoming `{"type": "replay_request", "since_seq": N}` messages
-- [ ] Fetch events from Redis list `vault_{id}:events`
-- [ ] Filter events where `seq > since_seq`
-- [ ] Send filtered events to client in chronological order
-- [ ] Typecheck passes
+- [x] Handle incoming `{"type": "replay_request", "since_seq": N}` messages
+- [x] Fetch events from Redis list `vault_{id}:events`
+- [x] Filter events where `seq > since_seq`
+- [x] Send filtered events to client in chronological order
+- [x] Typecheck passes
 
 ---
 
