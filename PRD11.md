@@ -87,15 +87,15 @@ Replace stub email implementation with production-ready email system using Hosti
 **Description:** As a user, I want to receive a branded verification email so I can activate my account.
 
 **Acceptance Criteria:**
-- [ ] Create `templates/emails/verification.html` extending base.html
-- [ ] Preheader: "Verify your email to start using SyncScript"
-- [ ] Greeting: "Welcome to SyncScript, {{ user.first_name|default:user.username }}!"
-- [ ] Body text explaining verification purpose
-- [ ] Prominent orange CTA button: "Verify Email Address" linking to verification URL
-- [ ] Fallback text link below button
-- [ ] "Link expires in 24 hours" notice
-- [ ] Create `templates/emails/verification.txt` plaintext version
-- [ ] Typecheck passes
+- [x] Create `templates/emails/verification.html` extending base.html
+- [x] Preheader: "Verify your email to start using SyncScript"
+- [x] Greeting: "Welcome to SyncScript, {{ user.first_name|default:user.username }}!"
+- [x] Body text explaining verification purpose
+- [x] Prominent orange CTA button: "Verify Email Address" linking to verification URL
+- [x] Fallback text link below button
+- [x] "Link expires in 24 hours" notice
+- [x] Create `templates/emails/verification.txt` plaintext version
+- [x] Typecheck passes
 
 ---
 
