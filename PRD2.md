@@ -308,10 +308,10 @@ Create a secure, collaborative Knowledge Vault system where researchers can crea
 **Description:** As a developer, I need REST endpoints routed properly.
 
 **Acceptance Criteria:**
-- [ ] Create DefaultRouter in urls.py
-- [ ] Register VaultViewSet at 'vaults'
-- [ ] Export urlpatterns from router.urls
-- [ ] Typecheck passes
+- [x] Create DefaultRouter in urls.py
+- [x] Register VaultViewSet at 'vaults'
+- [x] Export urlpatterns from router.urls
+- [x] Typecheck passes
 
 ### US-031: Configure nested routes for members and audit-logs
 **Description:** As a developer, I need nested endpoints under each vault.

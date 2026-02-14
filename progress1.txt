@@ -459,3 +459,25 @@ Learnings for future iterations:
 - BasePermission from rest_framework.permissions is the base class for custom permissions
 ---
 
+## Iteration 24 - Apply rate limiting to all auth views (US-026)
+- Verified @ratelimit decorators on all auth views in apps/users/views.py
+- RegisterView: rate='5/m' (line 212) ✓
+- LoginView: rate='5/m' (line 284) ✓
+- VerifyEmailView: rate='10/m' (line 246) ✓
+- RefreshTokenView: rate='20/m' (line 365) ✓
+- PasswordResetRequestView: rate='3/h' with key='user_or_ip' (line 410) ✓
+- PasswordResetConfirmView: rate='10/m' (line 455) ✓
+- Django system check passes
+
+Files changed:
+- PRD1.md (marked US-026 complete)
+
+Learnings for future iterations:
+- All rate limiting was already implemented in previous iterations (US-014 through US-021)
+- US-026 is a verification task, not an implementation task
+- @method_decorator(ratelimit(...), name='dispatch') is used for class-based views
+- key='user_or_ip' used for password reset to prevent email-based enumeration while rate limiting
+- Django system check is the typecheck for Django projects
+- Rate limiting requires RATELIMIT_ENABLE=True and RATELIMIT_USE_CACHE='default' in settings (already configured in US-005)
+---
+
