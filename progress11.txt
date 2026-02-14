@@ -384,3 +384,34 @@
   - Exception handling ensures graceful fallback if Celery down
   - is_first_verification = not user.email_verified captures state before update
 ---
+
+## Iteration 15 - US-015: Create verification pending page (Already Complete)
+- Discovered US-015 was already implemented in commit 79a284e
+- File created: frontend/src/app/(auth)/verify-email/pending/page.tsx
+- Implementation details verified - all acceptance criteria met:
+  - Displays "Check your email" message with Mail envelope icon (lucide-react)
+  - Shows email address from URL search params
+  - Resend verification email button with 60-second countdown timer
+  - Button disabled during countdown, shows "Resend in Xs" text
+  - Calls /api/v1/auth/resend-verification/ endpoint on click
+  - Shows success/error toast messages (title + description)
+  - Handles 429 rate limit errors with appropriate message
+  - "Back to login" link with ArrowLeft icon
+  - Bitcoin DeFi dark theme styling using GlassCard and GradientButton
+  - Orange gradient styling (#F7931A to #FFD600)
+  - Responsive centered layout (max-w-md)
+- Code matches all Bitcoin DeFi aesthetic requirements:
+  - GlassCard component for container
+  - GradientButton for CTA
+  - Orange (#F7931A) icon colors and gradients
+  - Muted text (#94A3B8) for descriptions
+  - White text for emphasized content
+- TypeScript syntax validated
+- Files already committed in previous session
+- PRD11.md marked complete
+- Learnings for future iterations:
+  - Always check git log for file existence before creating
+  - Frontend work was already completed correctly
+  - Component follows existing auth page patterns (register, login)
+  - useEffect cleanup function returns undefined when countdown reaches 0
+---
