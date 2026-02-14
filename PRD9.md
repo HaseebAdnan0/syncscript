@@ -141,12 +141,12 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 **Description:** As a developer, I need a React Query hook to fetch and cache sources for a vault with filter support.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/hooks/useSourcesQuery.ts`
-- [ ] Accepts `vaultId` and optional filter params
-- [ ] Uses `@tanstack/react-query` with cache key including filters
-- [ ] Returns `{ data, isLoading, error, refetch }`
-- [ ] Stale time set to 30 seconds
-- [ ] Typecheck passes
+- [x] Create `frontend/src/hooks/useSourcesQuery.ts`
+- [x] Accepts `vaultId` and optional filter params
+- [x] Uses `@tanstack/react-query` with cache key including filters
+- [x] Returns `{ data, isLoading, error, refetch }`
+- [x] Stale time set to 30 seconds
+- [x] Typecheck passes
 
 ---
 
