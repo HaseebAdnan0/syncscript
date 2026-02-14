@@ -1173,3 +1173,58 @@
 ### Issues Found
 (Append any bugs, edge cases, or unexpected behavior discovered during testing)
 
+
+## US-023: Demo Vault Deletion Prompt - 2026-02-14
+
+### Prerequisites
+- [ ] Backend server running: `cd backend && python manage.py runserver`
+- [ ] Frontend server running: `cd frontend && npm run dev`
+- [ ] User account with demo vault created
+- [ ] User is logged in
+
+### Test Demo Vault Detection
+- [ ] Navigate to the demo vault ("AI Research Papers 2025")
+- [ ] Open vault Settings tab
+- [ ] Scroll to Danger Zone section
+- [ ] Click "Delete Vault" button
+- [ ] Verify deletion dialog opens
+
+### Verify Custom Demo Vault Message
+- [ ] In the deletion dialog, verify there is an orange warning box above the red warning box
+- [ ] Verify the orange box has a 📚 emoji and "This is your demo vault" heading
+- [ ] Verify the message reads: "You can recreate the demo vault anytime from Settings → Onboarding → Recreate Demo Vault. All the original demo content will be restored."
+- [ ] Verify the orange box uses Bitcoin DeFi styling:
+  - Background: `bg-[#F7931A]/10`
+  - Border: `border-[#F7931A]/30`
+  - Text color: `text-[#F7931A]`
+
+### Verify Standard Deletion Flow Still Works
+- [ ] Type the vault name "AI Research Papers 2025" in the confirmation input
+- [ ] Verify the green checkmark appears when name matches
+- [ ] Click "Delete Vault" button
+- [ ] Verify vault is deleted successfully
+- [ ] Verify redirect to /vaults page
+- [ ] Verify success toast appears
+
+### Test Non-Demo Vault Deletion
+- [ ] Create a regular vault (not named "AI Research Papers 2025")
+- [ ] Navigate to vault Settings tab
+- [ ] Click "Delete Vault" in Danger Zone
+- [ ] Verify deletion dialog DOES NOT show the orange demo vault message
+- [ ] Verify only the red warning box appears
+- [ ] Cancel the dialog
+
+### Edge Case: Demo Vault Recreated with Different Name
+- [ ] If user renames demo vault to something else, it should NOT show the custom message
+- [ ] The demo vault detection is based on exact name match: "AI Research Papers 2025"
+
+### Expected Behavior
+- Demo vault deletion shows informative message about recreation option
+- Standard deletion flow unchanged (confirmation input, validation)
+- Non-demo vaults do not show the custom message
+- Orange warning box appears above red warning box
+- Styling matches Bitcoin DeFi aesthetic
+- Dialog provides clear path to recreate demo vault from settings
+
+### Issues Found
+(Append any bugs, edge cases, or unexpected behavior discovered during testing)

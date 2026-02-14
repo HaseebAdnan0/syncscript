@@ -313,12 +313,12 @@ Create a comprehensive new user onboarding experience for SyncScript that guides
 **Description:** As a user deleting the demo vault, I want to be informed I can recreate it later.
 
 **Acceptance Criteria:**
-- [ ] Intercept vault delete for demo vault specifically
-- [ ] Show custom confirmation: "This is your demo vault. You can recreate it anytime from Settings."
-- [ ] "Delete Anyway" and "Cancel" buttons
-- [ ] On delete: proceed with normal vault deletion
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Intercept vault delete for demo vault specifically
+- [x] Show custom confirmation: "This is your demo vault. You can recreate it anytime from Settings."
+- [x] "Delete Anyway" and "Cancel" buttons
+- [x] On delete: proceed with normal vault deletion
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-024: Mobile-responsive onboarding modals
 **Description:** As a mobile user, I want onboarding to work well on my device.

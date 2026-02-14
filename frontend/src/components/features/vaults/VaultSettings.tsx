@@ -97,6 +97,9 @@ export function VaultSettings({ vault, userRole }: VaultSettingsProps) {
     }
   };
 
+  // Check if this is the demo vault
+  const isDemoVault = vault.name === 'AI Research Papers 2025';
+
   // Check if delete confirmation text matches vault name
   const isDeleteConfirmed = deleteConfirmText === vault.name;
 
@@ -320,6 +323,16 @@ export function VaultSettings({ vault, userRole }: VaultSettingsProps) {
             </Dialog.Title>
 
             <Dialog.Description className="text-[#94A3B8] mb-6 space-y-4">
+              {isDemoVault && (
+                <div className="bg-[#F7931A]/10 border border-[#F7931A]/30 rounded-lg p-4 mb-4">
+                  <p className="text-[#F7931A] font-semibold mb-2">📚 This is your demo vault</p>
+                  <p className="text-sm text-[#94A3B8]">
+                    You can recreate the demo vault anytime from Settings → Onboarding → Recreate Demo Vault.
+                    All the original demo content will be restored.
+                  </p>
+                </div>
+              )}
+
               <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4">
                 <p className="text-red-400 font-semibold mb-2">⚠️ This action cannot be undone</p>
                 <p className="text-sm text-[#94A3B8]">

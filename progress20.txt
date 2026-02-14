@@ -549,3 +549,26 @@
   - router.refresh() updates vault list sidebar after vault creation/reset
   - Confirmation dialog should explain action impact clearly (data loss warning)
 ---
+
+## Iteration 24 - Demo vault deletion prompt (US-023)
+- Enhanced VaultSettings.tsx to detect demo vault by name
+- Added isDemoVault check: vault.name === 'AI Research Papers 2025'
+- Modified delete confirmation dialog to show custom message for demo vault
+- Orange warning box appears above red warning box for demo vault deletion
+- Custom message informs user they can recreate demo vault from Settings
+- Demo vault message styled with Bitcoin DeFi aesthetic (orange gradient theme)
+- Standard deletion flow unchanged: confirmation input, validation, delete button
+- Non-demo vaults do not show custom message (only red warning box)
+- Files changed: VaultSettings.tsx, .planning/MANUAL_VERIFICATION.md, PRD20.md, progress20.txt
+- Typecheck passes
+- Learnings for future iterations:
+  - Name-based detection pattern: const isDemoVault = vault.name === 'EXACT_NAME'
+  - Conditional rendering in dialogs: {isDemoVault && <CustomMessage />}
+  - Orange warning box uses: bg-[#F7931A]/10, border-[#F7931A]/30, text-[#F7931A]
+  - Red warning box uses: bg-red-500/10, border-red-500/30, text-red-400
+  - Multiple warning boxes can stack in Dialog.Description with mb-4 spacing
+  - Demo vault name constant from fixture: "AI Research Papers 2025"
+  - Settings path reference in message guides user to recreation feature
+  - Deletion flow proceeds normally after custom message (no special handling needed)
+  - Manual verification checklist covers: demo detection, custom message display, styling, standard flow
+---
