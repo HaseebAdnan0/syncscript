@@ -21,14 +21,14 @@ This feature uses Claude as the AI backbone with a simple chunking strategy (no 
 **Description:** As a developer, I need the database schema for AI features so I can track usage and store conversations.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/ai/` Django app with models.py, views.py, urls.py, serializers.py
-- [ ] `AIUsageLog` model: user (FK), request_type (enum: summary/insights/question), tokens_used (int), created_at
-- [ ] `ChatConversation` model: vault (FK), user (FK), created_at, updated_at
-- [ ] `ChatMessage` model: conversation (FK), role (enum: user/assistant), content (text), sources_cited (JSONField), created_at
-- [ ] Add `ai_summary` JSONField to Source model (nullable)
-- [ ] Add `ai_insights_cache` JSONField + `ai_insights_updated_at` to Vault model (nullable)
-- [ ] Generate and run migrations
-- [ ] Register app in INSTALLED_APPS
+- [x] Create `apps/ai/` Django app with models.py, views.py, urls.py, serializers.py
+- [x] `AIUsageLog` model: user (FK), request_type (enum: summary/insights/question), tokens_used (int), created_at
+- [x] `ChatConversation` model: vault (FK), user (FK), created_at, updated_at
+- [x] `ChatMessage` model: conversation (FK), role (enum: user/assistant), content (text), sources_cited (JSONField), created_at
+- [x] Add `ai_summary` JSONField to Source model (nullable)
+- [x] Add `ai_insights_cache` JSONField + `ai_insights_updated_at` to Vault model (nullable)
+- [x] Generate and run migrations
+- [x] Register app in INSTALLED_APPS
 - [x] Typecheck passes
 
 ### US-002: Implement token usage tracking service
