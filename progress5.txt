@@ -359,3 +359,35 @@
   - Verification tests can check code structure without requiring Redis connection
   - Auto-commit hooks may commit changes during file editing
 ---
+
+## Iteration 19 - US-020: Implement message throttling (Layer 3)
+- Implemented Layer 3 rate limiting to prevent message spam
+- Added _check_message_throttle method to track and enforce message limits
+  - Tracks message timestamps in Redis sorted set conn_{channel}:messages
+  - Counts messages in last 60 seconds using zcard
+  - Removes old messages with zremrangebyscore
+  - Progressive enforcement with offense counter (user_{id}:throttle_offenses)
+- Added _set_temporary_ban method to ban repeat offenders
+  - Sets ban flag in user_{id}:banned with 1-hour expiry (3600 seconds)
+- Added _is_user_banned method to check ban status
+  - Checks if ban key exists in Redis
+- Updated connect method to reject banned users on connection attempt
+- Updated receive method to check throttle before processing messages
+  - First offense: sends warning message to client
+  - Second offense: disconnects with RATE_LIMIT_EXCEEDED error
+  - Third offense: sets temporary ban and disconnects
+- Files changed: backend/apps/vaults/consumers.py, PRD5.md, test_us020.py (new)
+- Created test_us020.py verification script - all 9 tests pass
+- Typecheck passes (0 errors, 0 warnings)
+- Auto-committed in 3253bda (code), manually committed in 716de5c (PRD + test)
+- Learnings for future iterations:
+  - Message throttling uses sorted sets for timestamp tracking (same pattern as presence/connections)
+  - zremrangebyscore efficiently removes old entries using score range
+  - Progressive enforcement: warning -> disconnect -> ban
+  - Offense counter tracked separately from message timestamps
+  - Ban check happens early in connect flow (after auth, before permission check)
+  - redis.incr() returns new value after increment (useful for checking offense count)
+  - setex command sets value with expiry in single operation
+  - Auto-commit hooks committed consumers.py changes during editing
+  - Layer 3 (message throttling) complements Layer 1 (connection limit) and Layer 2 (room limit)
+---

@@ -630,3 +630,26 @@ Learnings for future iterations:
 - Token rotation test verifies old and new tokens are different strings
 - All 17 auth tests (registration, verification, login, logout, refresh) pass together
 ---
+
+## Iteration 31 - Create password reset flow tests (US-034)
+- Added PasswordResetFlowTests class to test_auth.py with 6 comprehensive tests
+- Test password reset request returns success for both existing and non-existent emails (prevents user enumeration)
+- Test valid reset token allows password change and verified by attempting login with new password
+- Test expired/invalidated reset token returns error (simulated by changing password to invalidate token)
+- Test new password must meet strength requirements (min 8 chars validation)
+- Test invalid uid decoding returns appropriate error
+- All 23 auth tests pass together (4 registration + 4 verification + 5 login/logout + 4 refresh + 6 password reset)
+
+Files changed:
+- backend/apps/users/tests/test_auth.py (added PasswordResetFlowTests class with 6 tests)
+- PRD1.md (marked US-034 complete)
+
+Learnings for future iterations:
+- PasswordResetTokenGenerator from django.contrib.auth.tokens generates secure reset tokens
+- Django's token generator uses password hash, so changing password invalidates old tokens (good for testing expired tokens)
+- urlsafe_base64_encode/decode used for uid encoding in password reset URLs
+- Two error messages in PasswordResetConfirmView: "Invalid or expired reset token" (check_token fails) vs "Invalid reset link" (uid decode fails)
+- Password reset request always returns success (prevents user enumeration) - same message for existing and non-existent emails
+- All password reset tests validate both happy path and error cases (invalid token, expired token, weak password, invalid uid)
+- Total test count: 23 auth tests pass together (comprehensive coverage of entire auth system)
+---

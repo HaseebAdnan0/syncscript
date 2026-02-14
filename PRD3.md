@@ -323,12 +323,12 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need the database migration and admin access for Annotation model.
 
 **Acceptance Criteria:**
-- [ ] Run `python manage.py makemigrations annotations`
-- [ ] Run `python manage.py migrate`
-- [ ] Register `Annotation` model in `admin.py`
-- [ ] list_display: id, source, user, content (truncated), parent, created_at
-- [ ] list_filter: source, user
-- [ ] Typecheck passes
+- [x] Run `python manage.py makemigrations annotations`
+- [x] Run `python manage.py migrate`
+- [x] Register `Annotation` model in `admin.py`
+- [x] list_display: id, source, user, content (truncated), parent, created_at
+- [x] list_filter: source, user
+- [x] Typecheck passes
 
 ---
 

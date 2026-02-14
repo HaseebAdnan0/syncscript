@@ -518,3 +518,26 @@
   - Linters may remove unused imports - need to re-add if they're used in the code
   - Audit logs for task failures should include retry count for debugging
 ---
+
+## Iteration 22 - US-022: Add rate limiting to PDF endpoints
+- Added django-ratelimit decorators to protect PDF upload/download endpoints from abuse
+- Imported django_ratelimit.decorators.ratelimit and django.utils.decorators.method_decorator
+- Applied rate limits to PDFUploadViewSet methods:
+  - upload_url(): @method_decorator(ratelimit(key='user', rate='10/m', method='POST'))
+  - download_url(): @method_decorator(ratelimit(key='user', rate='30/m', method='GET'))
+- Rate limiting tracks per-user via 'user' key (uses Django authentication)
+- Uses Redis backend (already configured via CACHES setting)
+- Files changed:
+  - backend/apps/sources/views.py (added imports and decorators)
+  - PRD6.md (marked US-022 complete)
+- Learnings for future iterations:
+  - django-ratelimit was already in requirements.txt (no new dependency)
+  - Rate limiting syntax: @method_decorator(ratelimit(key='user', rate='N/m', method='HTTP_METHOD'))
+  - key='user' uses request.user.pk for tracking (requires authentication)
+  - Rate format: '10/m' = 10 requests per minute, '30/m' = 30 requests per minute
+  - method_decorator() required for class-based views (ViewSet methods)
+  - Place @method_decorator after @action decorator
+  - Redis backend automatically used if CACHES configured with RedisCache
+  - Django system check passes with 0 errors (6 security warnings expected in dev mode)
+  - Pyright import errors for django_ratelimit are normal without type stubs
+---

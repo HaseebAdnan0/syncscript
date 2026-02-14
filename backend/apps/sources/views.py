@@ -41,10 +41,56 @@ class PDFUploadViewSet(viewsets.ModelViewSet):
     """
     ViewSet for PDF upload operations (US-006).
     Handles presigned URL generation, upload completion, and downloads.
+    Also provides nested route for listing vault PDFs (US-023).
     """
     queryset = PDFUpload.objects.filter(deleted_at__isnull=True)
     serializer_class = PDFUploadSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        """
+        Override get_queryset to filter by vault when accessed via nested route (US-023).
+
+        For nested route /api/v1/vaults/{vault_id}/pdfs/:
+        - Filters PDFs by vault_id
+        - Excludes soft-deleted PDFs
+        - Orders by uploaded_at descending
+
+        For standard route /api/v1/sources/pdfs/:
+        - Returns all accessible PDFs
+        """
+        user = self.request.user
+
+        # Check if this is a nested route from /vaults/{vault_id}/pdfs/
+        vault_pk = self.kwargs.get('vault_pk')
+
+        if vault_pk:
+            # Nested route: Verify permission and filter by specific vault
+            self._check_vault_permission(
+                vault_pk,
+                user,
+                required_roles=[RoleChoices.VIEWER, RoleChoices.CONTRIBUTOR, RoleChoices.OWNER]
+            )
+
+            return PDFUpload.objects.filter(
+                vault_id=vault_pk,
+                deleted_at__isnull=True
+            ).order_by('-uploaded_at')
+
+        # Standard route: Return all PDFs from accessible vaults
+        # Get vaults where user is owner
+        owned_vault_ids = Vault.objects.filter(owner=user).values_list('id', flat=True)
+
+        # Get vaults where user is a member
+        member_vault_ids = VaultMembership.objects.filter(user=user).values_list('vault_id', flat=True)
+
+        # Combine both sets of vault IDs
+        accessible_vault_ids = list(owned_vault_ids) + list(member_vault_ids)
+
+        return PDFUpload.objects.filter(
+            vault_id__in=accessible_vault_ids,
+            deleted_at__isnull=True
+        ).order_by('-uploaded_at')
 
     def _check_vault_permission(self, vault_id, user, required_roles=None):
         """

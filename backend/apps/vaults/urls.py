@@ -16,8 +16,11 @@ vaults_router.register(r'members', VaultMembershipViewSet, basename='vault-membe
 vaults_router.register(r'audit-logs', AuditLogViewSet, basename='vault-audit-logs')
 
 # Nested router for vault sources (defined in sources app but registered here)
-from apps.sources.views import SourceViewSet
+from apps.sources.views import SourceViewSet, PDFUploadViewSet
 vaults_router.register(r'sources', SourceViewSet, basename='vault-sources')
+
+# Nested router for vault PDFs (US-023)
+vaults_router.register(r'pdfs', PDFUploadViewSet, basename='vault-pdfs')
 
 urlpatterns = [
     path('', include(router.urls)),

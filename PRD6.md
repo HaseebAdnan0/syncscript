@@ -255,12 +255,12 @@ Implement cloud file storage for SyncScript using Cloudflare R2 (S3-compatible).
 **Description:** As a vault member, I want to list all PDFs in my vault.
 
 **Acceptance Criteria:**
-- [ ] Add `GET /api/v1/vaults/{vault_id}/pdfs/` endpoint
-- [ ] Filter out soft-deleted PDFs (deleted_at is null)
-- [ ] Return paginated list using PDFUploadSerializer
-- [ ] Validate user has vault access
-- [ ] Order by uploaded_at descending
-- [ ] Typecheck passes
+- [x] Add `GET /api/v1/vaults/{vault_id}/pdfs/` endpoint
+- [x] Filter out soft-deleted PDFs (deleted_at is null)
+- [x] Return paginated list using PDFUploadSerializer
+- [x] Validate user has vault access
+- [x] Order by uploaded_at descending
+- [x] Typecheck passes
 
 ### US-024: Write unit tests for PDF validation
 **Description:** As a developer, I need tests to verify PDF validation works correctly.
