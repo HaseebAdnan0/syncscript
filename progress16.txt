@@ -157,3 +157,27 @@
   - Using relative + z-10 on content wrapper ensures it appears above background
   - Two separate layouts (mobile stack, desktop absolute positioning) work better than trying to make one responsive
 ---
+
+## Iteration 8 - US-008: Create Stats Ticker Section
+- Created `frontend/src/components/marketing/StatsTicker.tsx` component
+- Installed framer-motion package for scroll-triggered animations
+- Implemented count-up animation using requestAnimationFrame with ease-out cubic timing
+- Three statistics with Lucide icons: Users (10K+), FileText (50K+), TrendingUp (1M+)
+- Numbers animate from 0 to target value when section enters viewport (Framer Motion useInView)
+- Horizontal bar with `border-y border-white/10` and semi-transparent background
+- Responsive layout: flex-col (mobile stacks vertically), md:flex-row (desktop horizontal)
+- Stats evenly distributed using justify-between
+- Integrated into landing page below HeroSection
+- Files changed:
+  - Created: `frontend/src/components/marketing/StatsTicker.tsx`
+  - Modified: `frontend/src/app/(marketing)/page.tsx` (added StatsTicker import)
+  - Modified: `frontend/package.json` and `package-lock.json` (added framer-motion)
+  - Modified: `PRD16.md` (marked US-008 complete)
+- Learnings for future iterations:
+  - Framer Motion's useInView hook simplifies scroll-triggered animations with `once: true` option
+  - requestAnimationFrame provides smooth count-up animations better than setInterval
+  - Ease-out cubic (1 - Math.pow(1 - progress, 3)) creates natural deceleration effect
+  - Using toLocaleString() formats large numbers with commas automatically
+  - motion.div with initial/animate props creates fade-in effects on scroll
+  - Combining icon + number + label in vertical layout creates clear stat presentation
+---

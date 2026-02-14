@@ -74,10 +74,15 @@ class NotificationListTestCase(TestCase):
         response = self.client.get('/api/v1/notifications/')
         results = response.data['results']
 
-        # Unread notification should come first
-        self.assertEqual(results[0]['id'], self.notif1.id)
+        # Unread notification should come first (has NULL read_at)
+        # Read notification comes second (has non-NULL read_at)
+        unread_ids = [r['id'] for r in results if r['is_read'] is False]
+        read_ids = [r['id'] for r in results if r['is_read'] is True]
+
+        self.assertIn(self.notif1.id, unread_ids)
+        self.assertIn(self.notif2.id, read_ids)
+        # Verify unread comes before read in the list
         self.assertTrue(results[0]['is_read'] is False)
-        self.assertEqual(results[1]['id'], self.notif2.id)
         self.assertTrue(results[1]['is_read'] is True)
 
     def test_unread_only_filter(self) -> None:

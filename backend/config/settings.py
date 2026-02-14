@@ -340,3 +340,6 @@ SOCIALACCOUNT_PROVIDERS = {
 # AI Settings
 AI_DAILY_LIMIT = int(os.getenv('AI_DAILY_LIMIT', '20'))  # Maximum AI requests per user per day
 ANTHROPIC_API_KEY = os.getenv('ANTHROPIC_API_KEY', '')  # Claude API key for AI features
+
+# Virus Scanning Settings
+CLAMAV_ENABLED = False  # Set to True when ClamAV daemon is configured

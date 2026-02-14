@@ -1,0 +1,93 @@
+{% extends "emails/base.html" %}
+
+{% block preheader %}Your SyncScript account is ready!{% endblock %}
+
+{% block title %}Welcome to SyncScript{% endblock %}
+
+{% block content %}
+<tr>
+    <td style="padding: 32px 40px; color: #FFFFFF; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; font-size: 16px; line-height: 1.6;">
+        <!-- Celebratory Heading -->
+        <h1 style="margin: 0 0 24px 0; font-size: 32px; font-weight: 700; background: linear-gradient(135deg, #F7931A 0%, #FFD600 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+            You're all set!
+        </h1>
+
+        <!-- Welcome Message -->
+        <p style="margin: 0 0 24px 0; color: #FFFFFF;">
+            Hi {{ user.first_name|default:user.username }},
+        </p>
+
+        <p style="margin: 0 0 24px 0; color: #FFFFFF;">
+            Your email has been verified and your SyncScript account is now active. You can start building Knowledge Vaults and collaborating with researchers.
+        </p>
+
+        <!-- Features List -->
+        <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; margin: 24px 0;">
+            <tr>
+                <td style="padding: 12px 0;">
+                    <table cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                            <td style="width: 24px; vertical-align: top; padding-top: 4px;">
+                                <div style="width: 8px; height: 8px; background: #F7931A; border-radius: 50%;"></div>
+                            </td>
+                            <td style="color: #FFFFFF; font-size: 15px; padding-left: 12px;">
+                                <strong style="color: #F7931A;">Create Knowledge Vaults</strong> – Organize research sources and citations in collaborative repositories
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 12px 0;">
+                    <table cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                            <td style="width: 24px; vertical-align: top; padding-top: 4px;">
+                                <div style="width: 8px; height: 8px; background: #F7931A; border-radius: 50%;"></div>
+                            </td>
+                            <td style="color: #FFFFFF; font-size: 15px; padding-left: 12px;">
+                                <strong style="color: #F7931A;">Annotate PDFs</strong> – Add notes and highlights to research documents with real-time collaboration
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 12px 0;">
+                    <table cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                            <td style="width: 24px; vertical-align: top; padding-top: 4px;">
+                                <div style="width: 8px; height: 8px; background: #F7931A; border-radius: 50%;"></div>
+                            </td>
+                            <td style="color: #FFFFFF; font-size: 15px; padding-left: 12px;">
+                                <strong style="color: #F7931A;">Track Citations</strong> – Maintain verified sources with audit logs for research integrity
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+
+        <!-- CTA Button -->
+        <table cellpadding="0" cellspacing="0" border="0" style="margin: 32px 0;">
+            <tr>
+                <td align="center">
+                    <table cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                            <td align="center" style="border-radius: 50px; background: linear-gradient(135deg, #EA580C 0%, #F7931A 100%); box-shadow: 0 0 20px -5px rgba(234, 88, 12, 0.5);">
+                                <a href="{{ site_url }}" target="_blank" style="font-size: 16px; font-weight: 700; color: #FFFFFF; text-decoration: none; display: inline-block; padding: 14px 32px; letter-spacing: 0.5px; text-transform: uppercase;">
+                                    Go to Dashboard
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+
+        <!-- Fallback Link -->
+        <p style="margin: 16px 0 0 0; font-size: 14px; color: #94A3B8; text-align: center;">
+            Or copy this link: <a href="{{ site_url }}" style="color: #F7931A; text-decoration: none;">{{ site_url }}</a>
+        </p>
+    </td>
+</tr>
+{% endblock %}

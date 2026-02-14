@@ -104,12 +104,12 @@ Enhance SyncScript's file storage system to production-ready status with Cloudfl
 **Description:** As a developer, I need a virus scanning service interface ready for future ClamAV integration.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/sources/services/virus_scanner.py`
-- [ ] Create `VirusScanResult` dataclass with fields: `is_clean`, `threat_name`, `scan_time_ms`
-- [ ] Create `VirusScanner` class with method `scan_file(file_bytes: bytes) -> VirusScanResult`
-- [ ] Stub implementation: log "TODO: ClamAV integration", return `is_clean=True`
-- [ ] Add `CLAMAV_ENABLED = False` setting to `config/settings.py`
-- [ ] Typecheck passes
+- [x] Create `apps/sources/services/virus_scanner.py`
+- [x] Create `VirusScanResult` dataclass with fields: `is_clean`, `threat_name`, `scan_time_ms`
+- [x] Create `VirusScanner` class with method `scan_file(file_bytes: bytes) -> VirusScanResult`
+- [x] Stub implementation: log "TODO: ClamAV integration", return `is_clean=True`
+- [x] Add `CLAMAV_ENABLED = False` setting to `config/settings.py`
+- [x] Typecheck passes
 
 ---
 

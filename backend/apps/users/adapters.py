@@ -45,7 +45,7 @@ class JWTSocialAccountAdapter(DefaultSocialAccountAdapter):
 
         Check if email already exists and handle account linking scenarios.
         """
-        # If user is already being logged in, we're done
+        # If user is already being logged in (social account exists), we're done
         if sociallogin.is_existing:
             return
 
@@ -56,14 +56,20 @@ class JWTSocialAccountAdapter(DefaultSocialAccountAdapter):
 
         if not email:
             # No email provided - will need to prompt user (GitHub private email case)
-            # Store OAuth data in session for later
+            # Store OAuth data in session and abort the auto-signup
             request.session['pending_oauth'] = {
                 'provider': sociallogin.account.provider,
                 'uid': sociallogin.account.uid,
                 'extra_data': sociallogin.account.extra_data,
             }
             request.session['oauth_needs_email'] = True
-            return
+            # Abort the signup - we need email first
+            from allauth.exceptions import ImmediateHttpResponse
+            frontend_url = settings.SITE_URL
+            response = HttpResponseRedirect(
+                f"{frontend_url}/auth/callback?email_required=true&provider={sociallogin.account.provider}"
+            )
+            raise ImmediateHttpResponse(response)
 
         # Check if user with this email already exists
         from apps.users.models import User
@@ -76,9 +82,12 @@ class JWTSocialAccountAdapter(DefaultSocialAccountAdapter):
                 provider=sociallogin.account.provider
             ).first()
 
-            if not social_account:
+            if social_account:
+                # Provider is already linked - let allauth proceed with login
+                return
+            else:
                 # Email exists but OAuth not linked - need password confirmation
-                # Store OAuth data in session for linking flow
+                # Store OAuth data in session and abort the signup
                 request.session['pending_oauth'] = {
                     'provider': sociallogin.account.provider,
                     'uid': sociallogin.account.uid,
@@ -87,8 +96,16 @@ class JWTSocialAccountAdapter(DefaultSocialAccountAdapter):
                 }
                 request.session['oauth_needs_linking'] = True
 
+                # Abort the signup - need password confirmation first
+                from allauth.exceptions import ImmediateHttpResponse
+                frontend_url = settings.SITE_URL
+                response = HttpResponseRedirect(
+                    f"{frontend_url}/auth/callback?link_required=true&provider={sociallogin.account.provider}"
+                )
+                raise ImmediateHttpResponse(response)
+
         except User.DoesNotExist:
-            # Email is new - allauth will create the user automatically
+            # Email is new - let allauth proceed with auto-signup
             pass
 
     def get_login_redirect_url(self, request):
@@ -99,22 +116,6 @@ class JWTSocialAccountAdapter(DefaultSocialAccountAdapter):
         and redirect to the frontend callback page.
         """
         frontend_url = settings.SITE_URL
-
-        # Check if account linking is required
-        if request.session.get('oauth_needs_linking'):
-            provider = request.session.get('pending_oauth', {}).get('provider', 'unknown')
-            request.session.pop('oauth_needs_linking', None)
-            return HttpResponseRedirect(
-                f"{frontend_url}/auth/callback?link_required=true&provider={provider}"
-            )
-
-        # Check if email is required (GitHub private email case)
-        if request.session.get('oauth_needs_email'):
-            provider = request.session.get('pending_oauth', {}).get('provider', 'unknown')
-            # Don't pop yet - need the data for email submission
-            return HttpResponseRedirect(
-                f"{frontend_url}/auth/callback?email_required=true&provider={provider}"
-            )
 
         # Get the user from the request (allauth sets this after successful auth)
         user = request.user

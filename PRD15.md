@@ -56,15 +56,15 @@ This feature uses Claude as the AI backbone with a simple chunking strategy (no 
 **Description:** As a developer, I need a wrapper for Claude API calls with consistent error handling.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/ai/services/claude_client.py`
-- [ ] `ClaudeClient` class with `__init__` reading `ANTHROPIC_API_KEY` from settings
-- [ ] `summarize(text, source_type)` method with academic summarization prompt
-- [ ] `analyze_sources(sources_data)` method for vault insights
-- [ ] `answer_question(question, context_chunks)` method for Q&A
-- [ ] All methods return structured dict matching expected schema
-- [ ] Graceful error handling: return `{"error": "..."}` on API failure
-- [ ] Token counting using `anthropic` SDK's token counter
-- [ ] Typecheck passes
+- [x] Create `apps/ai/services/claude_client.py`
+- [x] `ClaudeClient` class with `__init__` reading `ANTHROPIC_API_KEY` from settings
+- [x] `summarize(text, source_type)` method with academic summarization prompt
+- [x] `analyze_sources(sources_data)` method for vault insights
+- [x] `answer_question(question, context_chunks)` method for Q&A
+- [x] All methods return structured dict matching expected schema
+- [x] Graceful error handling: return `{"error": "..."}` on API failure
+- [x] Token counting using `anthropic` SDK's token counter
+- [x] Typecheck passes
 
 ### US-005: Add source text chunking utility
 **Description:** As a developer, I need to chunk source text intelligently so it fits in Claude's context window for Q&A.

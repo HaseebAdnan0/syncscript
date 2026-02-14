@@ -1,0 +1,20 @@
+You're all set!
+
+Hi {{ user.first_name|default:user.username }},
+
+Your email has been verified and your SyncScript account is now active. You can start building Knowledge Vaults and collaborating with researchers.
+
+What you can do with SyncScript:
+
+• Create Knowledge Vaults – Organize research sources and citations in collaborative repositories
+
+• Annotate PDFs – Add notes and highlights to research documents with real-time collaboration
+
+• Track Citations – Maintain verified sources with audit logs for research integrity
+
+Get started now:
+{{ site_url }}
+
+---
+SyncScript - Collaborative Research & Citation Engine
+{{ site_url }}

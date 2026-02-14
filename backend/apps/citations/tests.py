@@ -7,6 +7,12 @@ from apps.citations.services.structured_citation import (
     has_complete_metadata,
     generate_structured_citation,
 )
+from apps.citations.services.ai_citation import (
+    generate_ai_citation,
+    _build_system_prompt,
+    _build_user_prompt,
+    _parse_response,
+)
 from apps.citations.models import CitationFormat
 
 
@@ -698,3 +704,219 @@ class StructuredCitationTests(TestCase):
         citation = generate_structured_citation(metadata, CitationFormat.BIBTEX)
 
         self.assertIn('url = {https://example.com/article}', citation)
+
+
+class AICitationTests(TestCase):
+    """Tests for AI-powered citation generation"""
+
+    def test_parse_response_with_split(self):
+        """Test parsing response with separator"""
+        response = """Smith, J. (2024). Test article.
+---SPLIT---
+Smith, J. (2024). <i>Test article</i>."""
+
+        plain, html = _parse_response(response)
+
+        self.assertEqual(plain, "Smith, J. (2024). Test article.")
+        self.assertEqual(html, "Smith, J. (2024). <i>Test article</i>.")
+
+    def test_parse_response_without_split(self):
+        """Test parsing response without separator (fallback)"""
+        response = "Smith, J. (2024). Test article."
+
+        plain, html = _parse_response(response)
+
+        self.assertEqual(plain, "Smith, J. (2024). Test article.")
+        self.assertEqual(html, "Smith, J. (2024). Test article.")
+
+    def test_build_system_prompt_apa7(self):
+        """Test building APA7 system prompt"""
+        prompt = _build_system_prompt(CitationFormat.APA7)
+
+        self.assertIn("APA 7th Edition", prompt)
+        self.assertIn("Author, A. A. (Year)", prompt)
+        self.assertIn("---SPLIT---", prompt)
+        self.assertIn("n.d.", prompt)
+
+    def test_build_system_prompt_mla9(self):
+        """Test building MLA9 system prompt"""
+        prompt = _build_system_prompt(CitationFormat.MLA9)
+
+        self.assertIn("MLA 9th Edition", prompt)
+        self.assertIn("quotation marks", prompt)
+        self.assertIn("---SPLIT---", prompt)
+
+    def test_build_system_prompt_bibtex(self):
+        """Test building BibTeX system prompt"""
+        prompt = _build_system_prompt(CitationFormat.BIBTEX)
+
+        self.assertIn("BibTeX", prompt)
+        self.assertIn("@article", prompt)
+        self.assertIn("@book", prompt)
+        self.assertIn("@misc", prompt)
+
+    def test_build_user_prompt_complete_metadata(self):
+        """Test building user prompt with complete metadata"""
+        source_data = {
+            'title': 'Test Article',
+            'url': 'https://example.com/article',
+            'authors': ['Smith, John', 'Doe, Jane'],
+            'metadata': {
+                'journal': 'Nature',
+                'volume': '123',
+                'issue': '4',
+                'pages': '567-589',
+                'publication_date': '2024',
+                'doi': '10.1234/example',
+            }
+        }
+
+        prompt = _build_user_prompt(source_data, CitationFormat.APA7)
+
+        self.assertIn("Test Article", prompt)
+        self.assertIn("Smith, John, Doe, Jane", prompt)
+        self.assertIn("Nature", prompt)
+        self.assertIn("123", prompt)
+        self.assertIn("10.1234/example", prompt)
+        self.assertIn("---SPLIT---", prompt)
+
+    def test_build_user_prompt_incomplete_metadata(self):
+        """Test building user prompt with missing fields"""
+        source_data = {
+            'title': 'Untitled Source',
+            'url': 'https://example.com',
+        }
+
+        prompt = _build_user_prompt(source_data, CitationFormat.MLA9)
+
+        self.assertIn("Untitled Source", prompt)
+        self.assertIn("Not provided", prompt)
+
+    def test_build_user_prompt_authors_as_string(self):
+        """Test building user prompt with authors as string"""
+        source_data = {
+            'title': 'Test',
+            'authors': 'Smith, John',
+        }
+
+        prompt = _build_user_prompt(source_data, CitationFormat.APA7)
+
+        self.assertIn("Smith, John", prompt)
+
+    @patch.dict('os.environ', {'ANTHROPIC_API_KEY': 'test-key'})
+    @patch('apps.citations.services.ai_citation.Anthropic')
+    def test_generate_ai_citation_apa7(self, mock_anthropic):
+        """Test generating APA7 citation with Claude"""
+        # Mock Claude API response
+        mock_message = MagicMock()
+        mock_content = MagicMock()
+        mock_content.text = """Smith, J. (2024). Test article. Nature, 123(4), 567-589.
+---SPLIT---
+Smith, J. (2024). Test article. <i>Nature</i>, <i>123</i>(4), 567-589."""
+        mock_message.content = [mock_content]
+
+        mock_client = MagicMock()
+        mock_client.messages.create.return_value = mock_message
+        mock_anthropic.return_value = mock_client
+
+        source_data = {
+            'title': 'Test article',
+            'authors': ['Smith, John'],
+            'metadata': {
+                'journal': 'Nature',
+                'volume': '123',
+                'issue': '4',
+                'pages': '567-589',
+                'publication_date': '2024',
+            }
+        }
+
+        plain, html = generate_ai_citation(source_data, CitationFormat.APA7)
+
+        self.assertIn("Smith, J. (2024)", plain)
+        self.assertIn("<i>Nature</i>", html)
+        self.assertNotIn("<i>", plain)
+
+        # Verify API was called correctly
+        mock_client.messages.create.assert_called_once()
+        call_kwargs = mock_client.messages.create.call_args[1]
+        self.assertEqual(call_kwargs['model'], 'claude-3-5-sonnet-20241022')
+        self.assertIn('APA 7th Edition', call_kwargs['system'])
+
+    @patch.dict('os.environ', {'ANTHROPIC_API_KEY': 'test-key'})
+    @patch('apps.citations.services.ai_citation.Anthropic')
+    def test_generate_ai_citation_bibtex(self, mock_anthropic):
+        """Test generating BibTeX citation with Claude"""
+        mock_message = MagicMock()
+        mock_content = MagicMock()
+        mock_content.text = """@article{Smith2024Test,
+  author = {Smith, John},
+  title = {Test Article},
+  journal = {Nature},
+  year = {2024}
+}
+---SPLIT---
+@article{Smith2024Test,
+  author = {Smith, John},
+  title = {Test Article},
+  journal = {Nature},
+  year = {2024}
+}"""
+        mock_message.content = [mock_content]
+
+        mock_client = MagicMock()
+        mock_client.messages.create.return_value = mock_message
+        mock_anthropic.return_value = mock_client
+
+        source_data = {
+            'title': 'Test Article',
+            'authors': ['Smith, John'],
+            'metadata': {
+                'journal': 'Nature',
+                'publication_date': '2024',
+            }
+        }
+
+        plain, html = generate_ai_citation(source_data, CitationFormat.BIBTEX)
+
+        self.assertIn("@article{Smith2024Test", plain)
+        self.assertIn("author = {Smith, John}", plain)
+
+    @patch.dict('os.environ', {}, clear=True)
+    def test_generate_ai_citation_missing_api_key(self):
+        """Test error when ANTHROPIC_API_KEY is not set"""
+        source_data = {
+            'title': 'Test',
+            'authors': ['Smith'],
+        }
+
+        with self.assertRaises(ValueError) as cm:
+            generate_ai_citation(source_data, CitationFormat.APA7)
+
+        self.assertIn("ANTHROPIC_API_KEY", str(cm.exception))
+
+    @patch.dict('os.environ', {'ANTHROPIC_API_KEY': 'test-key'})
+    @patch('apps.citations.services.ai_citation.Anthropic')
+    def test_generate_ai_citation_incomplete_metadata(self, mock_anthropic):
+        """Test AI citation handles incomplete metadata gracefully"""
+        mock_message = MagicMock()
+        mock_content = MagicMock()
+        mock_content.text = """Unknown. (n.d.). Untitled source. Retrieved February 14, 2026 from https://example.com
+---SPLIT---
+Unknown. (n.d.). Untitled source. Retrieved February 14, 2026 from https://example.com"""
+        mock_message.content = [mock_content]
+
+        mock_client = MagicMock()
+        mock_client.messages.create.return_value = mock_message
+        mock_anthropic.return_value = mock_client
+
+        source_data = {
+            'title': 'Untitled source',
+            'url': 'https://example.com',
+        }
+
+        plain, html = generate_ai_citation(source_data, CitationFormat.APA7)
+
+        self.assertIn("Unknown", plain)
+        self.assertIn("n.d.", plain)
+        self.assertIn("example.com", plain)
