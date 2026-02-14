@@ -123,3 +123,17 @@
   - User type includes optional fields (first_name, last_name) for Django user model compatibility
 ---
 
+## Iteration 9 - US-009: React Query Provider
+- Created src/lib/providers/query-provider.tsx with QueryClientProvider
+- Configured QueryClient with sensible defaults: retry: 1, staleTime: 5min, refetchOnWindowFocus: false
+- Added 'use client' directive for client-side rendering
+- Imported and wrapped children in QueryProvider inside root layout.tsx
+- Verified typecheck passes
+- Files changed: frontend/src/lib/providers/query-provider.tsx, frontend/src/app/layout.tsx, PRD4.md
+- Learnings for future iterations:
+  - QueryClient should be instantiated inside a useState hook to avoid re-creating on every render
+  - React Query provider needs 'use client' directive since it uses React context
+  - Provider must be nested inside ThemeProvider in root layout
+  - QueryClient default options apply to all queries unless overridden
+---
+
