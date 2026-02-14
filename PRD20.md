@@ -30,13 +30,13 @@ Create a comprehensive new user onboarding experience for SyncScript that guides
 **Description:** As a frontend developer, I need an API endpoint to update onboarding progress so the UI can persist state.
 
 **Acceptance Criteria:**
-- [ ] Create `PATCH /api/v1/users/me/onboarding/` endpoint
-- [ ] Accepts: `step`, `completed`, `path`, `data` (all optional)
-- [ ] Returns updated onboarding state
-- [ ] Only authenticated users can access their own onboarding
-- [ ] Add `GET /api/v1/users/me/onboarding/` to fetch current state
-- [ ] Typecheck passes
-- [ ] Tests pass
+- [x] Create `PATCH /api/v1/users/me/onboarding/` endpoint
+- [x] Accepts: `step`, `completed`, `path`, `data` (all optional)
+- [x] Returns updated onboarding state
+- [x] Only authenticated users can access their own onboarding
+- [x] Add `GET /api/v1/users/me/onboarding/` to fetch current state
+- [x] Typecheck passes
+- [x] Tests pass
 
 ### US-003: Create demo vault fixture data
 **Description:** As a developer, I need a fixture/template with demo vault content so we can populate it for new users.

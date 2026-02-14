@@ -307,6 +307,9 @@ ACCOUNT_AUTHENTICATION_METHOD = 'email'
 SOCIALACCOUNT_AUTO_SIGNUP = True
 SOCIALACCOUNT_EMAIL_AUTHENTICATION = False
 
+# Custom adapter for JWT-based OAuth authentication
+SOCIALACCOUNT_ADAPTER = 'apps.users.adapters.JWTSocialAccountAdapter'
+
 # OAuth Provider Settings
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
