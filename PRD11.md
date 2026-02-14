@@ -205,11 +205,11 @@ Replace stub email implementation with production-ready email system using Hosti
 **Description:** As a developer, I need password reset to send emails asynchronously.
 
 **Acceptance Criteria:**
-- [ ] Update `PasswordResetRequestView` in `apps/users/views.py`
-- [ ] Replace direct `send_password_reset_email()` call with `send_password_reset_email_task.delay()`
-- [ ] Pass request IP and timestamp to task for security notice in email
-- [ ] Add error handling if Celery is unavailable (fallback to sync)
-- [ ] Typecheck passes
+- [x] Update `PasswordResetRequestView` in `apps/users/views.py`
+- [x] Replace direct `send_password_reset_email()` call with `send_password_reset_email_task.delay()`
+- [x] Pass request IP and timestamp to task for security notice in email
+- [x] Add error handling if Celery is unavailable (fallback to sync)
+- [x] Typecheck passes
 
 ---
 

@@ -234,12 +234,12 @@ Add social authentication to SyncScript using Google and GitHub OAuth providers.
 **Description:** As a user who clicked an OAuth button, I want to see a loading state while being redirected.
 
 **Acceptance Criteria:**
-- [ ] Show full-page loading overlay when OAuth redirect starts
-- [ ] Display message: "Redirecting to {Provider}..."
-- [ ] Show spinner animation
-- [ ] Prevent duplicate clicks during redirect
-- [ ] Use zustand or local state to track redirect status
-- [ ] Typecheck passes
+- [x] Show full-page loading overlay when OAuth redirect starts
+- [x] Display message: "Redirecting to {Provider}..."
+- [x] Show spinner animation
+- [x] Prevent duplicate clicks during redirect
+- [x] Use zustand or local state to track redirect status
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---
