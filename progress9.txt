@@ -604,3 +604,75 @@ Learnings for future iterations:
 - Gradient circle background for empty state icon follows pattern from SourcesList
 - Parent component controls all actions via optional callbacks pattern
 ---
+
+## Iteration 21 - US-022: Create AddAnnotationForm component
+- Created AddAnnotationForm at frontend/src/components/features/sources/AddAnnotationForm.tsx
+- Textarea with placeholder "Add your annotation... (Cmd/Ctrl + Enter to submit)"
+- Optional page number input field with label and min="1" validation
+- Character count indicator with color-coded warnings (orange < 100, red if over limit)
+- Submit button disabled when text is empty or exceeds maxLength (2000 chars default)
+- Cancel button with glass morphism secondary style
+- Form uses bottom-border input style: border-b-2 border-white/20 focus:border-[#F7931A]
+- Keyboard shortcuts: Cmd/Ctrl + Enter submits, Escape cancels
+- Loading state disables all inputs and buttons, shows "Adding..." on submit button
+- Form auto-resets (clears text and page number) after successful submission
+- Header shows MessageSquarePlus icon with "Add Annotation" title and X close button
+- Glass morphism card wrapping: bg-[#0F1115] border border-white/10 rounded-xl
+- Typecheck passes ✓
+
+Files changed:
+- frontend/src/components/features/sources/AddAnnotationForm.tsx (new)
+- PRD9.md (marked US-022 complete except browser verification)
+
+Learnings for future iterations:
+- Character count indicator should change color as limit approaches (orange warning, red over)
+- Keyboard shortcuts improve UX: Cmd/Ctrl + Enter for submit, Escape for cancel
+- Form should auto-reset after submission for immediate reuse
+- Textarea needs maxLength attribute to enforce client-side validation
+- Optional fields labeled clearly with "(optional)" suffix for user clarity
+- Page number input uses type="number" with min="1" for basic validation
+- Submit button validation: text.trim().length > 0 && text.length <= maxLength
+- Form header includes close button for alternative cancel option
+- Textarea placeholder can hint at keyboard shortcuts for power users
+- remainingChars calculation: maxLength - text.length (not trimmed)
+- Loading state message changes button text: "Adding..." vs "Add Annotation"
+---
+
+## Iteration 22 - US-023: Create AddReplyForm component
+- Created AddReplyForm at frontend/src/components/features/sources/AddReplyForm.tsx
+- Compact inline form appearing below annotation with left border accent
+- Single-line input (type="text" not textarea) that expands on focus with character count
+- Focus state tracked via useState to show/hide action buttons
+- Submit on Enter (handleKeyDown checks e.key === 'Enter' && !e.shiftKey)
+- Cancel on Escape (handleKeyDown checks e.key === 'Escape')
+- Shows author avatar (small gradient circle) next to input (same pattern as AnnotationReplyCard)
+- Input placeholder hints at keyboard shortcuts: "Write a reply... (Enter to submit, Escape to cancel)"
+- Character count appears when focused or has text, color-coded (red < 0, orange < 50, gray normal)
+- Action buttons (Cancel and Send) appear only when focused or has text
+- Cancel button uses X icon in glass morphism pill style
+- Send button uses gradient style with Send icon (lucide-react)
+- Form uses left border accent (border-l-2 border-[#F7931A]/30) matching reply card nesting
+- Input uses bottom-border focus style: border-b-2 border-white/20 focus:border-[#F7931A]
+- Auto-resets text and focus state after successful submit
+- maxLength defaults to 500 chars (shorter than annotation form's 2000)
+- Component accepts currentUserName prop for avatar (defaults to "You")
+- Typecheck passes ✓
+
+Files changed:
+- frontend/src/components/features/sources/AddReplyForm.tsx (new)
+- PRD9.md (marked US-023 complete except browser verification)
+
+Learnings for future iterations:
+- Reply form uses single-line input (input type="text") not textarea for compact inline UI
+- Focus state triggers visibility of action buttons for clean, progressive disclosure
+- Character count only warns when approaching limit (< 100 chars remaining) to avoid clutter
+- Reply form maxLength (500) is much shorter than annotation form (2000) for brief replies
+- Keyboard shortcuts improve UX: Enter submits, Escape cancels and clears
+- Submit validation: text.trim() && text.length <= maxLength && !isLoading
+- Auto-reset clears both text and isFocused state after submission
+- Left border accent (pl-4 border-l-2) visually connects reply form to parent annotation
+- Send icon from lucide-react perfect for submit action on compact forms
+- Action buttons use small icon size (w-3.5 h-3.5) for compact inline design
+- Cancel button uses X icon instead of text label for space efficiency
+- Form appears inline (not modal) so no DialogHeader or wrapping card needed
+---

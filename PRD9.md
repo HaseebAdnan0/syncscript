@@ -343,12 +343,12 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 **Description:** As a user, I want to reply to annotations so I can discuss insights with my team.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/sources/AddReplyForm.tsx`
-- [ ] Compact inline form appearing below annotation
-- [ ] Single-line input that expands on focus
-- [ ] Submit on Enter, cancel on Escape
-- [ ] Shows author avatar next to input
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/sources/AddReplyForm.tsx`
+- [x] Compact inline form appearing below annotation
+- [x] Single-line input that expands on focus
+- [x] Submit on Enter, cancel on Escape
+- [x] Shows author avatar next to input
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---
