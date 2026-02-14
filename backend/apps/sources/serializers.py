@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import PDFUpload
+from .models import PDFUpload, Source
+from .services import extract_metadata
 
 
 class UploadURLRequestSerializer(serializers.Serializer):
@@ -50,3 +51,43 @@ class PDFUploadSerializer(serializers.ModelSerializer):
             'id', 'uploaded_by', 'uploaded_at', 'processing_status',
             'pdf_title', 'pdf_author', 'page_count', 'thumbnail_url', 'deleted_at'
         ]
+
+
+class SourceSerializer(serializers.ModelSerializer):
+    """
+    Serializer for Source model (US-007).
+    Handles CRUD operations with automatic metadata extraction for URLs.
+    """
+    created_by = serializers.StringRelatedField(read_only=True)
+
+    class Meta:
+        model = Source
+        fields = [
+            'id', 'vault', 'url', 'title', 'description', 'source_type',
+            'metadata', 'created_by', 'created_at', 'updated_at'
+        ]
+        read_only_fields = ['created_by', 'created_at', 'updated_at']
+
+    def create(self, validated_data):
+        """
+        Override create to auto-extract metadata from URL if title not provided.
+        Merges extracted metadata into the metadata field.
+        """
+        # If title is not provided, extract metadata from URL
+        if not validated_data.get('title'):
+            url = validated_data['url']
+            extracted = extract_metadata(url)
+
+            # Use extracted title if available
+            if 'title' in extracted:
+                validated_data['title'] = extracted['title']
+
+            # Merge extracted metadata into metadata field
+            existing_metadata = validated_data.get('metadata', {})
+            # Copy all extracted data except 'title' into metadata
+            for key, value in extracted.items():
+                if key != 'title':
+                    existing_metadata[key] = value
+            validated_data['metadata'] = existing_metadata
+
+        return super().create(validated_data)

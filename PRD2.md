@@ -149,10 +149,10 @@ Create a secure, collaborative Knowledge Vault system where researchers can crea
 **Description:** As a developer, I need contributor+ permission for write operations.
 
 **Acceptance Criteria:**
-- [ ] Extends BasePermission
-- [ ] `has_object_permission` checks role weight >= CONTRIBUTOR weight (2)
-- [ ] Returns False if no membership exists
-- [ ] Typecheck passes
+- [x] Extends BasePermission
+- [x] `has_object_permission` checks role weight >= CONTRIBUTOR weight (2)
+- [x] Returns False if no membership exists
+- [x] Typecheck passes
 
 ### US-014: Create IsVaultMember permission
 **Description:** As a developer, I need member permission for read access.
