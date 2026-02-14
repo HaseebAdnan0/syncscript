@@ -1461,3 +1461,157 @@
 - Tests fail with 404 but URLs resolve correctly in shell
 
 (Document any other bugs or UX issues discovered during manual testing)
+
+## PRD14: AI Citation Generator - Frontend Components (US-016 to US-020) - 2026-02-15
+
+**NOTE**: Frontend citation components are implemented but require manual browser testing to verify complete functionality.
+
+### US-016: Citation format selector with preview
+- [ ] Navigate to a vault and view source cards
+- [ ] Verify CitationButton component appears on each source card (Quote icon)
+- [ ] Click citation button to open dropdown menu
+- [ ] Verify dropdown shows all 6 format options: APA 7th, MLA 9th, Chicago 17th, BibTeX, IEEE, Harvard
+- [ ] Click a format option (e.g., "APA 7th")
+- [ ] Verify loading state appears while generating citation
+- [ ] For sources with complete metadata:
+  - [ ] Verify citation preview modal opens immediately (structured citation, synchronous)
+  - [ ] Verify citation is properly formatted in selected style
+- [ ] For sources with incomplete metadata:
+  - [ ] Verify "Generating citation..." toast appears (AI citation, asynchronous)
+  - [ ] Verify loading state with polling
+  - [ ] Verify citation preview modal opens when ready (may take 5-15 seconds)
+- [ ] Verify error toast if generation fails
+- [ ] Test all 6 citation formats for accuracy
+
+### US-017: CitationPreviewModal component
+- [ ] Generate a citation to open the preview modal
+- [ ] Verify modal header shows format name (e.g., "APA 7th Edition")
+- [ ] Verify modal body shows formatted citation with proper typography
+- [ ] Verify HTML rendering: italics for journal names, book titles (e.g., <i>Nature</i>)
+- [ ] Verify "Copy Citation" button (primary, gradient button with orange accent)
+- [ ] Verify "Copy as Plain Text" button (secondary, strips HTML)
+- [ ] Click outside modal - verify it closes
+- [ ] Press Escape key - verify it closes
+- [ ] Verify modal follows Bitcoin DeFi design system:
+  - Glass morphism background (backdrop-blur-lg)
+  - Orange gradient accents
+  - Dark theme (#0F1115 surface)
+  - Border with white/10 opacity
+- [ ] Test on mobile viewport - verify modal is responsive
+
+### US-018: Copy to clipboard with toast
+- [ ] Open citation preview modal
+- [ ] Click "Copy Citation" button
+- [ ] Verify success toast appears: "Copied APA 7th citation to clipboard"
+- [ ] Toast should include format name and source title (truncated if long)
+- [ ] Paste clipboard content into text editor - verify HTML version copied
+- [ ] Click "Copy as Plain Text" button
+- [ ] Verify success toast appears
+- [ ] Paste clipboard content - verify plain text version (no HTML tags)
+- [ ] Verify toast auto-dismisses after 3 seconds
+- [ ] Verify toast has Bitcoin DeFi styling (dark bg, orange accent)
+- [ ] Test fallback for browsers without clipboard API (older browsers)
+
+### US-019: Batch export button in vault page
+- [ ] Navigate to a vault detail page
+- [ ] Verify "Export All Citations" button appears in vault header/toolbar
+- [ ] Verify button has gradient styling with orange accent
+- [ ] Click button to open dropdown with format options
+- [ ] Verify all 6 formats appear: BibTeX, APA 7th, MLA 9th, Chicago 17th, IEEE, Harvard
+- [ ] Select a format (e.g., "BibTeX")
+- [ ] For small/medium vaults (≤200 sources):
+  - [ ] Verify file downloads immediately
+  - [ ] Verify filename format: `{vault-name}-citations.bib` (or .txt for non-BibTeX)
+  - [ ] Verify success toast: "Exported X citations in BibTeX format"
+- [ ] For large vaults (>200 sources):
+  - [ ] Verify toast: "Export started, you'll be notified when ready"
+  - [ ] Verify notification appears when export completes (Pusher notification)
+  - [ ] Verify download link in notification
+- [ ] Test with empty vault (0 sources):
+  - [ ] Verify button is disabled
+  - [ ] Verify tooltip: "No sources to export"
+- [ ] Test BibTeX export:
+  - [ ] Open downloaded .bib file
+  - [ ] Verify proper BibTeX format (@article, @book entries)
+  - [ ] Verify special characters escaped correctly (&, %, $, etc.)
+  - [ ] Verify Unicode characters converted to LaTeX macros (é → {\'e})
+- [ ] Test other formats (APA, MLA, etc.):
+  - [ ] Open downloaded .txt file
+  - [ ] Verify citations separated by blank lines
+  - [ ] Verify formatting matches selected style
+
+### US-020: Citation format settings UI
+- [ ] Navigate to Settings page (/settings)
+- [ ] Verify "Citation Preferences" section appears
+- [ ] Section should have Quote icon and proper heading
+- [ ] Verify dropdown selector with options:
+  - "Always Ask" (default, sets to null)
+  - APA 7th, MLA 9th, Chicago 17th, BibTeX, IEEE, Harvard
+- [ ] Select a default format (e.g., "APA 7th")
+- [ ] Verify auto-save on change (loading state appears)
+- [ ] Verify success toast: "Default citation format updated to APA 7th"
+- [ ] Reload page - verify selection persists
+- [ ] Navigate to a source and generate citation:
+  - [ ] Verify default format is pre-selected (if set)
+  - [ ] Verify "Always Ask" shows format dropdown as usual
+- [ ] Test error handling:
+  - [ ] Disconnect backend server
+  - [ ] Change format selection
+  - [ ] Verify error toast appears
+  - [ ] Verify selection reverts to previous value
+
+### Vault Citation Format Override (Settings)
+- [ ] Navigate to a vault you own
+- [ ] Open vault Settings tab
+- [ ] Scroll to "Citation Preferences" section
+- [ ] Verify dropdown with options:
+  - "Use User Preference" (default)
+  - APA 7th, MLA 9th, Chicago 17th, BibTeX, IEEE, Harvard
+- [ ] Select a format (e.g., "MLA 9th")
+- [ ] Click "Save Changes" button
+- [ ] Verify success toast appears
+- [ ] Reload page - verify vault format persists
+- [ ] Invite a collaborator to the vault
+- [ ] As collaborator, generate citation in that vault:
+  - [ ] Verify vault's default format is used (MLA 9th)
+  - [ ] Verify vault format overrides user's personal preference
+- [ ] As non-owner (contributor/viewer):
+  - [ ] Verify vault format selector is read-only or hidden
+  - [ ] Only owners can change vault citation format
+
+### Expected Behavior:
+- Citation button integrates seamlessly into source cards
+- Format selector dropdown uses Radix UI for accessibility
+- Synchronous citations (structured) return immediately
+- Asynchronous citations (AI) show polling with loading toast
+- Preview modal displays formatted citations with proper typography
+- Copy buttons work with both HTML and plain text versions
+- Batch export handles small/medium/large vaults progressively
+- Export filename follows format: `{vault-name}-citations.{ext}`
+- User preferences auto-save and persist across sessions
+- Vault format override takes precedence over user preference
+- Settings hierarchy: Vault override > User preference > Always Ask
+- All components follow Bitcoin DeFi design system
+- Mobile responsive (test on <768px viewport)
+
+### Prerequisites:
+1. Backend server running: `cd backend && python manage.py runserver`
+2. Frontend dev server running: `cd frontend && npm run dev`
+3. Celery worker running: `celery -A config worker -l info`
+4. Redis running (for caching and Celery)
+5. Test user account with at least one vault
+6. Vault with sources (mix of complete and incomplete metadata for testing both citation types)
+7. Valid Anthropic API key in backend .env (for AI citations)
+
+### Implementation Files:
+- `frontend/src/components/features/sources/CitationButton.tsx`
+- `frontend/src/components/features/sources/CitationButtonContainer.tsx`
+- `frontend/src/components/features/sources/CitationPreviewModal.tsx`
+- `frontend/src/components/features/vaults/ExportCitationsButton.tsx`
+- `frontend/src/components/features/settings/CitationPreferences.tsx`
+- `frontend/src/lib/api/citations.ts`
+- `frontend/src/lib/types/user.ts`
+- `frontend/src/lib/types/vault.ts`
+
+### Issues Found:
+(Document any bugs, edge cases, or unexpected behavior discovered during manual testing)

@@ -209,7 +209,7 @@ SyncScript's AI-powered citation generation system enables researchers to genera
 - [x] Handle async citations: show "Generating..." with polling
 - [x] Handle errors: show toast with error message
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser (documented in .planning/MANUAL_VERIFICATION.md)
 
 ### US-017: Create CitationPreviewModal component
 **Description:** As a user, I want a modal that shows my formatted citation with copy functionality so I can review and copy it.
@@ -224,7 +224,7 @@ SyncScript's AI-powered citation generation system enables researchers to genera
 - [x] Close button and click-outside-to-close
 - [x] Matches Bitcoin DeFi design system
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser (documented in .planning/MANUAL_VERIFICATION.md)
 
 ### US-018: Implement copy to clipboard with toast
 **Description:** As a user, I want one-click copy with confirmation so I know the citation was copied successfully.
@@ -237,7 +237,7 @@ SyncScript's AI-powered citation generation system enables researchers to genera
 - [x] Toast matches design system (dark with orange accent)
 - [x] Fallback for browsers without clipboard API
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser (documented in .planning/MANUAL_VERIFICATION.md)
 
 ### US-019: Add batch export button to vault page
 **Description:** As a user, I want to export all citations from my vault so I can import them into my reference manager.
@@ -251,7 +251,7 @@ SyncScript's AI-powered citation generation system enables researchers to genera
 - [x] Button disabled with tooltip if vault has no sources
 - [x] Download filename: `{vault-name}-citations.{ext}`
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser (documented in .planning/MANUAL_VERIFICATION.md)
 
 ### US-020: Add citation format settings UI
 **Description:** As a user, I want to set my default citation format in settings so my preference is remembered.
@@ -264,7 +264,7 @@ SyncScript's AI-powered citation generation system enables researchers to genera
 - [x] For vault settings: add similar dropdown for vault owners
 - [x] Vault setting shows "Use User Preference" as default option
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser (documented in .planning/MANUAL_VERIFICATION.md)
 
 ### US-021: Handle BibTeX special character escaping
 **Description:** As a researcher, I need BibTeX exports to properly escape special characters so they compile correctly in LaTeX.

@@ -562,14 +562,14 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a user, I want to see suggestions when typing @mentions in annotations.
 
 **Acceptance Criteria:**
-- [ ] Create `components/features/annotations/MentionAutocomplete.tsx`
-- [ ] Trigger on typing `@` in annotation input
-- [ ] Show dropdown with matching vault members
-- [ ] Filter as user types after @
-- [ ] Show user avatar, name, username
-- [ ] Keyboard navigation (arrow keys, enter to select)
-- [ ] Insert selected username at cursor
-- [ ] Typecheck passes
+- [x] Create `components/features/annotations/MentionAutocomplete.tsx`
+- [x] Trigger on typing `@` in annotation input
+- [x] Show dropdown with matching vault members
+- [x] Filter as user types after @
+- [x] Show user avatar, name, username
+- [x] Keyboard navigation (arrow keys, enter to select)
+- [x] Insert selected username at cursor
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---

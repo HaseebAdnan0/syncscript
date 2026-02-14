@@ -1197,3 +1197,63 @@ In Progress - US-004 complete
   - Link to related settings pages using Next.js <a> tags
 ---
 
+## Iteration 41 - US-044: Verification - Comprehensive Notification Tests
+- Verified all comprehensive tests already exist and are passing (140 tests total)
+- Tests cover all acceptance criteria:
+  - Notification model creation (NotificationListTestCase, ServiceTestCase)
+  - Signal handlers (VaultInviteSignalTestCase, MemberJoinedSignalTestCase, SourceAddedSignalTestCase, AnnotationReplySignalTestCase, MentionSignalTestCase)
+  - API endpoints (NotificationListTestCase, MarkNotificationReadTestCase, MarkAllReadTestCase, UnreadCountTestCase, NotificationPreferencesTestCase, MutedVaultsTestCase)
+  - Muted vault filtering (MutedVaultsTestCase with 11 tests)
+  - Mention extraction utility (ExtractMentionsTestCase with 11 tests, ResolveMentionsTestCase with 7 tests)
+  - Email digest generation (EmailNotificationServiceTestCase with 6 tests, DailyDigestTaskTestCase, WeeklyDigestTaskTestCase)
+  - Pusher integration (PusherIntegrationTestCase with 6 tests, PusherAuthTestCase with 8 tests)
+  - Immediate email tasks (ImmediateEmailTaskTestCase with 7 tests)
+  - Cleanup tasks (CleanupNotificationsTaskTestCase with 7 tests)
+- All 140 tests pass successfully (0 failures, 0 errors)
+- Backend typecheck passes (mypy)
+- Commit 7884aa2
+- Files changed: PRD19.md (marked US-044 complete)
+- Learnings for future iterations:
+  - Comprehensive test coverage built incrementally across all previous iterations
+  - Test files organized by feature: test_mentions.py, test_email.py, test_digest_tasks.py, etc.
+  - Each user story had tests written alongside implementation
+  - Running full test suite: python manage.py test apps.notifications --noinput
+  - 140 tests provide excellent coverage for production confidence
+  - Always verify test existence before assuming tests need to be written
+---
+
+## Iteration 42 - US-042: Create Mention Autocomplete Component
+- Created frontend/src/components/features/annotations/MentionAutocomplete.tsx
+- Component accepts vaultMembers, onSelect, trigger, position, onClose props
+- Filters members based on typed text after @: uses .toLowerCase().startsWith(trigger)
+- Displays dropdown with user avatar (gradient circle with first letter), name, username
+- Keyboard navigation implemented:
+  - ArrowDown/ArrowUp to navigate filtered members
+  - Enter to select highlighted member
+  - Escape to close dropdown
+- Auto-scrolls selected item into view with scrollIntoView
+- Click outside to close using mousedown event listener with setTimeout
+- Selected item highlighted with orange background tint and left border
+- Avatar styled with Bitcoin DeFi gradient (EA580C to F7931A)
+- Dropdown styled: dark bg (#0F1115), border white/10, orange shadow glow
+- Max height 200px with scrollable overflow for long member lists
+- Shows user's full name if available, otherwise username
+- All acceptance criteria met (except browser verification - manual task)
+- TypeScript typecheck passes
+- Files changed:
+  - frontend/src/components/features/annotations/MentionAutocomplete.tsx (new)
+  - PRD19.md (marked US-042 complete except browser verification)
+  - progress19.txt (this entry)
+- Learnings for future iterations:
+  - Component positions dropdown using absolute positioning with top/left props
+  - Parent component responsible for calculating cursor position
+  - useEffect with setTimeout(0) for click-outside prevents immediate close on mount
+  - selectedIndex resets to 0 when trigger text changes (useEffect with [trigger] dependency)
+  - data-index attribute on items enables scrollIntoView by selector
+  - Keyboard event listeners on window level to capture all keystrokes
+  - filteredMembers.length === 0 returns null (hides dropdown when no matches)
+  - User type from @/lib/types/user (not @/types/auth)
+  - Avatar gradient circle pattern: flex items-center justify-center with uppercase first letter
+  - truncate class prevents long names from breaking layout
+---
+
