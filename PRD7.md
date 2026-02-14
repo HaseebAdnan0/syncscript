@@ -275,16 +275,16 @@ SyncScript needs a complete frontend authentication system that enables users to
 **Description:** As a user, I want to view and edit my profile information so that I can keep my account up to date.
 
 **Acceptance Criteria:**
-- [ ] Profile tab shows form with: name, email (read-only), bio (optional textarea)
-- [ ] Pre-populate with current user data from store
-- [ ] Editable fields use FormInput components
-- [ ] Gradient "Save Changes" button
-- [ ] On submit, PUT to `/auth/me/`
-- [ ] Show loading state during save
-- [ ] On success, update store and show success toast
-- [ ] On error, show error toast
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Profile tab shows form with: name, email (read-only), bio (optional textarea)
+- [x] Pre-populate with current user data from store
+- [x] Editable fields use FormInput components
+- [x] Gradient "Save Changes" button
+- [x] On submit, PUT to `/auth/me/`
+- [x] Show loading state during save
+- [x] On success, update store and show success toast
+- [x] On error, show error toast
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 

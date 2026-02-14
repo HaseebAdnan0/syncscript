@@ -570,3 +570,37 @@ Learnings for future iterations:
 - Fixed unrelated import errors to ensure clean typecheck pass
 - AnnotationReplyCard can be used standalone or integrated into AnnotationCard's reply expansion
 ---
+
+## Iteration 20 - US-021: Create AnnotationSidebar component
+- Created AnnotationSidebar at frontend/src/components/features/sources/AnnotationSidebar.tsx
+- Fixed height with flex-1 overflow-y-auto for scrollable content
+- Header shows "Annotations" title with count badge (orange themed)
+- "Add Annotation" button at top uses gradient pill style with MessageSquarePlus icon
+- Header button is compact version (px-3 py-1.5) while empty state button is standard size
+- Lists AnnotationCards sorted by newest first in space-y-4 container
+- Empty state shows MessageSquarePlus icon in gradient circle (20% opacity)
+- Empty state encourages action: "Be the first to add one! Share your insights and notes with your team."
+- Empty state CTA button repeats "Add First Annotation" for clear user action
+- Loading state shows centered message "Loading annotations..."
+- Component accepts annotations array, loading state, callbacks, and currentUserId
+- Passes edit/delete permissions to AnnotationCard based on currentUserId === annotation.author.id
+- All callbacks optional (onReply, onEdit, onDelete) for parent control
+- Fixed TypeScript errors: annotation IDs are numbers, not strings (changed all ID types)
+- Typecheck passes ✓
+
+Files changed:
+- frontend/src/components/features/sources/AnnotationSidebar.tsx (new)
+- PRD9.md (marked US-021 complete except browser verification)
+
+Learnings for future iterations:
+- Annotation and User IDs are numbers, not strings - check types before implementing
+- Empty state should be encouraging with clear CTA matching the header action
+- Loading state can be simple centered message for sidebar (no need for full skeleton)
+- Sidebar uses flex flex-col h-full for header + scrollable content layout
+- Count badge only shows when annotations.length > 0 to avoid showing "0"
+- Edit/delete permissions determined by comparing currentUserId with annotation.author.id
+- Header "Add" button is compact to save space, empty state button is full-size for emphasis
+- MessageSquarePlus icon from lucide-react perfect for annotation actions
+- Gradient circle background for empty state icon follows pattern from SourcesList
+- Parent component controls all actions via optional callbacks pattern
+---

@@ -240,14 +240,14 @@ Create the complete vault management interface for SyncScript, enabling research
 **Description:** As a vault owner, I want to rename my vault so I can keep it organized.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/vaults/VaultSettings.tsx`
-- [ ] Form section: "Vault Details" with name input and description textarea
-- [ ] Pre-populated with current values
-- [ ] "Save Changes" button, disabled if no changes
-- [ ] Uses useUpdateVault mutation
-- [ ] On success: show toast, update page header
-- [ ] Only editable fields shown to Owner role
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/vaults/VaultSettings.tsx`
+- [x] Form section: "Vault Details" with name input and description textarea
+- [x] Pre-populated with current values
+- [x] "Save Changes" button, disabled if no changes
+- [x] Uses useUpdateVault mutation
+- [x] On success: show toast, update page header
+- [x] Only editable fields shown to Owner role
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-019: Settings tab - archive vault

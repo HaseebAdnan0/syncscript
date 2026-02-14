@@ -327,14 +327,14 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 **Description:** As a user, I want a form to add new annotations so I can share my notes with collaborators.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/sources/AddAnnotationForm.tsx`
-- [ ] Textarea with placeholder "Add your annotation..."
-- [ ] Optional page number input field
-- [ ] Character count indicator
-- [ ] Submit button (disabled when empty)
-- [ ] Cancel button to collapse form
-- [ ] Form uses bottom-border input style
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/sources/AddAnnotationForm.tsx`
+- [x] Textarea with placeholder "Add your annotation..."
+- [x] Optional page number input field
+- [x] Character count indicator
+- [x] Submit button (disabled when empty)
+- [x] Cancel button to collapse form
+- [x] Form uses bottom-border input style
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---

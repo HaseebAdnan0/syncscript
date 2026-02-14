@@ -9,6 +9,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { useReconnectionHandler } from '@/hooks/useReconnectionHandler';
 import { SourcesList } from '@/components/features/vaults/SourcesList';
 import { MembersList } from '@/components/features/vaults/MembersList';
+import { VaultSettings } from '@/components/features/vaults/VaultSettings';
 import { PresenceIndicator } from '@/components/features/notifications/PresenceIndicator';
 import * as Tabs from '@radix-ui/react-tabs';
 import { ArrowLeft } from 'lucide-react';
@@ -143,7 +144,7 @@ export default function VaultDetailPage() {
           </Tabs.Content>
 
           <Tabs.Content value="settings">
-            <div className="text-[#94A3B8]">Settings tab content (to be implemented)</div>
+            <VaultSettings vault={vault} userRole={vault.user_role} />
           </Tabs.Content>
         </Tabs.Root>
       </div>
