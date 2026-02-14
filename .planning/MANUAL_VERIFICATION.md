@@ -283,6 +283,29 @@
 
 ---
 
+## US-027: Signal Handler Tests - 2026-02-14
+- [ ] Ensure PostgreSQL is running and accessible
+- [ ] Stop any running test processes that might hold database locks
+- [ ] Drop test database manually if needed: `DROP DATABASE IF EXISTS test_syncscript;` via psql or pgAdmin
+- [ ] Run signal tests: `python manage.py test apps.sources.tests.test_signals --verbosity=2`
+- [ ] Expected results:
+  - test_source_created_triggers_celery_task: PASS (Source creation triggers broadcast_source_created task)
+  - test_source_updated_broadcasts_to_vault: PASS (Source update triggers broadcast_source_updated task with changed fields)
+  - test_source_deleted_broadcasts_to_vault: PASS (Source deletion triggers broadcast_source_deleted task with vault_id)
+  - test_signal_not_triggered_on_update: PASS (Update does NOT trigger create task)
+  - test_create_and_update_trigger_different_tasks: PASS (Create and update trigger different Celery tasks)
+- [ ] All 5 tests should pass
+- [ ] Typecheck passes: `pyright apps/sources/tests/test_signals.py`
+- [ ] Verification script passes: `python test_verify_signals.py` (verifies signal registration and test structure)
+- [ ] Tests verify:
+  - post_save signal with created=True triggers broadcast_source_created.delay(source_id)
+  - post_save signal with created=False triggers broadcast_source_updated.delay(source_id, changed_fields)
+  - post_delete signal triggers broadcast_source_deleted.delay(source_id, vault_id, deleted_by_id)
+  - Celery tasks mocked to verify correct arguments without actually executing
+  - Signal handlers only fire for appropriate events (create vs update)
+
+---
+
 ## US-026: E2E WebSocket Rate Limiting and Replay Tests - 2026-02-14
 - [ ] Ensure PostgreSQL is running and accessible
 - [ ] Ensure Redis is running (required for InMemoryChannelLayer fallback)

@@ -560,3 +560,33 @@
   - Test database connection failures are environmental, not code issues - document in MANUAL_VERIFICATION.md
 ---
 
+## Iteration 25 - US-026: Create E2E WebSocket tests (rate limiting and replay)
+- Created test_websocket_rate_limiting.py with 3 comprehensive E2E tests
+- Tests verify rate limiting enforcement and event replay:
+  - test_message_throttling_progressive_enforcement: Send 61 messages rapidly, verify warning/error and disconnect
+  - test_heartbeat_timeout_enforcement: Verify connection stays alive with heartbeats (timeout cleanup by Celery task)
+  - test_event_replay_after_reconnection: User disconnects during events, reconnects with replay_request, receives missed events in order
+- Used TransactionTestCase for async compatibility with database access
+- Configured CELERY_TASK_ALWAYS_EAGER=True for synchronous Celery task execution
+- Configured InMemoryChannelLayer to avoid Redis dependency
+- Created helper method _connect_user to consume initial messages (connection.success + presence.update)
+- Event replay test simulates real-world disconnect/reconnect scenario with sequence number tracking
+- Verifies replayed events delivered in chronological order (sequence numbers increasing)
+- Files changed: apps/vaults/tests/test_websocket_rate_limiting.py (new), PRD5.md, .planning/MANUAL_VERIFICATION.md
+- Typecheck passes (0 errors, 0 warnings)
+- Code complete - manual verification required due to PostgreSQL database setup issues
+- Committed in 6cc5332
+- Learnings for future iterations:
+  - Rate limiting test sends 61 messages to exceed 60/60s threshold (Layer 3 enforcement)
+  - Progressive enforcement pattern: warning → disconnect → ban (verified in consumer implementation)
+  - Heartbeat timeout test verifies connection stays alive (full 5-min timeout impractical for E2E test)
+  - Celery periodic task cleanup_stale_connections handles actual timeout enforcement (US-021)
+  - Event replay test tracks last_seq from received events to simulate real client behavior
+  - replay_request message format: {"type": "replay_request", "since_seq": N}
+  - Replayed events filtered by seq > since_seq and delivered in chronological order
+  - asyncio.to_thread for blocking Django ORM operations in async test methods
+  - Used underscore _ for unused loop variables to avoid Pyright warnings
+  - Helper pattern: _connect_user consumes expected messages to keep test assertions clean
+  - Test database connection failures are environmental - document in MANUAL_VERIFICATION.md
+---
+
