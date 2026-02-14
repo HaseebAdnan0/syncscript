@@ -372,3 +372,30 @@
   - Use set() to detect duplicates: len(set(urls)) != len(urls)
   - Serializer.Serializer (not ModelSerializer) for non-model data structures
 ---
+
+## Iteration 18 - US-017: Add bulk_import action to SourceViewSet
+- Task already completed in previous development session
+- Verified implementation in backend/apps/sources/views.py (lines 498-599)
+- Implementation details:
+  - Added @action(detail=False, methods=['post']) decorator
+  - Validates request data using BulkSourceSerializer
+  - Requires nested route: /api/v1/vaults/{vault_id}/sources/bulk_import/
+  - Checks Owner/Contributor permissions on vault
+  - Queries existing sources in vault to detect duplicates (filter by is_deleted=False)
+  - Wraps processing in transaction.atomic() for atomicity
+  - For each URL: calls extract_metadata() and creates Source object
+  - Returns {"created": [...], "skipped": [...], "errors": [...]}
+  - Skipped sources include reason: "URL already exists in vault"
+  - Errors include url and error message
+- Django check passes with 0 issues
+- Files already committed:
+  - backend/apps/sources/views.py (bulk_import action exists)
+  - PRD3.md (marked US-017 complete)
+- Learnings for future iterations:
+  - Always check git history and existing code before implementing
+  - Bulk actions should use transaction.atomic() for all-or-nothing semantics
+  - Error handling in loops: catch exceptions per item, don't fail entire batch
+  - Nested routes use kwargs.get('vault_pk') to access parent ID
+  - Return HTTP 200 (not 201) for bulk operations since response contains mixed results
+  - Check existing resources by filtering with __in lookup for performance
+---
