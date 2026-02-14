@@ -224,12 +224,12 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 **Description:** As a user, I want to access the sources page within a vault via URL navigation.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/app/vaults/[id]/sources/page.tsx`
-- [ ] Page fetches vault ID from params
-- [ ] Renders SourcesListHeader, SourcesFilterBar, SourcesList
-- [ ] Integrates AddSourceModal triggered from header button
-- [ ] Page title set to "[Vault Name] - Sources"
-- [ ] Typecheck passes
+- [x] Create `frontend/src/app/vaults/[id]/sources/page.tsx`
+- [x] Page fetches vault ID from params
+- [x] Renders SourcesListHeader, SourcesFilterBar, SourcesList
+- [x] Integrates AddSourceModal triggered from header button
+- [x] Page title set to "[Vault Name] - Sources"
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---

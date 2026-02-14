@@ -64,7 +64,7 @@ export default function LoginPage() {
 
       if (result.success) {
         // Get return URL from query params or default to dashboard
-        const returnUrl = searchParams.get('returnUrl') || '/dashboard';
+        const returnUrl = searchParams.get('returnUrl') || '/vaults';
         router.push(returnUrl);
       } else {
         // Show error toast

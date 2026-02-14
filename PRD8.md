@@ -159,13 +159,13 @@ Create the complete vault management interface for SyncScript, enabling research
 **Description:** As a user viewing an empty vault, I want to see a helpful message so I know how to add sources.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/vaults/EmptySourcesState.tsx`
-- [ ] Displays icon (Lucide `FileText` or `Link`)
-- [ ] Heading: "No sources yet"
-- [ ] Subtext: "Add URLs, PDFs, or citations to build your knowledge base"
-- [ ] CTA button: "Add Source" (can be placeholder action for now)
-- [ ] Only show CTA if user has Contributor or Owner role
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/vaults/EmptySourcesState.tsx`
+- [x] Displays icon (Lucide `FileText` or `Link`)
+- [x] Heading: "No sources yet"
+- [x] Subtext: "Add URLs, PDFs, or citations to build your knowledge base"
+- [x] CTA button: "Add Source" (can be placeholder action for now)
+- [x] Only show CTA if user has Contributor or Owner role
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-013: Members tab list component

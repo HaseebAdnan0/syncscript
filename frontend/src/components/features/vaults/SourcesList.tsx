@@ -4,13 +4,16 @@ import Link from 'next/link';
 import { FileText, Calendar, User } from 'lucide-react';
 import { useSources } from '@/hooks/useSources';
 import { SourceTypeBadge } from '../sources/SourceTypeBadge';
+import EmptySourcesState from './EmptySourcesState';
 import type { Source } from '@/lib/types/sources';
+import type { VaultRole } from '@/lib/types/vault';
 
 interface SourcesListProps {
   vaultId: number;
+  userRole: VaultRole;
 }
 
-export function SourcesList({ vaultId }: SourcesListProps) {
+export function SourcesList({ vaultId, userRole }: SourcesListProps) {
   const { data: sources = [], isLoading, error } = useSources(vaultId);
 
   // Loading state
@@ -40,6 +43,20 @@ export function SourcesList({ vaultId }: SourcesListProps) {
       <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-6">
         <p className="text-red-400">Failed to load sources. Please try again.</p>
       </div>
+    );
+  }
+
+  // Empty state
+  if (sources.length === 0) {
+    const canAddSource = userRole === 'OWNER' || userRole === 'CONTRIBUTOR';
+    return (
+      <EmptySourcesState
+        onAddSource={() => {
+          // TODO: Open AddSourceModal when implemented
+          console.log('Add source clicked');
+        }}
+        canAddSource={canAddSource}
+      />
     );
   }
 
