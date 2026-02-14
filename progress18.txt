@@ -284,3 +284,31 @@
   - Test user isolation: create second user and verify histories are separate
 ---
 
+## Iteration 14 - US-014: Create management command to backfill search vectors
+- Created backend/apps/search/management/commands/rebuild_search_index.py
+- Command: python manage.py rebuild_search_index
+- Supports flags: --sources-only, --annotations-only, --batch-size (default 100)
+- Processes Sources: builds search vector from title (weight A) + description (weight B)
+- Processes Annotations: builds search vector from content (weight A)
+- Shows progress output with batch numbers and totals
+- Filters out deleted sources (is_deleted=False)
+- Uses bulk updates with filter().update() for performance
+- Created management/__init__.py and management/commands/__init__.py directories
+- Command executes successfully with 0 sources/annotations in test DB
+- Files changed:
+  - backend/apps/search/management/__init__.py (created)
+  - backend/apps/search/management/commands/__init__.py (created)
+  - backend/apps/search/management/commands/rebuild_search_index.py (created)
+  - PRD18.md (marked US-014 complete)
+- Learnings for future iterations:
+  - Management commands extend BaseCommand and implement handle() method
+  - add_arguments() defines CLI flags and options
+  - self.stdout.write() outputs to console, self.style.SUCCESS() colors green
+  - SearchVector can be built dynamically with weight parameter
+  - Update search vectors using Model.objects.filter(pk=obj.pk).update(search_vector=...)
+  - Avoid Unicode characters (✓) in console output - they fail on Windows cp1252 encoding
+  - Batch processing: process records in chunks to avoid memory issues on large datasets
+  - offset:offset+limit slicing processes records in batches
+  - --help flag automatically generated from help attribute and add_arguments()
+---
+
