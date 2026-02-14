@@ -170,11 +170,11 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a vault owner, I want to be notified when someone joins my vault.
 
 **Acceptance Criteria:**
-- [ ] Listen for VaultMembership creation
-- [ ] Notify vault owner (if different from new member)
-- [ ] Create notification with type `member_joined`
-- [ ] Data includes: `vault_id`, `vault_name`, `member_id`, `member_name`
-- [ ] Typecheck passes
+- [x] Listen for VaultMembership creation
+- [x] Notify vault owner (if different from new member)
+- [x] Create notification with type `member_joined`
+- [x] Data includes: `vault_id`, `vault_name`, `member_id`, `member_name`
+- [x] Typecheck passes
 
 ---
 
