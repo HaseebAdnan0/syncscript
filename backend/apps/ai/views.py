@@ -9,7 +9,7 @@ from apps.sources.models import Source, PDFUpload
 from apps.vaults.models import Vault, VaultMembership, RoleChoices
 from .decorators import ai_rate_limit
 from .services.claude_client import ClaudeClient
-from .services.usage import log_usage
+from .services.usage import log_usage, get_daily_usage
 from .services.chunking import chunk_text, get_relevant_chunks
 from .serializers import SummarizeRequestSerializer, AskQuestionSerializer
 from .models import ChatConversation, ChatMessage
@@ -609,4 +609,41 @@ def get_conversation(request, vault_id, conversation_id):
         'created_at': conversation.created_at.isoformat(),
         'updated_at': conversation.updated_at.isoformat(),
         'messages': message_list
+    }, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_ai_usage(request):
+    """
+    GET /api/v1/ai/usage/
+
+    Get current AI usage stats for the authenticated user.
+
+    Returns:
+    - requests_today (int): Number of AI requests made today
+    - requests_limit (int): Daily request limit
+    - tokens_today (int): Total tokens consumed today
+    - resets_at (str): ISO timestamp when usage resets (midnight UTC)
+    """
+    from django.conf import settings
+    from datetime import datetime, timedelta
+
+    # Get daily usage
+    usage = get_daily_usage(request.user)
+
+    # Get daily limit from settings
+    requests_limit = getattr(settings, 'AI_DAILY_LIMIT', 20)
+
+    # Calculate when usage resets (midnight UTC tomorrow)
+    now = datetime.utcnow()
+    tomorrow_midnight = (now + timedelta(days=1)).replace(
+        hour=0, minute=0, second=0, microsecond=0
+    )
+
+    return Response({
+        'requests_today': usage['request_count'],
+        'requests_limit': requests_limit,
+        'tokens_today': usage['tokens_used'],
+        'resets_at': tomorrow_midnight.isoformat() + 'Z'
     }, status=status.HTTP_200_OK)

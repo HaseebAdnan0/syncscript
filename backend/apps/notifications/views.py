@@ -12,6 +12,7 @@ from rest_framework.response import Response
 
 from .models import Notification, NotificationPreferences, MutedVault
 from .serializers import NotificationSerializer, NotificationPreferencesSerializer, MutedVaultSerializer
+from .services import get_pusher_client
 
 
 class NotificationPagination(PageNumberPagination):
@@ -223,3 +224,52 @@ class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
             pass
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=False, methods=['post'], url_path='pusher/auth')
+    def pusher_auth(self, request) -> Response:  # type: ignore[no-untyped-def]
+        """
+        Authenticate Pusher private channel subscription.
+
+        POST /api/v1/notifications/pusher/auth/
+
+        Validates channel name matches private-user-{request.user.id}
+        Returns Pusher auth signature.
+        Rejects unauthorized channel access.
+        """
+        channel_name = request.data.get('channel_name')
+        socket_id = request.data.get('socket_id')
+
+        if not channel_name or not socket_id:
+            return Response(
+                {'detail': 'channel_name and socket_id are required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Validate channel name matches user's private channel
+        expected_channel = f'private-user-{request.user.id}'
+        if channel_name != expected_channel:
+            return Response(
+                {'detail': 'Unauthorized channel access'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        # Get Pusher client
+        pusher_client = get_pusher_client()
+        if pusher_client is None:
+            return Response(
+                {'detail': 'Pusher not configured'},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE
+            )
+
+        # Generate auth signature
+        try:
+            auth = pusher_client.authenticate(
+                channel=channel_name,
+                socket_id=socket_id
+            )
+            return Response(auth)
+        except Exception as e:
+            return Response(
+                {'detail': f'Pusher authentication failed: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )

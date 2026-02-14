@@ -476,13 +476,13 @@ Implement a global full-text search system for SyncScript that enables researche
 **Description:** As a user, I want clicking a search result to navigate to that item so I can access the content.
 
 **Acceptance Criteria:**
-- [ ] Vault results navigate to `/vaults/[id]`
-- [ ] Source results navigate to `/vaults/[vaultId]/sources/[sourceId]`
-- [ ] Annotation results navigate to source page with annotation highlighted
-- [ ] Modal closes after navigation
-- [ ] Search query preserved in recent searches
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Vault results navigate to `/vaults/[id]`
+- [x] Source results navigate to `/vaults/[vaultId]/sources/[sourceId]`
+- [x] Annotation results navigate to source page with annotation highlighted
+- [x] Modal closes after navigation
+- [x] Search query preserved in recent searches
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 

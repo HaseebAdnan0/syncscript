@@ -54,6 +54,25 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
     setSelectedType('all');
   };
 
+  // Handle result click - navigate to appropriate page
+  const handleResultClick = (result: SearchResult) => {
+    // Navigate based on result type
+    switch (result.type) {
+      case 'vault':
+        router.push(`/vaults/${result.id}`);
+        break;
+      case 'source':
+        router.push(`/vaults/${result.vault_id}/sources/${result.id}`);
+        break;
+      case 'annotation':
+        // Navigate to source page with annotation highlighted
+        router.push(`/vaults/${result.vault_id}/sources/${result.id}#annotation-${result.id}`);
+        break;
+    }
+    // Close modal after navigation
+    handleClose();
+  };
+
   // Close modal and reset state
   const handleClose = () => {
     onClose();
@@ -114,7 +133,7 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
 
           {/* Show results when available */}
           {query.length >= 2 && !isLoading && hasResults && (
-            <SearchResultsList results={searchResults} onResultClick={() => {}} />
+            <SearchResultsList results={searchResults} onResultClick={handleResultClick} />
           )}
 
           {/* Show no results state */}
