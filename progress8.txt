@@ -53,3 +53,26 @@ Learnings for future iterations:
 - enabled: !!id pattern prevents queries from running with falsy IDs
 ---
 
+## Iteration 3 - US-003: Vault members API client and hooks
+- Created `frontend/src/hooks/useVaultMembers.ts` with comprehensive member management hooks:
+  - useVaultMembers(vaultId) - Fetches all members of a vault
+  - useAddMember(vaultId) - Adds existing user by email/username
+  - useInviteMember(vaultId) - Sends email invitation to new user
+  - useUpdateRole(vaultId) - Updates member's role (accepts { memberId, data })
+  - useRemoveMember(vaultId) - Removes member from vault (accepts memberId)
+- Implemented query key factory pattern (vaultMemberKeys) for cache management
+- All mutations properly invalidate members list query on success
+- API functions already existed from US-001 (created in Iteration 1)
+- Typecheck passes successfully
+
+Files changed:
+- frontend/src/hooks/useVaultMembers.ts (created)
+- PRD8.md (marked US-003 complete)
+
+Learnings for future iterations:
+- Member management hooks follow same pattern as vault hooks (query key factory + invalidation)
+- Some mutations need compound parameters (e.g., useUpdateRole takes { memberId, data })
+- Hooks should be vault-scoped (take vaultId parameter) for member operations
+- API client was already comprehensive from US-001, just needed React Query wrappers
+---
+
