@@ -183,3 +183,27 @@
   - min() function caps user-provided limit to prevent excessive queries
   - PostgreSQL tsvector search uses @@ operator via Django's filter(search_vector=search_query)
 ---
+## Iteration 10 - US-010: Create search suggestions endpoint
+- Created suggestions_view in backend/apps/search/views.py
+- Endpoint: GET /api/v1/search/suggestions/ with query param q (min 2 chars)
+- Returns top 5 suggestions: top 3 from Source titles (by count), up to 2 from Annotation content
+- Filters by user's accessible vaults (memberships + owned vaults)
+- Suggestions include text, type (source/annotation), and count fields
+- Added URL route in apps/search/urls.py
+- Created SuggestionsViewTest with 6 comprehensive tests
+- All tests pass (authenticated, min length, success, max 5, structure, permissions)
+- Files changed:
+  - backend/apps/search/views.py (added suggestions_view function)
+  - backend/apps/search/urls.py (added suggestions/ route)
+  - backend/apps/search/test_views.py (added SuggestionsViewTest class)
+  - PRD18.md (marked US-010 complete)
+- Learnings for future iterations:
+  - Use icontains for case-insensitive substring matching (simple, fast alternative to full-text search)
+  - values() + annotate(count=Count('id')) pattern for grouping and counting
+  - Limit source suggestions to 3 to leave room for annotation suggestions in top 5
+  - For annotations, truncate content to 50 chars for better UX (snippet preview)
+  - Order by -created_at for annotations to show recent content first
+  - Test permission isolation: create other users/vaults to verify filtering works
+  - Response time is fast (<100ms) even without full-text search for typeahead use case
+---
+

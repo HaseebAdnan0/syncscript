@@ -19,7 +19,7 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 
-from .models import User
+from .models import User, EmailPreference
 from .serializers import (
     UserRegistrationSerializer,
     UserSerializer,
@@ -30,6 +30,7 @@ from .serializers import (
     PasswordResetConfirmSerializer,
     ProfileUpdateSerializer,
     OnboardingSerializer,
+    EmailPreferenceSerializer,
 )
 from .tokens import generate_verification_token, verify_token
 from .emails import send_verification_email, send_password_reset_email

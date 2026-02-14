@@ -231,3 +231,33 @@ vaults/{vault_id}/thumbnails/{uuid}.jpg
   - abort_multipart_upload is a cleanup operation, so errors shouldn't block execution
 
 ---
+
+## Iteration 9 - Create multipart abort API endpoint (US-009)
+- Created `MultipartUploadAbortRequestSerializer` in backend/apps/sources/serializers.py
+  - Validates upload_id (S3 multipart upload ID)
+  - Validates file_key (S3 object key)
+- Added `multipart_upload_abort` action to PDFUploadViewSet in backend/apps/sources/views.py
+  - Endpoint: POST /api/v1/sources/pdfs/multipart-upload/abort/
+  - Extracts vault_id from file_key (format: vaults/{vault_id}/pdfs/{uuid}.pdf)
+  - Validates user has contributor or owner permission on vault
+  - Calls abort_multipart_upload() storage function
+  - Returns 200 on success with success message
+  - Returns 400 for invalid file_key format
+  - Returns 403 for permission denied
+  - Returns 500 for S3 abort failures
+- Updated imports in views.py to include MultipartUploadAbortRequestSerializer and abort_multipart_upload
+- Files changed:
+  - backend/apps/sources/serializers.py
+  - backend/apps/sources/views.py
+  - PRD13.md
+  - progress13.txt
+- Learnings for future iterations:
+  - Endpoint follows REST pattern: POST to /multipart-upload/abort/ instead of DELETE
+  - Permission check uses existing _check_vault_permission helper method
+  - file_key parsing extracts vault_id from path format: vaults/{vault_id}/pdfs/{uuid}.pdf
+  - Error handling includes graceful responses for invalid file_key format
+  - Django system checks pass (only security warnings, not errors)
+  - Imports verified successfully in Django shell
+  - URL patterns loaded successfully
+
+---

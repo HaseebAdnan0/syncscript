@@ -83,16 +83,16 @@ Create a comprehensive user dashboard as the primary logged-in landing page for 
 **Description:** As a user, I want a dashboard layout with collapsible sidebar navigation so I can easily navigate between sections of the app.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/app/(app)/dashboard/page.tsx`
-- [ ] Create `frontend/src/app/(app)/layout.tsx` with sidebar (shared across app routes)
-- [ ] Sidebar items: Dashboard, My Vaults, Shared With Me, Recent, Settings
-- [ ] Each item has icon (lucide-react) and label
-- [ ] Active item highlighted with Bitcoin orange accent
-- [ ] Sidebar collapsible on mobile (hamburger menu)
-- [ ] Sidebar collapsed state shows icons only on desktop
-- [ ] Main content area uses responsive grid
-- [ ] Follows Bitcoin DeFi design system (dark theme, orange accents)
-- [ ] Typecheck passes
+- [x] Create `frontend/src/app/(app)/dashboard/page.tsx`
+- [x] Create `frontend/src/app/(app)/layout.tsx` with sidebar (shared across app routes)
+- [x] Sidebar items: Dashboard, My Vaults, Shared With Me, Recent, Settings
+- [x] Each item has icon (lucide-react) and label
+- [x] Active item highlighted with Bitcoin orange accent
+- [x] Sidebar collapsible on mobile (hamburger menu)
+- [x] Sidebar collapsed state shows icons only on desktop
+- [x] Main content area uses responsive grid
+- [x] Follows Bitcoin DeFi design system (dark theme, orange accents)
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-007: Create welcome header component

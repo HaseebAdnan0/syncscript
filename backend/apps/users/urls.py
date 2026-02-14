@@ -18,6 +18,7 @@ from .views import (
     GoogleOAuthRedirectView,
     GitHubOAuthRedirectView,
     LinkOAuthAccountView,
+    CompleteOAuthEmailView,
 )
 
 app_name = 'users'
@@ -50,5 +51,6 @@ urlpatterns = [
     path('auth/google/', GoogleOAuthRedirectView.as_view(), name='google-oauth'),
     path('auth/github/', GitHubOAuthRedirectView.as_view(), name='github-oauth'),
     path('auth/oauth/link/', LinkOAuthAccountView.as_view(), name='oauth-link'),
+    path('auth/oauth/complete-email/', CompleteOAuthEmailView.as_view(), name='oauth-complete-email'),
     # Note: OAuth callbacks are handled by allauth URLs in config/urls.py
 ]

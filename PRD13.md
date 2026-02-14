@@ -141,12 +141,12 @@ Enhance SyncScript's file storage system to production-ready status with Cloudfl
 **Description:** As a frontend developer, I need an endpoint to abort failed uploads.
 
 **Acceptance Criteria:**
-- [ ] Add `POST /api/v1/uploads/abort/` endpoint
-- [ ] Request body: `{ "upload_id": str, "file_key": str }`
-- [ ] Validate user has permission to abort (owns the upload or vault admin)
-- [ ] Call `abort_multipart_upload()` function
-- [ ] Return 200 on success, 400/404 on error
-- [ ] Typecheck passes
+- [x] Add `POST /api/v1/uploads/abort/` endpoint
+- [x] Request body: `{ "upload_id": str, "file_key": str }`
+- [x] Validate user has permission to abort (owns the upload or vault admin)
+- [x] Call `abort_multipart_upload()` function
+- [x] Return 200 on success, 400/404 on error
+- [x] Typecheck passes
 
 ---
 

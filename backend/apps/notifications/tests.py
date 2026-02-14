@@ -5,7 +5,7 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient
 from rest_framework import status
-from .models import Notification
+from .models import Notification, NotificationPreferences
 
 User = get_user_model()
 
@@ -408,4 +408,120 @@ class MarkAllReadTestCase(TestCase):
         """Test endpoint requires authentication."""
         client = APIClient()
         response = client.post('/api/v1/notifications/mark-all-read/')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+class NotificationPreferencesTestCase(TestCase):
+    """Test notification preferences endpoints (US-009)."""
+
+    def setUp(self) -> None:
+        """Create test user."""
+        self.user = User.objects.create_user(  # type: ignore[attr-defined]
+            username='testuser',
+            email='test@example.com',
+            password='testpass123'
+        )
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.user)
+
+    def test_get_preferences_returns_user_preferences(self) -> None:
+        """Test GET /api/v1/notifications/preferences/ returns user's preferences."""
+        response = self.client.get('/api/v1/notifications/preferences/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Verify response includes all expected fields
+        self.assertIn('email_vault_activity', response.data)  # type: ignore[attr-defined]
+        self.assertIn('email_mentions', response.data)  # type: ignore[attr-defined]
+        self.assertIn('email_digest_frequency', response.data)  # type: ignore[attr-defined]
+        self.assertIn('push_enabled', response.data)  # type: ignore[attr-defined]
+        self.assertIn('push_sources', response.data)  # type: ignore[attr-defined]
+        self.assertIn('push_annotations', response.data)  # type: ignore[attr-defined]
+
+        # Verify default values
+        self.assertTrue(response.data['email_vault_activity'])  # type: ignore[attr-defined]
+        self.assertTrue(response.data['email_mentions'])  # type: ignore[attr-defined]
+        self.assertEqual(response.data['email_digest_frequency'], 'daily')  # type: ignore[attr-defined]
+        self.assertTrue(response.data['push_enabled'])  # type: ignore[attr-defined]
+        self.assertTrue(response.data['push_sources'])  # type: ignore[attr-defined]
+        self.assertTrue(response.data['push_annotations'])  # type: ignore[attr-defined]
+
+    def test_get_preferences_auto_creates_if_missing(self) -> None:
+        """Test GET auto-creates preferences if user doesn't have them yet."""
+        # Delete any existing preferences (signal creates on user creation)
+        NotificationPreferences.objects.filter(user=self.user).delete()
+
+        # Verify no preferences exist
+        self.assertFalse(NotificationPreferences.objects.filter(user=self.user).exists())
+
+        # GET should auto-create
+        response = self.client.get('/api/v1/notifications/preferences/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Verify preferences were created
+        self.assertTrue(NotificationPreferences.objects.filter(user=self.user).exists())
+
+    def test_patch_preferences_updates_fields(self) -> None:
+        """Test PATCH /api/v1/notifications/preferences/ updates preferences."""
+        # Update some preferences
+        response = self.client.patch(
+            '/api/v1/notifications/preferences/',
+            data={
+                'email_vault_activity': False,
+                'email_digest_frequency': 'weekly',
+                'push_enabled': False
+            },
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Verify response reflects updates
+        self.assertFalse(response.data['email_vault_activity'])  # type: ignore[attr-defined]
+        self.assertEqual(response.data['email_digest_frequency'], 'weekly')  # type: ignore[attr-defined]
+        self.assertFalse(response.data['push_enabled'])  # type: ignore[attr-defined]
+
+        # Verify database was updated
+        prefs = NotificationPreferences.objects.get(user=self.user)
+        self.assertFalse(prefs.email_vault_activity)
+        self.assertEqual(prefs.email_digest_frequency, 'weekly')
+        self.assertFalse(prefs.push_enabled)
+
+    def test_patch_preferences_validates_frequency_choices(self) -> None:
+        """Test PATCH validates email_digest_frequency choices."""
+        response = self.client.patch(
+            '/api/v1/notifications/preferences/',
+            data={'email_digest_frequency': 'invalid_choice'},
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('email_digest_frequency', response.data)  # type: ignore[attr-defined]
+
+    def test_patch_preferences_partial_update(self) -> None:
+        """Test PATCH allows partial updates without overwriting other fields."""
+        # Set initial values
+        prefs = NotificationPreferences.objects.get(user=self.user)
+        prefs.email_vault_activity = False
+        prefs.push_enabled = False
+        prefs.save()
+
+        # Update only one field
+        response = self.client.patch(
+            '/api/v1/notifications/preferences/',
+            data={'email_digest_frequency': 'immediate'},
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Verify only specified field changed
+        prefs.refresh_from_db()
+        self.assertEqual(prefs.email_digest_frequency, 'immediate')
+        self.assertFalse(prefs.email_vault_activity)  # Should remain unchanged
+        self.assertFalse(prefs.push_enabled)  # Should remain unchanged
+
+    def test_requires_authentication(self) -> None:
+        """Test endpoint requires authentication."""
+        client = APIClient()
+        response = client.get('/api/v1/notifications/preferences/')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        response = client.patch('/api/v1/notifications/preferences/', data={})
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)

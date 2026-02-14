@@ -5,7 +5,7 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError as DjangoValidationError
-from .models import User
+from .models import User, EmailPreference
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -252,3 +252,17 @@ class OnboardingSerializer(serializers.Serializer):
         if value is not None and not isinstance(value, dict):
             raise serializers.ValidationError("Data must be a JSON object.")
         return value
+
+
+class EmailPreferenceSerializer(serializers.ModelSerializer):
+    """
+    Serializer for email preference updates (US-011).
+    Allows users to update their email notification preferences.
+    """
+    class Meta:
+        model = EmailPreference
+        fields = ['collaboration_notifications', 'marketing_emails']
+        extra_kwargs = {
+            'collaboration_notifications': {'required': False},
+            'marketing_emails': {'required': False},
+        }

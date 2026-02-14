@@ -281,3 +281,36 @@
   - pt-4 border-t provides visual separation between quote and author attribution
   - Image component from next/image requires width/height props for optimization
 ---
+
+## Iteration 13 - US-013: Create Testimonials Section with Carousel
+- Created `frontend/src/components/marketing/TestimonialsSection.tsx` component
+- Section heading centered with gradient text on "Researchers"
+- Desktop layout: 3-column grid (md:grid-cols-2, lg:grid-cols-3) showing first 3 testimonials
+- Mobile layout: Carousel with single testimonial at a time
+- Created 4 realistic testimonials with research personas:
+  - Dr. Sarah Chen (Stanford) - meta-analysis workflow
+  - Marcus Rodriguez (MIT PhD) - PDF annotations
+  - Dr. Emily Watson (Oxford) - Knowledge Vaults
+  - Prof. James Liu (Caltech) - AI metadata extraction
+- Carousel features:
+  - AnimatePresence with exit animations for smooth transitions
+  - useState to track currentIndex
+  - Prev/Next arrow buttons (ChevronLeft, ChevronRight icons)
+  - Dot indicators with active state (expanded width, orange color)
+  - Navigation functions: nextTestimonial, prevTestimonial, goToTestimonial
+- Desktop: Framer Motion stagger animation (0.15s delay between cards)
+- Mobile: Slide animations (x: 100 → 0 → -100) for carousel effect
+- Integrated into landing page after HowItWorksSection
+- Files changed:
+  - Created: `frontend/src/components/marketing/TestimonialsSection.tsx`
+  - Modified: `frontend/src/app/(marketing)/page.tsx` (added import and integration)
+  - Modified: `PRD16.md` (marked US-013 complete)
+- Learnings for future iterations:
+  - AnimatePresence with mode="wait" ensures smooth transitions between carousel items
+  - Separate layouts for desktop (hidden md:grid) and mobile (md:hidden) provides optimal UX
+  - Active dot indicator uses conditional width (w-2 vs w-8) for visual feedback
+  - Arrow buttons use circular design with glass morphism styling
+  - Modulo arithmetic (% testimonials.length) enables infinite carousel looping
+  - Initial/animate/exit props on motion.div create slide-in/slide-out effects
+  - Viewport prop with once: true prevents re-triggering animations on scroll
+---

@@ -172,4 +172,56 @@ export const handleApiError = (error: unknown): ApiError => {
   return new ApiError('An unknown error occurred');
 };
 
+// ============================
+// Onboarding API Functions
+// ============================
+
+import { OnboardingState, OnboardingUpdateData } from '@/lib/types/onboarding';
+import { Vault } from '@/lib/types/vault';
+
+/**
+ * Get current user's onboarding state
+ */
+export const getOnboardingState = async (): Promise<OnboardingState> => {
+  const response = await api.get('/users/me/onboarding/');
+  return response.data;
+};
+
+/**
+ * Update current user's onboarding state
+ */
+export const updateOnboardingState = async (
+  data: OnboardingUpdateData
+): Promise<OnboardingState> => {
+  const response = await api.patch('/users/me/onboarding/', data);
+  return response.data;
+};
+
+/**
+ * Get demo vault status (exists or not)
+ */
+export const getDemoVaultStatus = async (): Promise<{
+  exists: boolean;
+  vault_id: string | null;
+}> => {
+  const response = await api.get('/users/me/demo-vault/status/');
+  return response.data;
+};
+
+/**
+ * Create demo vault for current user
+ */
+export const createDemoVault = async (): Promise<Vault> => {
+  const response = await api.post('/users/me/demo-vault/create/');
+  return response.data;
+};
+
+/**
+ * Reset demo vault to original state
+ */
+export const resetDemoVault = async (): Promise<Vault> => {
+  const response = await api.post('/users/me/demo-vault/reset/');
+  return response.data;
+};
+
 export default api;

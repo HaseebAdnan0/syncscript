@@ -56,6 +56,10 @@ class JWTSocialAccountAdapter(DefaultSocialAccountAdapter):
 
         if not email:
             # No email provided - will need to prompt user (GitHub private email case)
+            # Generate temp token for validation
+            import secrets
+            temp_token = secrets.token_urlsafe(32)
+
             # Store OAuth data in session and abort the auto-signup
             request.session['pending_oauth'] = {
                 'provider': sociallogin.account.provider,
@@ -63,11 +67,13 @@ class JWTSocialAccountAdapter(DefaultSocialAccountAdapter):
                 'extra_data': sociallogin.account.extra_data,
             }
             request.session['oauth_needs_email'] = True
+            request.session['oauth_temp_token'] = temp_token
+
             # Abort the signup - we need email first
             from allauth.exceptions import ImmediateHttpResponse
             frontend_url = settings.SITE_URL
             response = HttpResponseRedirect(
-                f"{frontend_url}/auth/callback?email_required=true&provider={sociallogin.account.provider}"
+                f"{frontend_url}/auth/callback?email_required=true&provider={sociallogin.account.provider}&temp_token={temp_token}"
             )
             raise ImmediateHttpResponse(response)
 
