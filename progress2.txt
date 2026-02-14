@@ -446,3 +446,19 @@
   - No code changes needed - just verification and documentation
 ---
 
+## Iteration 34 - US-033: Add last owner validation to membership
+- Implemented last owner validation to prevent vault orphaning
+- Files changed:
+  - backend/apps/vaults/serializers.py (added validate() method to VaultMembershipSerializer)
+  - backend/apps/vaults/views.py (added perform_destroy() override in VaultMembershipViewSet, imported ValidationError and RoleChoices)
+  - PRD2.md (marked US-033 as complete)
+- Django check passed with no issues
+- Learnings for future iterations:
+  - Serializer validate() method handles validation on updates by checking self.instance
+  - Count existing owners with VaultMembership.objects.filter(vault=vault, role=OWNER).count()
+  - Raise serializers.ValidationError in serializer, rest_framework.exceptions.ValidationError in viewset
+  - perform_destroy() override allows pre-deletion validation before instance.delete()
+  - Both role downgrade and deletion scenarios are now protected from orphaning vaults
+  - ValidationError automatically returns 400 Bad Request with error message
+---
+

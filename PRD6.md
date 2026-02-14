@@ -194,13 +194,13 @@ Implement cloud file storage for SyncScript using Cloudflare R2 (S3-compatible).
 **Description:** As a system, I need to permanently delete soft-deleted files after 30 days.
 
 **Acceptance Criteria:**
-- [ ] Create `cleanup_deleted_pdfs` task in `backend/apps/sources/tasks.py`
-- [ ] Query PDFUploads where deleted_at < 30 days ago
-- [ ] Delete file from S3 via `pdf.file.delete(save=False)`
-- [ ] Delete thumbnail if exists
-- [ ] Delete database record
-- [ ] Log each permanent deletion
-- [ ] Typecheck passes
+- [x] Create `cleanup_deleted_pdfs` task in `backend/apps/sources/tasks.py`
+- [x] Query PDFUploads where deleted_at < 30 days ago
+- [x] Delete file from S3 via `pdf.file.delete(save=False)`
+- [x] Delete thumbnail if exists
+- [x] Delete database record
+- [x] Log each permanent deletion
+- [x] Typecheck passes
 
 ### US-018: Create cleanup_orphaned_multipart_uploads Celery task
 **Description:** As a system, I need to clean up abandoned multipart uploads to prevent storage waste.
