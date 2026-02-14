@@ -107,13 +107,13 @@ Create a secure, collaborative Knowledge Vault system where researchers can crea
 **Description:** As a developer, I need serialization for vault API responses.
 
 **Acceptance Criteria:**
-- [ ] ModelSerializer for Vault
-- [ ] Fields: id, name, description, owner, owner_username, is_archived, created_at, updated_at, member_count, user_role
-- [ ] read_only_fields: id, owner, created_at, updated_at
-- [ ] `owner_username` from source='owner.username'
-- [ ] `get_member_count()` returns obj.members.count()
-- [ ] `get_user_role()` returns current user's role from membership or None
-- [ ] Typecheck passes
+- [x] ModelSerializer for Vault
+- [x] Fields: id, name, description, owner, owner_username, is_archived, created_at, updated_at, member_count, user_role
+- [x] read_only_fields: id, owner, created_at, updated_at
+- [x] `owner_username` from source='owner.username'
+- [x] `get_member_count()` returns obj.members.count()
+- [x] `get_user_role()` returns current user's role from membership or None
+- [x] Typecheck passes
 
 ### US-010: Create VaultMembershipSerializer
 **Description:** As a developer, I need serialization for membership API responses.
