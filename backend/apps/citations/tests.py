@@ -1476,7 +1476,8 @@ class AsyncCitationEndpointTests(TestCase):
         """Test endpoint returns 202 Accepted for incomplete metadata (async AI)"""
         # Mock Celery task
         mock_result = MagicMock()
-        mock_result.id = 'test-task-id-1234'
+        task_id = '12345678-1234-1234-1234-123456789abc'
+        mock_result.id = task_id
         mock_task_delay.return_value = mock_result
 
         response = self.client.post(
@@ -1488,8 +1489,8 @@ class AsyncCitationEndpointTests(TestCase):
         self.assertEqual(response.status_code, 202)
         self.assertIn('task_id', response.data)
         self.assertIn('status_url', response.data)
-        self.assertEqual(response.data['task_id'], 'test-task-id-1234')
-        self.assertEqual(response.data['status_url'], '/api/v1/citations/tasks/test-task-id-1234/')
+        self.assertEqual(response.data['task_id'], task_id)
+        self.assertEqual(response.data['status_url'], f'/api/v1/citations/tasks/{task_id}/')
 
         # Verify task was queued
         mock_task_delay.assert_called_once_with(self.source_incomplete.id, 'apa7')

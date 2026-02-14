@@ -147,14 +147,14 @@ Create a comprehensive new user onboarding experience for SyncScript that guides
 **Description:** As a new user, I want to add my first source URL as step 2 of vault creation.
 
 **Acceptance Criteria:**
-- [ ] Step 2: "Add your first source" with URL input
-- [ ] URL validation (basic format check)
-- [ ] "Back" button to return to Step 1
-- [ ] "Next" button to proceed (can skip with "Skip this step" link)
-- [ ] Progress indicator shows "Step 2 of 3"
-- [ ] Stores source URL in local state
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Step 2: "Add your first source" with URL input
+- [x] URL validation (basic format check)
+- [x] "Back" button to return to Step 1
+- [x] "Next" button to proceed (can skip with "Skip this step" link)
+- [x] Progress indicator shows "Step 2 of 3"
+- [x] Stores source URL in local state
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-012: GuidedVaultWizard Step 3 (Invite Collaborator)
 **Description:** As a new user, I want to optionally invite a collaborator as the final step.

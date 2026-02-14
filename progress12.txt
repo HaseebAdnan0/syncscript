@@ -381,3 +381,25 @@ Learnings for future iterations:
   - Border + hover:shadow-md creates professional interactive feel
 ---
 
+## Iteration 14 - US-014: Add OAuth buttons to login page
+- Imported OAuthButtons component into login page
+- Positioned OAuth buttons above email/password form
+- Created styled divider with horizontal line and centered "or" text
+- Divider styling: white/10 border with text on bg-[#0F1115] background (matches GlassCard)
+- OAuth buttons disabled when isLoading is true (form is submitting)
+- Maintained existing login form functionality (all handlers, validation intact)
+- Frontend typecheck passes with no errors
+- Committed successfully
+
+Files changed:
+  - frontend/src/app/(auth)/login/page.tsx (added OAuthButtons import and rendering)
+  - PRD12.md (marked US-014 complete except browser verification)
+
+Learnings for future iterations:
+  - Divider pattern: absolute border-t with centered text on same background as parent
+  - OAuth buttons accept disabled prop to sync with form loading state
+  - Position OAuth at top (before form) encourages OAuth usage over password
+  - Use relative/absolute positioning for clean horizontal divider with text overlay
+  - px-4 spacing on divider text prevents border from showing through text
+---
+

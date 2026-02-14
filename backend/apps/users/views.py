@@ -1,6 +1,7 @@
 """
 Views for user authentication and management.
 """
+import logging
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -35,6 +36,18 @@ from .serializers import (
 from .tokens import generate_verification_token, verify_token
 from .emails import send_verification_email, send_password_reset_email
 from .tasks import send_verification_email_task, send_password_reset_email_task
+
+logger = logging.getLogger(__name__)
+
+
+def get_client_ip(request):
+    """Get the client IP address from the request."""
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
 
 
 @api_view(['POST'])
@@ -422,6 +435,10 @@ class PasswordResetRequestView(APIView):
 
         email = serializer.validated_data['email']
 
+        # Get request metadata for security notice in email
+        request_ip = get_client_ip(request)
+        request_time = timezone.now().strftime('%Y-%m-%d %H:%M:%S UTC')
+
         # Try to find user by email
         try:
             user = User.objects.get(email__iexact=email)
@@ -433,8 +450,13 @@ class PasswordResetRequestView(APIView):
             # Encode user ID in base64
             uid = urlsafe_base64_encode(force_bytes(user.pk))
 
-            # Send password reset email
-            send_password_reset_email(user, uid, token)
+            # Send password reset email asynchronously via Celery
+            try:
+                send_password_reset_email_task.delay(user.id, uid, token, request_ip, request_time)
+            except Exception as e:
+                # Fallback to sync if Celery unavailable
+                logger.warning(f"Celery unavailable, falling back to sync email: {str(e)}")
+                send_password_reset_email(user, uid, token, request_ip, request_time)
 
         except User.DoesNotExist:
             # Don't reveal if email exists or not - just continue
