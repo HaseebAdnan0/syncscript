@@ -22,7 +22,7 @@ export default function OnboardingFlow() {
   const hasShownResumeToast = useRef(false);
 
   // Check if onboarding is enabled via feature flag
-  const onboardingEnabled = process.env.NEXT_PUBLIC_ONBOARDING_ENABLED !== 'false';
+  const _onboardingEnabled = process.env.NEXT_PUBLIC_ONBOARDING_ENABLED !== 'false';
 
   // Show "resuming" toast when user returns to incomplete onboarding
   useEffect(() => {
@@ -63,6 +63,11 @@ export default function OnboardingFlow() {
       });
     }
   }, [completed, step, isLoading, user]);
+
+  // Don't render if feature flag is disabled
+  if (!_onboardingEnabled) {
+    return null;
+  }
 
   // Don't render if onboarding is already completed or user not loaded
   if (completed || !user) {

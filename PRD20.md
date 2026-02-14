@@ -364,12 +364,12 @@ Create a comprehensive new user onboarding experience for SyncScript that guides
 **Description:** As a developer, I need a feature flag to enable/disable onboarding for testing.
 
 **Acceptance Criteria:**
-- [ ] Add `ONBOARDING_ENABLED` to backend settings (default True)
-- [ ] Add `NEXT_PUBLIC_ONBOARDING_ENABLED` to frontend env
-- [ ] OnboardingFlow checks flag before rendering
-- [ ] API endpoints return 404 if flag disabled
-- [ ] Document flag in .env.example files
-- [ ] Typecheck passes
+- [x] Add `ONBOARDING_ENABLED` to backend settings (default True)
+- [x] Add `NEXT_PUBLIC_ONBOARDING_ENABLED` to frontend env
+- [x] OnboardingFlow checks flag before rendering
+- [x] API endpoints return 404 if flag disabled
+- [x] Document flag in .env.example files
+- [x] Typecheck passes
 
 ## Non-Goals
 

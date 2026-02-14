@@ -276,13 +276,13 @@ This feature uses Claude as the AI backbone with a simple chunking strategy (no 
 **Description:** As a user, I want to see my AI usage stats in settings.
 
 **Acceptance Criteria:**
-- [ ] Create `components/features/ai/TokenUsageDisplay.tsx`
-- [ ] Props: `usage{requests_today, requests_limit, tokens_today, resets_at}`
-- [ ] Progress bar showing requests used / limit
-- [ ] "Resets in X hours" countdown
-- [ ] Token count display (informational)
-- [ ] Warning state when > 80% used
-- [ ] Typecheck passes
+- [x] Create `components/features/ai/TokenUsageDisplay.tsx`
+- [x] Props: `usage{requests_today, requests_limit, tokens_today, resets_at}`
+- [x] Progress bar showing requests used / limit
+- [x] "Resets in X hours" countdown
+- [x] Token count display (informational)
+- [x] Warning state when > 80% used
+- [x] Typecheck passes
 
 ### US-023: Add AI usage endpoint
 **Description:** As a user, I need an endpoint to fetch my current AI usage stats.
