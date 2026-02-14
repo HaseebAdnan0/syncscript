@@ -246,17 +246,17 @@ Create a comprehensive new user onboarding experience for SyncScript that guides
 **Description:** As a developer, I need an orchestrator component to manage the onboarding flow state machine.
 
 **Acceptance Criteria:**
-- [ ] Create `components/features/onboarding/OnboardingFlow.tsx`
-- [ ] Renders appropriate component based on current step:
+- [x] Create `components/features/onboarding/OnboardingFlow.tsx`
+- [x] Renders appropriate component based on current step:
   - 'welcome' → WelcomeModal
   - 'path' → PathSelection
   - 'guided-1/2/3' → GuidedVaultWizard at correct step
   - 'demo' → redirects to demo vault, then tutorial
   - 'tutorial' → InteractiveTutorial
   - 'complete' → CompletionCelebration
-- [ ] Handles step transitions and state updates
-- [ ] Only renders for users with `onboarding_completed === false`
-- [ ] Typecheck passes
+- [x] Handles step transitions and state updates
+- [x] Only renders for users with `onboarding_completed === false`
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-019: Integrate onboarding into app layout
