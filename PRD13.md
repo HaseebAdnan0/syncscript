@@ -330,12 +330,12 @@ Enhance SyncScript's file storage system to production-ready status with Cloudfl
 **Description:** As a developer, I need tests for the new upload functionality.
 
 **Acceptance Criteria:**
-- [ ] Test image validation (valid PNG, valid JPG, invalid file)
-- [ ] Test abort multipart endpoint
-- [ ] Test storage quota check (under limit, warning, exceeded)
-- [ ] Test virus scanner stub returns clean
-- [ ] All tests pass
-- [ ] Typecheck passes
+- [x] Test image validation (valid PNG, valid JPG, invalid file)
+- [x] Test abort multipart endpoint
+- [x] Test storage quota check (under limit, warning, exceeded)
+- [x] Test virus scanner stub returns clean
+- [x] All tests pass
+- [x] Typecheck passes
 
 ---
 
