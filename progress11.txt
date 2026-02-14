@@ -47,12 +47,31 @@
   - Celery autodiscovery requires Django context to find tasks
 ---
 
+## Iteration 3 - US-003: Update emails.py with all email sender functions
+- Discovered emails.py was already enhanced in a previous iteration
+- Verified all 5 email sender functions are implemented:
+  - send_verification_email(user, token) - renders verification.html
+  - send_password_reset_email(user, uid, token, request_ip, request_time) - renders password_reset.html
+  - send_welcome_email(user) - renders welcome.html
+  - send_vault_invite_email(invite) - renders vault_invite.html
+  - send_collaboration_notification(user, notification_data) - renders collaboration_notification.html
+- Added get_unsubscribe_token(user) helper function
+- All functions use DEFAULT_FROM_EMAIL and render HTML + plaintext fallback
+- EmailPreference model not yet created (US-010), so functions handle ImportError gracefully
+- Files changed:
+  - PRD11.md (marked US-003 complete)
+- Learnings for future iterations:
+  - Work was already done in commit 6b8b31b
+  - Functions gracefully handle missing EmailPreference model with try/except ImportError
+  - Django system check passes with only allauth deprecation warnings
+---
+
 ## Story Progress
 
 ### Backend - Email Configuration
 - [x] US-001: Configure Hostinger SMTP email backend
 - [x] US-002: Create Celery email tasks module
-- [ ] US-003: Update emails.py with all email sender functions
+- [x] US-003: Update emails.py with all email sender functions
 
 ### Backend - Email Templates
 - [ ] US-004: Create base email template with Bitcoin DeFi styling
