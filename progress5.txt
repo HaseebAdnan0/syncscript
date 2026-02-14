@@ -97,3 +97,20 @@
   - vault_event method name matches Channels convention for handling group messages
   - Sequence number tracking will be implemented with Redis in later tasks (US-016/US-017)
 ---
+## Iteration 7 - US-008: Implement presence tracking with Redis sorted set
+- Implemented Redis-based presence tracking for vault collaborators
+- Added _add_to_presence method to add users to sorted set on connect
+- Added _remove_from_presence method to remove users on disconnect
+- Created _get_presence_list helper function to fetch presence with user details
+- Presence status calculated: 'active' (<60s), 'idle' (60-300s)
+- User data enriched with username from database
+- Files changed: backend/apps/vaults/consumers.py, PRD5.md
+- Code committed in 47b2c6e (presence methods) and 1703c68 (PRD update)
+- Learnings for future iterations:
+  - Redis sorted sets (zadd, zrem, zrange) perfect for time-based presence tracking
+  - Use cache.client.get_client() to access raw Redis connection
+  - Score in sorted set represents timestamp for calculating user status
+  - Database queries in async context require @database_sync_to_async decorator
+  - Clean up stale presence entries when user no longer exists (User.DoesNotExist)
+  - Auto-commit hooks may commit changes during file edits
+---
