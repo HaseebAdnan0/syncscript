@@ -203,15 +203,15 @@ Enhance SyncScript's file storage system to production-ready status with Cloudfl
 **Description:** As a user, I want to drag and drop files to upload them easily.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/uploads/FileUploadZone.tsx`
-- [ ] Accept `onFilesSelected: (files: File[]) => void` prop
-- [ ] Accept `accept` prop for allowed MIME types (default: PDF, PNG, JPG)
-- [ ] Drag-over visual state with dashed border highlight (Bitcoin orange)
-- [ ] Click to open file picker
-- [ ] Display drop hint text: "Drop files here or click to browse"
-- [ ] Validate file types client-side before calling callback
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/features/uploads/FileUploadZone.tsx`
+- [x] Accept `onFilesSelected: (files: File[]) => void` prop
+- [x] Accept `accept` prop for allowed MIME types (default: PDF, PNG, JPG)
+- [x] Drag-over visual state with dashed border highlight (Bitcoin orange)
+- [x] Click to open file picker
+- [x] Display drop hint text: "Drop files here or click to browse"
+- [x] Validate file types client-side before calling callback
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 
