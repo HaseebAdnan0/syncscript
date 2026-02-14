@@ -31,7 +31,7 @@ export function NotificationPanel() {
   };
 
   return (
-    <div className="absolute right-0 top-full mt-2 w-96 backdrop-blur-lg bg-white/5 border border-white/10 rounded-2xl shadow-xl overflow-hidden z-50">
+    <div className="absolute right-0 top-full mt-2 w-full sm:w-96 backdrop-blur-lg bg-white/5 border border-white/10 rounded-2xl shadow-xl overflow-hidden z-50">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-white/10">
         <h3 className="text-white font-bold text-sm uppercase tracking-wider">
