@@ -337,3 +337,37 @@ Learnings for future iterations:
 - font-mono class used for URL display for better readability
 - "Continue" button shows count dynamically: "Continue with {count} URL{s}"
 ---
+
+## Iteration 13 - US-014: Create BulkImportPreviewList component
+- Created BulkImportPreviewList at frontend/src/components/features/sources/BulkImportPreviewList.tsx
+- Lists each URL with checkbox for valid URLs (checkboxes only shown for valid items)
+- All valid URLs selected by default on mount using useState initialization
+- Status icons: green check (valid) in bg-green-500/20 border, red X (invalid) in bg-red-500/20 border
+- "Select All" / "Deselect All" toggle button updates dynamically based on current selection state
+- Selection count indicator shows "N of M selected" for user feedback
+- Each row shows validation status icon, URL text (truncated), and remove button
+- Remove button uses Trash2 icon with hover effect (text-red-400 + bg-red-500/10)
+- Invalid URLs display error message below URL text in red
+- URL list scrollable (max-h-96 overflow-y-auto) for long lists
+- "Import Selected" button shows count dynamically: "Import Selected (N)"
+- Button disabled when no URLs selected or while loading
+- Cancel button with glass morphism secondary style
+- All buttons follow design system: gradient for primary, glass for secondary
+- Typecheck passes ✓
+
+Files changed:
+- frontend/src/components/features/sources/BulkImportPreviewList.tsx (new)
+- PRD9.md (marked US-014 complete except browser verification)
+
+Learnings for future iterations:
+- Checkbox uses accent-[#F7931A] for orange theme consistency
+- useState can initialize Set with filtered/mapped array for default selection
+- Checkboxes only shown for valid URLs - invalid URLs can't be selected
+- Status icons follow same pattern as BulkImportModal (green/red themed circles)
+- Remove button provides optimistic UI - parent handles actual state removal
+- Selected count displayed in header for clear user feedback
+- Toggle all button text changes based on selection state (Select All vs Deselect All)
+- max-h-96 prevents preview list from growing too large with many URLs
+- Import button disabled state includes isLoading prop for async operations
+- font-mono used for URL display for better readability
+---
