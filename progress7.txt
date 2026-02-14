@@ -321,3 +321,25 @@
   - playNotificationSound() called when toast appears
   - US-016 was already complete from previous work - marked all criteria as done
 ---
+
+## Iteration 18 - US-017: Build profile page layout with tabs
+- Created profile page at frontend/src/app/(protected)/profile/page.tsx
+- Wrapped entire page with ProtectedRoute component for authentication
+- Implemented Radix Tabs with two tabs: "Profile" and "Security"
+- Tab styling uses Bitcoin DeFi aesthetic with orange active indicator
+- Default tab is "Profile" as specified
+- Placeholder content in tabs for US-018 and US-019 implementation
+- Fixed unused ChevronDown import in MembersList.tsx
+- Files changed:
+  - frontend/src/app/(protected)/profile/page.tsx (new file)
+  - frontend/src/components/features/vaults/MembersList.tsx (removed unused import)
+  - PRD7.md (marked US-017 complete)
+- Learnings for future iterations:
+  - Radix Tabs uses Tabs.Root, Tabs.List, Tabs.Trigger, and Tabs.Content components
+  - data-[state=active] attribute selector used for active tab styling
+  - Active indicator implemented with absolute positioned span with opacity toggle
+  - Page uses same backdrop-blur glass card styling for tab content areas
+  - ProtectedRoute handles authentication check and redirect
+  - Tab triggers use hover:text-white for better UX
+  - Build passes successfully with no TypeScript errors
+---
