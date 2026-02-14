@@ -378,13 +378,13 @@ Implement a global full-text search system for SyncScript that enables researche
 **Description:** As a power user, I want keyboard navigation in search results so I can select items without a mouse.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/hooks/useSearchKeyboardNavigation.ts`
-- [ ] Arrow up/down moves selection through results
-- [ ] Enter opens selected result
-- [ ] Escape closes modal (when at top) or clears selection
-- [ ] Selection wraps at boundaries
-- [ ] Visual highlight on selected item
-- [ ] Typecheck passes
+- [x] Create `frontend/src/hooks/useSearchKeyboardNavigation.ts`
+- [x] Arrow up/down moves selection through results
+- [x] Enter opens selected result
+- [x] Escape closes modal (when at top) or clears selection
+- [x] Selection wraps at boundaries
+- [x] Visual highlight on selected item
+- [x] Typecheck passes
 
 ---
 

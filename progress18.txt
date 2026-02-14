@@ -485,3 +485,25 @@
   - Optional props pattern: popularSearches = [] default, onSuggestionClick with optional chaining ?.()
   - Typecheck passes with proper TypeScript interface and optional prop handling
 ---
+## Iteration 24 - US-027: Create useSearchKeyboardNavigation hook
+- Created useSearchKeyboardNavigation.ts hook for keyboard navigation in search results
+- Arrow up/down moves selection through results with index wrapping at boundaries
+- Enter key opens the selected result via onSelect callback
+- First Escape clears selection, second Escape closes modal
+- Selection resets when modal closes or results change
+- Returns selectedIndex, setSelectedIndex, and clearSelection for external control
+- Visual highlight handled by parent component using selectedIndex
+- Files changed:
+  - frontend/src/hooks/useSearchKeyboardNavigation.ts (created)
+  - PRD18.md (will mark US-027 complete after verification)
+- Learnings for future iterations:
+  - Keyboard navigation pattern: useState for selectedIndex, useEffect for keydown listener
+  - Selection wrapping: if at end (>= length-1) go to 0, if at start (<= 0) go to length-1
+  - Escape key dual behavior: first clears selection, second closes modal
+  - Reset selection when isOpen changes or results.length changes to avoid stale state
+  - window.addEventListener('keydown') for global keyboard handling
+  - Cleanup listener in useEffect return to prevent memory leaks
+  - e.preventDefault() on all handled keys to prevent browser default behavior
+  - selectedIndex >= 0 check prevents executing action when nothing selected
+  - Note: Pre-existing build error in src/app/auth/forgot-password/page.tsx (duplicate auth folders issue) prevents full typecheck - this is unrelated to search feature
+---
