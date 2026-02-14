@@ -94,6 +94,25 @@
   - Typecheck passes without issues
 ---
 
+## Iteration 5 - US-005: Integrate real-time annotation updates
+- Implemented real-time annotation updates in vault detail page
+- Files changed:
+  - Created `frontend/src/hooks/useAnnotations.ts` (React Query hooks for annotations)
+  - Created `frontend/src/components/features/annotations/AnnotationCard.tsx` (annotation display component)
+  - Updated `frontend/src/app/vaults/[id]/page.tsx` (added annotation event handling and Recent Annotations sidebar)
+  - Updated `PRD10.md` (marked US-005 complete)
+- Learnings for future iterations:
+  - WebSocket events for annotations: `annotation.created`, `annotation.updated`, `annotation.deleted`
+  - Event data structure: `{ annotation: Annotation }` for created/updated, `{ annotation_id: number }` for deleted
+  - Annotations are per-source, but can be displayed vault-wide in "Recent Annotations" panel
+  - AnnotationCard shows author avatar (gradient circle with initial), username, timestamp, page number (if applicable), and reply count
+  - Used same fade-in animation pattern as sources: `animate-in fade-in duration-500`
+  - Tracked new annotation IDs in local state, cleared after 2 seconds for animation
+  - Kept last 10 annotations in recent list (prepend new, slice to 10)
+  - Layout changed to two-column: sources (2/3) + recent annotations sidebar (1/3)
+  - Typecheck passes without issues (pre-existing errors in vaults/page.tsx are unrelated)
+---
+
 ## Implementation Notes
 - Frontend-only implementation (backend WebSocket/Pusher assumed working)
 - Notification history stored in backend database via API

@@ -8,7 +8,6 @@ import {
   deleteAnnotation,
 } from '@/lib/api/annotations';
 import type {
-  Annotation,
   CreateAnnotationRequest,
   UpdateAnnotationRequest,
 } from '@/lib/types/annotations';
@@ -62,7 +61,7 @@ export function useDeleteAnnotation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, sourceId }: { id: number; sourceId: number }) => deleteAnnotation(id),
+    mutationFn: ({ id }: { id: number; sourceId: number }) => deleteAnnotation(id),
     onSuccess: (_, variables) => {
       // Invalidate annotations list
       queryClient.invalidateQueries({ queryKey: ['annotations', variables.sourceId] });

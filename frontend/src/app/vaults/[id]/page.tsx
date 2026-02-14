@@ -6,7 +6,9 @@ import { useVault } from '@/hooks/useVaults';
 import { useSources } from '@/hooks/useSources';
 import { useVaultSocket } from '@/hooks/useVaultSocket';
 import { SourceCard } from '@/components/features/sources/SourceCard';
+import { AnnotationCard } from '@/components/features/annotations/AnnotationCard';
 import type { Source } from '@/lib/types/sources';
+import type { Annotation } from '@/lib/types/annotations';
 
 export default function VaultDetailPage() {
   const params = useParams();
@@ -24,6 +26,10 @@ export default function VaultDetailPage() {
 
   // Local state for animated sources (to trigger fade-in)
   const [newSourceIds, setNewSourceIds] = useState<Set<number>>(new Set());
+
+  // Local state for recent annotations (vault-wide)
+  const [recentAnnotations, setRecentAnnotations] = useState<Annotation[]>([]);
+  const [newAnnotationIds, setNewAnnotationIds] = useState<Set<number>>(new Set());
 
   // Handle real-time source events
   const handleSourceCreated = useCallback((data: { source: Source }) => {
@@ -52,18 +58,66 @@ export default function VaultDetailPage() {
     refetchSources();
   }, [refetchSources]);
 
+  // Handle real-time annotation events
+  const handleAnnotationCreated = useCallback((data: { annotation: Annotation }) => {
+    console.log('Annotation created event:', data);
+    // Add to recent annotations list (prepend)
+    setRecentAnnotations((prev) => [data.annotation, ...prev].slice(0, 10)); // Keep last 10
+    // Mark as new for animation
+    setNewAnnotationIds((prev) => new Set(prev).add(data.annotation.id));
+    // Remove animation after 2 seconds
+    setTimeout(() => {
+      setNewAnnotationIds((prev) => {
+        const updated = new Set(prev);
+        updated.delete(data.annotation.id);
+        return updated;
+      });
+    }, 2000);
+  }, []);
+
+  const handleAnnotationUpdated = useCallback((data: { annotation: Annotation }) => {
+    console.log('Annotation updated event:', data);
+    // Update in recent annotations list
+    setRecentAnnotations((prev) =>
+      prev.map((ann) => (ann.id === data.annotation.id ? data.annotation : ann))
+    );
+  }, []);
+
+  const handleAnnotationDeleted = useCallback((data: { annotation_id: number }) => {
+    console.log('Annotation deleted event:', data);
+    // Remove from recent annotations list
+    setRecentAnnotations((prev) => prev.filter((ann) => ann.id !== data.annotation_id));
+  }, []);
+
   // Subscribe to WebSocket events
   useEffect(() => {
+    // Source events
     const unsubscribeCreated = addEventListener('source.created', handleSourceCreated);
     const unsubscribeUpdated = addEventListener('source.updated', handleSourceUpdated);
     const unsubscribeDeleted = addEventListener('source.deleted', handleSourceDeleted);
+
+    // Annotation events
+    const unsubscribeAnnotationCreated = addEventListener('annotation.created', handleAnnotationCreated);
+    const unsubscribeAnnotationUpdated = addEventListener('annotation.updated', handleAnnotationUpdated);
+    const unsubscribeAnnotationDeleted = addEventListener('annotation.deleted', handleAnnotationDeleted);
 
     return () => {
       unsubscribeCreated();
       unsubscribeUpdated();
       unsubscribeDeleted();
+      unsubscribeAnnotationCreated();
+      unsubscribeAnnotationUpdated();
+      unsubscribeAnnotationDeleted();
     };
-  }, [addEventListener, handleSourceCreated, handleSourceUpdated, handleSourceDeleted]);
+  }, [
+    addEventListener,
+    handleSourceCreated,
+    handleSourceUpdated,
+    handleSourceDeleted,
+    handleAnnotationCreated,
+    handleAnnotationUpdated,
+    handleAnnotationDeleted,
+  ]);
 
   if (vaultLoading) {
     return (
@@ -111,31 +165,62 @@ export default function VaultDetailPage() {
 
       {/* Main content */}
       <div className="max-w-7xl mx-auto px-6 py-12">
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-white mb-6">Sources</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Sources section */}
+          <div className="lg:col-span-2">
+            <h2 className="text-2xl font-bold text-white mb-6">Sources</h2>
 
-          {sourcesLoading ? (
-            <div className="text-[#94A3B8]">Loading sources...</div>
-          ) : sources.length === 0 ? (
-            <div className="bg-[#0F1115] border border-white/10 rounded-2xl p-12 text-center">
-              <p className="text-[#94A3B8]">No sources yet. Add your first source to get started!</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {sources.map((source) => (
-                <div
-                  key={source.id}
-                  className={
-                    newSourceIds.has(source.id)
-                      ? 'animate-in fade-in duration-500'
-                      : ''
-                  }
-                >
-                  <SourceCard source={source} vaultId={vaultId.toString()} />
-                </div>
-              ))}
-            </div>
-          )}
+            {sourcesLoading ? (
+              <div className="text-[#94A3B8]">Loading sources...</div>
+            ) : sources.length === 0 ? (
+              <div className="bg-[#0F1115] border border-white/10 rounded-2xl p-12 text-center">
+                <p className="text-[#94A3B8]">No sources yet. Add your first source to get started!</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {sources.map((source) => (
+                  <div
+                    key={source.id}
+                    className={
+                      newSourceIds.has(source.id)
+                        ? 'animate-in fade-in duration-500'
+                        : ''
+                    }
+                  >
+                    <SourceCard source={source} vaultId={vaultId.toString()} />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Recent Annotations sidebar */}
+          <div className="lg:col-span-1">
+            <h2 className="text-2xl font-bold text-white mb-6">Recent Annotations</h2>
+
+            {recentAnnotations.length === 0 ? (
+              <div className="bg-[#0F1115] border border-white/10 rounded-2xl p-8 text-center">
+                <p className="text-sm text-[#94A3B8]">
+                  No annotations yet. Annotations will appear here as team members add them.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {recentAnnotations.map((annotation) => (
+                  <div
+                    key={annotation.id}
+                    className={
+                      newAnnotationIds.has(annotation.id)
+                        ? 'animate-in fade-in duration-500'
+                        : ''
+                    }
+                  >
+                    <AnnotationCard annotation={annotation} />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

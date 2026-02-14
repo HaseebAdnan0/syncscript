@@ -68,11 +68,11 @@ Integrate SyncScript's frontend with the existing backend WebSocket system and n
 **Description:** As a user, I want to see new annotations appear instantly when collaborators add them.
 
 **Acceptance Criteria:**
-- [ ] Listen for `annotation.created`, `annotation.updated`, `annotation.deleted` events
-- [ ] Update annotations list/panel in real-time
-- [ ] Show annotation author avatar with new annotations
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Listen for `annotation.created`, `annotation.updated`, `annotation.deleted` events
+- [x] Update annotations list/panel in real-time
+- [x] Show annotation author avatar with new annotations
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-006: Create usePresence hook for tracking active vault members
 **Description:** As a developer, I need a hook to track which members are currently active in a vault.
