@@ -442,7 +442,7 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 - [x] New annotations appear without manual refresh
 - [x] New replies appear under their parent annotation
 - [x] "New annotation by [name]" toast appears briefly
-- [ ] Scroll indicator if new annotation added below fold
+- [x] Scroll indicator if new annotation added below fold
 - [x] Typecheck passes
 - [ ] Verify changes work in browser
 
