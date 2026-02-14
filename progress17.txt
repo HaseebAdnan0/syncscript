@@ -303,3 +303,26 @@
   - Typecheck passes with no errors
 ---
 
+## Iteration 15 - US-015: Create quick actions FAB
+- Created QuickActionsFAB component with floating action button (FAB)
+- Files changed:
+  - frontend/src/components/features/dashboard/QuickActionsFAB.tsx (new component)
+  - PRD17.md (marked US-015 acceptance criteria complete)
+- Learnings for future iterations:
+  - FAB positioned with fixed bottom-8 right-8 z-50 (stays in corner, above content)
+  - Plus icon rotates 45deg to become X when menu is open (smooth transition)
+  - Bitcoin orange gradient background with shadow: `shadow-[0_0_30px_-5px_rgba(234,88,12,0.6)]`
+  - Main button hover: scale-110 for emphasis
+  - Menu expands upward (bottom-16) with absolute positioning
+  - Action items use staggered animation delays: `${index * 50}ms` for cascade effect
+  - Click outside detection: useRef + useEffect with mousedown event listener
+  - Menu state transitions: opacity, translateY, and pointer-events for smooth open/close
+  - Action buttons show label on left, icon on right (reversed layout for visual hierarchy)
+  - Each action navigates to /vaults with query param (?action=create/add-source/invite)
+  - Actions array typed as QuickAction[] for type safety
+  - setIsOpen(false) called before navigation to close menu immediately
+  - Action items have hover effects: border-[#F7931A]/50, scale-105, text color change
+  - All components follow Bitcoin DeFi design system (dark bg, orange-gold gradient, glassmorphism)
+  - Typecheck passes with no errors
+---
+

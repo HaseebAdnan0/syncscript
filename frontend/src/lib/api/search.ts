@@ -1,4 +1,4 @@
-import { apiClient } from './client';
+import { api } from '../api';
 import type {
   SearchResponse,
   SearchSuggestion,
@@ -27,7 +27,7 @@ export async function search(
     params.append('limit', filters.limit.toString());
   }
 
-  const response = await apiClient.get<SearchResponse>(
+  const response = await api.get<SearchResponse>(
     `/search/?${params.toString()}`
   );
 
@@ -40,7 +40,7 @@ export async function search(
 export async function getSuggestions(query: string): Promise<SearchSuggestion[]> {
   const params = new URLSearchParams({ q: query });
 
-  const response = await apiClient.get<SearchSuggestion[]>(
+  const response = await api.get<SearchSuggestion[]>(
     `/search/suggestions/?${params.toString()}`
   );
 
@@ -51,7 +51,7 @@ export async function getSuggestions(query: string): Promise<SearchSuggestion[]>
  * Get recent searches for the authenticated user
  */
 export async function getRecentSearches(): Promise<SearchHistory[]> {
-  const response = await apiClient.get<SearchHistory[]>('/search/recent/');
+  const response = await api.get<SearchHistory[]>('/search/recent/');
   return response.data;
 }
 
@@ -59,12 +59,12 @@ export async function getRecentSearches(): Promise<SearchHistory[]> {
  * Clear all recent searches for the authenticated user
  */
 export async function clearRecentSearches(): Promise<void> {
-  await apiClient.delete('/search/recent/');
+  await api.delete('/search/recent/');
 }
 
 /**
  * Delete a single recent search entry
  */
 export async function deleteRecentSearch(searchId: number): Promise<void> {
-  await apiClient.delete(`/search/recent/${searchId}/`);
+  await api.delete(`/search/recent/${searchId}/`);
 }

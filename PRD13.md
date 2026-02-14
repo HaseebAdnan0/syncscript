@@ -178,10 +178,10 @@ Enhance SyncScript's file storage system to production-ready status with Cloudfl
 **Description:** As a frontend developer, I need storage info in the vault API to display usage.
 
 **Acceptance Criteria:**
-- [ ] Add `storage_usage` field to VaultSerializer
-- [ ] Include: `used_bytes`, `limit_bytes`, `percentage`, `warning`, `file_count`
-- [ ] Retrieve from VaultStorageUsage model (create if not exists)
-- [ ] Typecheck passes
+- [x] Add `storage_usage` field to VaultSerializer
+- [x] Include: `used_bytes`, `limit_bytes`, `percentage`, `warning`, `file_count`
+- [x] Retrieve from VaultStorageUsage model (create if not exists)
+- [x] Typecheck passes
 
 ---
 

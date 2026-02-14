@@ -1339,16 +1339,13 @@ class QuestionAnsweringTestCase(APITestCase):
                 f'/api/v1/vaults/{self.vault.id}/ask/',
                 {
                     'question': 'Follow-up question?',
-                    'conversation_id': str(conversation.id)
+                    'conversation_id': conversation.id
                 },
                 format='json'
             )
 
-            if response.status_code != 200:
-                print(f"Response: {response.data}")
-
             self.assertEqual(response.status_code, 200)
-            self.assertEqual(str(response.data['conversation_id']), str(conversation.id))
+            self.assertEqual(response.data['conversation_id'], str(conversation.id))
             messages = ChatMessage.objects.filter(conversation=conversation)
             self.assertEqual(messages.count(), 2)
 

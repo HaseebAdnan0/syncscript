@@ -262,3 +262,28 @@
   - SourceType.URL for URL-based sources, VaultRole.CONTRIBUTOR for invites
   - Default description: "Created via guided onboarding" for tracking source
 ---
+
+## Iteration 14 - Install and configure react-joyride (US-014)
+- Installed react-joyride package (v2.9.2) via npm
+- Created TutorialProvider.tsx wrapper component in components/features/onboarding/
+- Configured custom styles matching Bitcoin DeFi design system:
+  - Glass morphism tooltips: backdrop-blur-lg, border-white/10, orange shadow
+  - Orange gradient buttons: linear-gradient from #EA580C to #F7931A
+  - Dark surface colors: #0F1115 background, #94A3B8 muted text
+  - Custom button styles: pill-shaped, uppercase, tracking-wider
+- Implemented callback handling for finish/skip/close events
+- Customized locale for button labels (Back, Next, Skip Tutorial, Finish)
+- Files changed: TutorialProvider.tsx (new), package.json, package-lock.json, PRD20.md, progress20.txt
+- Commit: 3f0b440
+- Typecheck passes
+- Learnings for future iterations:
+  - react-joyride Styles type imported from 'react-joyride' for proper typing
+  - Custom styles configured via styles prop with nested objects (options, tooltip, buttons)
+  - CallBackProps provides status, action, type for event handling
+  - STATUS.FINISHED vs STATUS.SKIPPED distinguish completion types
+  - ACTIONS.SKIP and EVENTS.STEP_AFTER detect close button click
+  - Joyride props: continuous, showProgress, showSkipButton enable standard features
+  - Glass morphism: backdropFilter: 'blur(16px)' in tooltip styles
+  - boxShadow with orange tint: '0 0 30px -5px rgba(247, 147, 26, 0.3)'
+  - Typography: use CSS variables for fonts (var(--font-heading), var(--font-body))
+---
