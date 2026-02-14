@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404
 from apps.annotations.models import Annotation
 from apps.annotations.serializers import AnnotationSerializer
 from apps.annotations.permissions import IsAuthorOrReadOnly
+from apps.annotations.filters import AnnotationFilter
 from apps.vaults.models import Vault, VaultMembership
 from apps.sources.models import Source
 
@@ -30,6 +31,7 @@ class AnnotationViewSet(viewsets.ModelViewSet):
     serializer_class = AnnotationSerializer
     permission_classes = [IsAuthenticated, IsAuthorOrReadOnly]
     pagination_class = AnnotationPagination
+    filterset_class = AnnotationFilter
 
     def perform_create(self, serializer):
         """

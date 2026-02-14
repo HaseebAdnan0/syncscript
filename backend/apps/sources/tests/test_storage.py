@@ -230,26 +230,29 @@ class UpdateVaultStorageUsageTests(TestCase):
         """Test that update_vault_storage_usage excludes soft-deleted PDFs."""
         from django.utils import timezone
 
-        # Create test PDFUploads (one deleted) without actual file storage
-        PDFUpload.objects.create(
+        # Create test PDFUploads (one deleted) with mock file paths
+        pdf1 = PDFUpload(
             vault=self.vault,
             uploaded_by=self.user1,
             original_filename='file1.pdf',
             file_size=1000000,  # 1MB
             mime_type='application/pdf',
-            processing_status='completed',
-            file=''
+            processing_status='completed'
         )
-        PDFUpload.objects.create(
+        pdf1.file.name = 'vaults/test/file1.pdf'
+        pdf1.save()
+
+        pdf2 = PDFUpload(
             vault=self.vault,
             uploaded_by=self.user1,
             original_filename='file2.pdf',
             file_size=2000000,  # 2MB (DELETED)
             mime_type='application/pdf',
             processing_status='completed',
-            deleted_at=timezone.now(),  # Soft-deleted
-            file=''
+            deleted_at=timezone.now()  # Soft-deleted
         )
+        pdf2.file.name = 'vaults/test/file2.pdf'
+        pdf2.save()
 
         # Calculate storage usage
         storage_usage = update_vault_storage_usage(self.vault.id)
@@ -271,16 +274,17 @@ class UpdateVaultStorageUsageTests(TestCase):
     @patch('apps.sources.utils.cache.delete')
     def test_update_vault_storage_usage_invalidates_cache(self, mock_cache_delete):
         """Test that update_vault_storage_usage invalidates Redis cache."""
-        # Create a test PDFUpload without actual file storage
-        PDFUpload.objects.create(
+        # Create a test PDFUpload with mock file path
+        pdf1 = PDFUpload(
             vault=self.vault,
             uploaded_by=self.user1,
             original_filename='file1.pdf',
             file_size=1000000,
             mime_type='application/pdf',
-            processing_status='completed',
-            file=''
+            processing_status='completed'
         )
+        pdf1.file.name = 'vaults/test/file1.pdf'
+        pdf1.save()
 
         # Calculate storage usage
         update_vault_storage_usage(self.vault.id)

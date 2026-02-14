@@ -426,10 +426,10 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need filtering on annotations by user and page_number.
 
 **Acceptance Criteria:**
-- [ ] Create `AnnotationFilter` class in `filters.py` extending `FilterSet`
-- [ ] Add filters: `user`, `page_number`
-- [ ] Set `filterset_class = AnnotationFilter` in AnnotationViewSet
-- [ ] Typecheck passes
+- [x] Create `AnnotationFilter` class in `filters.py` extending `FilterSet`
+- [x] Add filters: `user`, `page_number`
+- [x] Set `filterset_class = AnnotationFilter` in AnnotationViewSet
+- [x] Typecheck passes
 
 ---
 

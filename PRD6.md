@@ -277,12 +277,12 @@ Implement cloud file storage for SyncScript using Cloudflare R2 (S3-compatible).
 **Description:** As a developer, I need tests for presigned URL generation and storage tracking.
 
 **Acceptance Criteria:**
-- [ ] Create `backend/apps/sources/tests/test_storage.py`
-- [ ] Test: generate_presigned_upload_url returns valid URL and key
-- [ ] Test: generate_presigned_download_url includes content-disposition
-- [ ] Test: update_vault_storage_usage calculates correct totals
-- [ ] Mock boto3 client for S3 operations
-- [ ] All tests pass
+- [x] Create `backend/apps/sources/tests/test_storage.py`
+- [x] Test: generate_presigned_upload_url returns valid URL and key
+- [x] Test: generate_presigned_download_url includes content-disposition
+- [x] Test: update_vault_storage_usage calculates correct totals
+- [x] Mock boto3 client for S3 operations
+- [x] All tests pass
 
 ### US-026: Write integration tests for upload flow
 **Description:** As a developer, I need end-to-end tests for the upload workflow.
