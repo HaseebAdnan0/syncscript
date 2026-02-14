@@ -3,6 +3,7 @@ Unit tests for storage utilities (presigned URL generation and storage tracking)
 """
 from unittest.mock import patch, MagicMock
 from django.test import TestCase, override_settings
+from django.core.files.base import ContentFile
 from django.contrib.auth import get_user_model
 from apps.vaults.models import Vault
 from apps.sources.models import PDFUpload, VaultStorageUsage
@@ -141,34 +142,39 @@ class UpdateVaultStorageUsageTests(TestCase):
 
     def test_update_vault_storage_usage_calculates_correct_totals(self):
         """Test that update_vault_storage_usage calculates correct total bytes and file count."""
-        # Create test PDFUploads without actual file storage
-        PDFUpload.objects.create(
+        # Create test PDFUploads with mock file paths (skip actual file creation)
+        pdf1 = PDFUpload(
             vault=self.vault,
             uploaded_by=self.user1,
             original_filename='file1.pdf',
             file_size=1000000,  # 1MB
             mime_type='application/pdf',
-            processing_status='completed',
-            file=''  # Empty file path to avoid storage operations
+            processing_status='completed'
         )
-        PDFUpload.objects.create(
+        pdf1.file.name = 'vaults/test/file1.pdf'  # Set file path without saving to storage
+        pdf1.save()
+
+        pdf2 = PDFUpload(
             vault=self.vault,
             uploaded_by=self.user1,
             original_filename='file2.pdf',
             file_size=2000000,  # 2MB
             mime_type='application/pdf',
-            processing_status='completed',
-            file=''
+            processing_status='completed'
         )
-        PDFUpload.objects.create(
+        pdf2.file.name = 'vaults/test/file2.pdf'
+        pdf2.save()
+
+        pdf3 = PDFUpload(
             vault=self.vault,
             uploaded_by=self.user2,
             original_filename='file3.pdf',
             file_size=3000000,  # 3MB
             mime_type='application/pdf',
-            processing_status='completed',
-            file=''
+            processing_status='completed'
         )
+        pdf3.file.name = 'vaults/test/file3.pdf'
+        pdf3.save()
 
         # Calculate storage usage
         storage_usage = update_vault_storage_usage(self.vault.id)
@@ -179,34 +185,39 @@ class UpdateVaultStorageUsageTests(TestCase):
 
     def test_update_vault_storage_usage_calculates_per_user_breakdown(self):
         """Test that update_vault_storage_usage calculates correct per-user breakdown."""
-        # Create test PDFUploads without actual file storage
-        PDFUpload.objects.create(
+        # Create test PDFUploads with mock file paths
+        pdf1 = PDFUpload(
             vault=self.vault,
             uploaded_by=self.user1,
             original_filename='file1.pdf',
             file_size=1500000,  # 1.5MB
             mime_type='application/pdf',
-            processing_status='completed',
-            file=''
+            processing_status='completed'
         )
-        PDFUpload.objects.create(
+        pdf1.file.name = 'vaults/test/file1.pdf'
+        pdf1.save()
+
+        pdf2 = PDFUpload(
             vault=self.vault,
             uploaded_by=self.user1,
             original_filename='file2.pdf',
             file_size=2500000,  # 2.5MB
             mime_type='application/pdf',
-            processing_status='completed',
-            file=''
+            processing_status='completed'
         )
-        PDFUpload.objects.create(
+        pdf2.file.name = 'vaults/test/file2.pdf'
+        pdf2.save()
+
+        pdf3 = PDFUpload(
             vault=self.vault,
             uploaded_by=self.user2,
             original_filename='file3.pdf',
             file_size=3000000,  # 3MB
             mime_type='application/pdf',
-            processing_status='completed',
-            file=''
+            processing_status='completed'
         )
+        pdf3.file.name = 'vaults/test/file3.pdf'
+        pdf3.save()
 
         # Calculate storage usage
         storage_usage = update_vault_storage_usage(self.vault.id)

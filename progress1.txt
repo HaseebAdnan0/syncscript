@@ -757,3 +757,32 @@ Learnings for future iterations:
 - Pyright warnings on Django admin code are false positives - Django system check is the real typecheck
 ---
 
+
+## Iteration 35 - Update environment documentation (US-038)
+- Created .env.example with comprehensive environment variable documentation
+- Includes all authentication-related settings:
+  - Django settings (SECRET_KEY, DEBUG, ALLOWED_HOSTS, SITE_URL)
+  - Database configuration (DATABASE_URL for PostgreSQL)
+  - Redis configuration (REDIS_URL for caching and rate limiting)
+  - Email/SMTP configuration (all EMAIL_* variables)
+  - JWT configuration (token lifetimes)
+  - AWS S3/Cloudflare R2 for file storage
+  - Pusher and Twilio for notifications (optional)
+  - CORS settings for frontend integration
+  - Rate limiting enable flag
+- Each variable includes explanatory comments
+- Includes instructions for generating secure SECRET_KEY
+- Django system check passes
+
+Files changed:
+- backend/.env.example (created with all environment variables)
+- PRD1.md (marked US-038 complete)
+
+Learnings for future iterations:
+- .env.example serves as template for local .env file (not committed to git)
+- Comments in .env.example help developers understand required configuration
+- Sensitive values (passwords, keys) should use placeholder text
+- Include generation instructions for SECRET_KEY
+- Group related variables with section comments for clarity
+---
+

@@ -509,11 +509,11 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a developer, I need environment variables documented for setup.
 
 **Acceptance Criteria:**
-- [ ] Update `.env.example` with all required email settings
-- [ ] Add JWT configuration variables
-- [ ] Add Redis URL variable
-- [ ] Include comments explaining each variable
-- [ ] Typecheck passes
+- [x] Update `.env.example` with all required email settings
+- [x] Add JWT configuration variables
+- [x] Add Redis URL variable
+- [x] Include comments explaining each variable
+- [x] Typecheck passes
 
 ---
 
