@@ -72,13 +72,13 @@ This PRD covers the full implementation: core infrastructure, event broadcasting
 **Description:** As a developer, I need JWT validation on WebSocket connections so only authenticated users can connect.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/vaults/middleware.py`
-- [ ] Implement `JWTAuthMiddleware` extending `BaseMiddleware`
-- [ ] Extract token from query string (`?token=xxx`)
-- [ ] Validate JWT using `rest_framework_simplejwt.tokens.AccessToken`
-- [ ] Set `scope["user"]` to authenticated user or `AnonymousUser`
-- [ ] Handle invalid/expired/missing tokens gracefully
-- [ ] Typecheck passes
+- [x] Create `apps/vaults/middleware.py`
+- [x] Implement `JWTAuthMiddleware` extending `BaseMiddleware`
+- [x] Extract token from query string (`?token=xxx`)
+- [x] Validate JWT using `rest_framework_simplejwt.tokens.AccessToken`
+- [x] Set `scope["user"]` to authenticated user or `AnonymousUser`
+- [x] Handle invalid/expired/missing tokens gracefully
+- [x] Typecheck passes
 
 ---
 
