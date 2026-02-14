@@ -125,12 +125,12 @@ Integrate SyncScript's frontend with the existing backend WebSocket system and n
 **Description:** As a user, I want to see my unread notification count in the header so I know when I have new notifications.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/notifications/UnreadBadge.tsx`
-- [ ] Displays count in orange pill badge (Bitcoin primary color)
-- [ ] Shows "9+" for counts > 9
-- [ ] Hidden when count is 0
-- [ ] Subtle pulse animation when count increases
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/notifications/UnreadBadge.tsx`
+- [x] Displays count in orange pill badge (Bitcoin primary color)
+- [x] Shows "9+" for counts > 9
+- [x] Hidden when count is 0
+- [x] Subtle pulse animation when count increases
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-011: Create NotificationPanel dropdown component

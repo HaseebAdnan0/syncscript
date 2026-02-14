@@ -160,3 +160,37 @@ Learnings for future iterations:
 - Type options: All Types, URL, PDF, Citation, Article
 - When fixing TypeScript errors in React Query mutations, need explicit type annotations for callback parameters
 ---
+---
+
+## Iteration 7 - US-008: Create SourcesList container component
+- Created SourcesList component at frontend/src/components/features/sources/SourcesList.tsx
+- Implemented grid view with CSS grid: grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6
+- Implemented table view with sticky header (bg-black/50 border-b border-white/10 sticky top-0)
+- Table wrapped in overflow-x-auto for horizontal scrolling on small screens
+- Created SourceCardSkeleton for grid loading state (6 cards shown)
+- Created SourceTableRowSkeleton for table loading state (10 rows shown)
+- Both skeletons use animate-pulse with bg-white/10
+- Empty state uses FileQuestion icon in gradient circle with 20% opacity
+- Empty state CTA button uses full gradient button style with shadow
+- Component accepts viewMode prop and conditionally renders grid or table
+- Also accepts optional callbacks: onAddSource, onEdit, onDelete
+- Fixed unrelated TypeScript errors:
+  - VaultToast.tsx: Changed annotation.user to annotation.author (already auto-fixed)
+  - login/page.tsx: Changed named imports to default imports for GradientButton and GlassCard (already auto-fixed)
+- Typecheck passes ✓
+
+Files changed:
+- frontend/src/components/features/sources/SourcesList.tsx (new)
+- frontend/src/app/(auth)/login/page.tsx (created - was missing)
+- frontend/src/components/features/notifications/VaultToast.tsx (fixed author property)
+- PRD9.md (marked US-008 complete except browser verification)
+
+Learnings for future iterations:
+- Loading skeletons should match the structure of actual content (same grid/table layout)
+- Empty states should be encouraging and include clear CTAs for first-time users
+- Empty state icons should use gradient circles with reduced opacity to maintain design system
+- Table sticky headers need explicit bg color (bg-black/50) to remain visible while scrolling
+- Skeleton counts: 6 for grid cards, 10 for table rows (good UX balance)
+- FileQuestion icon from lucide-react is perfect for empty source states
+- Component design allows parent to control all actions via optional callbacks
+- Always fix unrelated TypeScript errors to ensure typecheck passes for current task

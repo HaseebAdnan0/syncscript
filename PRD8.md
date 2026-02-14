@@ -118,14 +118,14 @@ Create the complete vault management interface for SyncScript, enabling research
 **Description:** As a user, I want to create a new vault via a modal form so I can start a new research project.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/vaults/CreateVaultModal.tsx`
-- [ ] Modal uses Radix Dialog with glass morphism: `backdrop-blur-lg bg-white/5 border border-white/10`
-- [ ] Form fields: Name (required), Description (optional, textarea)
-- [ ] Submit button: gradient orange, disabled while submitting
-- [ ] Uses useCreateVault mutation
-- [ ] On success: close modal, show toast, navigate to new vault
-- [ ] On error: display error message in modal
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/vaults/CreateVaultModal.tsx`
+- [x] Modal uses Radix Dialog with glass morphism: `backdrop-blur-lg bg-white/5 border border-white/10`
+- [x] Form fields: Name (required), Description (optional, textarea)
+- [x] Submit button: gradient orange, disabled while submitting
+- [x] Uses useCreateVault mutation
+- [x] On success: close modal, show toast, navigate to new vault
+- [x] On error: display error message in modal
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-010: Vault detail page layout with tabs

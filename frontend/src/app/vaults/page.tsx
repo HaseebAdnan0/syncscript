@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useVaults } from '@/hooks/useVaults';
 import { VaultCard } from '@/components/features/vaults/VaultCard';
 import { EmptyVaultsState } from '@/components/features/vaults/EmptyVaultsState';
+import { CreateVaultModal } from '@/components/features/vaults/CreateVaultModal';
 import GradientButton from '@/components/ui/GradientButton';
 import { useVaultsStore } from '@/stores/vaultsStore';
 import type { Vault } from '@/lib/types/vault';
@@ -122,6 +123,9 @@ export default function VaultsPage() {
           </div>
         )}
       </div>
+
+      {/* Create Vault Modal */}
+      <CreateVaultModal />
     </div>
   );
 }
