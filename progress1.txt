@@ -441,3 +441,21 @@ Learnings for future iterations:
 - Django's URL routing concatenates the include() prefix with the app's urlpatterns paths
 ---
 
+## Iteration 23 - Create custom permissions (US-025)
+- Verified apps/users/permissions.py already exists with IsEmailVerified permission class
+- Permission checks request.user.is_authenticated and request.user.email_verified
+- Returns False if email is not verified (restricts access to protected endpoints)
+- Includes appropriate error message: "Email verification required..."
+- Django system check passes
+
+Files changed:
+- PRD1.md (marked US-025 complete)
+
+Learnings for future iterations:
+- IsEmailVerified permission class already implemented from previous work
+- Permission uses has_permission(request, view) method (standard DRF pattern)
+- Checks both is_authenticated and email_verified to ensure user is logged in and verified
+- Custom message attribute provides user-friendly error message when permission denied
+- BasePermission from rest_framework.permissions is the base class for custom permissions
+---
+

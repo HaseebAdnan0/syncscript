@@ -338,11 +338,11 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a developer, I need custom permission classes for email verification checks.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/users/permissions.py`
-- [ ] Implement IsEmailVerified permission class
-- [ ] Returns False if user.email_verified is False
-- [ ] Include appropriate error message
-- [ ] Typecheck passes
+- [x] Create `apps/users/permissions.py`
+- [x] Implement IsEmailVerified permission class
+- [x] Returns False if user.email_verified is False
+- [x] Include appropriate error message
+- [x] Typecheck passes
 
 ---
 
