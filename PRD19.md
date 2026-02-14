@@ -220,12 +220,12 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a user, I want to be notified when someone @mentions me in an annotation.
 
 **Acceptance Criteria:**
-- [ ] Extract mentions from annotation body on creation/update
-- [ ] Create notification with type `mention` for each mentioned user
-- [ ] Data includes: `source_id`, `annotation_id`, `mentioner_name`, `preview`
-- [ ] Don't notify self-mentions
-- [ ] Don't duplicate if also replying to same user
-- [ ] Typecheck passes
+- [x] Extract mentions from annotation body on creation/update
+- [x] Create notification with type `mention` for each mentioned user
+- [x] Data includes: `source_id`, `annotation_id`, `mentioner_name`, `preview`
+- [x] Don't notify self-mentions
+- [x] Don't duplicate if also replying to same user
+- [x] Typecheck passes
 
 ---
 

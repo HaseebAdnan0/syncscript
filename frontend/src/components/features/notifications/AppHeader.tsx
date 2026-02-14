@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Bell, User, LogOut } from 'lucide-react';
+import { Bell, User, LogOut, Search } from 'lucide-react';
 import { useNotifications } from '@/hooks/useNotifications';
 import { UnreadBadge } from './UnreadBadge';
 import { NotificationPanel } from './NotificationPanel';
@@ -24,9 +24,11 @@ import {
 interface AppHeaderProps {
   /** Optional vault ID to show connection status for */
   vaultId?: string;
+  /** Optional callback to open global search modal */
+  onSearchClick?: () => void;
 }
 
-export function AppHeader({ vaultId }: AppHeaderProps) {
+export function AppHeader({ vaultId, onSearchClick }: AppHeaderProps) {
   const [isNotificationPanelOpen, setIsNotificationPanelOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { unreadCount } = useNotifications();
