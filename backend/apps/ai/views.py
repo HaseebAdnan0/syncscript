@@ -627,7 +627,7 @@ def get_ai_usage(request):
     - resets_at (str): ISO timestamp when usage resets (midnight UTC)
     """
     from django.conf import settings
-    from datetime import datetime, timedelta
+    from datetime import timedelta
 
     # Get daily usage
     usage = get_daily_usage(request.user)
@@ -636,7 +636,7 @@ def get_ai_usage(request):
     requests_limit = getattr(settings, 'AI_DAILY_LIMIT', 20)
 
     # Calculate when usage resets (midnight UTC tomorrow)
-    now = datetime.utcnow()
+    now = timezone.now()
     tomorrow_midnight = (now + timedelta(days=1)).replace(
         hour=0, minute=0, second=0, microsecond=0
     )
@@ -645,5 +645,5 @@ def get_ai_usage(request):
         'requests_today': usage['request_count'],
         'requests_limit': requests_limit,
         'tokens_today': usage['tokens_used'],
-        'resets_at': tomorrow_midnight.isoformat() + 'Z'
+        'resets_at': tomorrow_midnight.isoformat()
     }, status=status.HTTP_200_OK)

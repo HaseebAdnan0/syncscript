@@ -1945,3 +1945,244 @@ class RateLimitingTests(TestCase):
 
         self.assertEqual(cache.get(user_key), 1)
         self.assertEqual(cache.get(vault_key), 1)
+
+
+class BatchExportTests(TestCase):
+    """Tests for batch citation export endpoint"""
+
+    def setUp(self):
+        """Set up test fixtures"""
+        from apps.users.models import User
+        from apps.vaults.models import Vault, VaultMembership, RoleChoices
+        from apps.sources.models import Source
+
+        # Create user
+        self.user = User.objects.create_user(
+            email='test@example.com',
+            username='testuser',
+            password='testpass123'
+        )
+
+        # Create vault
+        self.vault = Vault.objects.create(
+            name='Test Vault',
+            description='Test vault for batch export',
+            owner=self.user
+        )
+
+        # Create sources with complete metadata (for structured citations)
+        self.source1 = Source.objects.create(
+            vault=self.vault,
+            title='First Article',
+            url='https://example.com/article1',
+            created_by=self.user,
+            metadata={
+                'authors': ['Smith, John', 'Doe, Jane'],
+                'publication_date': '2023-05-15',
+                'journal': 'Journal of Examples',
+                'volume': '42',
+                'issue': '3',
+                'pages': '123-145'
+            }
+        )
+
+        self.source2 = Source.objects.create(
+            vault=self.vault,
+            title='Second Article',
+            url='https://example.com/article2',
+            created_by=self.user,
+            metadata={
+                'authors': ['Johnson, Mary'],
+                'publication_date': '2024-01-10',
+                'journal': 'Another Journal',
+                'volume': '10',
+                'pages': '50-75'
+            }
+        )
+
+        # Create REST API client
+        from rest_framework.test import APIClient
+        self.client = APIClient()
+
+    def test_export_citations_bibtex(self):
+        """Test exporting citations in BibTeX format"""
+        # Authenticate
+        self.client.force_authenticate(user=self.user)
+
+        # Export citations
+        response = self.client.get(
+            f'/api/v1/citations/vaults/{self.vault.id}/export/',
+            {'format': 'bibtex'}
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/x-bibtex')
+        self.assertIn('attachment', response['Content-Disposition'])
+        self.assertIn('.bib', response['Content-Disposition'])
+
+        # Check content contains BibTeX entries
+        content = response.content.decode('utf-8')
+        self.assertIn('@article{', content)
+        self.assertIn('author = {', content)
+        self.assertIn('title = {', content)
+
+    def test_export_citations_apa7(self):
+        """Test exporting citations in APA 7th format"""
+        # Authenticate
+        self.client.force_authenticate(user=self.user)
+
+        # Export citations
+        response = self.client.get(
+            f'/api/v1/citations/vaults/{self.vault.id}/export/',
+            {'format': 'apa7'}
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'text/plain')
+        self.assertIn('attachment', response['Content-Disposition'])
+        self.assertIn('.txt', response['Content-Disposition'])
+
+        # Check content is not empty
+        content = response.content.decode('utf-8')
+        self.assertGreater(len(content), 0)
+
+    def test_export_citations_cached(self):
+        """Test exporting citations uses cache when available"""
+        # Pre-cache citations for both sources
+        self.source1.metadata['citations'] = {
+            'apa7': {
+                'text': 'Cached citation for source 1',
+                'html': 'Cached citation for source 1',
+                'generated_at': '2024-01-01T00:00:00',
+                'source': 'structured'
+            }
+        }
+        self.source1.save()
+
+        self.source2.metadata['citations'] = {
+            'apa7': {
+                'text': 'Cached citation for source 2',
+                'html': 'Cached citation for source 2',
+                'generated_at': '2024-01-01T00:00:00',
+                'source': 'structured'
+            }
+        }
+        self.source2.save()
+
+        # Authenticate
+        self.client.force_authenticate(user=self.user)
+
+        # Export citations
+        response = self.client.get(
+            f'/api/v1/citations/vaults/{self.vault.id}/export/',
+            {'format': 'apa7'}
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        # Check content uses cached citations
+        content = response.content.decode('utf-8')
+        self.assertIn('Cached citation for source 1', content)
+        self.assertIn('Cached citation for source 2', content)
+
+    def test_export_citations_missing_format(self):
+        """Test export fails when format parameter is missing"""
+        # Authenticate
+        self.client.force_authenticate(user=self.user)
+
+        # Export without format
+        response = self.client.get(
+            f'/api/v1/citations/vaults/{self.vault.id}/export/'
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('format', response.data)
+
+    def test_export_citations_invalid_format(self):
+        """Test export fails with invalid format"""
+        # Authenticate
+        self.client.force_authenticate(user=self.user)
+
+        # Export with invalid format
+        response = self.client.get(
+            f'/api/v1/citations/vaults/{self.vault.id}/export/',
+            {'format': 'invalid'}
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('format', response.data)
+
+    def test_export_citations_empty_vault(self):
+        """Test export fails when vault has no sources"""
+        from apps.vaults.models import Vault
+
+        # Create empty vault
+        empty_vault = Vault.objects.create(
+            name='Empty Vault',
+            description='Vault with no sources',
+            owner=self.user
+        )
+
+        # Authenticate
+        self.client.force_authenticate(user=self.user)
+
+        # Export from empty vault
+        response = self.client.get(
+            f'/api/v1/citations/vaults/{empty_vault.id}/export/',
+            {'format': 'apa7'}
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('error', response.data)
+
+    def test_export_citations_no_permission(self):
+        """Test export fails when user has no vault permission"""
+        from apps.users.models import User
+
+        # Create another user without vault access
+        other_user = User.objects.create_user(
+            email='other@example.com',
+            username='otheruser',
+            password='testpass123'
+        )
+
+        # Authenticate as other user
+        self.client.force_authenticate(user=other_user)
+
+        # Export citations
+        response = self.client.get(
+            f'/api/v1/citations/vaults/{self.vault.id}/export/',
+            {'format': 'apa7'}
+        )
+
+        self.assertEqual(response.status_code, 403)
+
+    def test_export_citations_viewer_role(self):
+        """Test export works for users with viewer role"""
+        from apps.users.models import User
+        from apps.vaults.models import VaultMembership, RoleChoices
+
+        # Create another user
+        viewer_user = User.objects.create_user(
+            email='viewer@example.com',
+            username='vieweruser',
+            password='testpass123'
+        )
+
+        # Add viewer membership
+        VaultMembership.objects.create(
+            vault=self.vault,
+            user=viewer_user,
+            role=RoleChoices.VIEWER
+        )
+
+        # Authenticate as viewer
+        self.client.force_authenticate(user=viewer_user)
+
+        # Export citations
+        response = self.client.get(
+            f'/api/v1/citations/vaults/{self.vault.id}/export/',
+            {'format': 'bibtex'}
+        )
+
+        self.assertEqual(response.status_code, 200)

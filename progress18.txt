@@ -694,3 +694,26 @@
   - Conditional rendering with && for optional features (onSearchClick && <button>)
 ---
 
+## Iteration 32 - US-034: Wire up search result navigation
+- Implemented handleResultClick function in both GlobalSearch.tsx and search page.tsx
+- Navigation routes based on result type:
+  - Vault: `/vaults/${result.id}`
+  - Source: `/vaults/${result.vault_id}/sources/${result.id}`
+  - Annotation: `/vaults/${result.vault_id}/sources/${result.id}#annotation-${result.id}`
+- Modal automatically closes after navigation in GlobalSearch component
+- Search query preservation already handled by existing record_search_history service
+- TypeScript typecheck passes with no errors
+- Files changed:
+  - frontend/src/components/features/search/GlobalSearch.tsx (added useRouter import, handleResultClick function, wired to SearchResultsList)
+  - frontend/src/app/(app)/search/page.tsx (added SearchResult import, handleResultClick function, wired to SearchResultsList)
+  - PRD18.md (marked US-034 complete)
+- Learnings for future iterations:
+  - Navigation pattern: useRouter().push() for client-side routing in Next.js
+  - For annotations, use hash anchors (#annotation-id) to highlight specific annotations on source page
+  - Modal close should happen after router.push() to avoid visual glitches
+  - Search history recording happens in backend (search_view calls record_search_history) automatically
+  - SearchResult type includes all needed fields: id, type, vault_id for proper navigation
+  - Both modal and full search page need same navigation logic - create separate handler in each component
+  - Typecheck command: cd frontend && npm run type-check
+---
+

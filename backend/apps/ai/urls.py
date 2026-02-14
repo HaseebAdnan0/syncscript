@@ -2,6 +2,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    # AI usage stats (US-023)
+    path('ai/usage/', views.get_ai_usage, name='ai-usage'),
     # Source summarization (US-006)
     path('sources/<int:source_id>/summarize/', views.summarize_source, name='summarize-source'),
     # Vault insights (US-007)

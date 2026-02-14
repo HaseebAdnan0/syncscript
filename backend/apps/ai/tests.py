@@ -1678,3 +1678,73 @@ class ChatHistoryPersistenceTestCase(APITestCase):
         )
 
         self.assertEqual(response.status_code, 401)
+
+
+class AIUsageEndpointTestCase(APITestCase):
+    """Test AI usage stats endpoint."""
+
+    def setUp(self):
+        """Create test user."""
+        self.user = User.objects.create_user(
+            email='test@example.com',
+            username='testuser',
+            password='testpass123'
+        )
+        self.client.force_authenticate(user=self.user)
+
+    def test_get_usage_returns_correct_structure(self):
+        """Test that usage endpoint returns correct data structure."""
+        response = self.client.get('/api/v1/ai/usage/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('requests_today', response.data)
+        self.assertIn('requests_limit', response.data)
+        self.assertIn('tokens_today', response.data)
+        self.assertIn('resets_at', response.data)
+
+    def test_get_usage_with_no_usage(self):
+        """Test usage endpoint with no AI usage."""
+        response = self.client.get('/api/v1/ai/usage/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['requests_today'], 0)
+        self.assertEqual(response.data['requests_limit'], 20)
+        self.assertEqual(response.data['tokens_today'], 0)
+
+    def test_get_usage_with_logs(self):
+        """Test usage endpoint with existing logs."""
+        # Create some usage logs
+        log_usage(self.user, 'summary', 100)
+        log_usage(self.user, 'insights', 200)
+        log_usage(self.user, 'question', 50)
+
+        response = self.client.get('/api/v1/ai/usage/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['requests_today'], 3)
+        self.assertEqual(response.data['tokens_today'], 350)
+        self.assertEqual(response.data['requests_limit'], 20)
+
+    def test_get_usage_resets_at_format(self):
+        """Test that resets_at is a valid ISO timestamp."""
+        from datetime import datetime
+
+        response = self.client.get('/api/v1/ai/usage/')
+
+        self.assertEqual(response.status_code, 200)
+        # Verify resets_at can be parsed as ISO datetime
+        resets_at = response.data['resets_at']
+        parsed = datetime.fromisoformat(resets_at.replace('Z', '+00:00'))
+        self.assertIsNotNone(parsed)
+
+        # Verify it's in the future (tomorrow midnight)
+        now = timezone.now()
+        self.assertGreater(parsed.replace(tzinfo=timezone.utc), now)
+
+    def test_get_usage_requires_authentication(self):
+        """Test that endpoint requires authentication."""
+        self.client.force_authenticate(user=None)
+
+        response = self.client.get('/api/v1/ai/usage/')
+
+        self.assertEqual(response.status_code, 401)

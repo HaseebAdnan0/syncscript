@@ -246,11 +246,11 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a developer, I need an endpoint to authenticate Pusher private channels.
 
 **Acceptance Criteria:**
-- [ ] POST `/api/v1/notifications/pusher/auth/` authenticates channel subscription
-- [ ] Validate channel name matches `private-user-{request.user.id}`
-- [ ] Return Pusher auth signature
-- [ ] Reject unauthorized channel access
-- [ ] Typecheck passes
+- [x] POST `/api/v1/notifications/pusher/auth/` authenticates channel subscription
+- [x] Validate channel name matches `private-user-{request.user.id}`
+- [x] Return Pusher auth signature
+- [x] Reject unauthorized channel access
+- [x] Typecheck passes
 
 ---
 
