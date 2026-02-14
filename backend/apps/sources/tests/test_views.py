@@ -1012,3 +1012,214 @@ class PDFUploadFlowTest(TestCase):
 
         # Verify storage usage update was called
         mock_update_storage.assert_called_once_with(self.vault.id)
+
+
+class MultipartAbortTest(TestCase):
+    """Test suite for multipart upload abort endpoint (US-023)."""
+
+    def setUp(self):
+        """Set up test fixtures."""
+        self.client = APIClient()
+
+        # Create test users
+        self.owner_user = User.objects.create(
+            username='owner',
+            email='owner@example.com'
+        )
+        self.owner_user.set_password('testpass123')
+        self.owner_user.save()
+
+        self.other_user = User.objects.create(
+            username='other',
+            email='other@example.com'
+        )
+        self.other_user.set_password('testpass123')
+        self.other_user.save()
+
+        # Create test vault
+        self.vault = Vault.objects.create(
+            name='Test Vault',
+            description='A test vault',
+            owner=self.owner_user
+        )
+
+    @patch('apps.sources.views.abort_multipart_upload')
+    def test_abort_multipart_upload_success(self, mock_abort):
+        """Test successful abort of multipart upload."""
+        self.client.force_authenticate(user=self.owner_user)
+
+        url = '/api/v1/sources/pdfs/multipart-upload/abort/'
+        data = {
+            'upload_id': 'test-upload-id-12345',
+            'file_key': f'vaults/{self.vault.id}/pdfs/test-file.pdf'
+        }
+
+        response = self.client.post(url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('message', response.data)
+        self.assertEqual(response.data['message'], 'Multipart upload aborted successfully')
+
+        # Verify abort_multipart_upload was called
+        mock_abort.assert_called_once_with(data['file_key'], data['upload_id'])
+
+    def test_abort_multipart_upload_invalid_file_key(self):
+        """Test abort with invalid file_key format."""
+        self.client.force_authenticate(user=self.owner_user)
+
+        url = '/api/v1/sources/pdfs/multipart-upload/abort/'
+        data = {
+            'upload_id': 'test-upload-id-12345',
+            'file_key': 'invalid-format/missing-vault-id.pdf'
+        }
+
+        response = self.client.post(url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('error', response.data)
+
+    def test_abort_multipart_upload_permission_denied(self):
+        """Test abort fails when user doesn't have vault access."""
+        self.client.force_authenticate(user=self.other_user)
+
+        url = '/api/v1/sources/pdfs/multipart-upload/abort/'
+        data = {
+            'upload_id': 'test-upload-id-12345',
+            'file_key': f'vaults/{self.vault.id}/pdfs/test-file.pdf'
+        }
+
+        response = self.client.post(url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class StorageQuotaTest(TestCase):
+    """Test suite for storage quota checking (US-023)."""
+
+    def setUp(self):
+        """Set up test fixtures."""
+        from apps.sources.models import VaultStorageUsage
+        from django.conf import settings
+
+        self.client = APIClient()
+
+        # Create test user
+        self.owner_user = User.objects.create(
+            username='owner',
+            email='owner@example.com'
+        )
+        self.owner_user.set_password('testpass123')
+        self.owner_user.save()
+
+        # Create test vault
+        self.vault = Vault.objects.create(
+            name='Test Vault',
+            description='A test vault',
+            owner=self.owner_user
+        )
+
+        # Create storage usage record
+        self.storage_usage = VaultStorageUsage.objects.create(
+            vault=self.vault,
+            used_bytes=0,
+            file_count=0
+        )
+
+        self.storage_limit = settings.VAULT_STORAGE_LIMIT
+
+    def test_check_storage_quota_under_limit(self):
+        """Test storage quota check when under limit."""
+        from apps.sources.services.storage_quota import check_storage_quota
+
+        # Set usage to 50% of limit
+        self.storage_usage.used_bytes = int(self.storage_limit * 0.5)
+        self.storage_usage.save()
+
+        result = check_storage_quota(self.vault.id)
+
+        self.assertEqual(result['used_bytes'], int(self.storage_limit * 0.5))
+        self.assertEqual(result['limit_bytes'], self.storage_limit)
+        self.assertAlmostEqual(result['percentage'], 0.5, places=2)
+        self.assertFalse(result['warning'])
+        self.assertFalse(result['exceeded'])
+
+    def test_check_storage_quota_warning_threshold(self):
+        """Test storage quota check at warning threshold (80%)."""
+        from apps.sources.services.storage_quota import check_storage_quota
+
+        # Set usage to 85% of limit
+        self.storage_usage.used_bytes = int(self.storage_limit * 0.85)
+        self.storage_usage.save()
+
+        result = check_storage_quota(self.vault.id)
+
+        self.assertEqual(result['used_bytes'], int(self.storage_limit * 0.85))
+        self.assertAlmostEqual(result['percentage'], 0.85, places=2)
+        self.assertTrue(result['warning'])
+        self.assertFalse(result['exceeded'])
+
+    def test_check_storage_quota_exceeded(self):
+        """Test storage quota check when exceeded."""
+        from apps.sources.services.storage_quota import check_storage_quota
+
+        # Set usage to 105% of limit
+        self.storage_usage.used_bytes = int(self.storage_limit * 1.05)
+        self.storage_usage.save()
+
+        result = check_storage_quota(self.vault.id)
+
+        self.assertEqual(result['used_bytes'], int(self.storage_limit * 1.05))
+        self.assertAlmostEqual(result['percentage'], 1.05, places=2)
+        self.assertTrue(result['warning'])
+        self.assertTrue(result['exceeded'])
+
+    @patch('apps.sources.services.storage_quota.check_storage_quota')
+    @patch('apps.sources.storage.generate_presigned_upload_url')
+    def test_upload_blocked_when_quota_exceeded(self, mock_generate_url, mock_check_quota):
+        """Test that uploads are blocked when storage quota is exceeded."""
+        # Mock quota check to return exceeded
+        mock_check_quota.return_value = {
+            'used_bytes': int(self.storage_limit * 1.1),
+            'limit_bytes': self.storage_limit,
+            'percentage': 1.1,
+            'warning': True,
+            'exceeded': True
+        }
+
+        self.client.force_authenticate(user=self.owner_user)
+
+        url = f'/api/v1/sources/pdfs/upload-url/'
+        data = {
+            'vault_id': self.vault.id,
+            'filename': 'test.pdf',
+            'file_size': 1000000
+        }
+
+        response = self.client.post(url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_413_REQUEST_ENTITY_TOO_LARGE)
+        self.assertIn('error', response.data)
+        self.assertEqual(response.data['error'], 'Storage quota exceeded')
+        self.assertIn('used_bytes', response.data)
+        self.assertIn('limit_bytes', response.data)
+
+        # Verify presigned URL was not generated
+        mock_generate_url.assert_not_called()
+
+
+class VirusScannerTest(TestCase):
+    """Test suite for virus scanner stub (US-023)."""
+
+    def test_virus_scanner_stub_returns_clean(self):
+        """Test that virus scanner stub always returns clean."""
+        from apps.sources.services.virus_scanner import VirusScanner
+
+        scanner = VirusScanner()
+        test_bytes = b"This is test file content"
+
+        result = scanner.scan_file(test_bytes)
+
+        self.assertTrue(result.is_clean)
+        self.assertIsNone(result.threat_name)
+        self.assertIsInstance(result.scan_time_ms, float)
+        self.assertGreaterEqual(result.scan_time_ms, 0)

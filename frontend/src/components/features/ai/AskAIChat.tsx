@@ -25,7 +25,7 @@ interface AskAIChatProps {
 }
 
 export default function AskAIChat({
-  vaultId, // eslint-disable-line @typescript-eslint/no-unused-vars -- Will be used in US-021 API integration
+  vaultId: _vaultId, // Will be used in US-021 API integration
   conversationId,
   onNewConversation
 }: AskAIChatProps) {

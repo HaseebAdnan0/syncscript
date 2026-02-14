@@ -227,13 +227,13 @@ This feature uses Claude as the AI backbone with a simple chunking strategy (no 
 **Description:** As a user, I want a chat interface to ask questions about my vault.
 
 **Acceptance Criteria:**
-- [ ] Create `components/features/ai/AskAIChat.tsx`
-- [ ] Props: `vaultId`, `conversationId?`, `onNewConversation`
-- [ ] Input field with send button at bottom
-- [ ] Message list showing user questions and AI responses
-- [ ] AI responses show inline citations as clickable chips
-- [ ] Auto-scroll to latest message
-- [ ] Typecheck passes
+- [x] Create `components/features/ai/AskAIChat.tsx`
+- [x] Props: `vaultId`, `conversationId?`, `onNewConversation`
+- [x] Input field with send button at bottom
+- [x] Message list showing user questions and AI responses
+- [x] AI responses show inline citations as clickable chips
+- [x] Auto-scroll to latest message
+- [x] Typecheck passes
 
 ### US-019: Create ChatMessage component
 **Description:** As a user, I want nicely formatted chat messages with citations.

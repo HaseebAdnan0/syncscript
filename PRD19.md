@@ -207,12 +207,12 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a developer, I need a utility to detect @mentions in annotation text.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/notifications/mentions.py`
-- [ ] Function `extract_mentions(text)` returns list of usernames from `@username` patterns
-- [ ] Handle edge cases: start of text, after spaces, punctuation
-- [ ] Function `resolve_mentions(usernames, vault_id)` returns User objects who are vault members
-- [ ] Ignore invalid/non-member usernames
-- [ ] Typecheck passes
+- [x] Create `apps/notifications/mentions.py`
+- [x] Function `extract_mentions(text)` returns list of usernames from `@username` patterns
+- [x] Handle edge cases: start of text, after spaces, punctuation
+- [x] Function `resolve_mentions(usernames, vault_id)` returns User objects who are vault members
+- [x] Ignore invalid/non-member usernames
+- [x] Typecheck passes
 
 ---
 

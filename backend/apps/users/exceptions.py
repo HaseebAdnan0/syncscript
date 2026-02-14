@@ -9,9 +9,10 @@ from django_ratelimit.exceptions import Ratelimited
 
 def custom_exception_handler(exc, context):
     """
-    Custom exception handler for DRF that handles rate limiting.
+    Custom exception handler for DRF that handles rate limiting and email verification.
 
     Returns 429 status code with Retry-After header when rate limit is exceeded.
+    Returns 403 with email_verification_required flag for unverified users.
     """
     # Handle Ratelimited exception BEFORE calling DRF's exception handler
     # This is necessary because Ratelimited inherits from PermissionDenied,
@@ -33,5 +34,10 @@ def custom_exception_handler(exc, context):
 
     # Call DRF's default exception handler for all other exceptions
     response = drf_exception_handler(exc, context)
+
+    # Check if exception has email_verification_required attribute
+    if response is not None and hasattr(exc, 'email_verification_required'):
+        # Add email_verification_required to response data
+        response.data['email_verification_required'] = exc.email_verification_required  # type: ignore
 
     return response
