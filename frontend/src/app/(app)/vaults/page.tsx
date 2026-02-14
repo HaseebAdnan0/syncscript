@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useVaults } from '@/hooks/useVaults';
 import { VaultCard } from '@/components/features/vaults/VaultCard';
+import { VaultCardSkeleton } from '@/components/features/vaults/VaultCardSkeleton';
 import { EmptyVaultsState } from '@/components/features/vaults/EmptyVaultsState';
 import { CreateVaultModal } from '@/components/features/vaults/CreateVaultModal';
 import GradientButton from '@/components/ui/GradientButton';
@@ -34,27 +35,15 @@ export default function VaultsPage() {
       <div className="min-h-screen bg-[#030304]">
         <div className="max-w-7xl mx-auto px-6 py-12">
           {/* Header skeleton */}
-          <div className="flex items-center justify-between mb-8">
-            <div className="h-10 w-48 bg-white/5 animate-pulse rounded" />
-            <div className="h-12 w-40 bg-white/5 animate-pulse rounded-full" />
+          <div className="flex items-center justify-between mb-8 animate-pulse">
+            <div className="h-10 w-48 bg-white/5 rounded" />
+            <div className="h-12 w-40 bg-white/5 rounded-full" />
           </div>
 
           {/* Grid skeleton */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(6)].map((_, i) => (
-              <div
-                key={i}
-                className="bg-[#0F1115] border border-white/10 rounded-2xl p-6 animate-pulse"
-              >
-                <div className="h-6 w-3/4 bg-white/5 rounded mb-4" />
-                <div className="h-4 w-full bg-white/5 rounded mb-2" />
-                <div className="h-4 w-2/3 bg-white/5 rounded mb-6" />
-                <div className="flex gap-4">
-                  <div className="h-4 w-20 bg-white/5 rounded" />
-                  <div className="h-4 w-20 bg-white/5 rounded" />
-                  <div className="h-4 w-24 bg-white/5 rounded ml-auto" />
-                </div>
-              </div>
+              <VaultCardSkeleton key={i} />
             ))}
           </div>
         </div>

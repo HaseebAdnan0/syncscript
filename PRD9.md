@@ -398,13 +398,13 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 **Description:** As a developer, I need a WebSocket hook to receive real-time source updates within a vault.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/hooks/useSourcesWebSocket.ts`
-- [ ] Connects to `ws://.../ws/vault/{vaultId}/`
-- [ ] Listens for events: `source.created`, `source.updated`, `source.deleted`
-- [ ] Invalidates React Query cache on relevant events
-- [ ] Auto-reconnect on disconnect with exponential backoff
-- [ ] Cleanup on unmount
-- [ ] Typecheck passes
+- [x] Create `frontend/src/hooks/useSourcesWebSocket.ts`
+- [x] Connects to `ws://.../ws/vault/{vaultId}/`
+- [x] Listens for events: `source.created`, `source.updated`, `source.deleted`
+- [x] Invalidates React Query cache on relevant events
+- [x] Auto-reconnect on disconnect with exponential backoff
+- [x] Cleanup on unmount
+- [x] Typecheck passes
 
 ---
 

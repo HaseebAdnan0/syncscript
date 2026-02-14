@@ -764,3 +764,43 @@ Learnings for future iterations:
 - Linter automatically adds explicit type annotations for callback parameters when it can infer context type
 - Always check API client function signatures before implementing mutation hooks
 ---
+---
+
+## Iteration 25 - US-026: Create DeleteConfirmationDialog component
+- Created DeleteConfirmationDialog at frontend/src/components/features/sources/DeleteConfirmationDialog.tsx
+- Created AlertDialog UI component at frontend/src/components/ui/alert-dialog.tsx
+- Installed @radix-ui/react-alert-dialog package dependency
+- AlertDialog follows Radix UI pattern with glass morphism styling
+- AlertDialogContent uses bg-[#0F1115] border border-white/10 backdrop-blur-lg rounded-2xl
+- AlertDialogOverlay uses bg-black/80 backdrop-blur-sm for darkened backdrop
+- DeleteConfirmationDialog shows item type (capitalized) and title being deleted
+- Item type supports: source, annotation, reply (passed via itemType prop)
+- Item title displayed as bold white text inline with description
+- Delete button uses destructive red style: bg-red-500 hover:bg-red-600 border-red-500 rounded-full
+- Cancel button uses secondary glass morphism: bg-[#0F1115] border border-white/20 rounded-full
+- Dialog accepts onConfirm callback for deletion action
+- Loading state supported with isLoading prop - shows spinner in delete button and disables both buttons
+- Delete button prevents default behavior and calls onConfirm manually for better control
+- All buttons use rounded-full shape for design system consistency
+- Fixed type error: explicit React.MouseEvent<HTMLButtonElement> type annotation for onClick parameter
+- Typecheck passes ✓
+
+Files changed:
+- frontend/src/components/features/sources/DeleteConfirmationDialog.tsx (new)
+- frontend/src/components/ui/alert-dialog.tsx (new)
+- frontend/package.json (added @radix-ui/react-alert-dialog)
+- frontend/package-lock.json (updated with new dependency)
+- PRD9.md (marked US-026 complete except browser verification)
+
+Learnings for future iterations:
+- AlertDialog pattern follows same structure as Dialog: Portal, Overlay, Content, Header, Footer, etc.
+- AlertDialog has specific components: AlertDialogAction (confirm) and AlertDialogCancel (cancel)
+- AlertDialogAction/Cancel need inline-flex items-center justify-center for proper button alignment
+- AlertDialog automatically closes on cancel - no need to call onOpenChange manually for cancel
+- AlertDialogAction onClick needs preventDefault() + manual callback to prevent auto-close before async operation
+- Delete button loading state shows "Deleting..." text with Loader2 spinner
+- Item type capitalized dynamically: itemType.charAt(0).toUpperCase() + itemType.slice(1)
+- Item title shown inline with description using conditional rendering and <span> for styling
+- AlertDialog properly handles disabled state during loading (disabled={isLoading} on both buttons)
+- Must install @radix-ui/react-alert-dialog separately from other Radix UI packages
+---

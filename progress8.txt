@@ -630,3 +630,45 @@ Learnings for future iterations:
 - Input with icon overlay: absolute positioning with right-3 top-1/2 -translate-y-1/2
 - useDeleteVault takes vault ID as parameter to mutateAsync (unlike useArchiveVault)
 ---
+
+## Iteration 22 - US-021: Role-based UI rendering
+- Created useVaultPermissions hook (frontend/src/hooks/useVaultPermissions.ts):
+  - Takes userRole parameter (VaultRole enum: OWNER, CONTRIBUTOR, VIEWER)
+  - Returns VaultPermissions interface with permission flags
+  - canEdit: true for Owners and Contributors (can edit content/sources)
+  - canManageMembers: true only for Owners (add/remove members, change roles)
+  - canDelete: true only for Owners (delete/archive vaults)
+  - isOwner, isContributor, isViewer: boolean flags for direct role checks
+- Updated vault detail page (frontend/src/app/(app)/vaults/[id]/page.tsx):
+  - Added useVaultPermissions import
+  - Called permissions hook with vault.user_role
+  - Conditionally render Settings tab trigger (hidden if isViewer)
+  - Conditionally render Settings tab content (hidden if isViewer)
+  - Settings tab properly hidden from Viewers, accessible to Contributors and Owners
+- Verified existing components already implement role-based permissions:
+  - MembersList: Add Member button uses isOwner check (line 88-96)
+  - MembersList: Role dropdown uses canChangeRole = isOwner && !isMemberOwner && !isCurrentUser
+  - MembersList: Remove button uses canRemove = isOwner && !isMemberOwner && !isCurrentUser
+  - SourcesList: canAddSource = userRole === 'OWNER' || userRole === 'CONTRIBUTOR'
+  - EmptySourcesState: Add Source button conditional on canAddSource prop
+  - VaultSettings: Form fields disabled for non-Owners, Danger Zone hidden for non-Owners
+- Typecheck passes successfully (no new errors)
+- Committed changes with feat: commit message
+
+Files changed:
+- frontend/src/hooks/useVaultPermissions.ts (created)
+- frontend/src/app/(app)/vaults/[id]/page.tsx (added permissions, conditional Settings tab)
+- PRD8.md (marked US-021 complete except browser verification)
+
+Learnings for future iterations:
+- useVaultPermissions hook provides single source of truth for permission logic
+- Conditional tab rendering: wrap both Tabs.Trigger and Tabs.Content in same condition
+- Check permissions with &&: {permissions && !permissions.isViewer && <Component />}
+- Existing components already had role checks - verified they align with permissions hook
+- canEdit includes both Owners and Contributors (collaboration principle)
+- canManageMembers and canDelete are Owner-only (admin principle)
+- VaultRole comparison uses string equality: userRole === 'OWNER' (stored as strings in API)
+- Permission hook can be used in any component needing role-based UI rendering
+- Settings tab read-only for Contributors already handled by VaultSettings component (isOwner check)
+- Role-based permissions prevent UI clutter and guide users to allowed actions
+---

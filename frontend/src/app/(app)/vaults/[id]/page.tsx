@@ -11,6 +11,7 @@ import { useReconnectionHandler } from '@/hooks/useReconnectionHandler';
 import { SourcesList } from '@/components/features/vaults/SourcesList';
 import { MembersList } from '@/components/features/vaults/MembersList';
 import { VaultSettings } from '@/components/features/vaults/VaultSettings';
+import { VaultDetailSkeleton } from '@/components/features/vaults/VaultDetailSkeleton';
 import { PresenceIndicator } from '@/components/features/notifications/PresenceIndicator';
 import * as Tabs from '@radix-ui/react-tabs';
 import { ArrowLeft } from 'lucide-react';
@@ -46,11 +47,7 @@ export default function VaultDetailPage() {
 
   // Loading state
   if (vaultLoading) {
-    return (
-      <div className="min-h-screen bg-[#030304] flex items-center justify-center">
-        <div className="text-[#94A3B8] text-lg">Loading vault...</div>
-      </div>
-    );
+    return <VaultDetailSkeleton />;
   }
 
   // 404 handling
