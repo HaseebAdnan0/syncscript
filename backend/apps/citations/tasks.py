@@ -13,6 +13,7 @@ from django.utils import timezone
 from apps.sources.models import Source
 from apps.citations.models import CitationFormat
 from apps.citations.services.ai_citation import generate_ai_citation
+from apps.citations.utils import log_ai_citation_usage
 
 logger = logging.getLogger(__name__)
 

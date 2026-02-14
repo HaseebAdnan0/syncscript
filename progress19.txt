@@ -309,3 +309,17 @@ In Progress - US-004 complete
   - Test both positive and negative cases (create vs skip) for each condition
   - Always fix blocking import errors before running tests
 ---
+
+## Iteration 12 - US-012: Signal Handler for vault_invite Notifications (Verification)
+- Task was already completed in previous session (commit 4426df2)
+- Verified signals.py exists with VaultMembership post_save handler
+- Verified signal creates vault_invite notification when user added to vault
+- Verified signal doesn't notify vault owner (auto-created membership)
+- Verified notification data includes vault_id, vault_name, inviter_id, inviter_name
+- Verified signal connected in apps.py ready() method
+- Verified comprehensive test suite exists with 5 test cases
+- All tests pass (51/51)
+- Mypy typecheck passes
+- Files: backend/apps/notifications/signals.py, apps.py, tests.py
+- Learnings: Always check git history to verify if task already exists before reimplementing
+---

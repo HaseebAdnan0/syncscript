@@ -13,7 +13,7 @@ from anthropic import Anthropic
 from apps.citations.models import CitationFormat
 
 
-def generate_ai_citation(source_data: Dict[str, Any], format: CitationFormat) -> Tuple[str, str]:
+def generate_ai_citation(source_data: Dict[str, Any], format: CitationFormat) -> Tuple[str, str, Dict[str, Any]]:
     """
     Generate a citation using Claude AI for sources with incomplete metadata.
 
@@ -26,9 +26,14 @@ def generate_ai_citation(source_data: Dict[str, Any], format: CitationFormat) ->
         format: Citation format (APA7, MLA9, CHICAGO17, BIBTEX, IEEE, HARVARD)
 
     Returns:
-        Tuple of (plain_text_citation, html_citation)
+        Tuple of (plain_text_citation, html_citation, usage_data)
         - plain_text: Citation with no formatting
         - html: Citation with HTML tags for italicization (journal names, titles)
+        - usage_data: Dict containing token counts and model info
+            - input_tokens: Number of input tokens
+            - output_tokens: Number of output tokens
+            - model: Model name used
+            - total_tokens: Total tokens (input + output)
 
     Raises:
         ValueError: If ANTHROPIC_API_KEY is not configured
@@ -63,7 +68,15 @@ def generate_ai_citation(source_data: Dict[str, Any], format: CitationFormat) ->
     # Parse plain text and HTML versions from response
     plain_text, html = _parse_response(response_text)
 
-    return plain_text, html
+    # Extract usage data from response
+    usage_data = {
+        'input_tokens': message.usage.input_tokens,
+        'output_tokens': message.usage.output_tokens,
+        'model': message.model,
+        'total_tokens': message.usage.input_tokens + message.usage.output_tokens,
+    }
+
+    return plain_text, html, usage_data
 
 
 def _build_system_prompt(format: CitationFormat) -> str:

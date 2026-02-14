@@ -1,7 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { TutorialProvider } from './TutorialProvider';
+import { useOnboarding } from '@/providers/OnboardingProvider';
 import type { Step } from 'react-joyride';
 
 interface InteractiveTutorialProps {
@@ -10,6 +11,8 @@ interface InteractiveTutorialProps {
 }
 
 const InteractiveTutorial: React.FC<InteractiveTutorialProps> = ({ onComplete, onSkip }) => {
+  const { updateOnboarding } = useOnboarding();
+
   // Define tutorial steps highlighting key UI elements
   const tutorialSteps: Step[] = [
     {
@@ -17,7 +20,7 @@ const InteractiveTutorial: React.FC<InteractiveTutorialProps> = ({ onComplete, o
       content: 'This is your vault sidebar. All your knowledge vaults appear here. Click on any vault to view its contents.',
       title: 'Knowledge Vaults',
       placement: 'right',
-      disableBeacon: true,
+      disableBeacon: false, // Enable beacon for first step to draw attention with pulse
     },
     {
       target: '[data-tour="add-source"]',
@@ -63,12 +66,46 @@ const InteractiveTutorial: React.FC<InteractiveTutorialProps> = ({ onComplete, o
     },
   ];
 
+  // Handle step changes - update backend on navigation
+  const handleStepChange = async (stepIndex: number) => {
+    try {
+      // Persist current tutorial step to backend
+      await updateOnboarding({
+        step: 'tutorial',
+        data: {
+          tutorialStep: stepIndex,
+        },
+      });
+    } catch (error) {
+      // Non-blocking error - tutorial continues even if backend update fails
+      console.error('Failed to update tutorial step:', error);
+    }
+  };
+
+  // Scroll target element into view if needed
+  useEffect(() => {
+    // react-joyride handles scrolling with scrollToFirstStep prop
+    // This effect is for any additional scroll behavior if needed
+    const scrollToElement = (selector: string) => {
+      const element = document.querySelector(selector);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    };
+
+    // Example: scroll to first tutorial target on mount
+    if (tutorialSteps.length > 0 && typeof tutorialSteps[0].target === 'string') {
+      scrollToElement(tutorialSteps[0].target);
+    }
+  }, [tutorialSteps]);
+
   return (
     <TutorialProvider
       steps={tutorialSteps}
       run={true}
       onFinish={onComplete}
       onSkip={onSkip}
+      onStepChange={handleStepChange}
     />
   );
 };

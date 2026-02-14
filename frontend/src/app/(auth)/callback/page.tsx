@@ -54,11 +54,12 @@ export default function OAuthCallbackPage() {
     // Handle error case
     if (error) {
       setStatus('error');
+      const providerName = provider ? (provider.charAt(0).toUpperCase() + provider.slice(1)) : 'the provider';
       const errorMessages: Record<string, string> = {
         'access_denied': 'You cancelled the sign-in process',
         'invalid_request': 'Something went wrong. Please try again',
         'email_exists': 'This email is already registered. Please login with your password',
-        'provider_error': `Could not connect to ${provider || 'the provider'}. Please try again`,
+        'provider_error': `Could not connect to ${providerName}. Please try again`,
       };
       setMessage(errorMessages[error] || 'An unexpected error occurred. Please try again');
     } else if (status === 'loading') {

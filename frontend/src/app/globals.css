@@ -11,6 +11,10 @@
   --accent: #FFD600;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   @apply bg-background text-foreground font-body;
   min-height: 100vh;

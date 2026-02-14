@@ -1,41 +1,62 @@
 'use client';
 
+import { ErrorBoundary } from 'react-error-boundary';
+import { WelcomeHeader } from '@/components/features/dashboard/WelcomeHeader';
+import { ContinueResearch } from '@/components/features/dashboard/ContinueResearch';
+import { RecentActivity } from '@/components/features/dashboard/RecentActivity';
+import { AnalyticsSection } from '@/components/features/dashboard/AnalyticsSection';
+import { QuickActionsFAB } from '@/components/features/dashboard/QuickActionsFAB';
+import { AlertTriangle } from 'lucide-react';
+
+// Error fallback component for failed sections
+function SectionErrorFallback({ error, resetErrorBoundary }: { error: Error; resetErrorBoundary: () => void }) {
+  return (
+    <div className="bg-[#0F1115] border border-red-500/20 rounded-2xl p-8">
+      <div className="flex items-start gap-4">
+        <div className="h-12 w-12 rounded-full bg-red-500/10 flex items-center justify-center flex-shrink-0">
+          <AlertTriangle className="h-6 w-6 text-red-500" />
+        </div>
+        <div className="flex-1">
+          <h3 className="text-white font-bold mb-2">Failed to load section</h3>
+          <p className="text-white/60 text-sm mb-4">{error.message}</p>
+          <button
+            onClick={resetErrorBoundary}
+            className="text-sm text-[#F7931A] hover:text-[#FFD600] transition-colors uppercase tracking-wide font-medium"
+          >
+            Try again
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-[#030304] p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Placeholder content for now - will be filled by subsequent user stories */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-[#F7931A] to-[#FFD600] bg-clip-text text-transparent mb-2">
-            Dashboard
-          </h1>
-          <p className="text-[#94A3B8]">
-            Welcome to your research dashboard
-          </p>
-        </div>
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* Welcome Header */}
+        <ErrorBoundary FallbackComponent={SectionErrorFallback}>
+          <WelcomeHeader />
+        </ErrorBoundary>
 
-        {/* Grid layout for future sections */}
-        <div className="grid grid-cols-1 gap-6">
-          {/* Welcome header section - to be added in US-007 */}
-          <div className="bg-[#0F1115] border border-white/10 rounded-2xl p-8">
-            <p className="text-white/60">Welcome header component will go here</p>
-          </div>
+        {/* Continue Research */}
+        <ErrorBoundary FallbackComponent={SectionErrorFallback}>
+          <ContinueResearch />
+        </ErrorBoundary>
 
-          {/* Continue research section - to be added in US-008 */}
-          <div className="bg-[#0F1115] border border-white/10 rounded-2xl p-8">
-            <p className="text-white/60">Continue research section will go here</p>
-          </div>
+        {/* Recent Activity */}
+        <ErrorBoundary FallbackComponent={SectionErrorFallback}>
+          <RecentActivity />
+        </ErrorBoundary>
 
-          {/* Recent activity and analytics - to be added in later user stories */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-[#0F1115] border border-white/10 rounded-2xl p-8">
-              <p className="text-white/60">Recent activity will go here</p>
-            </div>
-            <div className="bg-[#0F1115] border border-white/10 rounded-2xl p-8">
-              <p className="text-white/60">Analytics will go here</p>
-            </div>
-          </div>
-        </div>
+        {/* Analytics Section */}
+        <ErrorBoundary FallbackComponent={SectionErrorFallback}>
+          <AnalyticsSection />
+        </ErrorBoundary>
+
+        {/* Quick Actions FAB (fixed position) */}
+        <QuickActionsFAB />
       </div>
     </div>
   );

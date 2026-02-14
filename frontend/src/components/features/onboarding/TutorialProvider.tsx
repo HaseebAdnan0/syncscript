@@ -122,6 +122,20 @@ export function TutorialProvider({
       borderRadius: '0.5rem',
       boxShadow: '0 0 0 9999px rgba(3, 3, 4, 0.8)',
     },
+    beacon: {
+      backgroundColor: '#F7931A',
+      border: '2px solid #FFD600',
+      width: '36px',
+      height: '36px',
+    },
+    beaconInner: {
+      backgroundColor: '#F7931A',
+      border: '2px solid #FFD600',
+    },
+    beaconOuter: {
+      backgroundColor: 'rgba(247, 147, 26, 0.2)',
+      border: '2px solid rgba(255, 214, 0, 0.2)',
+    },
   };
 
   return (

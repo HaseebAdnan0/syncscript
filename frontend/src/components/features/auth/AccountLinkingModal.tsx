@@ -74,7 +74,16 @@ export default function AccountLinkingModal({
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || "Failed to link account");
+        // Map common error responses to user-friendly messages
+        const errorMessages: Record<string, string> = {
+          'invalid_password': 'Incorrect password. Please try again.',
+          'no_pending_oauth': 'OAuth session expired. Please try signing in again.',
+          'invalid_request': 'Something went wrong. Please try again.',
+        };
+        const errorMessage = data.error && errorMessages[data.error]
+          ? errorMessages[data.error]
+          : (data.error || "Failed to link account");
+        throw new Error(errorMessage);
       }
 
       // Success - redirect to dashboard

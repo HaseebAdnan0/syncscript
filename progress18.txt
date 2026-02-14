@@ -351,3 +351,16 @@
   - Enabled condition (query.length >= 2) prevents unnecessary API calls
 ---
 
+## Iteration 17 - US-018: Create useRecentSearches hook
+- Task was already completed in a previous session (commit aea0ff8)
+- File frontend/src/hooks/useRecentSearches.ts already exists with full implementation
+- Hook provides: query for recent searches, clearAll mutation, removeOne mutation
+- Optimistic updates implemented with rollback on error
+- Refetches on window focus enabled
+- Learnings for future iterations:
+  - Always check git log to see if files were already committed before starting work
+  - Use: git log --all --oneline -- <filepath> to check file history
+  - PRD18.md already had US-018 marked complete [x]
+  - Next incomplete task is US-019 (GlobalSearchModal component)
+---
+

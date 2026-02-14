@@ -616,3 +616,27 @@ Learnings for future iterations:
   - Clear confirmDisconnect state after operation (success or error) to close modal
 ---
 
+## Iteration 22 - US-022: Add Connected Accounts to settings page
+- Imported ConnectedAccounts component into settings page
+- Added new "Connected Accounts" section with Link icon from lucide-react
+- Positioned after Privacy & Security section (before Appearance)
+- Included section heading and description: "Manage your OAuth provider connections"
+- Fixed import: ConnectedAccounts is a named export, not default export
+- Frontend typecheck passes
+- Committed successfully
+
+Files changed:
+  - frontend/src/app/(app)/settings/page.tsx (added ConnectedAccounts section)
+  - PRD12.md (marked US-022 complete except browser verification)
+
+Learnings for future iterations:
+  - Always check if component is default export vs named export (use Grep for ^export)
+  - TypeScript error messages indicate whether to use default or named import
+  - ConnectedAccounts uses named export: export function ConnectedAccounts()
+  - Settings page follows section pattern: icon + heading + description + component
+  - Link icon from lucide-react represents connected accounts visually
+  - Position new sections logically: Connected Accounts fits between Security and Appearance
+  - Section styling: bg-[#0F1115] border border-white/10 rounded-2xl p-8
+  - Non-placeholder sections don't have opacity-50 class
+---
+

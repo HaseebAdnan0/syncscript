@@ -137,10 +137,10 @@ This feature uses Claude as the AI backbone with a simple chunking strategy (no 
 - [x] If not provided, create new ChatConversation
 - [x] Save user message and assistant response as ChatMessage records
 - [x] Store `sources_cited` in assistant message's JSONField
-- [ ] Limit to 10 conversations per vault (delete oldest on overflow)
-- [ ] `GET /api/v1/vaults/{id}/conversations/` lists conversations with preview
-- [ ] `GET /api/v1/vaults/{id}/conversations/{conv_id}/` returns full message history
-- [ ] Typecheck passes
+- [x] Limit to 10 conversations per vault (delete oldest on overflow)
+- [x] `GET /api/v1/vaults/{id}/conversations/` lists conversations with preview
+- [x] `GET /api/v1/vaults/{id}/conversations/{conv_id}/` returns full message history
+- [x] Typecheck passes
 
 ### US-011: Add AI URL routes
 **Description:** As a developer, I need to wire up all AI endpoints to the URL router.
