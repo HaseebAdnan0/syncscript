@@ -174,3 +174,27 @@ class SourceSerializer(serializers.ModelSerializer):
             validated_data['metadata'] = existing_metadata
 
         return super().create(validated_data)
+
+
+class BulkSourceSerializer(serializers.Serializer):
+    """
+    Serializer for bulk importing multiple URLs (US-016).
+    Validates that URLs are unique within the request and limited to 50.
+    """
+    urls = serializers.ListField(
+        child=serializers.URLField(max_length=2048),
+        min_length=1,
+        max_length=50,
+        help_text="List of URLs to import (max 50)"
+    )
+
+    def validate_urls(self, value):
+        """
+        Validate that all URLs are unique within the request.
+        """
+        # Check for duplicates
+        unique_urls = set(value)
+        if len(unique_urls) != len(value):
+            raise serializers.ValidationError("All URLs must be unique within the request.")
+
+        return value

@@ -217,11 +217,11 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need a serializer for bulk importing multiple URLs.
 
 **Acceptance Criteria:**
-- [ ] Create `BulkSourceSerializer` with field `urls` as ListField of URLFields
-- [ ] Add validation: max 50 URLs
-- [ ] Add validation: all URLs must be unique within the request
-- [ ] Return validation errors for invalid URLs
-- [ ] Typecheck passes
+- [x] Create `BulkSourceSerializer` with field `urls` as ListField of URLFields
+- [x] Add validation: max 50 URLs
+- [x] Add validation: all URLs must be unique within the request
+- [x] Return validation errors for invalid URLs
+- [x] Typecheck passes
 
 ---
 
