@@ -375,10 +375,10 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need a permission class allowing only authors to edit their annotations.
 
 **Acceptance Criteria:**
-- [ ] Create `IsAuthorOrReadOnly` class in `permissions.py` extending `BasePermission`
-- [ ] `has_object_permission()` returns True for safe methods (GET, HEAD, OPTIONS)
-- [ ] For unsafe methods, return `obj.user == request.user`
-- [ ] Typecheck passes
+- [x] Create `IsAuthorOrReadOnly` class in `permissions.py` extending `BasePermission`
+- [x] `has_object_permission()` returns True for safe methods (GET, HEAD, OPTIONS)
+- [x] For unsafe methods, return `obj.user == request.user`
+- [x] Typecheck passes
 
 ---
 
