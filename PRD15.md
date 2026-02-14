@@ -95,15 +95,15 @@ This feature uses Claude as the AI backbone with a simple chunking strategy (no 
 **Description:** As a user, I want AI-generated insights about my vault so I can see themes and gaps across all sources.
 
 **Acceptance Criteria:**
-- [ ] `GET /api/v1/vaults/{id}/insights/` endpoint
-- [ ] Requires authentication and vault read permission
-- [ ] Return cached insights if `ai_insights_updated_at` < 24 hours old
-- [ ] Gather all source summaries (or titles/abstracts if no summary)
-- [ ] Send to Claude for thematic analysis
-- [ ] Response: `{themes[], research_gaps[], cross_references[], suggested_searches[], generated_at}`
-- [ ] Cache in vault's `ai_insights_cache` field
-- [ ] Apply `@ai_rate_limit` decorator
-- [ ] Typecheck passes
+- [x] `GET /api/v1/vaults/{id}/insights/` endpoint
+- [x] Requires authentication and vault read permission
+- [x] Return cached insights if `ai_insights_updated_at` < 24 hours old
+- [x] Gather all source summaries (or titles/abstracts if no summary)
+- [x] Send to Claude for thematic analysis
+- [x] Response: `{themes[], research_gaps[], cross_references[], suggested_searches[], generated_at}`
+- [x] Cache in vault's `ai_insights_cache` field
+- [x] Apply `@ai_rate_limit` decorator
+- [x] Typecheck passes
 
 ### US-008: Add cache invalidation for vault insights
 **Description:** As a developer, I need to invalidate vault insights cache when sources change so insights stay fresh.

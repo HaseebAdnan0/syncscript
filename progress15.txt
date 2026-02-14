@@ -188,3 +188,31 @@ Learnings for future iterations:
 - Use force_authenticate() in APITestCase for authenticated requests
 - Import models inside test methods to avoid circular import issues
 ---
+
+## Iteration 7 - US-007: Implement vault insights endpoint
+- Created GET /api/v1/vaults/{id}/insights/ endpoint in apps/ai/views.py
+- Implemented cache logic: returns cached insights if ai_insights_updated_at < 24 hours old
+- Gathers source summaries (or descriptions/metadata for sources without summaries)
+- Sends to ClaudeClient.analyze_sources() for thematic analysis
+- Response includes: themes[], research_gaps[], cross_references[], suggested_searches[], generated_at
+- Caches result in vault.ai_insights_cache and vault.ai_insights_updated_at fields
+- Applied @ai_rate_limit decorator for rate limiting
+- Logs token usage via log_usage(user, 'insights', tokens_used)
+- Added URL route in apps/ai/urls.py (with uuid:vault_id for UUID primary keys)
+- Created comprehensive test suite with 9 tests in VaultInsightsTestCase
+- All 48 AI app tests pass successfully
+
+Files changed:
+- backend/apps/ai/views.py (added vault_insights function)
+- backend/apps/ai/urls.py (added vault insights route)
+- backend/apps/ai/tests.py (added VaultInsightsTestCase with 9 tests)
+- PRD15.md (marked US-007 complete)
+
+Learnings for future iterations:
+- Vault model uses UUID primary key, not integer - must use <uuid:vault_id> in URL patterns
+- Vault model uses is_archived field, not is_deleted
+- When getting 404 in tests but URL resolves correctly in shell, check the URL pattern type (int vs uuid vs str)
+- Django's error messages in tests can be misleading - the 'tried' dict in Resolver404 shows exactly why URLs don't match
+- Sources without AI summaries should be handled gracefully by passing description and metadata instead
+- Cache age check: timezone.now() - vault.ai_insights_updated_at < timedelta(hours=24)
+---
