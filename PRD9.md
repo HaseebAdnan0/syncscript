@@ -252,14 +252,14 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 **Description:** As a user, I want to view PDF documents within the app so I don't need to download them separately.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/sources/PDFViewer.tsx`
-- [ ] Install and configure `react-pdf` with worker
-- [ ] Renders PDF from source URL
-- [ ] Shows page navigation controls (prev/next, page input)
-- [ ] Displays current page / total pages
-- [ ] Shows loading state while PDF loads
-- [ ] Error state if PDF fails to load
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/sources/PDFViewer.tsx`
+- [x] Install and configure `react-pdf` with worker
+- [x] Renders PDF from source URL
+- [x] Shows page navigation controls (prev/next, page input)
+- [x] Displays current page / total pages
+- [x] Shows loading state while PDF loads
+- [x] Error state if PDF fails to load
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---
