@@ -112,13 +112,13 @@ Integrate SyncScript's frontend with the existing backend WebSocket system and n
 **Description:** As a user, I want to see toast notifications when vault events occur so I'm aware of collaborator activity.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/notifications/VaultToast.tsx`
-- [ ] Integrates with existing Radix toast or creates new toast context
-- [ ] Shows event-specific messages: "Alice added a new source", "Bob joined the vault"
-- [ ] Toast appears bottom-right, auto-dismisses after 5 seconds
-- [ ] Uses Bitcoin DeFi styling: dark background, orange accent border
-- [ ] Includes dismiss button
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/notifications/VaultToast.tsx`
+- [x] Integrates with existing Radix toast or creates new toast context
+- [x] Shows event-specific messages: "Alice added a new source", "Bob joined the vault"
+- [x] Toast appears bottom-right, auto-dismisses after 5 seconds
+- [x] Uses Bitcoin DeFi styling: dark background, orange accent border
+- [x] Includes dismiss button
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-010: Create UnreadBadge component for header
