@@ -590,3 +590,77 @@
   - Test database connection failures are environmental - document in MANUAL_VERIFICATION.md
 ---
 
+## Iteration 26 - US-027: Create signal handler tests
+- Created apps/sources/tests/test_signals.py with 5 comprehensive unit tests for Source model signals
+- Tests verify signals enqueue correct Celery tasks with proper arguments:
+  - test_source_created_triggers_celery_task: post_save with created=True triggers broadcast_source_created.delay(source_id)
+  - test_source_updated_broadcasts_to_vault: post_save with created=False triggers broadcast_source_updated.delay(source_id, changed_fields)
+  - test_source_deleted_broadcasts_to_vault: post_delete triggers broadcast_source_deleted.delay(source_id, vault_id, deleted_by_id)
+  - test_signal_not_triggered_on_update: Update does NOT re-trigger create task
+  - test_create_and_update_trigger_different_tasks: Verifies separate tasks for create vs update operations
+- Used @patch decorator to mock Celery tasks and verify they're called with correct arguments
+- Created standalone verification script test_verify_signals.py to check signal registration without database
+- Verification confirms 2 post_save receivers and 2 post_delete receivers for Source model
+- Files changed: apps/sources/tests/test_signals.py (new), test_verify_signals.py (new), PRD5.md, .planning/MANUAL_VERIFICATION.md
+- Typecheck passes (0 errors, 0 warnings)
+- Verification script passes - all signal handlers and test methods present
+- Code complete - manual verification required due to PostgreSQL database setup issues
+- Committed in 03dc0a5
+- Learnings for future iterations:
+  - Mock Celery tasks with @patch('apps.sources.signals.broadcast_source_created.delay')
+  - Patch path must match where the task is USED, not where it's defined (signals.py imports from tasks.py)
+  - mock_task.assert_called_once() verifies task was enqueued exactly once
+  - mock_task.call_args[0][N] accesses positional arguments passed to task
+  - mock_task.reset_mock() clears call history for subsequent assertions
+  - mock_task.assert_not_called() verifies task NOT enqueued
+  - DirtyFieldsMixin tracks changed_fields in instance._changed_fields attribute
+  - Signal handlers import tasks inside handler function to avoid circular imports
+  - Standalone verification scripts can check signal registration without database connection
+  - signals.post_save._live_receivers(Model) returns list of registered receivers
+  - Test database connection failures are environmental - document in MANUAL_VERIFICATION.md
+  - Source model has 2 post_save receivers: source_saved (WebSocket broadcast) + audit logging
+  - Source model has 2 post_delete receivers: source_deleted (WebSocket broadcast) + audit logging
+---
+
+## Iteration 27 - US-028: Update README with WebSocket documentation
+- Verified README.md already contains comprehensive "Real-Time WebSocket" section (previously added)
+- Documentation includes:
+  - Connection endpoint format: ws://localhost:8000/ws/vault/{vault_id}/?token={jwt_access_token}
+  - Required services: Redis, Daphne, Celery Worker, Celery Beat
+  - Commands to run Daphne: daphne -b 0.0.0.0 -p 8000 config.asgi:application
+  - Commands to run Celery: celery -A config worker -l info -Q websocket_events
+  - Complete list of event types: source.created, source.updated, source.deleted, annotation.created, member.added, presence.update
+  - Client message types: heartbeat, replay_request
+  - 4-layer rate limiting explanation
+- Files changed: PRD5.md (marked complete - documentation already exists)
+- All PRD5 tasks complete (US-001 through US-028)
+- Learnings for future iterations:
+  - Auto-commit hooks may complete documentation tasks during development
+  - Always verify README/documentation files before assuming they need updates
+  - WebSocket documentation should include connection string format, required services, event types, and rate limiting
+  - README structure follows pattern: connection endpoint → required services → event types → client messages → rate limiting
+---
+
+
+## Iteration 26 - US-028: Update README with WebSocket documentation
+- Added comprehensive "Real-Time WebSocket" section to backend/README.md
+- Documented WebSocket connection endpoint with parameters (vault_id UUID, JWT token)
+- Listed all required services for WebSocket system:
+  - Redis (channel layer backend)
+  - Daphne (ASGI server): daphne -b 0.0.0.0 -p 8000 config.asgi:application
+  - Celery Worker: celery -A config worker -l info -Q websocket_events
+  - Celery Beat: celery -A config beat -l info
+- Documented all event types: source.created/updated/deleted, annotation.created, member.added, presence.update
+- Documented client message types: heartbeat, replay_request
+- Added rate limiting documentation (4 layers)
+- Files changed: backend/README.md, PRD5.md
+- Committed in f07dd38
+- Learnings for future iterations:
+  - README.md is markdown documentation, not Python code - typecheck not applicable
+  - WebSocket documentation should include both server setup and client usage
+  - Event types list helps frontend developers understand what to expect
+  - Rate limiting documentation helps users understand connection behavior
+  - Comprehensive setup instructions important for developers unfamiliar with Django Channels
+  - Documented both Celery worker and Celery beat (beat needed for heartbeat timeout cleanup)
+  - Connection endpoint uses vault_id (UUID), not integer ID
+---

@@ -51,8 +51,8 @@ class VaultViewSet(viewsets.ModelViewSet):
         role = self.request.query_params.get('role')
         if role:
             queryset = queryset.filter(
-                vaultmembership__user=user,
-                vaultmembership__role=role
+                memberships__user=user,
+                memberships__role=role
             ).distinct()
 
         return queryset
