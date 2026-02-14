@@ -48,12 +48,12 @@ class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
 
         return queryset
 
-    @action(detail=True, methods=['patch'], url_path='read')
+    @action(detail=True, methods=['patch', 'post'], url_path='mark-read')
     def mark_read(self, request, pk=None) -> Response:  # type: ignore[no-untyped-def]
         """
         Mark a notification as read.
 
-        PATCH /api/v1/notifications/{id}/read/
+        POST/PATCH /api/v1/notifications/{id}/mark-read/
 
         Idempotent: re-marking doesn't change timestamp.
         Only allows marking own notifications.
@@ -74,3 +74,34 @@ class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
 
         serializer = self.get_serializer(notification)
         return Response(serializer.data)
+
+    @action(detail=False, methods=['get'], url_path='unread-count')
+    def unread_count(self, request) -> Response:  # type: ignore[no-untyped-def]
+        """
+        Get count of unread notifications for current user.
+
+        GET /api/v1/notifications/unread-count/
+
+        Returns: { "count": N }
+        """
+        count = Notification.objects.filter(
+            user=request.user,
+            read_at__isnull=True
+        ).count()
+        return Response({'count': count})
+
+    @action(detail=False, methods=['post'], url_path='mark-all-read')
+    def mark_all_read(self, request) -> Response:  # type: ignore[no-untyped-def]
+        """
+        Mark all notifications as read for current user.
+
+        POST /api/v1/notifications/mark-all-read/
+
+        Returns: { "updated": N }
+        """
+        updated_count = Notification.objects.filter(
+            user=request.user,
+            read_at__isnull=True
+        ).update(read_at=timezone.now())
+
+        return Response({'updated': updated_count})

@@ -24,7 +24,7 @@ class CitationResponseSerializer(serializers.Serializer):
         help_text="Citation format used"
     )
     source = serializers.ChoiceField(
-        choices=['structured', 'ai'],
+        choices=[('structured', 'structured'), ('ai', 'ai')],
         help_text="Generation method: structured (citeproc-py) or ai (Claude)"
     )
     cached = serializers.BooleanField(

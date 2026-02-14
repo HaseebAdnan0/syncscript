@@ -13,6 +13,7 @@ urlpatterns = [
     path('api/v1/citations/', include('apps.citations.urls')),
     path('api/v1/', include('apps.notifications.urls')),
     path('api/v1/', include('apps.ai.urls')),
+    path('api/v1/search/', include('apps.search.urls')),
     # django-allauth URLs for OAuth callbacks
     path('api/v1/auth/', include('allauth.urls')),
 ]
