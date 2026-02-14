@@ -232,12 +232,12 @@ SyncScript needs a complete frontend authentication system that enables users to
 **Description:** As a developer, I need a protected route wrapper so that unauthenticated users are redirected to login.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/auth/ProtectedRoute.tsx`
-- [ ] Check `isAuthenticated` from auth store
-- [ ] If not authenticated and not loading, redirect to `/login?returnUrl={currentPath}`
-- [ ] Show loading spinner while auth state is being determined
-- [ ] Render children when authenticated
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/auth/ProtectedRoute.tsx`
+- [x] Check `isAuthenticated` from auth store
+- [x] If not authenticated and not loading, redirect to `/login?returnUrl={currentPath}`
+- [x] Show loading spinner while auth state is being determined
+- [x] Render children when authenticated
+- [x] Typecheck passes
 
 ---
 
