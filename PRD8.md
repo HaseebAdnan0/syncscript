@@ -254,14 +254,14 @@ Create the complete vault management interface for SyncScript, enabling research
 **Description:** As a vault owner, I want to archive my vault so I can hide it without deleting.
 
 **Acceptance Criteria:**
-- [ ] "Danger Zone" section in settings with red/orange border
-- [ ] "Archive Vault" button with warning text
-- [ ] Click shows confirm dialog explaining archive behavior
-- [ ] Confirm triggers archive mutation
-- [ ] On success: redirect to vaults list, show toast
-- [ ] Archived vaults hidden from main list (can add filter later)
-- [ ] Only visible to Owner role
-- [ ] Typecheck passes
+- [x] "Danger Zone" section in settings with red/orange border
+- [x] "Archive Vault" button with warning text
+- [x] Click shows confirm dialog explaining archive behavior
+- [x] Confirm triggers archive mutation
+- [x] On success: redirect to vaults list, show toast
+- [x] Archived vaults hidden from main list (can add filter later)
+- [x] Only visible to Owner role
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-020: Settings tab - delete vault with type-to-confirm

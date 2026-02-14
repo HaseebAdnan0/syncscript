@@ -9,6 +9,7 @@ import GradientButton from '@/components/ui/GradientButton';
 import { useToast } from '@/hooks/useToast';
 import { api } from '@/lib/api';
 import * as Tabs from '@radix-ui/react-tabs';
+import { PasswordStrength } from '@/components/ui/PasswordStrength';
 
 export default function ProfilePage() {
   const { user, setUser } = useAuthStore();
@@ -20,6 +21,17 @@ export default function ProfilePage() {
   const [bio, setBio] = useState('');
   const [isProfileLoading, setIsProfileLoading] = useState(false);
   const [profileErrors, setProfileErrors] = useState<{ firstName?: string; lastName?: string }>({});
+
+  // Password form state
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [isPasswordLoading, setIsPasswordLoading] = useState(false);
+  const [passwordErrors, setPasswordErrors] = useState<{
+    currentPassword?: string;
+    newPassword?: string;
+    confirmNewPassword?: string;
+  }>({});
 
   // Validate profile form
   const validateProfileForm = (): boolean => {

@@ -676,3 +676,26 @@ Learnings for future iterations:
 - Cancel button uses X icon instead of text label for space efficiency
 - Form appears inline (not modal) so no DialogHeader or wrapping card needed
 ---
+## Iteration 23 - US-024: Create useAnnotationsQuery hook
+- Created useAnnotationsQuery hook at frontend/src/hooks/useAnnotationsQuery.ts
+- Accepts sourceId parameter as object: { sourceId: number }
+- Uses React Query with queryKey: ['annotations', sourceId]
+- Fetches annotations via getAnnotations(sourceId) API client function
+- Returns standard React Query response: { data, isLoading, error, refetch }
+- Stale time set to 10 seconds (10 * 1000) for real-time collaboration
+- enabled: !!sourceId prevents query when sourceId not provided
+- Typecheck passes ✓
+
+Files changed:
+- frontend/src/hooks/useAnnotationsQuery.ts (new)
+- PRD9.md (marked US-024 complete)
+
+Learnings for future iterations:
+- Annotations query follows same pattern as useSourcesQuery hook
+- Shorter stale time (10s vs 30s for sources) supports real-time collaboration
+- Query key includes only sourceId (no filters needed for annotations)
+- getAnnotations returns Annotation[] with nested replies already included
+- enabled: !!sourceId is safety check to prevent invalid queries
+- React Query v5 returns isPending not isLoading (but data/error/refetch same)
+- Hook parameter uses object destructuring for consistency with other hooks
+---
