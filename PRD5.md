@@ -49,11 +49,11 @@ This PRD covers the full implementation: core infrastructure, event broadcasting
 **Description:** As a developer, I need the ASGI configuration so Daphne can serve both HTTP and WebSocket protocols.
 
 **Acceptance Criteria:**
-- [ ] Create/update `config/asgi.py` with `ProtocolTypeRouter`
-- [ ] HTTP requests route to `get_asgi_application()`
-- [ ] WebSocket requests route through `AllowedHostsOriginValidator`
-- [ ] Import placeholder for `JWTAuthMiddleware` and `websocket_urlpatterns`
-- [ ] Typecheck passes
+- [x] Create/update `config/asgi.py` with `ProtocolTypeRouter`
+- [x] HTTP requests route to `get_asgi_application()`
+- [x] WebSocket requests route through `AllowedHostsOriginValidator`
+- [x] Import placeholder for `JWTAuthMiddleware` and `websocket_urlpatterns`
+- [x] Typecheck passes
 
 ---
 
