@@ -118,17 +118,17 @@ Create a comprehensive new user onboarding experience for SyncScript that guides
 **Description:** As a new user, I want to choose my onboarding path so I can learn in my preferred way.
 
 **Acceptance Criteria:**
-- [ ] Create `components/features/onboarding/PathSelection.tsx`
-- [ ] Three options as large cards:
+- [x] Create `components/features/onboarding/PathSelection.tsx`
+- [x] Three options as large cards:
   - "Create your first vault" (guided icon)
   - "Explore demo vault" (explore icon)
   - "Skip tutorial" (skip icon)
-- [ ] Cards have hover effects per design system
-- [ ] Selecting a path updates onboarding state and advances flow
-- [ ] "Skip" dismisses onboarding, marks path as 'skipped'
-- [ ] Responsive grid: 3 columns desktop, 1 column mobile
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Cards have hover effects per design system
+- [x] Selecting a path updates onboarding state and advances flow
+- [x] "Skip" dismisses onboarding, marks path as 'skipped'
+- [x] Responsive grid: 3 columns desktop, 1 column mobile
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-010: Create GuidedVaultWizard component - Step 1 (Name)
 **Description:** As a new user choosing guided creation, I want to name my first vault as the first step.

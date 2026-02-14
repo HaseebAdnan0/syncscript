@@ -280,3 +280,38 @@
   - Django system check passes (only allauth deprecation warnings)
 ---
 
+## Iteration 11 - US-011: Create unsubscribe endpoint
+- Created EmailPreferenceSerializer in apps/users/serializers.py
+  - Allows updating collaboration_notifications and marketing_emails fields
+  - Both fields optional (partial updates supported)
+- Created UnsubscribeView (GET /api/v1/auth/unsubscribe/{token}/)
+  - AllowAny permission (public access via email links)
+  - Validates unsubscribe_token against EmailPreference model
+  - Sets collaboration_notifications = False
+  - Returns success message with user email
+  - Returns 400 error for invalid tokens
+- Created EmailPreferenceUpdateView (POST /api/v1/users/email-preferences/)
+  - IsAuthenticated permission (user must be logged in)
+  - Uses EmailPreferenceSerializer for validation
+  - get_or_create ensures EmailPreference exists (safety check)
+  - Returns updated preferences in response
+- Added URL routes to apps/users/urls.py:
+  - path('auth/unsubscribe/<str:token>/', UnsubscribeView)
+  - path('users/email-preferences/', EmailPreferenceUpdateView)
+- All imports verified in Django shell
+- URL reversing works correctly for both endpoints
+- Django system check passes (only pre-existing allauth warnings)
+- Files changed:
+  - backend/apps/users/serializers.py (added EmailPreferenceSerializer)
+  - backend/apps/users/views.py (added UnsubscribeView, EmailPreferenceUpdateView)
+  - backend/apps/users/urls.py (added URL routes and imports)
+  - PRD11.md (marked US-011 complete)
+- Learnings for future iterations:
+  - Token-based unsubscribe uses unique unsubscribe_token from EmailPreference
+  - GET endpoint allows public access (AllowAny) for email link clicks
+  - POST endpoint requires authentication for security
+  - get_or_create provides safety net if signal didn't create EmailPreference
+  - URL pattern <str:token> captures token as string parameter
+  - Both endpoints return clear success/error messages
+---
+
