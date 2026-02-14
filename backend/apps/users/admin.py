@@ -11,21 +11,21 @@ class UserAdmin(BaseUserAdmin):
     """
     Custom admin for User model with email verification fields.
     """
-    list_display = ['email', 'username', 'is_email_verified', 'institution', 'is_active', 'created_at']
-    list_filter = ['is_email_verified', 'is_active', 'is_staff', 'created_at']
+    list_display = ['email', 'username', 'email_verified', 'institution', 'is_active', 'created_at']
+    list_filter = ['email_verified', 'is_active', 'is_staff', 'created_at']
     search_fields = ['email', 'username', 'institution']
     ordering = ['-created_at']
 
     fieldsets = BaseUserAdmin.fieldsets + (
         ('Profile Information', {
-            'fields': ('bio', 'institution')
+            'fields': ('avatar_url', 'bio', 'institution')
         }),
         ('Email Verification', {
-            'fields': ('is_email_verified', 'email_verification_token', 'email_verification_sent_at')
+            'fields': ('email_verified',)
         }),
     )
 
-    readonly_fields = ['email_verification_sent_at', 'created_at', 'updated_at']
+    readonly_fields = ['created_at', 'updated_at']
 
     add_fieldsets = BaseUserAdmin.add_fieldsets + (
         ('Additional Info', {

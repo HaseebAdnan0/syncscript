@@ -68,7 +68,7 @@ def verify_email(request):
     try:
         user = User.objects.get(email_verification_token=token)
 
-        if user.is_email_verified:
+        if user.email_verified:
             return Response({
                 'message': 'Email already verified.'
             }, status=status.HTTP_200_OK)
@@ -105,7 +105,7 @@ def resend_verification(request):
     try:
         user = User.objects.get(email__iexact=email)
 
-        if user.is_email_verified:
+        if user.email_verified:
             return Response({
                 'message': 'Email already verified.'
             }, status=status.HTTP_200_OK)

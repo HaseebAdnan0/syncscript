@@ -1,11 +1,13 @@
 param(
-    [Parameter(Mandatory=$false)]
+    [Parameter(Position = 0)]
     [string]$PRDFile = "PRD.md",
 
-    [Parameter(Mandatory=$false)]
+    [Parameter(Position = 1)]
     [string]$ProgressFile = "progress.txt",
 
+    [Parameter(Position = 2)]
     [int]$MaxIterations = 10,
+
     [int]$SleepSeconds = 2,
     [int]$TimeoutMinutes = 30
 )
@@ -35,26 +37,26 @@ You are Ralph, an autonomous coding agent. Do exactly ONE task per iteration.
 
 ## Steps
 
-1. Read $PRDFile and find the first task that is NOT complete (marked [ ]).
-2. Read $ProgressFile - check the Learnings section first for patterns from previous iterations.
+1. Read ${PRDFile} and find the first task that is NOT complete (marked [ ]).
+2. Read ${ProgressFile} - check the Learnings section first for patterns from previous iterations.
 3. Implement that ONE task only.
 4. Run tests/typecheck to verify it works.
 
 ## Critical: Only Complete If Tests Pass
 
 - If tests PASS:
-  - Update $PRDFile to mark the task complete (change [ ] to [x])
+  - Update ${PRDFile} to mark the task complete (change [ ] to [x])
   - Commit your changes with message: feat: [task description]
-  - Append what worked to $ProgressFile
+  - Append what worked to ${ProgressFile}
 
 - If tests FAIL:
   - Do NOT mark the task complete
   - Do NOT commit broken code
-  - Append what went wrong to $ProgressFile (so next iteration can learn)
+  - Append what went wrong to ${ProgressFile} (so next iteration can learn)
 
 ## Progress Notes Format
 
-Append to $ProgressFile using this format:
+Append to ${ProgressFile} using this format:
 
 ## Iteration [N] - [Task Name]
 - What was implemented
@@ -74,7 +76,7 @@ If you discover a reusable pattern that future work should know about:
 
 ## End Condition
 
-After completing your task, check $PRDFile:
+After completing your task, check ${PRDFile}:
 - If ALL tasks are [x], output exactly: <promise>COMPLETE</promise>
 - If tasks remain [ ], just end your response with a minimal message (next iteration will continue)
 "@
@@ -85,7 +87,7 @@ After completing your task, check $PRDFile:
     $job = Start-Job -ScriptBlock {
         param($promptText, $dir)
         Set-Location $dir
-        & claude --dangerously-skip-permissions -p $promptText 2>&1 | Out-String
+        & claude --dangerously-skip-permissions --model claude-sonnet-4-5-20250929 -p $promptText 2>&1 | Out-String
     } -ArgumentList $prompt, $workDir
 
     $null = $job | Wait-Job -Timeout $timeoutSec

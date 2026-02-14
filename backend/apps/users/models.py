@@ -3,28 +3,19 @@ User models for SyncScript.
 """
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.utils.crypto import get_random_string
-import uuid
 
 
 class User(AbstractUser):
     """
     Custom user model extending Django's AbstractUser.
-    Adds email verification and profile fields for researchers.
+    Uses email as primary identifier and includes profile fields for researchers.
     """
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(unique=True, db_index=True)
+    avatar_url = models.URLField(max_length=500, blank=True)
+    bio = models.TextField(max_length=500, blank=True)
+    institution = models.CharField(max_length=200, blank=True)
+    email_verified = models.BooleanField(default=False, db_index=True)
 
-    # Email verification
-    is_email_verified = models.BooleanField(default=False)
-    email_verification_token = models.CharField(max_length=64, blank=True, null=True)
-    email_verification_sent_at = models.DateTimeField(blank=True, null=True)
-
-    # Profile fields
-    bio = models.TextField(blank=True, max_length=500)
-    institution = models.CharField(max_length=255, blank=True)
-
-    # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -33,22 +24,23 @@ class User(AbstractUser):
 
     class Meta:
         db_table = 'users'
-        ordering = ['-created_at']
-        indexes = [
-            models.Index(fields=['email', 'is_email_verified']),
-            models.Index(fields=['email_verification_token']),
-        ]
 
     def __str__(self):
         return self.email
 
-    def generate_verification_token(self):
-        """Generate a unique verification token."""
-        self.email_verification_token = get_random_string(64)
-        return self.email_verification_token
 
-    def verify_email(self):
-        """Mark email as verified and clear the token."""
-        self.is_email_verified = True
-        self.email_verification_token = None
-        self.save(update_fields=['is_email_verified', 'email_verification_token'])
+class EmailVerificationToken(models.Model):
+    """
+    Email verification tokens for user account activation.
+    Tokens expire after 24 hours.
+    """
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='verification_tokens')
+    token = models.CharField(max_length=64, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+
+    class Meta:
+        db_table = 'email_verification_tokens'
+
+    def __str__(self):
+        return f"Token for {self.user.email}"

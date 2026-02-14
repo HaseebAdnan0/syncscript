@@ -19,11 +19,11 @@ Create a secure, collaborative Knowledge Vault system where researchers can crea
 **Description:** As a developer, I need the Django app scaffolding for vaults so subsequent stories have a place to live.
 
 **Acceptance Criteria:**
-- [ ] Create `backend/apps/vaults/` directory with `__init__.py`, `apps.py`, `admin.py`
-- [ ] Create empty `models.py`, `serializers.py`, `permissions.py`, `views.py`, `urls.py`, `signals.py`
-- [ ] Create `tests/` directory with `__init__.py`, `test_models.py`, `test_views.py`, `test_audit_logs.py`
-- [ ] Register app in `INSTALLED_APPS` as `apps.vaults`
-- [ ] Typecheck passes
+- [x] Create `backend/apps/vaults/` directory with `__init__.py`, `apps.py`, `admin.py`
+- [x] Create empty `models.py`, `serializers.py`, `permissions.py`, `views.py`, `urls.py`, `signals.py`
+- [x] Create `tests/` directory with `__init__.py`, `test_models.py`, `test_views.py`, `test_audit_logs.py`
+- [x] Register app in `INSTALLED_APPS` as `apps.vaults`
+- [x] Typecheck passes
 
 ### US-002: Define RoleChoices enum and role weights
 **Description:** As a developer, I need role definitions so membership permissions can reference them.

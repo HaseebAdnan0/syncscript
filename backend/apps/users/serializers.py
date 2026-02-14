@@ -65,11 +65,10 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        """Create user with hashed password and verification token."""
+        """Create user with hashed password."""
         password = validated_data.pop('password')
         user = User.objects.create(**validated_data)
         user.set_password(password)
-        user.generate_verification_token()
         user.save()
         return user
 
@@ -80,9 +79,9 @@ class UserSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = User
-        fields = ['id', 'email', 'username', 'bio', 'institution',
-                  'is_email_verified', 'created_at']
-        read_only_fields = ['id', 'email', 'is_email_verified', 'created_at']
+        fields = ['id', 'email', 'username', 'avatar_url', 'bio', 'institution',
+                  'email_verified', 'created_at']
+        read_only_fields = ['id', 'email', 'email_verified', 'created_at']
 
 
 class EmailVerificationSerializer(serializers.Serializer):
@@ -105,7 +104,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         # Add custom claims
         token['user_id'] = str(user.id)
         token['email'] = user.email
-        token['is_email_verified'] = user.is_email_verified
+        token['email_verified'] = user.email_verified
 
         return token
 
@@ -120,7 +119,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             'id': str(self.user.id),
             'email': self.user.email,
             'username': self.user.username,
-            'is_email_verified': self.user.is_email_verified,
+            'email_verified': self.user.email_verified,
         }
 
         return data

@@ -15,5 +15,5 @@ class IsEmailVerified(permissions.BasePermission):
         return (
             request.user and
             request.user.is_authenticated and
-            request.user.is_email_verified
+            request.user.email_verified
         )
