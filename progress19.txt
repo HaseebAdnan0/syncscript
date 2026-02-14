@@ -803,3 +803,34 @@ In Progress - US-004 complete
   - overflow-hidden on container, overflow-y-auto on scrollable section
   - Call onClose() after navigation to dismiss dropdown
 ---
+
+## Iteration 28 - US-029: Create useNotifications Hook (Verification)
+- Task was already completed in previous session
+- Verified frontend/src/hooks/useNotifications.ts exists with comprehensive implementation
+- Hook exceeds acceptance criteria with additional features:
+  - Pagination support with page, limit, and isRead filter options
+  - Polling for unread count with configurable interval (default 60s)
+  - Document visibility tracking to pause polling when tab hidden
+  - Automatic cache updates on mutations
+  - Error handling for both notifications list and unread count
+  - Refetch functions for manual updates
+  - Mutation pending states (isMarkingAsRead, isMarkingAllAsRead)
+- All acceptance criteria met:
+  - Uses React Query (useQuery, useMutation)
+  - Fetches notifications with pagination
+  - Fetches unread count with polling
+  - markAsRead(id) mutation with cache updates
+  - markAllAsRead() mutation with cache invalidation
+  - Refetch on window focus via polling when visible
+- TypeScript typecheck passes
+- Commit 94a5be8
+- Files: frontend/src/hooks/useNotifications.ts, PRD19.md
+- Learnings for future iterations:
+  - Always verify existing implementation before recreating
+  - Use document.visibilitychange event to track tab visibility
+  - refetchInterval can be a function returning interval or false for conditional polling
+  - refetchIntervalInBackground: false prevents polling when tab is hidden
+  - setQueryData with updater function for optimistic cache updates
+  - invalidateQueries for full refetch when data structure changes significantly
+  - Mark notification as complete if implementation exceeds requirements
+---

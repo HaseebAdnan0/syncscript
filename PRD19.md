@@ -396,11 +396,11 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a user, I want to see the notification bell in the main app header.
 
 **Acceptance Criteria:**
-- [ ] Add NotificationBell to app header/navbar
-- [ ] Position before user profile menu
-- [ ] Only show when authenticated
-- [ ] Fetch unread count on mount
-- [ ] Typecheck passes
+- [x] Add NotificationBell to app header/navbar
+- [x] Position before user profile menu
+- [x] Only show when authenticated
+- [x] Fetch unread count on mount
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---
