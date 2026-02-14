@@ -98,3 +98,30 @@
   - All endpoints scoped to accessible vaults (Q(owner=user) | Q(members=user))
   - All 15 analytics tests passing, total 29 dashboard tests passing
 ---
+
+## Iteration 5 - US-005: Extend notifications app for dashboard
+- Extended existing notifications app with dashboard-specific endpoints
+- Added GET /api/v1/notifications/unread-count/ endpoint
+  - Returns { count: N } for unread notifications (read_at IS NULL)
+  - Filters by current user only
+- Added POST /api/v1/notifications/{id}/mark-read/ endpoint
+  - Marks single notification as read (idempotent)
+  - Supports both POST and PATCH methods
+  - URL changed from /read/ to /mark-read/ for consistency
+- Added POST /api/v1/notifications/mark-all-read/ endpoint
+  - Bulk updates all unread notifications for current user
+  - Returns { updated: N } count of affected rows
+  - Uses QuerySet.update() for efficiency
+- Files changed:
+  - backend/apps/notifications/views.py (added 2 new action methods to NotificationViewSet)
+  - backend/apps/notifications/tests.py (added UnreadCountTestCase and MarkAllReadTestCase, updated URLs)
+  - PRD17.md (marked US-005 complete)
+- Learnings for future iterations:
+  - Notification model already existed with needed fields (user, title, body, type, read_at, data, created_at)
+  - Model has is_read property (computed from read_at IS NOT NULL)
+  - Model has mark_as_read() method for individual notifications
+  - ViewSet @action decorator with detail=False creates collection endpoints
+  - ViewSet @action decorator with methods=['post', 'patch'] supports multiple HTTP methods
+  - QuerySet.update() is efficient for bulk updates, bypasses model.save()
+  - All 22 notification tests passing (list, filtering, ordering, mark-read, unread-count, mark-all-read)
+---
