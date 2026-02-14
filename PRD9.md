@@ -467,12 +467,12 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 **Description:** As a user, I want to see loading skeletons so I know content is loading rather than missing.
 
 **Acceptance Criteria:**
-- [ ] Create `SourceCardSkeleton` matching SourceCard dimensions
-- [ ] Create `SourceTableRowSkeleton` for table view
-- [ ] Create `AnnotationCardSkeleton` for sidebar
-- [ ] Skeletons use pulsing animation with `bg-white/10`
-- [ ] Show 6 card skeletons or 10 row skeletons while loading
-- [ ] Typecheck passes
+- [x] Create `SourceCardSkeleton` matching SourceCard dimensions
+- [x] Create `SourceTableRowSkeleton` for table view
+- [x] Create `AnnotationCardSkeleton` for sidebar
+- [x] Skeletons use pulsing animation with `bg-white/10`
+- [x] Show 6 card skeletons or 10 row skeletons while loading
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---
