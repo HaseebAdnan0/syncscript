@@ -72,3 +72,19 @@
   - setLoading(true) at start, setLoading(false) in finally block for proper loading states
   - RegisterData interface exported for use in registration forms
 ---
+
+## Iteration 4 - US-004: Create AuthProvider for app initialization
+- Created `frontend/src/providers/AuthProvider.tsx` with auth state hydration on mount
+- Updated `frontend/src/app/layout.tsx` to wrap children with AuthProvider
+- Files changed:
+  - frontend/src/providers/AuthProvider.tsx (new file)
+  - frontend/src/app/layout.tsx (modified)
+- Learnings for future iterations:
+  - AuthProvider must be a client component ('use client' directive)
+  - Shows full-screen loading spinner while isLoading is true (initial auth check)
+  - Loading spinner uses Bitcoin DeFi aesthetic: orange border-t on spinning circle
+  - Provider wraps children with fragment (<>{children}</>) after loading completes
+  - Integrated into layout INSIDE QueryProvider (auth needs React Query context)
+  - useEffect with refreshUser() runs on mount to check existing session via cookies
+  - Build compiles successfully - pre-existing warnings in other files don't affect new code
+---
