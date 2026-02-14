@@ -1484,3 +1484,197 @@ class QuestionAnsweringTestCase(APITestCase):
 
             self.assertEqual(response.status_code, 500)
             self.assertIn('error', response.data)
+
+
+class ChatHistoryPersistenceTestCase(APITestCase):
+    """Test chat history persistence (US-010)."""
+
+    def setUp(self):
+        """Create test fixtures."""
+        from apps.vaults.models import Vault
+        from apps.sources.models import Source
+        from apps.ai.models import ChatConversation, ChatMessage
+
+        # Create test user
+        self.user = User.objects.create_user(
+            email='test@example.com',
+            username='testuser',
+            password='testpass123'
+        )
+
+        # Create vault
+        self.vault = Vault.objects.create(
+            name='Test Vault',
+            owner=self.user
+        )
+
+        # Create a source for ask endpoint
+        Source.objects.create(
+            vault=self.vault,
+            url='https://example.com/paper',
+            title='Test Paper',
+            description='Test content for questions',
+            source_type='URL',
+            created_by=self.user
+        )
+
+        # Create conversations with messages
+        self.conv1 = ChatConversation.objects.create(
+            vault=self.vault,
+            user=self.user
+        )
+        ChatMessage.objects.create(
+            conversation=self.conv1,
+            role='user',
+            content='What is machine learning?',
+            sources_cited=[]
+        )
+        ChatMessage.objects.create(
+            conversation=self.conv1,
+            role='assistant',
+            content='Machine learning is a subset of AI.',
+            sources_cited=[{'source_id': '1', 'source_title': 'ML Paper', 'excerpt': 'ML is...'}]
+        )
+
+        self.conv2 = ChatConversation.objects.create(
+            vault=self.vault,
+            user=self.user
+        )
+        ChatMessage.objects.create(
+            conversation=self.conv2,
+            role='user',
+            content='What is deep learning?',
+            sources_cited=[]
+        )
+
+        # Authentication
+        self.client.force_authenticate(user=self.user)
+
+    def test_list_conversations(self):
+        """Test listing conversations for a vault."""
+        response = self.client.get(f'/api/v1/vaults/{self.vault.id}/conversations/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('conversations', response.data)
+        self.assertEqual(len(response.data['conversations']), 2)
+
+        # Check conversation structure
+        conv = response.data['conversations'][0]
+        self.assertIn('id', conv)
+        self.assertIn('created_at', conv)
+        self.assertIn('updated_at', conv)
+        self.assertIn('message_count', conv)
+        self.assertIn('preview', conv)
+
+    def test_list_conversations_shows_preview(self):
+        """Test that conversation list includes preview from first message."""
+        response = self.client.get(f'/api/v1/vaults/{self.vault.id}/conversations/')
+
+        self.assertEqual(response.status_code, 200)
+        conversations = response.data['conversations']
+
+        # Find conv1 and check its preview
+        conv1_data = next(c for c in conversations if c['id'] == self.conv1.id)
+        self.assertIn('What is machine learning', conv1_data['preview'])
+
+    def test_get_conversation_full_history(self):
+        """Test getting full message history for a conversation."""
+        response = self.client.get(
+            f'/api/v1/vaults/{self.vault.id}/conversations/{self.conv1.id}/'
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['id'], self.conv1.id)
+        self.assertIn('messages', response.data)
+        self.assertEqual(len(response.data['messages']), 2)
+
+        # Check message structure
+        msg = response.data['messages'][0]
+        self.assertIn('role', msg)
+        self.assertIn('content', msg)
+        self.assertIn('sources_cited', msg)
+        self.assertIn('created_at', msg)
+
+    def test_get_conversation_requires_ownership(self):
+        """Test that users can only access their own conversations."""
+        # Create another user
+        other_user = User.objects.create_user(
+            email='other@example.com',
+            username='otheruser',
+            password='testpass123'
+        )
+        self.client.force_authenticate(user=other_user)
+
+        response = self.client.get(
+            f'/api/v1/vaults/{self.vault.id}/conversations/{self.conv1.id}/'
+        )
+
+        # Should get 403 because other_user doesn't have vault access
+        self.assertEqual(response.status_code, 403)
+
+    def test_conversation_limit_enforced(self):
+        """Test that only 10 conversations are kept per vault."""
+        from unittest.mock import patch, Mock
+        from apps.ai.models import ChatConversation
+
+        # Create 12 conversations total (2 already exist)
+        for i in range(10):
+            ChatConversation.objects.create(
+                vault=self.vault,
+                user=self.user
+            )
+
+        # Mock Claude API for ask endpoint
+        with patch('apps.ai.views.ClaudeClient') as MockClient:
+            mock_instance = Mock()
+            MockClient.return_value = mock_instance
+            mock_instance.answer_question.return_value = {
+                'answer': 'Test answer',
+                'citations': [],
+                'confidence': 'high',
+                'tokens_used': 200
+            }
+
+            # Create a new conversation via ask endpoint
+            response = self.client.post(
+                f'/api/v1/vaults/{self.vault.id}/ask/',
+                {'question': 'New question?'},
+                format='json'
+            )
+
+            self.assertEqual(response.status_code, 200)
+
+            # Should have exactly 10 conversations now
+            vault_conversations = ChatConversation.objects.filter(vault=self.vault)
+            self.assertEqual(vault_conversations.count(), 10)
+
+    def test_list_conversations_requires_authentication(self):
+        """Test that listing conversations requires authentication."""
+        self.client.force_authenticate(user=None)
+
+        response = self.client.get(f'/api/v1/vaults/{self.vault.id}/conversations/')
+
+        self.assertEqual(response.status_code, 401)
+
+    def test_list_conversations_checks_vault_permission(self):
+        """Test that user must have vault access to list conversations."""
+        other_user = User.objects.create_user(
+            email='other@example.com',
+            username='otheruser',
+            password='testpass123'
+        )
+        self.client.force_authenticate(user=other_user)
+
+        response = self.client.get(f'/api/v1/vaults/{self.vault.id}/conversations/')
+
+        self.assertEqual(response.status_code, 403)
+
+    def test_get_conversation_requires_authentication(self):
+        """Test that getting conversation requires authentication."""
+        self.client.force_authenticate(user=None)
+
+        response = self.client.get(
+            f'/api/v1/vaults/{self.vault.id}/conversations/{self.conv1.id}/'
+        )
+
+        self.assertEqual(response.status_code, 401)

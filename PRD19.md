@@ -157,12 +157,12 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a user, I want to be notified when I'm invited to a vault.
 
 **Acceptance Criteria:**
-- [ ] Create signal handler in `apps/notifications/signals.py`
-- [ ] Listen for VaultMembership creation where user != owner
-- [ ] Create notification with type `vault_invite`
-- [ ] Data includes: `vault_id`, `vault_name`, `inviter_id`, `inviter_name`
-- [ ] Connect signal in apps.py ready()
-- [ ] Typecheck passes
+- [x] Create signal handler in `apps/notifications/signals.py`
+- [x] Listen for VaultMembership creation where user != owner
+- [x] Create notification with type `vault_invite`
+- [x] Data includes: `vault_id`, `vault_name`, `inviter_id`, `inviter_name`
+- [x] Connect signal in apps.py ready()
+- [x] Typecheck passes
 
 ---
 

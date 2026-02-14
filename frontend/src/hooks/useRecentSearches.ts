@@ -34,7 +34,7 @@ export function useRecentSearches() {
 
       return { previousSearches };
     },
-    onError: (err, variables, context) => {
+    onError: (_err, _variables, context) => {
       // Rollback on error
       if (context?.previousSearches) {
         queryClient.setQueryData(['recent-searches'], context.previousSearches);
@@ -66,7 +66,7 @@ export function useRecentSearches() {
 
       return { previousSearches };
     },
-    onError: (err, variables, context) => {
+    onError: (_err, _variables, context) => {
       // Rollback on error
       if (context?.previousSearches) {
         queryClient.setQueryData(['recent-searches'], context.previousSearches);

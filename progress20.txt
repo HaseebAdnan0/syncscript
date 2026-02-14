@@ -287,3 +287,32 @@
   - boxShadow with orange tint: '0 0 30px -5px rgba(247, 147, 26, 0.3)'
   - Typography: use CSS variables for fonts (var(--font-heading), var(--font-body))
 ---
+## Iteration 15 - Create InteractiveTutorial component (US-015)
+- Created InteractiveTutorial.tsx with 7 tutorial steps highlighting key UI elements
+- Steps target:
+  - [data-tour="vault-list"]: Vault sidebar navigation
+  - [data-tour="add-source"]: Add source button
+  - [data-tour="invite-collaborator"]: Invite collaborator button
+  - [data-tour="annotations"]: Annotations panel
+  - [data-tour="search"]: Search functionality
+  - [data-tour="settings"]: Settings & preferences
+  - [data-tour="vault-header"]: Final completion step
+- Each step includes title, content, placement (right/left/bottom/center), disableBeacon: true
+- Component accepts onComplete and onSkip callbacks
+- Integrated with existing TutorialProvider using named import
+- TutorialProvider already handles Next/Back/Skip controls and progress dots via react-joyride
+- Files changed: InteractiveTutorial.tsx (new), PRD20.md, progress20.txt
+- Commit: f881bcb
+- Typecheck passes
+- Learnings for future iterations:
+  - TutorialProvider is a named export, not default: use `import { TutorialProvider }`
+  - TutorialProvider expects: steps, run, onFinish, onSkip props
+  - run={true} to auto-start tutorial when component mounts
+  - onFinish vs onComplete: TutorialProvider uses onFinish callback
+  - Tutorial steps use data-tour attributes for stable targeting: data-tour="element-name"
+  - Placement options: 'right' | 'left' | 'bottom' | 'center' | 'top'
+  - disableBeacon: true prevents initial pulsing beacon animation
+  - react-joyride Step type imported from 'react-joyride'
+  - TutorialProvider wraps Joyride with custom Bitcoin DeFi styling automatically
+  - Next/Back/Skip controls and progress dots already configured in TutorialProvider
+---

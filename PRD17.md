@@ -246,11 +246,11 @@ Create a comprehensive user dashboard as the primary logged-in landing page for 
 **Description:** As a developer, I need to add the notifications dropdown to the shared app header so it's accessible from all pages.
 
 **Acceptance Criteria:**
-- [ ] Add NotificationsDropdown to app layout header
-- [ ] Position in top-right area alongside user menu
-- [ ] Ensure proper z-index for dropdown overlay
-- [ ] Works on mobile (dropdown may be full-width)
-- [ ] Typecheck passes
+- [x] Add NotificationsDropdown to app layout header
+- [x] Position in top-right area alongside user menu
+- [x] Ensure proper z-index for dropdown overlay
+- [x] Works on mobile (dropdown may be full-width)
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-018: Assemble dashboard page with all sections

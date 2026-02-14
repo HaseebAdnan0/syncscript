@@ -301,3 +301,44 @@ Learnings for future iterations:
 - Return task_id and status_url in 202 response for client polling
 ---
 
+## Iteration 9 - US-009: Add rate limiting for AI citations
+- Created apps/citations/rate_limiting.py with Redis-backed rate limiting utilities
+- Implemented USER_DAILY_LIMIT (50) and VAULT_DAILY_LIMIT (200) constants
+- Created _get_cache_key() helper to generate Redis keys with date: ai_citation:user:{id}:daily:{date}
+- Created _get_seconds_until_midnight() for automatic cache expiry at midnight
+- Created increment_ai_citation_counter() to increment both user and vault counters
+- Created check_ai_citation_rate_limit() to verify limits before generating citations
+- Created get_ai_citation_quota() to return current usage and remaining quota
+- Modified apps/citations/views.py to check rate limits before AI citation generation
+- Return 429 Too Many Requests with Retry-After header when limit exceeded
+- Include quota information in 429 response body for user transparency
+- Increment counters before generating AI citation (prevent race conditions)
+- Added 8 comprehensive tests for rate limiting:
+  - test_increment_ai_citation_counter: verify counters increment correctly
+  - test_check_ai_citation_rate_limit_allowed: verify within limits allows generation
+  - test_check_ai_citation_rate_limit_user_exceeded: verify user limit blocks generation
+  - test_check_ai_citation_rate_limit_vault_exceeded: verify vault limit blocks generation
+  - test_get_ai_citation_quota: verify quota information is accurate
+  - test_rate_limit_endpoint_returns_429: verify endpoint returns 429 when limited
+  - test_rate_limit_endpoint_quota_info: verify 429 response includes quota data
+  - test_rate_limit_allows_within_limit: verify endpoint allows generation within limits
+- Tests: All 95 citation tests pass (87 existing + 8 new)
+- Typecheck: 0 errors
+- Files changed: backend/apps/citations/rate_limiting.py (142 lines), backend/apps/citations/views.py (modified), backend/apps/citations/tests.py (+228 lines), PRD14.md
+- Committed: eb82aae (PRD14.md), ded3a28 (rate_limiting.py, views.py), 3f0b440 (tests.py)
+
+Learnings for future iterations:
+- Redis cache.get() returns None for missing keys, use default=0 for counters
+- Redis cache.set(key, value, timeout=seconds) auto-expires keys at specified time
+- Daily expiry strategy: calculate seconds until midnight for timeout
+- Cache key format: include date to ensure automatic reset each day
+- Rate limiting order: check limits BEFORE incrementing counters to prevent over-counting on failures
+- Response headers: Retry-After should be integer seconds (not ISO datetime)
+- DRF APIClient vs Django Client: APIClient has force_authenticate() method for tests
+- Test setup: must use APIClient from rest_framework.test for DRF endpoint tests
+- Vault model uses 'name' field, not 'title' (check model schema before writing tests)
+- Multiple PRD workflows: git history can be messy when multiple PRDs run concurrently
+- Counter increment timing: increment AFTER check passes but BEFORE processing to prevent double-counting on retries
+- 429 response format: include both error message and detailed quota breakdown
+---
+
