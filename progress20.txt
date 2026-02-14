@@ -425,3 +425,25 @@
   - Include expected behavior summary at end of checklist
   - Document prerequisites clearly (running servers, database state, etc.)
 ---
+
+## Iteration 20 - Integrate onboarding into app layout (US-019)
+- Added OnboardingProvider to root layout (app/layout.tsx)
+- OnboardingProvider wraps children inside AuthProvider, outside OnboardingFlow
+- Added OnboardingFlow import to authenticated app layout (app/(app)/layout.tsx)
+- OnboardingFlow rendered as sibling to main content, creating overlay effect
+- OnboardingFlow automatically shows for authenticated users with onboarding_completed=false
+- Provider hierarchy: ThemeProvider > QueryProvider > AuthProvider > OnboardingProvider
+- OnboardingFlow component already handles conditional rendering (only if !completed && user exists)
+- Files changed: app/layout.tsx, app/(app)/layout.tsx, .planning/MANUAL_VERIFICATION.md, PRD20.md, progress20.txt
+- Typecheck passes
+- Learnings for future iterations:
+  - OnboardingProvider must wrap app at root level to provide context to all components
+  - OnboardingFlow should be in authenticated layout only (app/(app)/layout.tsx), not root
+  - Import OnboardingFlow as default import: `import OnboardingFlow from '...'`
+  - OnboardingFlow renders after main content to create overlay effect via CSS positioning
+  - OnboardingFlow's internal logic handles all conditional rendering (completed check, user check)
+  - App layout structure: Provider wrappers in root → OnboardingFlow in authenticated layout
+  - Manual verification checklist appended to .planning/MANUAL_VERIFICATION.md per CLAUDE.md rules
+  - Verification covers: provider integration, conditional rendering, authenticated-only display
+---
+
