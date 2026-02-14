@@ -412,12 +412,12 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 **Description:** As a developer, I need a WebSocket hook to receive real-time annotation updates for collaborative editing.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/hooks/useAnnotationsWebSocket.ts`
-- [ ] Connects to same vault WebSocket channel
-- [ ] Listens for events: `annotation.created`, `annotation.deleted`, `reply.created`
-- [ ] Invalidates annotations query on events
-- [ ] Shows subtle toast when another user adds annotation
-- [ ] Typecheck passes
+- [x] Create `frontend/src/hooks/useAnnotationsWebSocket.ts`
+- [x] Connects to same vault WebSocket channel
+- [x] Listens for events: `annotation.created`, `annotation.deleted`, `reply.created`
+- [x] Invalidates annotations query on events
+- [x] Shows subtle toast when another user adds annotation
+- [x] Typecheck passes
 
 ---
 
