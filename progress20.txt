@@ -162,3 +162,23 @@
   - Icon container uses gradient background matching path theme
   - CTA text revealed on hover with opacity transition
 ---
+## Iteration 10 - Create GuidedVaultWizard Step 1 (US-010)
+- Verified GuidedVaultWizard.tsx was already implemented in commit f83c50a
+- Component includes all required features:
+  - Step 1: Name input field with validation
+  - Progress indicator showing "Step 1 of 3" with visual step circles
+  - Input styled per Bitcoin DeFi design system (bottom border, orange focus on border-[#F7931A])
+  - Next button disabled until name is entered, supports loading state
+  - Enter key support for quick submission
+  - Stores vault name in onboarding.data and advances to 'guided-2' step
+  - Helpful tip at bottom for UX guidance
+- Files changed: PRD20.md (marked US-010 complete)
+- Typecheck passes
+- Learnings for future iterations:
+  - Check git log for specific files before implementing: `git log --follow -- path/to/file`
+  - Component was created by Write tool but already existed in git history
+  - Progress indicator pattern: gradient circle for current step, white/10 for future steps
+  - Input validation pattern: disable button with `!vaultName.trim()` check
+  - Store wizard state in onboarding.data JSONField for persistence across steps
+  - Pattern for multi-step wizards: update step field to advance (guided-1 → guided-2)
+---
