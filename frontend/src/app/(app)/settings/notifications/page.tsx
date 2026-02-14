@@ -64,6 +64,10 @@ export default function NotificationPreferencesPage() {
     updatePreferencesMutation.mutate({ [field]: value });
   };
 
+  const handleFrequencyChange = (frequency: 'immediate' | 'daily' | 'weekly' | 'none') => {
+    updatePreferencesMutation.mutate({ email_digest_frequency: frequency });
+  };
+
   const isLoading = isLoadingVaults || isLoadingPreferences;
 
   return (
@@ -144,7 +148,7 @@ export default function NotificationPreferencesPage() {
                         ? 'bg-gradient-to-r from-[#EA580C] to-[#F7931A]'
                         : 'bg-[#1E293B]'
                     }`}
-                    disabled={!preferences}
+                    disabled={!preferences || preferences.email_digest_frequency === 'none'}
                   >
                     <span
                       className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${
@@ -169,7 +173,7 @@ export default function NotificationPreferencesPage() {
                         ? 'bg-gradient-to-r from-[#EA580C] to-[#F7931A]'
                         : 'bg-[#1E293B]'
                     }`}
-                    disabled={!preferences}
+                    disabled={!preferences || preferences.email_digest_frequency === 'none'}
                   >
                     <span
                       className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${
@@ -179,7 +183,111 @@ export default function NotificationPreferencesPage() {
                   </button>
                 </div>
 
-                <p className="text-[#94A3B8] text-sm">Email frequency selector will be added in US-038</p>
+                {/* Email Frequency Selector */}
+                <div className="pt-4 border-t border-white/10">
+                  <h3 className="text-white font-medium mb-4">Email Digest Frequency</h3>
+                  <div className="space-y-3">
+                    {/* Immediate Option */}
+                    <label
+                      className={`flex items-start gap-3 p-4 rounded-lg border cursor-pointer transition-all ${
+                        preferences?.email_digest_frequency === 'immediate'
+                          ? 'border-[#F7931A] bg-[#F7931A]/5'
+                          : 'border-white/10 bg-black/30 hover:border-[#F7931A]/30'
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="email_frequency"
+                        value="immediate"
+                        checked={preferences?.email_digest_frequency === 'immediate'}
+                        onChange={() => handleFrequencyChange('immediate')}
+                        className="mt-1 h-4 w-4 text-[#F7931A] border-white/20 focus:ring-[#F7931A] focus:ring-offset-0"
+                        disabled={!preferences}
+                      />
+                      <div className="flex-1">
+                        <div className="text-white font-medium">Immediate</div>
+                        <div className="text-[#94A3B8] text-sm mt-1">
+                          Receive an email for each notification as it happens
+                        </div>
+                      </div>
+                    </label>
+
+                    {/* Daily Digest Option */}
+                    <label
+                      className={`flex items-start gap-3 p-4 rounded-lg border cursor-pointer transition-all ${
+                        preferences?.email_digest_frequency === 'daily'
+                          ? 'border-[#F7931A] bg-[#F7931A]/5'
+                          : 'border-white/10 bg-black/30 hover:border-[#F7931A]/30'
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="email_frequency"
+                        value="daily"
+                        checked={preferences?.email_digest_frequency === 'daily'}
+                        onChange={() => handleFrequencyChange('daily')}
+                        className="mt-1 h-4 w-4 text-[#F7931A] border-white/20 focus:ring-[#F7931A] focus:ring-offset-0"
+                        disabled={!preferences}
+                      />
+                      <div className="flex-1">
+                        <div className="text-white font-medium">Daily digest</div>
+                        <div className="text-[#94A3B8] text-sm mt-1">
+                          Get a summary of all notifications once per day at 9 AM UTC
+                        </div>
+                      </div>
+                    </label>
+
+                    {/* Weekly Digest Option */}
+                    <label
+                      className={`flex items-start gap-3 p-4 rounded-lg border cursor-pointer transition-all ${
+                        preferences?.email_digest_frequency === 'weekly'
+                          ? 'border-[#F7931A] bg-[#F7931A]/5'
+                          : 'border-white/10 bg-black/30 hover:border-[#F7931A]/30'
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="email_frequency"
+                        value="weekly"
+                        checked={preferences?.email_digest_frequency === 'weekly'}
+                        onChange={() => handleFrequencyChange('weekly')}
+                        className="mt-1 h-4 w-4 text-[#F7931A] border-white/20 focus:ring-[#F7931A] focus:ring-offset-0"
+                        disabled={!preferences}
+                      />
+                      <div className="flex-1">
+                        <div className="text-white font-medium">Weekly digest</div>
+                        <div className="text-[#94A3B8] text-sm mt-1">
+                          Get a summary of all notifications once per week on Monday at 9 AM UTC
+                        </div>
+                      </div>
+                    </label>
+
+                    {/* None Option */}
+                    <label
+                      className={`flex items-start gap-3 p-4 rounded-lg border cursor-pointer transition-all ${
+                        preferences?.email_digest_frequency === 'none'
+                          ? 'border-[#F7931A] bg-[#F7931A]/5'
+                          : 'border-white/10 bg-black/30 hover:border-[#F7931A]/30'
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="email_frequency"
+                        value="none"
+                        checked={preferences?.email_digest_frequency === 'none'}
+                        onChange={() => handleFrequencyChange('none')}
+                        className="mt-1 h-4 w-4 text-[#F7931A] border-white/20 focus:ring-[#F7931A] focus:ring-offset-0"
+                        disabled={!preferences}
+                      />
+                      <div className="flex-1">
+                        <div className="text-white font-medium">None</div>
+                        <div className="text-[#94A3B8] text-sm mt-1">
+                          Don&apos;t send email notifications (in-app and push notifications only)
+                        </div>
+                      </div>
+                    </label>
+                  </div>
+                </div>
               </div>
             </section>
 

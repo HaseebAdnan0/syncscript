@@ -2403,3 +2403,233 @@ class ProgressiveExportTests(TestCase):
 
         self.assertEqual(response.status_code, 400)
         self.assertIn('error', response.data)
+
+
+class BibTeXUtilsTests(TestCase):
+    """Tests for BibTeX utility functions"""
+
+    def test_escape_bibtex_ampersand(self):
+        """Test escaping ampersand character"""
+        from apps.citations.utils.bibtex import escape_bibtex
+        result = escape_bibtex("Research & Development")
+        self.assertEqual(result, r"Research \& Development")
+
+    def test_escape_bibtex_percent(self):
+        """Test escaping percent character"""
+        from apps.citations.utils.bibtex import escape_bibtex
+        result = escape_bibtex("100% Success Rate")
+        self.assertEqual(result, r"100\% Success Rate")
+
+    def test_escape_bibtex_dollar(self):
+        """Test escaping dollar sign"""
+        from apps.citations.utils.bibtex import escape_bibtex
+        result = escape_bibtex("Price: $50")
+        self.assertEqual(result, r"Price: \$50")
+
+    def test_escape_bibtex_hash(self):
+        """Test escaping hash/pound sign"""
+        from apps.citations.utils.bibtex import escape_bibtex
+        result = escape_bibtex("Issue #123")
+        self.assertEqual(result, r"Issue \#123")
+
+    def test_escape_bibtex_underscore(self):
+        """Test escaping underscore"""
+        from apps.citations.utils.bibtex import escape_bibtex
+        result = escape_bibtex("variable_name")
+        self.assertEqual(result, r"variable\_name")
+
+    def test_escape_bibtex_braces(self):
+        """Test escaping curly braces"""
+        from apps.citations.utils.bibtex import escape_bibtex
+        result = escape_bibtex("Code {example}")
+        self.assertEqual(result, r"Code \{example\}")
+
+    def test_escape_bibtex_backslash(self):
+        """Test escaping backslash"""
+        from apps.citations.utils.bibtex import escape_bibtex
+        result = escape_bibtex(r"Path: C:\Users")
+        self.assertEqual(result, r"Path: C:\\Users")
+
+    def test_escape_bibtex_tilde(self):
+        """Test escaping tilde"""
+        from apps.citations.utils.bibtex import escape_bibtex
+        result = escape_bibtex("Approximately ~100")
+        self.assertEqual(result, r"Approximately \~{}100")
+
+    def test_escape_bibtex_caret(self):
+        """Test escaping caret"""
+        from apps.citations.utils.bibtex import escape_bibtex
+        result = escape_bibtex("Power: x^2")
+        self.assertEqual(result, r"Power: x\^{}2")
+
+    def test_escape_bibtex_multiple_special_chars(self):
+        """Test escaping multiple special characters together"""
+        from apps.citations.utils.bibtex import escape_bibtex
+        result = escape_bibtex("Price: $50 & 10% off #sale")
+        self.assertEqual(result, r"Price: \$50 \& 10\% off \#sale")
+
+    def test_escape_bibtex_empty_string(self):
+        """Test escaping empty string returns empty"""
+        from apps.citations.utils.bibtex import escape_bibtex
+        result = escape_bibtex("")
+        self.assertEqual(result, "")
+
+    def test_escape_unicode_acute_accents(self):
+        """Test escaping acute accent characters"""
+        from apps.citations.utils.bibtex import escape_unicode
+        result = escape_unicode("café")
+        self.assertEqual(result, r"caf{\\'e}")
+
+    def test_escape_unicode_umlaut(self):
+        """Test escaping umlaut characters"""
+        from apps.citations.utils.bibtex import escape_unicode
+        result = escape_unicode("Müller")
+        self.assertEqual(result, r'M{\\"u}ller')
+
+    def test_escape_unicode_tilde_n(self):
+        """Test escaping Spanish ñ"""
+        from apps.citations.utils.bibtex import escape_unicode
+        result = escape_unicode("señor")
+        self.assertEqual(result, r'se{\~n}or')
+
+    def test_escape_unicode_nordic_characters(self):
+        """Test escaping Nordic characters"""
+        from apps.citations.utils.bibtex import escape_unicode
+        result = escape_unicode("Åse Øvrebø")
+        self.assertEqual(result, r'{\AA}se {\O}vreb{\o}')
+
+    def test_escape_unicode_german_sharp_s(self):
+        """Test escaping German ß"""
+        from apps.citations.utils.bibtex import escape_unicode
+        result = escape_unicode("Straße")
+        self.assertEqual(result, r'Stra{\ss}e')
+
+    def test_escape_unicode_dashes(self):
+        """Test escaping en-dash and em-dash"""
+        from apps.citations.utils.bibtex import escape_unicode
+        result = escape_unicode("Pages 10–20—see note")
+        self.assertEqual(result, "Pages 10--20---see note")
+
+    def test_escape_unicode_smart_quotes(self):
+        """Test escaping smart quotes"""
+        from apps.citations.utils.bibtex import escape_unicode
+        result = escape_unicode("\u201cHello\u201d and \u2018world\u2019")
+        self.assertEqual(result, r"``Hello'' and `world'")
+
+    def test_escape_unicode_ellipsis(self):
+        """Test escaping ellipsis"""
+        from apps.citations.utils.bibtex import escape_unicode
+        result = escape_unicode("And so on…")
+        self.assertEqual(result, r"And so on{\ldots}")
+
+    def test_escape_unicode_mixed(self):
+        """Test escaping mixed Unicode characters"""
+        from apps.citations.utils.bibtex import escape_unicode
+        result = escape_unicode("Café Müller\u2014a story")
+        self.assertEqual(result, r"Caf{\\'e} M{\\"u}ller---a story")
+
+    def test_escape_unicode_empty_string(self):
+        """Test escaping empty string returns empty"""
+        from apps.citations.utils.bibtex import escape_unicode
+        result = escape_unicode("")
+        self.assertEqual(result, "")
+
+    def test_generate_bibtex_key_single_author(self):
+        """Test generating key with single author"""
+        from apps.citations.utils.bibtex import generate_bibtex_key
+        result = generate_bibtex_key("Smith, John", 2024, "Article Title")
+        self.assertEqual(result, "Smith2024")
+
+    def test_generate_bibtex_key_first_last_format(self):
+        """Test generating key with First Last author format"""
+        from apps.citations.utils.bibtex import generate_bibtex_key
+        result = generate_bibtex_key("John Smith", 2024, "Article Title")
+        self.assertEqual(result, "Smith2024")
+
+    def test_generate_bibtex_key_multiple_authors(self):
+        """Test generating key with 2-3 authors"""
+        from apps.citations.utils.bibtex import generate_bibtex_key
+        authors = ["Smith, John", "Jones, Alice"]
+        result = generate_bibtex_key(authors, 2024, "Article Title")
+        self.assertEqual(result, "SmithJones2024")
+
+    def test_generate_bibtex_key_many_authors(self):
+        """Test generating key with >3 authors adds Etal"""
+        from apps.citations.utils.bibtex import generate_bibtex_key
+        authors = ["Smith, J.", "Jones, A.", "Brown, B.", "White, C."]
+        result = generate_bibtex_key(authors, 2024, "Article Title")
+        self.assertEqual(result, "SmithEtal2024")
+
+    def test_generate_bibtex_key_no_author(self):
+        """Test generating key with no author uses Anonymous"""
+        from apps.citations.utils.bibtex import generate_bibtex_key
+        result = generate_bibtex_key(None, 2024, "Article Title")
+        self.assertEqual(result, "Anonymous2024")
+
+    def test_generate_bibtex_key_no_author_uses_title(self):
+        """Test generating key with no author uses first word of title"""
+        from apps.citations.utils.bibtex import generate_bibtex_key
+        result = generate_bibtex_key(None, 2024, "Machine Learning in Practice")
+        self.assertEqual(result, "Machine2024")
+
+    def test_generate_bibtex_key_no_year(self):
+        """Test generating key with no year uses n.d."""
+        from apps.citations.utils.bibtex import generate_bibtex_key
+        result = generate_bibtex_key("Smith, John", None, "Article Title")
+        self.assertEqual(result, "Smithn.d.")
+
+    def test_generate_bibtex_key_year_extraction(self):
+        """Test extracting year from date string"""
+        from apps.citations.utils.bibtex import generate_bibtex_key
+        result = generate_bibtex_key("Smith, John", "2024-01-15", "Article Title")
+        self.assertEqual(result, "Smith2024")
+
+    def test_generate_bibtex_key_duplicate_handling(self):
+        """Test handling duplicate keys with a/b/c suffixes"""
+        from apps.citations.utils.bibtex import generate_bibtex_key
+        used_keys = {"Smith2024"}
+        result = generate_bibtex_key("Smith, John", 2024, "Article Title", used_keys)
+        self.assertEqual(result, "Smith2024a")
+
+    def test_generate_bibtex_key_multiple_duplicates(self):
+        """Test handling multiple duplicate keys"""
+        from apps.citations.utils.bibtex import generate_bibtex_key
+        used_keys = {"Smith2024", "Smith2024a", "Smith2024b"}
+        result = generate_bibtex_key("Smith, John", 2024, "Article Title", used_keys)
+        self.assertEqual(result, "Smith2024c")
+
+    def test_generate_bibtex_key_special_chars_removed(self):
+        """Test removing special characters from author name"""
+        from apps.citations.utils.bibtex import generate_bibtex_key
+        result = generate_bibtex_key("O'Brien, Patrick", 2024, "Article Title")
+        self.assertEqual(result, "OBrien2024")
+
+    def test_format_bibtex_value_with_special_chars(self):
+        """Test formatting value with special characters"""
+        from apps.citations.utils.bibtex import format_bibtex_value
+        result = format_bibtex_value("Machine Learning & AI: 100% Success")
+        self.assertEqual(result, r"Machine Learning \& AI: 100\% Success")
+
+    def test_format_bibtex_value_with_unicode(self):
+        """Test formatting value with Unicode characters"""
+        from apps.citations.utils.bibtex import format_bibtex_value
+        result = format_bibtex_value("Café Culture")
+        self.assertEqual(result, r"Caf{\\'e} Culture")
+
+    def test_format_bibtex_value_mixed(self):
+        """Test formatting value with both special chars and Unicode"""
+        from apps.citations.utils.bibtex import format_bibtex_value
+        result = format_bibtex_value("Müller & Sons: 50% Discount")
+        self.assertEqual(result, r'M{\\"u}ller \& Sons: 50\% Discount')
+
+    def test_format_bibtex_value_no_escape(self):
+        """Test formatting value without escaping special chars"""
+        from apps.citations.utils.bibtex import format_bibtex_value
+        result = format_bibtex_value("Price: $50", escape_special=False)
+        self.assertEqual(result, "Price: $50")
+
+    def test_format_bibtex_value_empty_string(self):
+        """Test formatting empty string returns empty"""
+        from apps.citations.utils.bibtex import format_bibtex_value
+        result = format_bibtex_value("")
+        self.assertEqual(result, "")

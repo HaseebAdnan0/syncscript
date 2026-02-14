@@ -508,11 +508,11 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a user, I want to choose how often I receive email digests.
 
 **Acceptance Criteria:**
-- [ ] Radio group or select for: "Immediate", "Daily digest", "Weekly digest", "None"
-- [ ] Show description for each option
-- [ ] Update API on selection change
-- [ ] Disable email toggles if frequency is "None"
-- [ ] Typecheck passes
+- [x] Radio group or select for: "Immediate", "Daily digest", "Weekly digest", "None"
+- [x] Show description for each option
+- [x] Update API on selection change
+- [x] Disable email toggles if frequency is "None"
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---

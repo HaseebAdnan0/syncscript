@@ -1048,3 +1048,32 @@ In Progress - US-004 complete
   - Empty state includes icon, message, and helpful hint for users
 ---
 
+## Iteration 36 - US-037: Add Email Notification Toggles to Preferences
+- Implemented toggle switches for "Vault activity" and "Mentions" email notifications
+- Added React Query mutations for updating preferences with optimistic updates
+- Optimistic update pattern: save snapshot, update cache, rollback on error, refetch on settled
+- Added "Saved" confirmation indicator with Check icon (auto-dismiss after 2 seconds)
+- Toggle switches styled with Bitcoin DeFi gradient (EA580C to F7931A) when enabled
+- Dark background (#1E293B) when disabled for clear visual state
+- Toggle animation using transform translate-x with smooth transition
+- Hover effects on preference rows (border-[#F7931A]/20)
+- Toggle state controlled by preferences?.field_name with disabled state when preferences loading
+- handleToggle function accepts field name and new value, calls mutation
+- TypeScript typecheck passes
+- Commit 9256744
+- Files changed:
+  - frontend/src/app/(app)/settings/notifications/page.tsx (added toggles, mutations, state)
+  - PRD19.md (marked US-037 complete except browser verification)
+- Learnings for future iterations:
+  - useMutation with onMutate for optimistic updates: cancel queries, snapshot, update cache
+  - onError receives context from onMutate to rollback changes
+  - onSettled always runs (success or error), perfect for invalidateQueries
+  - setQueryData with updater function: (old) => ({ ...old, ...new })
+  - Show temporary UI feedback with useState + setTimeout pattern
+  - Disabled attribute prevents interaction while data is loading
+  - Toggle button pattern: relative container with absolute positioned toggle circle
+  - Transform translate-x-1 (off) vs translate-x-6 (on) for toggle animation
+  - Gradient background only on enabled state, solid dark color for disabled
+  - Check icon from lucide-react for "Saved" confirmation
+---
+
