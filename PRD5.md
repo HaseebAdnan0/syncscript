@@ -23,12 +23,12 @@ This PRD covers the full implementation: core infrastructure, event broadcasting
 **Description:** As a developer, I need the required packages installed so Django Channels and Redis integration work.
 
 **Acceptance Criteria:**
-- [ ] Add `channels[daphne]>=4.3.1` to requirements.txt
-- [ ] Add `channels-redis>=4.2.0` to requirements.txt
-- [ ] Add `redis>=5.0.1` to requirements.txt
-- [ ] Add `hiredis>=2.3.2` to requirements.txt
-- [ ] Packages install successfully with `pip install -r requirements.txt`
-- [ ] Typecheck passes
+- [x] Add `channels[daphne]>=4.3.1` to requirements.txt
+- [x] Add `channels-redis>=4.2.0` to requirements.txt
+- [x] Add `redis>=5.0.1` to requirements.txt
+- [x] Add `hiredis>=2.3.2` to requirements.txt
+- [x] Packages install successfully with `pip install -r requirements.txt`
+- [x] Typecheck passes
 
 ---
 
