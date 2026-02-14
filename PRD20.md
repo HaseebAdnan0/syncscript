@@ -351,14 +351,14 @@ Create a comprehensive new user onboarding experience for SyncScript that guides
 **Description:** As a frontend developer, I need API client functions for onboarding endpoints.
 
 **Acceptance Criteria:**
-- [ ] Add to `lib/api.ts`:
+- [x] Add to `lib/api.ts`:
   - `getOnboardingState(): Promise<OnboardingState>`
   - `updateOnboardingState(data: Partial<OnboardingState>): Promise<OnboardingState>`
   - `resetDemoVault(): Promise<Vault>`
   - `createDemoVault(): Promise<Vault>`
   - `getDemoVaultStatus(): Promise<{ exists: boolean, vault_id: string | null }>`
-- [ ] Add TypeScript types for OnboardingState
-- [ ] Typecheck passes
+- [x] Add TypeScript types for OnboardingState
+- [x] Typecheck passes
 
 ### US-027: Add onboarding feature flag
 **Description:** As a developer, I need a feature flag to enable/disable onboarding for testing.
