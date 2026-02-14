@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import GlobalSearchModal from './GlobalSearchModal';
 import SearchInput from './SearchInput';
 import SearchTypeFilter from './SearchTypeFilter';
@@ -10,7 +11,7 @@ import RecentSearchesList from './RecentSearchesList';
 import NoResultsState from './NoResultsState';
 import { useSearchQuery } from '@/hooks/useSearchQuery';
 import { useRecentSearches } from '@/hooks/useRecentSearches';
-import type { SearchResultType } from '@/lib/types/search';
+import type { SearchResultType, SearchResult } from '@/lib/types/search';
 
 // Map between plural filter types and singular API types
 type FilterType = 'all' | 'vaults' | 'sources' | 'annotations';
@@ -32,6 +33,7 @@ interface GlobalSearchProps {
 export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
   const [query, setQuery] = useState('');
   const [selectedType, setSelectedType] = useState<FilterType>('all');
+  const router = useRouter();
 
   // Search query with type filter (convert plural filter to singular API type)
   const apiType = filterToApiType(selectedType);

@@ -685,3 +685,35 @@ Learnings for future iterations:
 - Install Radix UI packages as needed: npm install @radix-ui/react-collapsible
 - Browser verification is manual task - will be added to .planning/MANUAL_VERIFICATION.md
 ---
+
+## Iteration 23 - US-022: Create TokenUsageDisplay component
+- Created TokenUsageDisplay component for displaying AI usage stats in user settings
+- Implemented progress bar showing requests used / limit with dynamic gradient coloring
+- Added countdown timer showing "Resets in X hours Y minutes" format
+- Token count displayed as informational field with locale formatting
+- Warning state triggers when > 80% of daily requests used:
+  - Progress bar changes from orange to orange-red gradient
+  - "High Usage" badge displayed in header
+  - Warning message shown below stats with specific percentage
+- Calculates time until reset from resets_at ISO timestamp
+- Bitcoin DeFi design: glass card (bg-[#0F1115]), orange/red gradients, border accents
+- All props fully typed with TypeScript interface
+- Fixed pre-existing TypeScript error in OnboardingFlow.tsx (unused variable)
+- Typecheck passes successfully
+- Commit successful: fbec1b5
+
+Files changed:
+- frontend/src/components/features/ai/TokenUsageDisplay.tsx (created)
+- frontend/src/components/features/onboarding/OnboardingFlow.tsx (fixed unused var)
+- PRD15.md (marked US-022 complete)
+
+Learnings for future iterations:
+- Warning threshold calculation: (requests_today / requests_limit) * 100 > 80
+- Time until reset: calculate hours and minutes separately from milliseconds difference
+- Gradient color changes based on state improve visual feedback (orange vs orange-red)
+- Token count should use toLocaleString() for better readability (e.g., "12,345" instead of "12345")
+- Progress bar width should be capped at 100% even if usage exceeds limit: Math.min(usagePercentage, 100)
+- High usage warnings guide users to wait for reset rather than hitting rate limits
+- Always fix pre-existing type errors when encountered to keep codebase clean
+- ISO timestamp from API can be parsed directly with new Date(resets_at)
+---

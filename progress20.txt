@@ -644,3 +644,34 @@
   - Migration verified via file inspection - fields added correctly
   - Timestamps set automatically by view logic, no manual intervention needed
 ---
+
+## Iteration 27 - Add onboarding feature flag (US-027)
+- Added ONBOARDING_ENABLED setting to backend config/settings.py (default True)
+- Backend flag reads from environment: os.getenv('ONBOARDING_ENABLED', 'True') == 'True'
+- Updated all onboarding API views to check feature flag:
+  - OnboardingView.get() and .patch()
+  - DemoVaultResetView.post()
+  - DemoVaultStatusView.get()
+  - DemoVaultCreateView.post()
+- Views return 404 with message "Onboarding feature is currently disabled" if flag is False
+- Added NEXT_PUBLIC_ONBOARDING_ENABLED to frontend .env.local.example (default true)
+- Updated OnboardingFlow component to check frontend flag:
+  - Reads: process.env.NEXT_PUBLIC_ONBOARDING_ENABLED !== 'false'
+  - Early return null if disabled (before rendering any onboarding UI)
+- Documented flags in both .env.example files:
+  - backend/.env.example: ONBOARDING_ENABLED=True
+  - frontend/.env.local.example: NEXT_PUBLIC_ONBOARDING_ENABLED=true
+- Files changed: settings.py, views.py, OnboardingFlow.tsx, .env.example files, PRD20.md, progress20.txt
+- Django check passes
+- Typecheck passes (fixed linter-renamed variable _onboardingEnabled)
+- Learnings for future iterations:
+  - Feature flag pattern: settings variable + environment override for flexibility
+  - Backend flag check at view level: `if not settings.FLAG: return 404`
+  - Frontend flag check before rendering: early return null pattern
+  - Default to enabled (True/true) for production-ready features
+  - 404 response for disabled features is more RESTful than 403
+  - Check flag in every endpoint that uses the feature (consistency)
+  - Document flags in .env.example with clear default values
+  - Frontend env vars must start with NEXT_PUBLIC_ to be accessible client-side
+  - Linters may rename unused variables with _ prefix - check usage after refactoring
+---
