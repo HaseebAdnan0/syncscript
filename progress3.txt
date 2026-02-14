@@ -326,3 +326,29 @@
   - Search filters should check for empty value and return unfiltered queryset
   - Django check sufficient for validation when full typecheck requires venv
 ---
+
+## Iteration 16 - US-015: Create nested source creation endpoint
+- Task already completed in commit f1f9e35 and 32811f2
+- Verified implementation:
+  - drf-nested-routers>=0.94.1 added to requirements.txt
+  - Created backend/apps/vaults/urls.py with nested router
+  - Nested route registered: ^vaults/(?P<vault_pk>[^/.]+)/sources/$
+  - SourceViewSet.perform_create() updated to handle vault_pk from kwargs
+  - Permission checks validate Owner/Contributor role on nested creation
+  - SourceViewSet.get_queryset() updated to filter by vault_pk for nested listing
+  - config/urls.py updated to include apps.vaults.urls at /api/v1/
+- Django check passes with 0 issues
+- Files already committed:
+  - backend/requirements.txt (added drf-nested-routers)
+  - backend/apps/vaults/urls.py (created nested router)
+  - backend/config/urls.py (included vaults URLs)
+  - backend/apps/sources/views.py (updated perform_create and get_queryset)
+  - PRD3.md (marked US-015 complete)
+- Learnings for future iterations:
+  - drf-nested-routers creates routes like vaults/{vault_pk}/sources/ automatically
+  - Nested routes pass parent ID via kwargs.get('vault_pk')
+  - ViewSet methods check kwargs for nested context and filter accordingly
+  - Permission checks must be manual when using nested routes
+  - Nested routers registered in parent app's urls.py even if ViewSet is in another app
+  - Always check git history before implementing - task may already be complete
+---
