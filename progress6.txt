@@ -271,3 +271,37 @@
   - Django system check passed (6 security warnings expected in dev mode)
   - Pyright errors on Meta class overrides are false positives (normal Django pattern)
 ---
+
+## Iteration 13 - US-013: Create multipart upload complete endpoint
+- Implemented multipart upload completion for large PDF files
+- Created MultipartUploadCompleteRequestSerializer in backend/apps/sources/serializers.py:
+  - Validates pdf_upload_id (UUID) and parts array
+  - Each part must have part_number (int 1-10000) and etag (str)
+  - Enforces required fields and type checking
+- Added complete_multipart_upload() utility in backend/apps/sources/storage.py:
+  - Calls s3_client.complete_multipart_upload() via boto3
+  - Formats parts with capitalized keys (PartNumber, ETag) for S3 API
+  - Sorts parts by part_number (S3 requirement)
+  - Combines all uploaded parts into final S3 object
+- Implemented multipart_upload_complete() action in backend/apps/sources/views.py:
+  - Endpoint: POST /api/v1/sources/pdfs/multipart-upload/{upload_id}/complete/
+  - @action(detail=False) with custom URL pattern using upload_id path parameter
+  - Validates user has contributor/owner vault permission
+  - Completes S3 multipart upload with error handling
+  - Updates PDFUpload status to 'processing' on success, 'failed' on error
+  - Triggers process_uploaded_pdf Celery task for metadata extraction
+  - Returns pdf_id, status, and success message
+- Files changed:
+  - backend/apps/sources/serializers.py (added MultipartUploadCompleteRequestSerializer)
+  - backend/apps/sources/storage.py (added complete_multipart_upload)
+  - backend/apps/sources/views.py (added multipart_upload_complete action, imported new serializer and storage function)
+  - PRD6.md (marked US-013 complete)
+- Learnings for future iterations:
+  - S3 complete_multipart_upload requires parts sorted by PartNumber
+  - Parts must be formatted with capitalized keys: PartNumber, ETag (not snake_case)
+  - Custom URL patterns in @action decorator: url_path=r'multipart-upload/(?P<upload_id>[^/.]+)/complete'
+  - upload_id from S3 (not stored in DB) passed via URL, pdf_upload_id passed in body
+  - Error handling critical for multipart completion: set status to 'failed' if S3 operation fails
+  - Django system check passes (0 errors)
+  - Pyright warnings about unaccessed parameters in destroy() are false positives (required by Django signature)
+---
