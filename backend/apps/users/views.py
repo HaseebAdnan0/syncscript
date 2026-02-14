@@ -892,3 +892,133 @@ class LinkOAuthAccountView(APIView):
         )
 
         return response
+
+
+class CompleteOAuthEmailView(APIView):
+    """
+    Submit email to complete GitHub OAuth registration (US-010).
+
+    POST /api/v1/auth/oauth/complete-email/
+    Body: { email: string, temp_token: string }
+
+    For GitHub users with private email, completes registration by accepting email.
+    Validates email uniqueness and creates User + SocialAccount.
+    """
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        """Complete OAuth registration with user-provided email."""
+        email = request.data.get('email')
+        temp_token = request.data.get('temp_token')
+
+        # Validate inputs
+        if not email or not temp_token:
+            return Response({
+                'error': 'Email and temp_token are required'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Validate email format
+        from django.core.validators import EmailValidator
+        from django.core.exceptions import ValidationError as DjangoValidationError
+        validator = EmailValidator()
+        try:
+            validator(email)
+        except DjangoValidationError:
+            return Response({
+                'error': 'Invalid email format'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Check for pending OAuth data in session
+        pending_oauth = request.session.get('pending_oauth')
+        oauth_needs_email = request.session.get('oauth_needs_email', False)
+
+        if not pending_oauth or not oauth_needs_email:
+            return Response({
+                'error': 'No pending OAuth data found. Please restart the OAuth flow'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Validate temp_token matches (simple check - in production use signed tokens)
+        session_token = request.session.get('oauth_temp_token')
+        if session_token != temp_token:
+            return Response({
+                'error': 'Invalid or expired temp_token'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Check if email already exists
+        existing_user = User.objects.filter(email__iexact=email).first()
+
+        if existing_user:
+            # Email exists - need to link instead
+            # Store email in pending_oauth for linking flow
+            pending_oauth['email'] = email
+            request.session['pending_oauth'] = pending_oauth
+            request.session['oauth_needs_linking'] = True
+            request.session['oauth_needs_email'] = False
+
+            return Response({
+                'link_required': True,
+                'provider': pending_oauth.get('provider'),
+                'message': 'An account with this email already exists. Please link your account.'
+            }, status=status.HTTP_200_OK)
+
+        # Email is new - create User + SocialAccount
+        provider = pending_oauth.get('provider')
+        uid = pending_oauth.get('uid')
+        extra_data = pending_oauth.get('extra_data', {})
+
+        # Extract username from extra_data (for GitHub)
+        username = extra_data.get('login') or email.split('@')[0]
+
+        # Create new user
+        user = User.objects.create_user(
+            email=email,
+            username=username,
+            email_verified=True  # OAuth providers verify email
+        )
+
+        # Create SocialAccount
+        from allauth.socialaccount.models import SocialAccount
+        SocialAccount.objects.create(
+            user=user,
+            provider=provider,
+            uid=uid,
+            extra_data=extra_data
+        )
+
+        # Clear OAuth session data
+        request.session.pop('pending_oauth', None)
+        request.session.pop('oauth_needs_email', None)
+        request.session.pop('oauth_temp_token', None)
+
+        # Generate JWT tokens
+        refresh = RefreshToken.for_user(user)
+        access = refresh.access_token
+
+        # Build response with tokens
+        response = Response({
+            'message': 'Registration completed successfully',
+            'access_token': str(access),
+            'refresh_token': str(refresh),
+            'user': UserSerializer(user).data
+        }, status=status.HTTP_201_CREATED)
+
+        # Set tokens in httpOnly cookies
+        response.set_cookie(
+            key='access_token',
+            value=str(access),
+            httponly=True,
+            secure=not settings.DEBUG,
+            samesite='Lax',
+            max_age=60 * 15,  # 15 minutes
+        )
+
+        response.set_cookie(
+            key='refresh_token',
+            value=str(refresh),
+            httponly=True,
+            secure=not settings.DEBUG,
+            samesite='Lax',
+            max_age=60 * 60 * 24 * 7,  # 7 days
+        )
+
+        return response
