@@ -70,11 +70,11 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 **Description:** As a user, I want a compact table row view for sources so I can see more items when working with large collections.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/sources/SourceTableRow.tsx`
-- [ ] Displays: type badge, title (linked), contributor, date added, actions menu
-- [ ] Row hover highlights with `bg-white/5`
-- [ ] Actions dropdown includes: View, Edit, Delete
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/sources/SourceTableRow.tsx`
+- [x] Displays: type badge, title (linked), contributor, date added, actions menu
+- [x] Row hover highlights with `bg-white/5`
+- [x] Actions dropdown includes: View, Edit, Delete
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---
