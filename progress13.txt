@@ -158,3 +158,22 @@ vaults/{vault_id}/thumbnails/{uuid}.jpg
 
 ---
 
+## Iteration 6 - Create ClamAV virus scanning service stub (US-006)
+- Verified US-006 was already completed in a previous iteration (commit 6b62d4e)
+- All acceptance criteria met:
+  - VirusScanResult dataclass created with is_clean, threat_name, scan_time_ms fields
+  - VirusScanner class with scan_file() method implemented
+  - Stub returns is_clean=True with TODO comment for ClamAV integration
+  - CLAMAV_ENABLED = False added to config/settings.py (commit 9767d11)
+  - Typecheck passes
+- PRD13.md already marked complete in HEAD
+- Files verified:
+  - backend/apps/sources/services/virus_scanner.py - exists and correct
+  - backend/config/settings.py - CLAMAV_ENABLED setting present
+- Learnings for future iterations:
+  - Always check git history before reimplementing - tasks may already be complete
+  - Use `git log --all --oneline -- <file>` to find when files were added
+  - US-006 implementation is ready for US-007 integration
+
+---
+
