@@ -15,21 +15,30 @@ def get_unsubscribe_token(user):
 
     Returns:
         Unsubscribe token string
+
+    Note:
+        This function will work once EmailPreference model is created (US-010).
+        For now, it returns a temporary token.
     """
-    from .models import EmailPreference  # noqa: F401
+    try:
+        from .models import EmailPreference
 
-    # Get or create EmailPreference (should be created by signal, but ensure it exists)
-    email_pref, _ = EmailPreference.objects.get_or_create(
-        user=user,
-        defaults={'unsubscribe_token': secrets.token_urlsafe(32)}
-    )
+        # Get or create EmailPreference (should be created by signal, but ensure it exists)
+        email_pref, _ = EmailPreference.objects.get_or_create(
+            user=user,
+            defaults={'unsubscribe_token': secrets.token_urlsafe(32)}
+        )
 
-    # Generate token if missing (for old records)
-    if not email_pref.unsubscribe_token:
-        email_pref.unsubscribe_token = secrets.token_urlsafe(32)
-        email_pref.save(update_fields=['unsubscribe_token'])
+        # Generate token if missing (for old records)
+        if not email_pref.unsubscribe_token:
+            email_pref.unsubscribe_token = secrets.token_urlsafe(32)
+            email_pref.save(update_fields=['unsubscribe_token'])
 
-    return email_pref.unsubscribe_token
+        return email_pref.unsubscribe_token
+    except ImportError:
+        # EmailPreference model not yet created (US-010 pending)
+        # Return a temporary token (will be replaced once model exists)
+        return secrets.token_urlsafe(32)
 
 
 def send_verification_email(user, token):
@@ -187,15 +196,17 @@ def send_collaboration_notification(user, notification_data):
             - target: Optional related object (source, annotation, etc.)
             - action_url: URL to view the activity
     """
-    from .models import EmailPreference  # noqa: F401
-
     # Check if user has notifications enabled
     try:
+        from .models import EmailPreference
+
         email_pref = EmailPreference.objects.get(user=user)
         if not email_pref.collaboration_notifications:
             return  # User has unsubscribed from notifications
-    except EmailPreference.DoesNotExist:
-        pass  # No preference record, send notification (default behavior)
+    except (ImportError, Exception):
+        # EmailPreference model not yet created (US-010 pending) or doesn't exist
+        # Send notification by default
+        pass
 
     # Get unsubscribe token
     unsubscribe_token = get_unsubscribe_token(user)

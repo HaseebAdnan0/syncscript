@@ -1,16 +1,5 @@
 [
   {
-    "model": "vaults.vault",
-    "pk": "00000000-0000-0000-0000-000000000001",
-    "fields": {
-      "name": "AI Research Papers 2025",
-      "description": "A curated collection of cutting-edge AI research papers covering transformer architectures, large language models, multimodal learning, and AI safety. This demo vault showcases SyncScript's collaborative research capabilities.",
-      "is_archived": false,
-      "ai_insights_cache": null,
-      "ai_insights_updated_at": null
-    }
-  },
-  {
     "model": "sources.source",
     "pk": 1,
     "fields": {

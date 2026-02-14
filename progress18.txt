@@ -51,3 +51,20 @@
   - Django automatically creates composite indexes when specified in Meta.indexes list
   - Placeholder files (views.py, urls.py, serializers.py) should be created with minimal content to satisfy project structure
 ---
+
+## Iteration 4 - US-004: Create SearchAnalytics model for popular searches
+- Added `SearchAnalytics` model to apps/search/models.py
+- Fields: query_hash (CharField, indexed), query_normalized (CharField), search_count (IntegerField), last_searched (DateTimeField with auto_now)
+- Implemented static method `hash_query()` for SHA-256 hashing with normalized queries (lowercase, trimmed)
+- Added unique constraint on query_hash field
+- Created migration 0002_searchanalytics.py
+- Migration applied successfully
+- Files changed:
+  - backend/apps/search/models.py (added SearchAnalytics model, imported hashlib)
+  - backend/apps/search/migrations/0002_searchanalytics.py (created)
+- Learnings for future iterations:
+  - UniqueConstraint in Meta.constraints for field-level uniqueness
+  - auto_now=True on DateTimeField automatically updates timestamp on save
+  - Static methods on models can provide utility functions (hash_query for SHA-256)
+  - Query normalization pattern: strip().lower() before hashing
+---

@@ -53,15 +53,15 @@ Enhance SyncScript's file storage system to production-ready status with Cloudfl
 **Description:** As a developer, I need validation logic for PNG and JPG files to allow image uploads.
 
 **Acceptance Criteria:**
-- [ ] Add to `apps/sources/validators.py`:
+- [x] Add to `apps/sources/validators.py`:
   - `ALLOWED_IMAGE_TYPES = {'image/png': [b'\x89PNG'], 'image/jpeg': [b'\xff\xd8\xff']}`
   - `MAX_IMAGE_SIZE = 10 * 1024 * 1024` (10MB)
-- [ ] Create `validate_image_file(file)` function
-- [ ] Check file size against MAX_IMAGE_SIZE
-- [ ] Verify MIME type via python-magic
-- [ ] Verify magic number matches content type
-- [ ] Raise ValidationError with descriptive messages on failure
-- [ ] Typecheck passes
+- [x] Create `validate_image_file(file)` function
+- [x] Check file size against MAX_IMAGE_SIZE
+- [x] Verify MIME type via python-magic
+- [x] Verify magic number matches content type
+- [x] Raise ValidationError with descriptive messages on failure
+- [x] Typecheck passes
 
 ---
 

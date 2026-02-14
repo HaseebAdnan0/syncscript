@@ -1,7 +1,7 @@
 # Progress Log - PRD 13: Cloudflare R2 File Storage
 
 ## Status
-In progress - US-001, US-002 complete
+In progress - US-001, US-002, US-003 complete
 
 ## Learnings
 - Django settings had missing `django.contrib.postgres` app - required for SearchVectorField

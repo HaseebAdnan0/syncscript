@@ -44,13 +44,13 @@ SyncScript's AI-powered citation generation system enables researchers to genera
 **Description:** As a researcher, I want book sources with ISBNs to automatically fetch metadata from OpenLibrary so I don't need to manually enter book details.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/citations/services/isbn_lookup.py`
-- [ ] Function `fetch_isbn_metadata(isbn: str) -> dict` calls OpenLibrary API
-- [ ] Extract: title, authors (list), publication_date, publisher, edition, pages, ISBN-10, ISBN-13
-- [ ] Handle ISBN formats: ISBN-10, ISBN-13, with/without hyphens
-- [ ] Return `None` on API failure or invalid ISBN
-- [ ] Unit tests for ISBN parsing and metadata extraction
-- [ ] Typecheck passes
+- [x] Create `apps/citations/services/isbn_lookup.py`
+- [x] Function `fetch_isbn_metadata(isbn: str) -> dict` calls OpenLibrary API
+- [x] Extract: title, authors (list), publication_date, publisher, edition, pages, ISBN-10, ISBN-13
+- [x] Handle ISBN formats: ISBN-10, ISBN-13, with/without hyphens
+- [x] Return `None` on API failure or invalid ISBN
+- [x] Unit tests for ISBN parsing and metadata extraction
+- [x] Typecheck passes
 
 ### US-004: Implement citeproc-py structured citation service
 **Description:** As a developer, I need a service that generates citations using citeproc-py for sources with complete metadata.

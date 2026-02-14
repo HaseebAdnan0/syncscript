@@ -92,6 +92,19 @@ body {
     animation: orbit-fast 10s linear infinite;
   }
 
+  @keyframes bounce-slow {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  .animate-bounce-slow {
+    animation: bounce-slow 3s ease-in-out infinite;
+  }
+
   .text-balance {
     text-wrap: balance;
   }

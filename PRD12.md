@@ -62,13 +62,13 @@ Add social authentication to SyncScript using Google and GitHub OAuth providers.
 **Description:** As a developer, I need a custom adapter that generates JWT tokens after successful OAuth instead of session-based auth.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/users/adapters.py` with custom SocialAccountAdapter
-- [ ] Override `authentication_success_response` to return JWT tokens (access + refresh)
-- [ ] Use existing `get_tokens_for_user` utility from simplejwt
-- [ ] Store tokens in httpOnly cookies (same as regular login)
-- [ ] Redirect to frontend success URL with success indicator
-- [ ] Configure adapter in settings: `SOCIALACCOUNT_ADAPTER`
-- [ ] Typecheck passes
+- [x] Create `apps/users/adapters.py` with custom SocialAccountAdapter
+- [x] Override `authentication_success_response` to return JWT tokens (access + refresh)
+- [x] Use existing `get_tokens_for_user` utility from simplejwt
+- [x] Store tokens in httpOnly cookies (same as regular login)
+- [x] Redirect to frontend success URL with success indicator
+- [x] Configure adapter in settings: `SOCIALACCOUNT_ADAPTER`
+- [x] Typecheck passes
 
 ---
 

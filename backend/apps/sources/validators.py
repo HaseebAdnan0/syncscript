@@ -105,3 +105,69 @@ def validate_pdf_file(file) -> None:
 
     # All checks passed
     return None
+
+
+def validate_image_file(file) -> None:
+    """
+    Validate that uploaded file is a legitimate image (PNG or JPG).
+
+    Performs multiple security checks:
+    - File size limit (10MB)
+    - MIME type verification via content-type
+    - Magic number verification (file header)
+    - Content verification via python-magic
+
+    Args:
+        file: Django UploadedFile instance
+
+    Raises:
+        ValidationError: If file fails any validation check
+    """
+    # Check 1: File size limit
+    if file.size > MAX_IMAGE_SIZE:
+        raise ValidationError(
+            f"Image size ({file.size / 1024 / 1024:.2f}MB) exceeds maximum allowed size of 10MB."
+        )
+
+    # Check 2: Content-Type header
+    if file.content_type not in ALLOWED_IMAGE_TYPES:
+        raise ValidationError(
+            f"Invalid content type '{file.content_type}'. Only PNG and JPEG images are allowed."
+        )
+
+    # Check 3: Magic number verification
+    # Read first 1024 bytes to check magic number
+    file.seek(0)
+    header = file.read(1024)
+    file.seek(0)  # Reset for next read
+
+    # Check if magic number matches the content type
+    expected_magic_numbers = ALLOWED_IMAGE_TYPES.get(file.content_type, [])
+    has_valid_magic = any(header.startswith(magic_num) for magic_num in expected_magic_numbers)
+
+    if not has_valid_magic:
+        raise ValidationError(
+            f"File does not appear to be a valid {file.content_type} image (magic number check failed)."
+        )
+
+    # Check 4: MIME type via python-magic (reads file content, not just extension)
+    mime = magic.Magic(mime=True)
+    file.seek(0)
+    content = file.read()
+    file.seek(0)  # Reset after reading
+
+    detected_mime = mime.from_buffer(content)
+    if detected_mime not in ALLOWED_IMAGE_TYPES:
+        raise ValidationError(
+            f"File content does not match allowed image formats. Detected type: {detected_mime}"
+        )
+
+    # Verify detected MIME matches claimed content type
+    if detected_mime != file.content_type:
+        raise ValidationError(
+            f"Content type mismatch: claimed '{file.content_type}' but detected '{detected_mime}'"
+        )
+
+    # All checks passed
+    file.seek(0)  # Reset file pointer
+    return None
