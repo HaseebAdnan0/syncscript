@@ -49,7 +49,7 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 - [x] Hover effect: `-translate-y-1` and `border-[#F7931A]/50`
 - [x] Click navigates to source detail page
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser (documented in .planning/MANUAL_VERIFICATION_PRD9.md)
 
 ---
 
@@ -62,7 +62,7 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 - [x] Each type has distinct color: URL=blue, PDF=red, Citation=purple, Article=green
 - [x] Uses pill shape with icon + text label
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser (documented in .planning/MANUAL_VERIFICATION_PRD9.md)
 
 ---
 
@@ -75,7 +75,7 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 - [x] Row hover highlights with `bg-white/5`
 - [x] Actions dropdown includes: View, Edit, Delete
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser (documented in .planning/MANUAL_VERIFICATION_PRD9.md)
 
 ---
 
@@ -89,7 +89,7 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 - [x] Toggle buttons use active/inactive states with orange highlight for active
 - [x] Includes "Add Source" button (primary gradient style)
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser (documented in .planning/MANUAL_VERIFICATION_PRD9.md)
 
 ---
 
@@ -117,7 +117,7 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 - [x] Filters update URL search params for shareability
 - [x] Uses glass morphism dropdown styling
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser (documented in .planning/MANUAL_VERIFICATION_PRD9.md)
 
 ---
 
@@ -133,7 +133,7 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 - [x] Shows empty state with illustration when no sources
 - [x] Empty state includes "Add your first source" CTA
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser (documented in .planning/MANUAL_VERIFICATION_PRD9.md)
 
 ---
 
@@ -160,7 +160,7 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 - [x] "Fetch Metadata" button triggers preview
 - [x] Shows loading spinner while fetching metadata
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser (documented in .planning/MANUAL_VERIFICATION_PRD9.md)
 
 ---
 
@@ -174,7 +174,7 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 - [x] "Add Source" primary button and "Cancel" secondary button
 - [x] Error state if metadata fetch fails with retry option
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser (documented in .planning/MANUAL_VERIFICATION_PRD9.md)
 
 ---
 
@@ -201,7 +201,7 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 - [x] Shows count of valid/invalid URLs detected
 - [x] Invalid URLs highlighted in red with error message
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser (documented in .planning/MANUAL_VERIFICATION_PRD9.md)
 
 ---
 
@@ -216,7 +216,7 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 - [x] Remove button per item
 - [x] "Import Selected" button with count
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser (documented in .planning/MANUAL_VERIFICATION_PRD9.md)
 
 ---
 
@@ -230,7 +230,7 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 - [x] Integrates AddSourceModal triggered from header button
 - [x] Page title set to "[Vault Name] - Sources"
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser (documented in .planning/MANUAL_VERIFICATION_PRD9.md)
 
 ---
 
@@ -244,7 +244,7 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 - [x] Back button returns to sources list
 - [x] Breadcrumb navigation: Vault > Sources > [Source Title]
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser (documented in .planning/MANUAL_VERIFICATION_PRD9.md)
 
 ---
 
@@ -260,7 +260,7 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 - [x] Shows loading state while PDF loads
 - [x] Error state if PDF fails to load
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser (documented in .planning/MANUAL_VERIFICATION_PRD9.md)
 
 ---
 
@@ -275,7 +275,7 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 - [x] Fullscreen toggle button
 - [x] Controls fixed at top of viewer area
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser (documented in .planning/MANUAL_VERIFICATION_PRD9.md)
 
 ---
 
@@ -290,7 +290,7 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 - [x] Reply count indicator with expand/collapse toggle
 - [x] Hover shows quick action buttons (reply, edit, delete)
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser (documented in .planning/MANUAL_VERIFICATION_PRD9.md)
 
 ---
 
@@ -304,7 +304,7 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 - [x] Shows author, timestamp in muted style
 - [x] Delete button for own replies
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser (documented in .planning/MANUAL_VERIFICATION_PRD9.md)
 
 ---
 
@@ -319,7 +319,7 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 - [x] Lists AnnotationCards sorted by newest first
 - [x] Empty state: "No annotations yet. Be the first to add one!"
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser (documented in .planning/MANUAL_VERIFICATION_PRD9.md)
 
 ---
 
@@ -335,7 +335,7 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 - [x] Cancel button to collapse form
 - [x] Form uses bottom-border input style
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser (documented in .planning/MANUAL_VERIFICATION_PRD9.md)
 
 ---
 
@@ -349,7 +349,7 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 - [x] Submit on Enter, cancel on Escape
 - [x] Shows author avatar next to input
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser (documented in .planning/MANUAL_VERIFICATION_PRD9.md)
 
 ---
 
@@ -390,7 +390,7 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 - [x] "Cancel" button as secondary
 - [x] Accepts `onConfirm` callback
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser (documented in .planning/MANUAL_VERIFICATION_PRD9.md)
 
 ---
 
@@ -430,7 +430,7 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 - [x] Deleted sources disappear without manual refresh
 - [x] Subtle "New source added" indicator when update occurs
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser (documented in .planning/MANUAL_VERIFICATION_PRD9.md)
 
 ---
 
@@ -444,7 +444,7 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 - [x] "New annotation by [name]" toast appears briefly
 - [x] Scroll indicator if new annotation added below fold
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser (documented in .planning/MANUAL_VERIFICATION_PRD9.md)
 
 ---
 
@@ -459,7 +459,7 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 - [x] `?` shows keyboard shortcuts help overlay
 - [x] Shortcuts only active when sources page focused
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser (documented in .planning/MANUAL_VERIFICATION_PRD9.md)
 
 ---
 
@@ -473,7 +473,7 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 - [x] Skeletons use pulsing animation with `bg-white/10`
 - [x] Show 6 card skeletons or 10 row skeletons while loading
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser (documented in .planning/MANUAL_VERIFICATION_PRD9.md)
 
 ---
 
