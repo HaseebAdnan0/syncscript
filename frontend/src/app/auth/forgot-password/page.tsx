@@ -5,12 +5,13 @@ import Link from 'next/link';
 import { ArrowLeft, Mail } from 'lucide-react';
 import GlassCard from '@/components/ui/GlassCard';
 import GradientButton from '@/components/ui/GradientButton';
-import { toast } from '@/hooks/useToast';
+import { useToast } from '@/hooks/useToast';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

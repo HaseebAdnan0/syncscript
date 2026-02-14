@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppHeader } from '@/components/features/notifications/AppHeader';
 import { Sidebar } from '@/components/features/dashboard/Sidebar';
+import OnboardingFlow from '@/components/features/onboarding/OnboardingFlow';
 import { useAuthStore } from '@/stores/authStore';
 
 interface AppLayoutProps {
@@ -45,6 +46,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
         <Sidebar />
         <main className="flex-1 min-h-[calc(100vh-72px)]">{children}</main>
       </div>
+      <OnboardingFlow />
     </div>
   );
 }

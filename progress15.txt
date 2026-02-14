@@ -412,3 +412,34 @@ Learnings for future iterations:
 - Footer context ("Processing with Claude AI") reassures users during loading
 ---
 
+## Iteration 14 - US-014: Integrate AISummaryCard into source detail page
+- Added AISummary interface to frontend/src/lib/types/sources.ts with all fields matching backend schema
+- Extended Source interface to include ai_summary?: AISummary | null field
+- Created summarizeSource API function in frontend/src/lib/api/sources.ts:
+  - POST to /sources/{id}/summarize/ with optional regenerate query param
+  - Returns updated Source with ai_summary populated
+- Integrated AISummaryCard into source detail page:
+  - Added state management for aiSummary and isSummarizing
+  - Implemented handleGenerateSummary function with regenerate support
+  - Added AILoadingSkeleton display while summarizing
+  - Error handling for rate limit (429) and general errors
+  - Toast notifications for success and error states
+  - Positioned card above PDF viewer in left column (70% width)
+  - Auto-refetch sources after summary generation to update cache
+- Typecheck passes successfully
+
+Files changed:
+- frontend/src/lib/types/sources.ts (added AISummary interface, updated Source)
+- frontend/src/lib/api/sources.ts (added summarizeSource function)
+- frontend/src/app/(app)/vaults/[id]/sources/[sourceId]/page.tsx (integrated AISummaryCard)
+- PRD15.md (marked US-014 complete except browser verification)
+
+Learnings for future iterations:
+- Toast component doesn't have variant prop - remove variant from error toasts
+- useSourcesQuery hook has refetch function for manual cache updates
+- AI summary state should be initialized from source.ai_summary and updated on source changes
+- Rate limit error (429) should be handled separately with specific message
+- Loading skeleton should replace card entirely during summarization for better UX
+- Auto-refetch after mutation ensures UI stays in sync with backend state
+---
+

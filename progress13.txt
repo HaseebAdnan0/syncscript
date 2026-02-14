@@ -543,3 +543,44 @@ vaults/{vault_id}/thumbnails/{uuid}.jpg
 
 ---
 
+## Iteration 18 - Create StorageUsageIndicator component (US-018)
+- Created frontend/src/components/features/vaults/StorageUsageIndicator.tsx
+- Component implementation:
+  - Accepts usedBytes, limitBytes, warning props
+  - Calculates storage percentage with proper clamping (0-100%)
+  - Formats bytes to GB with 2 decimal places (formatGB helper)
+  - Displays formatted text: "X.XX GB / X.XX GB used" with percentage
+  - Progress bar with smooth width transitions
+  - Color coding based on usage:
+    - Blue gradient (blue-500 to blue-400) when healthy (<80%)
+    - Bitcoin orange gradient (EA580C to F7931A) when warning (80-95%)
+    - Red gradient (red-500 to red-400) when critical (>95%)
+  - Text color matches progress bar color scheme
+  - Warning messages with alert icons:
+    - Orange warning at 80%+: "Storage approaching limit. Consider archiving old files."
+    - Red critical at 95%+: "Storage nearly full. Delete files to upload more."
+  - Alert triangle icon (SVG) for warning state
+  - Alert circle icon (SVG) for critical state
+- Styling follows Bitcoin DeFi aesthetic:
+  - Black/50 background for progress track
+  - White/10 border on progress track
+  - Gradient fills for progress bar
+  - Smooth transitions (duration-300) on all state changes
+  - Proper spacing with space-y-3
+  - Rounded-full progress bar for pill shape
+- Uses named export (export function) for consistency with other components
+- Files changed:
+  - frontend/src/components/features/vaults/StorageUsageIndicator.tsx (new, 121 lines)
+  - PRD13.md
+  - progress13.txt
+- Learnings for future iterations:
+  - Progress bar colors should change based on percentage thresholds (80%, 95%)
+  - Warning messages improve UX by suggesting actions (archive, delete)
+  - Named exports preferred over default exports in this codebase
+  - formatGB helper keeps byte-to-GB conversion consistent
+  - clampedPercentage prevents progress bar overflow (min 0, max 100)
+  - Pre-existing build errors (missing _document page) are unrelated
+  - Build compiles successfully with warnings only
+  - Dev server starts successfully on port 3002
+---
+

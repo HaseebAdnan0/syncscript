@@ -9,6 +9,7 @@ from django.dispatch import receiver
 
 from apps.vaults.models import VaultMembership
 from apps.sources.models import Source
+from apps.annotations.models import Annotation
 from apps.notifications.services import create_notification
 
 logger = logging.getLogger(__name__)
