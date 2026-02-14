@@ -773,3 +773,33 @@ In Progress - US-004 complete
   - Unread styling: combine subtle background tint + dot indicator
   - Border separator on items inside dropdown lists
 ---
+
+## Iteration 27 - US-028: Create NotificationDropdown Component
+- Created frontend/src/components/features/notifications/NotificationDropdown.tsx
+- Implemented dropdown panel with controlled open/close state via isOpen prop
+- Header displays "Notifications" title with "Mark all as read" button (only shows if notifications exist)
+- Displays max 10 most recent notifications using NotificationItem component
+- Scrollable list with max-height of 500px for overflow
+- Empty state message: "No notifications yet" (centered, muted text)
+- Footer with "View all notifications" link (only shows if notifications exist)
+- Click outside to close using useRef + useEffect pattern
+- Click on notification calls onNotificationClick and auto-closes dropdown
+- Dark card styling: bg-[#0F1115], border white/10, orange shadow glow
+- Responsive max-width: max-w-[calc(100vw-2rem)] for mobile
+- TypeScript typecheck passes
+- Commit fc070b9
+- Files changed:
+  - frontend/src/components/features/notifications/NotificationDropdown.tsx (new)
+  - PRD19.md (marked US-028 complete except browser verification)
+- Learnings for future iterations:
+  - useRef<HTMLDivElement> for tracking dropdown container element
+  - useEffect cleanup pattern for event listeners (add on mount, remove on unmount)
+  - setTimeout delay on addEventListener prevents immediate click-outside firing
+  - event.stopPropagation() on buttons inside dropdown prevents closing
+  - .slice(0, 10) limits array to first 10 items
+  - Conditional rendering: show header button and footer only if notifications exist
+  - absolute + right-0 + top-full + mt-2 positions dropdown below parent
+  - z-50 ensures dropdown appears above other content
+  - overflow-hidden on container, overflow-y-auto on scrollable section
+  - Call onClose() after navigation to dismiss dropdown
+---
