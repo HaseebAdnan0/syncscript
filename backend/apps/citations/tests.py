@@ -1582,7 +1582,7 @@ class RateLimitingTests(TestCase):
 
         # Create test vault
         self.vault = Vault.objects.create(
-            title='Test Vault',
+            name='Test Vault',
             description='Test vault description',
             owner=self.user
         )

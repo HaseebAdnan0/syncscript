@@ -214,15 +214,15 @@ Create a comprehensive user dashboard as the primary logged-in landing page for 
 **Description:** As a user, I want a floating action button with quick actions so I can create content without navigating away.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/dashboard/QuickActionsFAB.tsx`
-- [ ] Floating button fixed to bottom-right corner
-- [ ] Plus icon, Bitcoin orange gradient background
-- [ ] On click, expands to show 3 actions: New Vault, Add Source, Invite Collaborator
-- [ ] Each action has icon and label
-- [ ] Click outside or action closes menu
-- [ ] Actions navigate to appropriate pages/modals
-- [ ] Smooth expand/collapse animation
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/dashboard/QuickActionsFAB.tsx`
+- [x] Floating button fixed to bottom-right corner
+- [x] Plus icon, Bitcoin orange gradient background
+- [x] On click, expands to show 3 actions: New Vault, Add Source, Invite Collaborator
+- [x] Each action has icon and label
+- [x] Click outside or action closes menu
+- [x] Actions navigate to appropriate pages/modals
+- [x] Smooth expand/collapse animation
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-016: Create notifications dropdown component

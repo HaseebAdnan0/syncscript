@@ -188,11 +188,11 @@ Create a comprehensive new user onboarding experience for SyncScript that guides
 **Description:** As a developer, I need react-joyride installed and configured so we can build the interactive tutorial.
 
 **Acceptance Criteria:**
-- [ ] Install `react-joyride` package
-- [ ] Create `components/features/onboarding/TutorialProvider.tsx` wrapper
-- [ ] Configure global styles to match design system (orange accent, dark theme)
-- [ ] Custom tooltip component with glass morphism styling
-- [ ] Typecheck passes
+- [x] Install `react-joyride` package
+- [x] Create `components/features/onboarding/TutorialProvider.tsx` wrapper
+- [x] Configure global styles to match design system (orange accent, dark theme)
+- [x] Custom tooltip component with glass morphism styling
+- [x] Typecheck passes
 
 ### US-015: Create InteractiveTutorial component
 **Description:** As a new user, I want an interactive tutorial highlighting key UI elements so I learn where things are.

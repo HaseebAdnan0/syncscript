@@ -519,3 +519,35 @@ Learnings for future iterations:
   - Credentials: "include" needed for httpOnly cookie authentication
   - Loading state prevents duplicate submissions and provides user feedback
 ---
+## Iteration 19 - US-019: Create email prompt modal for GitHub users
+- Created EmailPromptModal component in components/features/auth/EmailPromptModal.tsx
+- Modal displays when GitHub user has private email and needs to provide one manually
+- Header shows GitHub icon with "Complete Registration" title and explanation
+- Email input field with built-in client-side validation (regex pattern)
+- Cancel and Complete Registration buttons (styled with Bitcoin DeFi aesthetic)
+- Form validation: requires valid email format before enabling submit
+- Calls POST /api/v1/auth/oauth/complete-email/ with email and tempToken
+- Shows loading state during API call (button text: "Completing...")
+- Handles link_required response: redirects to /login?link_oauth=true for account linking flow
+- On success: closes modal and redirects to /vaults dashboard
+- On validation error: displays inline error message in red error card
+- Fixed z-50 overlay to appear above all content
+- Full-width modal (max-w-md) centered on screen
+- Frontend typecheck passes
+- Committed successfully
+
+Files changed:
+  - frontend/src/components/features/auth/EmailPromptModal.tsx (created)
+  - PRD12.md (marked US-019 complete except browser verification)
+
+Learnings for future iterations:
+  - Client-side email validation using regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  - EmailPromptModal follows same modal pattern as AccountLinkingModal (fixed overlay, centered card)
+  - Backend can return link_required from complete-email endpoint if email already exists
+  - Transition between flows: email_required -> link_required by checking response data
+  - tempToken passed as prop from callback page (stored in sessionStorage or URL param)
+  - GitHub icon follows same styling as other modals (dark circle background, white icon)
+  - autoFocus on email input improves UX (user can start typing immediately)
+  - Disable form inputs during loading to prevent state changes mid-request
+  - sessionStorage used to preserve state during redirects between pages
+---
