@@ -145,13 +145,13 @@ Implement a global full-text search system for SyncScript that enables researche
 **Description:** As a user, I want search suggestions as I type so I can find content faster.
 
 **Acceptance Criteria:**
-- [ ] Create `GET /api/v1/search/suggestions/` endpoint
-- [ ] Query param: `q` (required, min 2 chars)
-- [ ] Return top 5 completions based on Source titles and Annotation content
-- [ ] Filter to user's accessible vaults
-- [ ] Include suggestion type (source/annotation) and match count
-- [ ] Response time < 100ms for typical queries
-- [ ] Typecheck passes
+- [x] Create `GET /api/v1/search/suggestions/` endpoint
+- [x] Query param: `q` (required, min 2 chars)
+- [x] Return top 5 completions based on Source titles and Annotation content
+- [x] Filter to user's accessible vaults
+- [x] Include suggestion type (source/annotation) and match count
+- [x] Response time < 100ms for typical queries
+- [x] Typecheck passes
 
 ---
 

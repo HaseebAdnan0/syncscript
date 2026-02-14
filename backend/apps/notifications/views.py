@@ -105,3 +105,34 @@ class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
         ).update(read_at=timezone.now())
 
         return Response({'updated': updated_count})
+
+    @action(detail=False, methods=['get', 'patch'], url_path='preferences')
+    def preferences(self, request) -> Response:  # type: ignore[no-untyped-def]
+        """
+        View or update notification preferences for current user.
+
+        GET /api/v1/notifications/preferences/
+        PATCH /api/v1/notifications/preferences/
+
+        Auto-creates preferences if missing on GET.
+        """
+        # Get or create preferences for this user
+        prefs, created = NotificationPreferences.objects.get_or_create(user=request.user)
+
+        if request.method == 'GET':
+            serializer = NotificationPreferencesSerializer(prefs)
+            return Response(serializer.data)
+        elif request.method == 'PATCH':
+            serializer = NotificationPreferencesSerializer(
+                prefs,
+                data=request.data,
+                partial=True
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(
+            {'detail': 'Method not allowed'},
+            status=status.HTTP_405_METHOD_NOT_ALLOWED
+        )

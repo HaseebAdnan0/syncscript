@@ -182,15 +182,15 @@ Create SyncScript's production landing page following the Bitcoin DeFi aesthetic
 **Description:** As a user, I want to see what other researchers say so I trust the platform.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/marketing/TestimonialsSection.tsx`
-- [ ] Section heading centered
-- [ ] Desktop: 3-column static grid showing all testimonials
-- [ ] Mobile: Horizontal carousel with swipe support
-- [ ] 3-4 placeholder testimonials with realistic research personas
-- [ ] Carousel has dot indicators on mobile
-- [ ] Smooth transition between carousel items
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/marketing/TestimonialsSection.tsx`
+- [x] Section heading centered
+- [x] Desktop: 3-column static grid showing all testimonials
+- [x] Mobile: Horizontal carousel with swipe support
+- [x] 3-4 placeholder testimonials with realistic research personas
+- [x] Carousel has dot indicators on mobile
+- [x] Smooth transition between carousel items
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-014: Create Pricing Card Component
 **Description:** As a developer, I need a pricing card component for the pricing section.

@@ -1264,16 +1264,13 @@ class CitationCacheInvalidationTests(TestCase):
 
     def test_signal_does_not_invalidate_cache_on_other_field_change(self):
         """Test that signal does NOT invalidate cache when non-metadata fields change"""
-        # Add cached citation
-        self.source.metadata = {
-            'authors': 'Smith, J.',
-            'citations': {
-                'apa7': {
-                    'text': 'Smith, J. (2024). Test Article.',
-                    'html': 'Smith, J. (2024). <i>Test Article</i>.',
-                    'generated_at': '2024-01-01T00:00:00',
-                    'source': 'structured'
-                }
+        # Add cached citation to existing metadata (don't replace the whole dict)
+        self.source.metadata['citations'] = {
+            'apa7': {
+                'text': 'Smith, J. (2024). Test Article.',
+                'html': 'Smith, J. (2024). <i>Test Article</i>.',
+                'generated_at': '2024-01-01T00:00:00',
+                'source': 'structured'
             }
         }
         self.source.save()
