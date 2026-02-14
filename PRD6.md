@@ -86,12 +86,12 @@ Implement cloud file storage for SyncScript using Cloudflare R2 (S3-compatible).
 **Description:** As a client, I need to notify the backend when upload completes so processing can start.
 
 **Acceptance Criteria:**
-- [ ] Add `POST /api/v1/sources/pdfs/{upload_id}/complete/` endpoint
-- [ ] Request body: file_key
-- [ ] Update PDFUpload status to 'processing'
-- [ ] Trigger Celery task for post-processing (placeholder call for now)
-- [ ] Return: pdf_id, status, message
-- [ ] Typecheck passes
+- [x] Add `POST /api/v1/sources/pdfs/{upload_id}/complete/` endpoint
+- [x] Request body: file_key
+- [x] Update PDFUpload status to 'processing'
+- [x] Trigger Celery task for post-processing (placeholder call for now)
+- [x] Return: pdf_id, status, message
+- [x] Typecheck passes
 
 ### US-008: Create download URL endpoint
 **Description:** As a vault member, I want to download PDFs from my vault so I can access materials offline.
