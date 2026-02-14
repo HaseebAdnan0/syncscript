@@ -129,3 +129,32 @@ vaults/{vault_id}/thumbnails/{uuid}.jpg
 
 ---
 
+## Iteration 5 - Create image processing Celery task (US-005)
+- Created `process_uploaded_image` task in backend/apps/sources/tasks.py (lines 295-440)
+- Task implementation:
+  - Downloads image from S3 using boto3 client
+  - Opens image with Pillow (PIL)
+  - Generates 300px wide thumbnail with proportional height
+  - Uses LANCZOS resampling for high quality
+  - Converts to RGB mode if needed (handles RGBA, grayscale)
+  - Saves as JPEG with 80% quality and optimize=True
+  - Uploads thumbnail to S3 at path: vaults/{vault_id}/thumbnails/{uuid}.jpg
+  - Generates presigned URL with 7-day expiry
+  - Updates FileUpload.thumbnail_url field
+- Error handling:
+  - Bound task with max_retries=3, default_retry_delay=60
+  - Exponential backoff: 2^retries * 60 seconds
+  - Catches FileUpload.DoesNotExist and general exceptions
+  - Logs all errors with exc_info for debugging
+- Files changed:
+  - backend/apps/sources/tasks.py
+  - PRD13.md
+  - progress13.txt
+- Learnings for future iterations:
+  - Image processing follows same pattern as PDF processing
+  - Pillow's Image.Resampling.LANCZOS provides best quality for thumbnails
+  - RGB conversion needed for RGBA/grayscale images before JPEG save
+  - Task verified to import successfully in Django shell
+
+---
+

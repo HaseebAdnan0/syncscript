@@ -44,6 +44,13 @@ class Notification(models.Model):
     def is_read(self) -> bool:
         return self.read_at is not None
 
+    def mark_as_read(self) -> None:
+        """Mark notification as read with current timestamp."""
+        from django.utils import timezone
+        if self.read_at is None:
+            self.read_at = timezone.now()
+            self.save(update_fields=['read_at'])
+
 
 class NotificationPreferences(models.Model):
     """User preferences for notification delivery"""

@@ -6,6 +6,9 @@
 - Annotation model has custom save() that calls full_clean() - use bulk_create() in tests to bypass validation
 - Test database needs to be migrated before running tests (use --keepdb flag to preserve database)
 - When testing with timestamps, use QuerySet.update() to bypass model validation
+- Vault creation triggers signals that auto-create audit logs (vault.created + membership.added)
+- Must clear AuditLog.objects.all().delete() after creating test vaults to isolate test data
+- AuditLog has metadata JSONField for flexible action-specific data storage
 
 ---
 
