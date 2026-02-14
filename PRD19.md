@@ -436,14 +436,14 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a user, I want toast popups for real-time notifications.
 
 **Acceptance Criteria:**
-- [ ] Create `components/features/notifications/NotificationToast.tsx`
-- [ ] Toast shows icon, title, body preview
-- [ ] Auto-dismiss after 5 seconds
-- [ ] Stack up to 3 toasts (newest at bottom)
-- [ ] Click toast to navigate and dismiss
-- [ ] Dismiss button (X)
-- [ ] Slide-in animation from right
-- [ ] Typecheck passes
+- [x] Create `components/features/notifications/NotificationToast.tsx`
+- [x] Toast shows icon, title, body preview
+- [x] Auto-dismiss after 5 seconds
+- [x] Stack up to 3 toasts (newest at bottom)
+- [x] Click toast to navigate and dismiss
+- [x] Dismiss button (X)
+- [x] Slide-in animation from right
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---

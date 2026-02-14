@@ -885,3 +885,33 @@ In Progress - US-004 complete
   - Custom authorizer pattern preferred over authEndpoint + headers for more control
   - Import api client from @/lib/api to make authenticated requests
 ---
+## Iteration 31 - US-032: Create usePusherNotifications Hook for Real-time
+- Created frontend/src/hooks/usePusherNotifications.ts
+- Hook accepts userId and enabled options via UsePusherNotificationsOptions interface
+- Subscribes to private-user-{userId} channel using getPusherClient()
+- Listens for 'notification' event and updates React Query cache:
+  - Prepends new notification to existing results array
+  - Increments count in paginated data structure
+  - Initializes cache if empty with first notification
+- Listens for 'badge_update' event and updates unread count cache directly
+- Uses setQueryData with updater function for cache manipulation
+- Cleanup: unbind_all() and unsubscribe() on component unmount
+- Handles missing Pusher client gracefully with console.warn
+- Error handling for subscription failures with try/catch
+- TypeScript typecheck passes
+- Commit c707cd3
+- Files changed:
+  - frontend/src/hooks/usePusherNotifications.ts (new)
+  - PRD19.md (marked US-032 complete)
+- Learnings for future iterations:
+  - Import Channel type from pusher-js for proper typing
+  - Use useEffect with userId and enabled as dependencies for reactive subscription
+  - setQueryData updater function receives oldData and returns new data
+  - Prepend notifications with [notification, ...oldData.results] for chronological order
+  - Query key for unread count is ['notifications', 'unread-count'] (array format)
+  - channel.bind() for event listeners, channel.unbind_all() before unsubscribe
+  - pusher.subscribe() returns Channel object, store in state for cleanup
+  - Return cleanup function from useEffect to unbind/unsubscribe
+  - Handle undefined oldData case when cache is empty
+---
+
