@@ -278,3 +278,17 @@
   - ModelViewSet provides all CRUD operations by default
   - Permission classes will be refined in next US (US-021)
 ---
+
+## Iteration 22 - US-021: Add permissions to VaultMembershipViewSet
+- Implemented get_permissions() method in VaultMembershipViewSet
+- Files changed:
+  - backend/apps/vaults/views.py (added IsVaultMember import, added get_permissions() method to VaultMembershipViewSet)
+  - PRD2.md (marked US-021 as complete)
+- Django check passed with no issues
+- Learnings for future iterations:
+  - VaultMembershipViewSet permissions mirror VaultViewSet pattern but with different rules
+  - Create/update/delete operations require IsVaultOwner (only owners can manage members)
+  - List/retrieve operations require IsVaultMember (any member can see who else is in the vault)
+  - get_permissions() method dynamically returns permission instances based on self.action
+  - IsVaultMember permission checks if user has any membership in vault, regardless of role
+---

@@ -138,10 +138,10 @@ This PRD covers the full implementation: core infrastructure, event broadcasting
 **Description:** As a developer, I need heartbeat messages to detect stale connections and maintain accurate presence.
 
 **Acceptance Criteria:**
-- [ ] Handle incoming `{"type": "heartbeat"}` messages from client
-- [ ] Update user's timestamp in presence sorted set on heartbeat
-- [ ] No broadcast on heartbeat (internal tracking only)
-- [ ] Typecheck passes
+- [x] Handle incoming `{"type": "heartbeat"}` messages from client
+- [x] Update user's timestamp in presence sorted set on heartbeat
+- [x] No broadcast on heartbeat (internal tracking only)
+- [x] Typecheck passes
 
 ---
 

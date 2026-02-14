@@ -181,11 +181,11 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need to filter sources by tags stored in metadata JSON.
 
 **Acceptance Criteria:**
-- [ ] Add `tags` CharFilter with `method='filter_tags'`
-- [ ] Implement `filter_tags()` to split comma-separated tags
-- [ ] Use PostgreSQL `metadata__tags__overlap` lookup for array overlap
-- [ ] Test: `?tags=ml,nlp` returns sources with either tag
-- [ ] Typecheck passes
+- [x] Add `tags` CharFilter with `method='filter_tags'`
+- [x] Implement `filter_tags()` to split comma-separated tags
+- [x] Use PostgreSQL `metadata__tags__overlap` lookup for array overlap
+- [x] Test: `?tags=ml,nlp` returns sources with either tag
+- [x] Typecheck passes
 
 ---
 
