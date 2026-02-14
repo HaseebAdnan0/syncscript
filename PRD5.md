@@ -102,11 +102,11 @@ This PRD covers the full implementation: core infrastructure, event broadcasting
 **Description:** As a developer, I need users to join vault rooms so broadcasts reach all collaborators.
 
 **Acceptance Criteria:**
-- [ ] On successful connect, call `group_add(f"vault_{vault_id}", channel_name)`
-- [ ] On disconnect, call `group_discard(f"vault_{vault_id}", channel_name)`
-- [ ] Send `connection.success` message with current sequence number
-- [ ] Implement `vault_event` method to receive group messages and forward to client
-- [ ] Typecheck passes
+- [x] On successful connect, call `group_add(f"vault_{vault_id}", channel_name)`
+- [x] On disconnect, call `group_discard(f"vault_{vault_id}", channel_name)`
+- [x] Send `connection.success` message with current sequence number
+- [x] Implement `vault_event` method to receive group messages and forward to client
+- [x] Typecheck passes
 
 ---
 
