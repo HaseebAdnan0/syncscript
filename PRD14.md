@@ -189,14 +189,14 @@ SyncScript's AI-powered citation generation system enables researchers to genera
 **Description:** As a user, I want a "Cite" button on source cards that opens a citation dropdown so I can quickly generate citations.
 
 **Acceptance Criteria:**
-- [ ] Create `components/features/sources/CitationButton.tsx`
-- [ ] Button with citation icon (Quote or similar from Lucide)
-- [ ] Clicking opens dropdown menu with format options
-- [ ] Dropdown shows: APA 7th, MLA 9th, Chicago 17th, BibTeX, IEEE, Harvard
-- [ ] Uses Radix DropdownMenu for accessibility
-- [ ] Loading state while fetching citation
-- [ ] Matches Bitcoin DeFi design system (orange accent, dark theme)
-- [ ] Typecheck passes
+- [x] Create `components/features/sources/CitationButton.tsx`
+- [x] Button with citation icon (Quote or similar from Lucide)
+- [x] Clicking opens dropdown menu with format options
+- [x] Dropdown shows: APA 7th, MLA 9th, Chicago 17th, BibTeX, IEEE, Harvard
+- [x] Uses Radix DropdownMenu for accessibility
+- [x] Loading state while fetching citation
+- [x] Matches Bitcoin DeFi design system (orange accent, dark theme)
+- [x] Typecheck passes
 
 ### US-016: Implement citation format selector with preview
 **Description:** As a user, I want to see a preview of my citation before copying so I can verify it's correct.
