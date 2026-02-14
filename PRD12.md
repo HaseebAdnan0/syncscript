@@ -36,12 +36,12 @@ Add social authentication to SyncScript using Google and GitHub OAuth providers.
 **Description:** As a developer, I need Google OAuth configured so users can authenticate with Google.
 
 **Acceptance Criteria:**
-- [ ] Add SOCIALACCOUNT_PROVIDERS config for Google with required scopes (`email`, `profile`)
-- [ ] Create environment variables: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
-- [ ] Add Google provider configuration to load from env vars
-- [ ] Set callback URL pattern: `/api/v1/auth/google/callback/`
-- [ ] Document required Google Cloud Console setup in USER_SETUP.md
-- [ ] Typecheck passes
+- [x] Add SOCIALACCOUNT_PROVIDERS config for Google with required scopes (`email`, `profile`)
+- [x] Create environment variables: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
+- [x] Add Google provider configuration to load from env vars
+- [x] Set callback URL pattern: `/api/v1/auth/google/callback/`
+- [x] Document required Google Cloud Console setup in USER_SETUP.md
+- [x] Typecheck passes
 
 ---
 

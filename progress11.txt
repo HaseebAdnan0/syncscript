@@ -33,7 +33,7 @@
 ## Story Progress
 
 ### Backend - Email Configuration
-- [ ] US-001: Configure Hostinger SMTP email backend
+- [x] US-001: Configure Hostinger SMTP email backend
 - [ ] US-002: Create Celery email tasks module
 - [ ] US-003: Update emails.py with all email sender functions
 
