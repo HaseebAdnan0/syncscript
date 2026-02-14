@@ -29,6 +29,7 @@ from .utils import update_vault_storage_usage
 from apps.vaults.models import Vault, VaultMembership, RoleChoices
 from datetime import datetime, timedelta
 from django.utils import timezone
+from core.websocket_utils import broadcast_to_vault
 
 
 class PDFUploadViewSet(viewsets.ModelViewSet):
@@ -395,6 +396,26 @@ class PDFUploadViewSet(viewsets.ModelViewSet):
 
         # Update vault storage usage
         update_vault_storage_usage(pdf_upload.vault.id)
+
+        # Send WebSocket notification to vault (US-020)
+        try:
+            broadcast_to_vault(
+                vault_id=pdf_upload.vault.id,
+                event_type='pdf.deleted',
+                payload={
+                    'pdf_id': str(pdf_upload.id),
+                    'filename': pdf_upload.original_filename,
+                },
+                user=request.user,
+            )
+        except Exception as ws_exc:
+            # Log but don't fail the request if WebSocket broadcast fails
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.warning(
+                f"Failed to send WebSocket notification for deleted PDF {pdf_upload.id}: {ws_exc}",
+                exc_info=True,
+            )
 
         # Calculate permanent deletion date (30 days from now)
         permanent_deletion_date = pdf_upload.deleted_at + timedelta(days=30)

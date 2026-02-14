@@ -261,3 +261,21 @@
   - Test verification: check signal receiver count instead of parsing names
   - VaultMembership uses UUID primary key (id field)
 ---
+## Iteration 15 - US-016: Implement event buffering in Redis
+- Updated broadcast_to_vault function in core/websocket_utils.py
+- Added event buffering to Redis list after broadcasting to channel layer
+  - Uses lpush to add event JSON to vault_{id}:events (newest at head)
+  - Uses ltrim to keep only last 100 events (index 0-99)
+  - Sets 1-hour TTL (3600 seconds) with expire command
+- Files changed: backend/core/websocket_utils.py, PRD5.md
+- Typecheck passes (0 errors, 0 warnings)
+- Committed in ccda158
+- Learnings for future iterations:
+  - Event buffering happens AFTER channel_layer.group_send (broadcast first, then buffer)
+  - lpush adds to head of list (newest events first)
+  - ltrim with range 0-99 keeps exactly 100 events
+  - expire sets TTL in seconds (3600 = 1 hour)
+  - Redis commands can be chained on same client without issue
+  - Events stored as JSON strings for easy replay
+  - Buffering enables reconnection with replay (US-017 will consume this buffer)
+---
