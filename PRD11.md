@@ -36,15 +36,15 @@ Replace stub email implementation with production-ready email system using Hosti
 **Description:** As a developer, I need Celery tasks for sending emails asynchronously so API responses aren't blocked by SMTP.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/users/tasks.py` with Celery tasks
-- [ ] `send_verification_email_task(user_id, token)` - sends verification email
-- [ ] `send_password_reset_email_task(user_id, uid, token)` - sends reset email
-- [ ] `send_welcome_email_task(user_id)` - sends welcome after verification
-- [ ] `send_vault_invite_email_task(invite_id)` - sends vault invitation
-- [ ] `send_collaboration_notification_task(notification_data)` - sends activity notifications
-- [ ] All tasks have `autoretry_for` with exponential backoff (max 3 retries)
-- [ ] Tasks log success/failure with user email (not full email content)
-- [ ] Typecheck passes
+- [x] Create `apps/users/tasks.py` with Celery tasks
+- [x] `send_verification_email_task(user_id, token)` - sends verification email
+- [x] `send_password_reset_email_task(user_id, uid, token)` - sends reset email
+- [x] `send_welcome_email_task(user_id)` - sends welcome after verification
+- [x] `send_vault_invite_email_task(invite_id)` - sends vault invitation
+- [x] `send_collaboration_notification_task(notification_data)` - sends activity notifications
+- [x] All tasks have `autoretry_for` with exponential backoff (max 3 retries)
+- [x] Tasks log success/failure with user email (not full email content)
+- [x] Typecheck passes
 
 ---
 

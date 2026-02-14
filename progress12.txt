@@ -82,3 +82,24 @@ Learnings for future iterations:
   - SOCIALACCOUNT_PROVIDERS uses nested 'APP' config with 'client_id' and 'secret' keys
   - Environment variables should have sensible defaults (empty string) to avoid crashes when not configured
 ---
+
+## Iteration 3 - US-003: Configure GitHub OAuth provider settings
+- Added SOCIALACCOUNT_PROVIDERS configuration for GitHub OAuth
+- Configured required scopes: 'read:user' and 'user:email' (for accessing user profile and email)
+- Added GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET environment variables to .env.example
+- Set callback URL pattern to `/api/v1/auth/github/callback/`
+- Documented complete GitHub OAuth App setup in USER_SETUP.md (with step-by-step instructions)
+- Typecheck passed (no new errors introduced)
+
+Files changed:
+  - backend/config/settings.py (added GitHub to SOCIALACCOUNT_PROVIDERS)
+  - backend/.env.example (added GitHub OAuth env vars)
+  - .planning/USER_SETUP.md (added GitHub OAuth setup section)
+
+Learnings for future iterations:
+  - GitHub OAuth setup is simpler than Google (no API enablement required)
+  - GitHub OAuth Apps are created directly from Developer Settings
+  - GitHub's 'user:email' scope is needed to access private emails
+  - Pattern is consistent: each provider added to SOCIALACCOUNT_PROVIDERS dict with APP and SCOPE keys
+  - Can have separate OAuth Apps for dev/prod or use same with multiple callback URLs
+---

@@ -18,3 +18,15 @@
   - Some migrations were already created in previous PRDs - check existing migrations before creating new ones
   - Django check command confirms models are valid even if mypy shows warnings (Django models don't need type annotations on fields)
 ---
+
+## Iteration 2 - US-002: Add tsvector search column to Annotation model
+- Added `search_vector` field to Annotation model using `SearchVectorField(null=True)`
+- Created migration 0002_add_search_vector_to_annotation with GIN index
+- Files changed:
+  - backend/apps/annotations/models.py (added SearchVectorField and GinIndex imports, search_vector field, GinIndex in Meta)
+  - backend/apps/annotations/migrations/0002_add_search_vector_to_annotation.py (created)
+- Learnings for future iterations:
+  - Same pattern as Source model: import SearchVectorField and GinIndex, add field, add to Meta.indexes
+  - Migration automatically creates both the field and the GIN index in one migration
+  - Django check is the reliable validation - mypy warnings on Django model fields are expected
+---

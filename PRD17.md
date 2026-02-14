@@ -20,14 +20,14 @@ Create a comprehensive user dashboard as the primary logged-in landing page for 
 **Description:** As a developer, I need a dedicated API endpoint that returns aggregated dashboard statistics so the frontend can display quick stats efficiently.
 
 **Acceptance Criteria:**
-- [ ] Create `GET /api/v1/dashboard/stats/` endpoint
-- [ ] Returns JSON: `{ vaults_count, sources_count, annotations_this_week }`
-- [ ] `vaults_count`: total vaults user owns or is member of
-- [ ] `sources_count`: total sources across all accessible vaults
-- [ ] `annotations_this_week`: annotations created by user in last 7 days
-- [ ] Endpoint requires authentication
-- [ ] Add to `apps/` as new `dashboard` app or add to existing app
-- [ ] Typecheck passes
+- [x] Create `GET /api/v1/dashboard/stats/` endpoint
+- [x] Returns JSON: `{ vaults_count, sources_count, annotations_this_week }`
+- [x] `vaults_count`: total vaults user owns or is member of
+- [x] `sources_count`: total sources across all accessible vaults
+- [x] `annotations_this_week`: annotations created by user in last 7 days
+- [x] Endpoint requires authentication
+- [x] Add to `apps/` as new `dashboard` app or add to existing app
+- [x] Typecheck passes
 
 ### US-002: Create recent vaults API endpoint
 **Description:** As a developer, I need an endpoint that returns the user's most recently accessed vaults so the dashboard can show "Continue Research" section.
