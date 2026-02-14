@@ -455,12 +455,12 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a developer, I need integration tests for password reset.
 
 **Acceptance Criteria:**
-- [ ] Add tests to `apps/users/tests/test_auth.py`
-- [ ] Test password reset request returns success (even for non-existent email)
-- [ ] Test valid reset token allows password change
-- [ ] Test expired reset token returns error
-- [ ] Test new password must meet strength requirements
-- [ ] All tests pass
+- [x] Add tests to `apps/users/tests/test_auth.py`
+- [x] Test password reset request returns success (even for non-existent email)
+- [x] Test valid reset token allows password change
+- [x] Test expired reset token returns error
+- [x] Test new password must meet strength requirements
+- [x] All tests pass
 
 ---
 
