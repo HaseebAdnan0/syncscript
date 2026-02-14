@@ -292,3 +292,16 @@
   - get_permissions() method dynamically returns permission instances based on self.action
   - IsVaultMember permission checks if user has any membership in vault, regardless of role
 ---
+## Iteration 23 - US-022: Add perform_create to membership viewset
+- Implemented perform_create() method in VaultMembershipViewSet
+- Files changed:
+  - backend/apps/vaults/views.py (added perform_create method)
+  - PRD2.md (marked US-022 as complete)
+- Django check passed with no issues
+- Learnings for future iterations:
+  - perform_create() hook pattern same as VaultViewSet but retrieves parent vault from URL kwargs
+  - Use self.kwargs.get('vault_pk') to get parent object ID from nested route
+  - Must retrieve Vault instance using Vault.objects.get(pk=vault_pk) before passing to serializer.save()
+  - serializer.save() accepts multiple keyword arguments: vault=vault, added_by=request.user
+  - This ensures memberships are properly linked to parent vault and track who added them
+---

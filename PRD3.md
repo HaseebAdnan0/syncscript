@@ -193,11 +193,11 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need text search across title and description fields.
 
 **Acceptance Criteria:**
-- [ ] Add `search` CharFilter with `method='filter_search'`
-- [ ] Implement `filter_search()` using Q objects with `icontains`
-- [ ] Search both `title` and `description` fields (OR)
-- [ ] Test: `?search=neural` returns matching sources
-- [ ] Typecheck passes
+- [x] Add `search` CharFilter with `method='filter_search'`
+- [x] Implement `filter_search()` using Q objects with `icontains`
+- [x] Search both `title` and `description` fields (OR)
+- [x] Test: `?search=neural` returns matching sources
+- [x] Typecheck passes
 
 ---
 

@@ -37,3 +37,38 @@ def send_verification_email(user, token):
         html_message=html_message,
         fail_silently=False,
     )
+
+
+def send_password_reset_email(user, uid, token):
+    """
+    Send password reset email to user.
+
+    Args:
+        user: User instance
+        uid: Base64-encoded user ID
+        token: Password reset token
+    """
+    # Build password reset URL
+    reset_url = f"{settings.SITE_URL}/auth/reset-password?uid={uid}&token={token}"
+
+    # Render HTML email template
+    html_message = render_to_string(
+        'emails/password_reset.html',
+        {
+            'user': user,
+            'reset_url': reset_url,
+        }
+    )
+
+    # Generate plain text fallback by stripping HTML tags
+    plain_message = strip_tags(html_message)
+
+    # Send email
+    send_mail(
+        subject='Reset Your Password - SyncScript',
+        message=plain_message,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[user.email],
+        html_message=html_message,
+        fail_silently=False,
+    )

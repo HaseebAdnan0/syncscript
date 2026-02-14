@@ -53,6 +53,52 @@ class PDFUploadSerializer(serializers.ModelSerializer):
         ]
 
 
+class MultipartUploadRequestSerializer(serializers.Serializer):
+    """
+    Serializer for requesting multipart upload initiation (US-012).
+    Validates input for large PDF upload via S3 multipart upload.
+    """
+    vault_id = serializers.UUIDField(required=True)
+    filename = serializers.CharField(required=True, max_length=255)
+    file_size = serializers.IntegerField(required=True, min_value=1, max_value=50 * 1024 * 1024)  # Max 50MB
+    part_size = serializers.IntegerField(required=True, min_value=5 * 1024 * 1024)  # Minimum 5MB per part
+    content_type = serializers.CharField(default='application/pdf')
+
+    def validate_content_type(self, value):
+        """Ensure only PDF files are accepted."""
+        if value != 'application/pdf':
+            raise serializers.ValidationError("Only PDF files are supported.")
+        return value
+
+    def validate(self, attrs):
+        """Validate that file_size and part_size are compatible."""
+        file_size = attrs['file_size']
+        part_size = attrs['part_size']
+
+        # Calculate number of parts
+        num_parts = (file_size + part_size - 1) // part_size  # Ceiling division
+
+        # AWS S3 allows maximum 10,000 parts
+        if num_parts > 10000:
+            raise serializers.ValidationError(
+                f"Part size too small. Would result in {num_parts} parts (max 10,000)."
+            )
+
+        return attrs
+
+
+class MultipartUploadResponseSerializer(serializers.Serializer):
+    """
+    Serializer for multipart upload initiation response (US-012).
+    Returns upload ID, file key, and presigned URLs for each part.
+    """
+    upload_id = serializers.CharField()
+    pdf_upload_id = serializers.UUIDField()
+    file_key = serializers.CharField()
+    part_urls = serializers.ListField(child=serializers.DictField())
+    expires_in = serializers.IntegerField()
+
+
 class SourceSerializer(serializers.ModelSerializer):
     """
     Serializer for Source model (US-007).
