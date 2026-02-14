@@ -145,12 +145,12 @@ Create a comprehensive user dashboard as the primary logged-in landing page for 
 **Description:** As a developer, I need Recharts installed and configured so I can build analytics charts.
 
 **Acceptance Criteria:**
-- [ ] Run `npm install recharts` in frontend directory
-- [ ] Verify recharts is added to package.json
-- [ ] Create `frontend/src/components/features/dashboard/charts/` directory
-- [ ] Create base chart wrapper component with consistent styling
-- [ ] Configure chart colors using design system tokens (Bitcoin orange: #F7931A, gold: #FFD600)
-- [ ] Typecheck passes
+- [x] Run `npm install recharts` in frontend directory
+- [x] Verify recharts is added to package.json
+- [x] Create `frontend/src/components/features/dashboard/charts/` directory
+- [x] Create base chart wrapper component with consistent styling
+- [x] Configure chart colors using design system tokens (Bitcoin orange: #F7931A, gold: #FFD600)
+- [x] Typecheck passes
 
 ### US-011: Create sources timeline chart
 **Description:** As a user, I want to see a line chart of sources added over time so I can visualize my research productivity.

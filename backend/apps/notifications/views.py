@@ -187,6 +187,8 @@ class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
                 )
 
             # Create or get muted vault (idempotent)
+            muted: MutedVault
+            created: bool
             muted, created = MutedVault.objects.get_or_create(
                 user=request.user,
                 vault=vault

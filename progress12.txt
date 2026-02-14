@@ -354,3 +354,30 @@ Learnings for future iterations:
   - REST convention: DELETE returns 204 No Content on success (no response body)
 ---
 
+## Iteration 13 - US-013: Create OAuthButtons component
+- Created components/features/auth/OAuthButtons.tsx component
+- Google button: white background, official Google "G" logo SVG, "Continue with Google" text
+- GitHub button: dark background (#24292e), GitHub Octocat logo SVG, "Continue with GitHub" text
+- Both buttons: full-width, 48px height (h-12), rounded-lg corners
+- Hover states: bg-gray-50 for Google, bg-[#2f363d] for GitHub, shadow-md on both
+- Accepts `disabled` prop to disable both buttons
+- Accepts `loading` prop to show loading state
+- Clicking triggers redirect to OAuth endpoint using NEXT_PUBLIC_API_URL
+- Shows loading spinner when redirecting to prevent duplicate clicks
+- Frontend typecheck passes
+- Committed successfully
+
+Files changed:
+  - frontend/src/components/features/auth/OAuthButtons.tsx (created)
+  - PRD12.md (marked US-013 complete except browser verification)
+
+Learnings for future iterations:
+  - Use inline SVG for brand logos to avoid external dependencies and ensure color control
+  - Loading state can be per-button (track which button was clicked) for better UX
+  - Prevent duplicate redirects by disabling all buttons once one is clicked
+  - Use environment variable NEXT_PUBLIC_API_URL for backend URL configuration
+  - Official brand colors: Google uses white bg, GitHub uses #24292e (dark gray)
+  - Tailwind h-12 = 48px height, matches standard button sizing
+  - Border + hover:shadow-md creates professional interactive feel
+---
+

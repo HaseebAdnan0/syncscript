@@ -350,3 +350,52 @@
   - Center positioning for popular tier works best on desktop grid layouts
   - Build verification (npm run build) confirms component works without starting dev server
 ---
+
+## Iteration 16 - US-016: Create CTA Section
+- Created `frontend/src/components/marketing/CTASection.tsx` component
+- Implemented gradient background using bg-gradient-to-b:
+  - from-[#030304] (true void)
+  - via-[#0F1115] (dark matter)
+  - to-[#1a0f0a] (orange tint for warmth)
+- Section heading with gradient text on "Research Journey"
+- Subtext: "Join thousands of researchers..." with max-w-2xl centering
+- Email capture form with client-side state management:
+  - useState hook for email input
+  - useRouter hook for navigation
+  - FormEvent handler prevents default, navigates to /register?email={encoded}
+  - Required email validation via HTML5
+- Input field styling:
+  - bg-black/50 semi-transparent background
+  - border-b-2 border-white/20 (bottom border only)
+  - focus:border-[#F7931A] orange focus state
+  - placeholder with white/40 opacity
+  - transition-colors for smooth focus animation
+- Submit button:
+  - Primary gradient (EA580C to F7931A)
+  - ArrowRight icon from Lucide
+  - hover:scale-105 interaction
+  - Orange shadow for depth
+  - whitespace-nowrap prevents text wrapping
+- Responsive form layout:
+  - flex-col (mobile): input stacks above button
+  - sm:flex-row (desktop): input and button side-by-side
+  - max-w-md constraint keeps form compact
+- Trust badge below form:
+  - "Free forever. Upgrade anytime. No credit card required."
+  - Reduced opacity for subtle reassurance
+- Centered layout with max-w-4xl container
+- Integrated into landing page after PricingSection
+- Files changed:
+  - Created: `frontend/src/components/marketing/CTASection.tsx`
+  - Modified: `frontend/src/app/(marketing)/page.tsx` (added import and integration)
+  - Modified: `PRD16.md` (marked US-016 complete)
+- Learnings for future iterations:
+  - Gradient backgrounds with orange tint create warmth without breaking dark aesthetic
+  - Bottom-border-only inputs feel modern and lightweight
+  - encodeURIComponent ensures email is safely passed in query params
+  - Trust badges reduce friction by addressing common objections (cost, commitment)
+  - ArrowRight icon in CTA button suggests forward momentum
+  - flex-1 on input makes it grow while button stays fixed width
+  - 'use client' directive required for useState and useRouter hooks
+  - Preventing form default and using router.push provides SPA navigation
+---

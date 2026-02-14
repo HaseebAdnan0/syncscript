@@ -315,3 +315,23 @@
   - Both endpoints return clear success/error messages
 ---
 
+## Iteration 12 - US-012: Update registration to use Celery email task
+- Updated RegisterView in apps/users/views.py to use async Celery task
+- Added import for send_verification_email_task from .tasks
+- Replaced synchronous send_verification_email(user, token) with task.delay(user.id, token)
+- Token generation happens before task queuing (generate_verification_token saves to DB)
+- Added try/except block with fallback to synchronous send if Celery unavailable
+- Logs warning if Celery not available and falls back to sync
+- All 4 registration flow tests pass successfully
+- Files changed:
+  - backend/apps/users/views.py (import and RegisterView.post method)
+  - PRD11.md (marked US-012 complete)
+- Learnings for future iterations:
+  - Task.delay() queues task asynchronously, requires Celery worker running
+  - Fallback to sync ensures emails always sent even if Celery down
+  - Token must be in database before task runs (task takes user_id, not user object)
+  - Registration tests verify email sending without needing actual SMTP
+  - Django system check passes (only pre-existing allauth warnings)
+  - Test database issues solved with --keepdb flag
+---
+
