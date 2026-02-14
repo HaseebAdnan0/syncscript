@@ -314,3 +314,39 @@
   - Initial/animate/exit props on motion.div create slide-in/slide-out effects
   - Viewport prop with once: true prevents re-triggering animations on scroll
 ---
+
+## Iteration 15 - US-015: Create Pricing Section
+- Created `frontend/src/components/marketing/PricingSection.tsx` component
+- Implemented section heading with gradient text on "Research Plan"
+- Added subtext: "Start free and scale as your research grows"
+- Created three pricing tiers with detailed feature lists:
+  - Free: 1 vault, 50 sources, basic features, no collaboration/AI
+  - Pro: 5 vaults, unlimited sources, real-time collaboration, AI insights (Popular)
+  - Team: Unlimited everything, SSO, audit logs, 24/7 support
+- Pro tier marked as isPopular with center position on desktop
+- Feature comparison shows 8 features per tier with included/excluded states
+- Responsive ordering using order classes:
+  - Mobile: Pro (order-1), Free (order-2), Team (order-3) - popular tier first
+  - Desktop: Free (order-1), Pro (order-2), Team (order-3) - popular tier in center
+- Framer Motion animations:
+  - Container/item variants pattern for stagger effect
+  - Scale animation from 0.8 to 1.0 on scroll
+  - 0.2s stagger delay between cards
+  - viewport with once: true and -100px margin for early trigger
+- Grid layout: grid-cols-1 (mobile), md:grid-cols-3 (desktop)
+- Section has id="pricing" for smooth scroll anchor navigation
+- Integrated into landing page after TestimonialsSection
+- Files changed:
+  - Created: `frontend/src/components/marketing/PricingSection.tsx`
+  - Modified: `frontend/src/app/(marketing)/page.tsx` (added import and integration)
+  - Modified: `PRD16.md` (marked US-015 complete)
+- Learnings for future iterations:
+  - Order classes enable different layouts on mobile vs desktop (popular tier first vs center)
+  - Using spread operator {...pricingTiers[n]} cleanly passes all props to child components
+  - 8 features per tier creates visual consistency in the comparison grid
+  - Scale animation (0.8 to 1.0) creates "pop-in" effect that draws attention
+  - Wrapping each card in motion.div enables individual stagger animations
+  - Feature arrays with included booleans allow flexible tier differentiation
+  - Center positioning for popular tier works best on desktop grid layouts
+  - Build verification (npm run build) confirms component works without starting dev server
+---

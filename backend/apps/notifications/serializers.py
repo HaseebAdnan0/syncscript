@@ -60,7 +60,7 @@ class MutedVaultSerializer(serializers.ModelSerializer):
     Serializer for MutedVault API responses (US-004, US-010).
     Includes vault details (id, name) for display purposes.
     """
-    vault_id = serializers.IntegerField(source='vault.id', read_only=True)
+    vault_id = serializers.UUIDField(source='vault.id', read_only=True)
     vault_name = serializers.CharField(source='vault.name', read_only=True)
 
     class Meta:

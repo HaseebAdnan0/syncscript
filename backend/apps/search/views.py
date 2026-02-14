@@ -11,6 +11,7 @@ from apps.annotations.models import Annotation
 from apps.vaults.models import Vault
 from .models import SearchHistory
 from .serializers import SearchHistorySerializer
+from .services import track_search_analytics
 
 
 @api_view(['GET'])

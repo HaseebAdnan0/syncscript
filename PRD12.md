@@ -175,13 +175,13 @@ Add social authentication to SyncScript using Google and GitHub OAuth providers.
 **Description:** As a user, I want to disconnect an OAuth provider from my account.
 
 **Acceptance Criteria:**
-- [ ] Create `DELETE /api/v1/auth/oauth/connected/{provider}/` endpoint (requires auth)
-- [ ] Validate provider is 'google' or 'github'
-- [ ] Check user has at least one other auth method (password or another OAuth)
-- [ ] If this is the only auth method: return 400 with error message
-- [ ] Delete SocialAccount for this provider
-- [ ] Return 204 on success
-- [ ] Typecheck passes
+- [x] Create `DELETE /api/v1/auth/oauth/connected/{provider}/` endpoint (requires auth)
+- [x] Validate provider is 'google' or 'github'
+- [x] Check user has at least one other auth method (password or another OAuth)
+- [x] If this is the only auth method: return 400 with error message
+- [x] Delete SocialAccount for this provider
+- [x] Return 204 on success
+- [x] Typecheck passes
 
 ---
 

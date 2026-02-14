@@ -5,5 +5,5 @@ urlpatterns = [
     # Source summarization (US-006)
     path('sources/<int:source_id>/summarize/', views.summarize_source, name='summarize-source'),
     # Vault insights (US-007)
-    path('vaults/<int:vault_id>/insights/', views.vault_insights, name='vault-insights'),
+    path('vaults/<uuid:vault_id>/insights/', views.vault_insights, name='vault-insights'),
 ]
