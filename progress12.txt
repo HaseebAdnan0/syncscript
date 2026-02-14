@@ -207,3 +207,29 @@ Learnings for future iterations:
   - Same validation pattern: check provider config before redirecting, return 503 if missing
 ---
 
+## Iteration 8 - US-008: Create GitHub OAuth callback handler
+- Verified GitHub callback logic was already implemented in JWTSocialAccountAdapter.pre_social_login()
+- Callback endpoint provided by allauth at /api/v1/auth/accounts/github/login/callback/
+- Adapter handles all GitHub scenarios:
+  - Email available and new: auto-creates user (SOCIALACCOUNT_AUTO_SIGNUP=True)
+  - Email available and exists with OAuth: proceeds with login
+  - Email available and exists with password only: redirects with link_required=true
+  - Email unavailable (private): redirects with email_required=true, stores OAuth data in session
+- User info extracted from sociallogin.account.extra_data (email, username, avatar)
+- Typecheck passes (pre-existing model errors unrelated to OAuth)
+- Marked task complete in PRD12.md and committed
+
+Files verified:
+  - backend/apps/users/adapters.py (pre_social_login method, lines 42-109)
+  - backend/config/urls.py (allauth.urls includes GitHub callback)
+  - PRD12.md (marked US-008 complete)
+
+Learnings for future iterations:
+  - GitHub callback uses same JWTSocialAccountAdapter as Google (unified implementation)
+  - allauth's pre_social_login() runs for ALL OAuth providers, no need for provider-specific logic
+  - GitHub's user:email scope provides email in extra_data (or empty if private)
+  - Session storage used for pending OAuth data during linking/email prompt flows
+  - Callback URLs are provider-specific but all handled by allauth.urls routing
+  - US-006 and US-008 were both completed in Iteration 6 (single adapter implementation)
+---
+

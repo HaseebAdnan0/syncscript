@@ -84,14 +84,14 @@ SyncScript's AI-powered citation generation system enables researchers to genera
 **Description:** As a frontend developer, I need an API endpoint to generate citations for a single source so users can cite sources in their preferred format.
 
 **Acceptance Criteria:**
-- [ ] Create `POST /api/v1/sources/{id}/citation/` endpoint
-- [ ] Request body: `{"format": "apa7"}` (one of 6 formats)
-- [ ] Response: `{"citation": "...", "citation_html": "...", "format": "apa7", "source": "structured|ai", "cached": bool}`
-- [ ] Structured citations return synchronously
-- [ ] AI citations: if source has incomplete metadata, return sync if fast, else return 202 with task_id
-- [ ] Permission: user must have vault access (viewer+)
-- [ ] Serializer validates format enum
-- [ ] Typecheck passes
+- [x] Create `POST /api/v1/sources/{id}/citation/` endpoint
+- [x] Request body: `{"format": "apa7"}` (one of 6 formats)
+- [x] Response: `{"citation": "...", "citation_html": "...", "format": "apa7", "source": "structured|ai", "cached": bool}`
+- [x] Structured citations return synchronously
+- [x] AI citations: if source has incomplete metadata, return sync if fast, else return 202 with task_id
+- [x] Permission: user must have vault access (viewer+)
+- [x] Serializer validates format enum
+- [x] Typecheck passes
 
 ### US-007: Implement citation caching
 **Description:** As a system, I need to cache generated citations in source metadata to avoid redundant API calls and reduce latency.
