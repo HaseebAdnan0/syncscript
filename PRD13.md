@@ -318,11 +318,11 @@ Enhance SyncScript's file storage system to production-ready status with Cloudfl
 **Description:** As a system admin, I want cleanup tasks to run automatically on schedule.
 
 **Acceptance Criteria:**
-- [ ] Add to `config/celery.py` beat schedule:
+- [x] Add to `config/celery.py` beat schedule:
   - `cleanup_orphaned_files`: daily at 3 AM
   - `cleanup_orphaned_multipart_uploads`: daily at 4 AM (already exists, verify)
   - `cleanup_deleted_pdfs`: daily at 5 AM (already exists, verify)
-- [ ] Typecheck passes
+- [x] Typecheck passes
 
 ---
 
