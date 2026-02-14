@@ -27,11 +27,11 @@ Create the complete vault management interface for SyncScript, enabling research
 **Description:** As a developer, I need TypeScript types and API client functions for vaults so that all components have type-safe data access.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/lib/types/vault.ts` with Vault, VaultMember, VaultRole types
-- [ ] Create `frontend/src/lib/api/vaults.ts` with API functions: getVaults, getVault, createVault, updateVault, deleteVault, archiveVault
-- [ ] API functions use axios instance from existing `frontend/src/lib/api/client.ts`
-- [ ] VaultRole enum: OWNER, CONTRIBUTOR, VIEWER
-- [ ] Typecheck passes
+- [x] Create `frontend/src/lib/types/vault.ts` with Vault, VaultMember, VaultRole types
+- [x] Create `frontend/src/lib/api/vaults.ts` with API functions: getVaults, getVault, createVault, updateVault, deleteVault, archiveVault
+- [x] API functions use axios instance from existing `frontend/src/lib/api/client.ts`
+- [x] VaultRole enum: OWNER, CONTRIBUTOR, VIEWER
+- [x] Typecheck passes
 
 ### US-002: React Query hooks for vaults
 **Description:** As a developer, I need React Query hooks for vault data fetching so components can easily query and mutate vault data with caching.

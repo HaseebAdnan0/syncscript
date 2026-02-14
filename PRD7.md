@@ -31,13 +31,13 @@ SyncScript needs a complete frontend authentication system that enables users to
 **Description:** As a developer, I need a configured axios instance so that API calls include credentials and handle token refresh automatically.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/lib/api.ts` with axios instance
-- [ ] Base URL from `NEXT_PUBLIC_API_URL` env var
-- [ ] `withCredentials: true` for httpOnly cookie handling
-- [ ] Response interceptor: on 401, attempt token refresh via `/auth/refresh/`
-- [ ] If refresh fails, clear auth store and redirect to `/login`
-- [ ] Export configured `api` instance
-- [ ] Typecheck passes
+- [x] Create `frontend/src/lib/api.ts` with axios instance
+- [x] Base URL from `NEXT_PUBLIC_API_URL` env var
+- [x] `withCredentials: true` for httpOnly cookie handling
+- [x] Response interceptor: on 401, attempt token refresh via `/auth/refresh/`
+- [x] If refresh fails, clear auth store and redirect to `/login`
+- [x] Export configured `api` instance
+- [x] Typecheck passes
 
 ---
 

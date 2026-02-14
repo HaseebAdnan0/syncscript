@@ -29,12 +29,12 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 **Description:** As a developer, I need TypeScript types and API client functions for sources and annotations so that components can fetch and mutate data with type safety.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/lib/types/sources.ts` with `Source`, `SourceType`, `SourceMetadata` types
-- [ ] Create `frontend/src/lib/types/annotations.ts` with `Annotation`, `AnnotationReply` types
-- [ ] Create `frontend/src/lib/api/sources.ts` with CRUD functions: `getSources`, `getSource`, `createSource`, `updateSource`, `deleteSource`
-- [ ] Create `frontend/src/lib/api/annotations.ts` with CRUD functions: `getAnnotations`, `createAnnotation`, `createReply`, `deleteAnnotation`
-- [ ] All API functions use axios instance from existing lib/api setup
-- [ ] Typecheck passes
+- [x] Create `frontend/src/lib/types/sources.ts` with `Source`, `SourceType`, `SourceMetadata` types
+- [x] Create `frontend/src/lib/types/annotations.ts` with `Annotation`, `AnnotationReply` types
+- [x] Create `frontend/src/lib/api/sources.ts` with CRUD functions: `getSources`, `getSource`, `createSource`, `updateSource`, `deleteSource`
+- [x] Create `frontend/src/lib/api/annotations.ts` with CRUD functions: `getAnnotations`, `createAnnotation`, `createReply`, `deleteAnnotation`
+- [x] All API functions use axios instance from existing lib/api setup
+- [x] Typecheck passes
 
 ---
 

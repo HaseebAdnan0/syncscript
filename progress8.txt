@@ -1,0 +1,28 @@
+# PRD8 Progress Log
+
+## Iteration 1 - US-001: Vault TypeScript types and API client
+- Created `frontend/src/lib/types/vault.ts` with comprehensive TypeScript types:
+  - VaultRole enum (OWNER, CONTRIBUTOR, VIEWER)
+  - Vault interface with all necessary fields
+  - VaultMember interface
+  - Request/Response types for API operations
+  - List response types with pagination support
+- Created `frontend/src/lib/api/vaults.ts` with all vault API functions:
+  - CRUD operations: getVaults, getVault, createVault, updateVault, deleteVault
+  - Archive operation: archiveVault
+  - Member management: getVaultMembers, addVaultMember, inviteVaultMember, updateMemberRole, removeMember
+- All functions use existing axios instance from `frontend/src/lib/api.ts`
+- Typecheck passes successfully
+
+Files changed:
+- frontend/src/lib/types/vault.ts (created)
+- frontend/src/lib/api/vaults.ts (created)
+- PRD8.md (marked US-001 complete)
+
+Learnings for future iterations:
+- The existing API client is in `frontend/src/lib/api.ts` (not `client.ts` as PRD mentioned)
+- The axios instance is exported as `api` from this file
+- The API has interceptors for auth token handling and refresh logic
+- TypeScript compilation is fast and reliable for verification
+---
+
