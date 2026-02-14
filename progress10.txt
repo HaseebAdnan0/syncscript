@@ -229,3 +229,27 @@
   - Component accepts optional className prop for additional styling
   - Typecheck passes without issues
 ---
+
+## Iteration 11 - US-011: Create NotificationPanel dropdown component
+- Implemented notification panel dropdown at `frontend/src/components/features/notifications/NotificationPanel.tsx`
+- Files changed:
+  - Created `frontend/src/components/features/notifications/NotificationPanel.tsx`
+  - Updated `PRD10.md` (marked US-011 complete except browser verification)
+- Learnings for future iterations:
+  - Notification type imported from `@/lib/api/notifications` not `@/lib/types/api`
+  - useNotifications hook returns `notifications` as array (not `notifications.results`)
+  - Hook returns `isLoadingNotifications` not `isLoading`
+  - Hook returns `markAsRead` and `markAllAsRead` as functions directly (not `.mutate`)
+  - Hook returns `isMarkingAllAsRead` for pending state (not `.isPending`)
+  - Notification type has `type` field not `notification_type`
+  - Panel positioned absolute right-0 top-full to appear below bell icon
+  - Glass morphism container: backdrop-blur-lg bg-white/5 border border-white/10 rounded-2xl
+  - Max height 500px with overflow-y-auto for scrolling
+  - Shows last 20 notifications using `.slice(0, 20)` on notifications array
+  - Unread notifications have `border-l-2 border-[#F7931A]` left accent
+  - Unread dot indicator: `h-2 w-2 rounded-full bg-[#F7931A]`
+  - Empty state with bell icon, centered text
+  - formatDistanceToNow from date-fns for relative timestamps
+  - Component removed onClose prop (not used in implementation)
+  - Typecheck passes without issues
+---
