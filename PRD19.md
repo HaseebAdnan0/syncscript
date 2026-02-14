@@ -326,10 +326,10 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a developer, I need TypeScript types and API functions for notifications.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/types/notifications.ts` with interfaces
-- [ ] Types: Notification, NotificationPreferences, NotificationType enum
-- [ ] Add to `frontend/src/lib/api.ts`: `getNotifications()`, `markAsRead()`, `markAllAsRead()`, `getUnreadCount()`, `getPreferences()`, `updatePreferences()`, `getMutedVaults()`, `muteVault()`, `unmuteVault()`
-- [ ] Typecheck passes
+- [x] Create `frontend/src/types/notifications.ts` with interfaces
+- [x] Types: Notification, NotificationPreferences, NotificationType enum
+- [x] Add to `frontend/src/lib/api.ts`: `getNotifications()`, `markAsRead()`, `markAllAsRead()`, `getUnreadCount()`, `getPreferences()`, `updatePreferences()`, `getMutedVaults()`, `muteVault()`, `unmuteVault()`
+- [x] Typecheck passes
 
 ---
 

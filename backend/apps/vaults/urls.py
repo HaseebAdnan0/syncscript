@@ -26,8 +26,9 @@ vaults_router.register(r'pdfs', PDFUploadViewSet, basename='vault-pdfs')
 from apps.citations.export_views import export_vault_citations
 
 urlpatterns = [
+    # Citation export endpoint (function-based view to avoid routing issues)
+    # IMPORTANT: Must be BEFORE router includes to avoid being shadowed
+    path('vaults/<uuid:vault_id>/citations/export/', export_vault_citations, name='vault-export-citations-func'),
     path('', include(router.urls)),
     path('', include(vaults_router.urls)),
-    # Citation export endpoint (function-based view to avoid routing issues)
-    path('vaults/<uuid:vault_id>/citations/export/', export_vault_citations, name='vault-export-citations-func'),
 ]

@@ -420,4 +420,114 @@ export const confirmPasswordReset = async (
   return response.data;
 };
 
+// ============================
+// Notification API Functions
+// ============================
+
+import {
+  Notification,
+  NotificationPreferences,
+  MutedVault,
+  UnreadCountResponse,
+  MarkAllReadResponse,
+} from '@/types/notifications';
+
+/**
+ * Get paginated list of notifications for current user
+ * @param unreadOnly - If true, only return unread notifications
+ * @param page - Page number (default: 1)
+ */
+export const getNotifications = async (
+  unreadOnly = false,
+  page = 1
+): Promise<{
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: Notification[];
+}> => {
+  const params = new URLSearchParams();
+  if (unreadOnly) {
+    params.append('unread_only', 'true');
+  }
+  if (page > 1) {
+    params.append('page', page.toString());
+  }
+
+  const url = `/notifications/${params.toString() ? `?${params.toString()}` : ''}`;
+  const response = await api.get(url);
+  return response.data;
+};
+
+/**
+ * Mark a single notification as read
+ * @param id - Notification ID
+ */
+export const markAsRead = async (id: string): Promise<Notification> => {
+  const response = await api.patch(`/notifications/${id}/read/`);
+  return response.data;
+};
+
+/**
+ * Mark all notifications as read for current user
+ */
+export const markAllAsRead = async (): Promise<MarkAllReadResponse> => {
+  const response = await api.post('/notifications/mark-all-read/');
+  return response.data;
+};
+
+/**
+ * Get unread notification count for current user
+ */
+export const getUnreadCount = async (): Promise<UnreadCountResponse> => {
+  const response = await api.get('/notifications/unread-count/');
+  return response.data;
+};
+
+/**
+ * Get notification preferences for current user
+ */
+export const getPreferences = async (): Promise<NotificationPreferences> => {
+  const response = await api.get('/notifications/preferences/');
+  return response.data;
+};
+
+/**
+ * Update notification preferences for current user
+ * @param data - Partial preferences data to update
+ */
+export const updatePreferences = async (
+  data: Partial<NotificationPreferences>
+): Promise<NotificationPreferences> => {
+  const response = await api.patch('/notifications/preferences/', data);
+  return response.data;
+};
+
+/**
+ * Get list of muted vaults for current user
+ */
+export const getMutedVaults = async (): Promise<MutedVault[]> => {
+  const response = await api.get('/notifications/muted-vaults/');
+  return response.data;
+};
+
+/**
+ * Mute a vault to suppress notifications
+ * @param vaultId - Vault UUID to mute
+ */
+export const muteVault = async (vaultId: string): Promise<MutedVault> => {
+  const response = await api.post('/notifications/muted-vaults/', {
+    vault_id: vaultId,
+  });
+  return response.data;
+};
+
+/**
+ * Unmute a vault to resume notifications
+ * @param vaultId - Vault UUID to unmute
+ */
+export const unmuteVault = async (vaultId: string): Promise<void> => {
+  await api.delete(`/notifications/muted-vaults/${vaultId}/`);
+};
+
 export default api;

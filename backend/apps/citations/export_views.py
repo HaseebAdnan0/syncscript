@@ -32,6 +32,8 @@ def export_vault_citations(request, vault_id):
 
     Permission: User must have vault access (viewer+)
     """
+    # DEBUG: Print to confirm view is being called
+    print(f'DEBUG: export_vault_citations called with vault_id={vault_id}')
     user = request.user
 
     # Get vault and check permission

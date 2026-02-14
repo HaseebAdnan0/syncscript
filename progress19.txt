@@ -643,3 +643,34 @@ In Progress - US-004 complete
   - Return count of emails sent for monitoring/logging purposes
   - Print statements useful for debugging Celery task execution
 ---
+
+## Iteration 23 - US-024: Celery Task for Notification Cleanup
+- Implemented cleanup_old_notifications() task in apps/notifications/tasks.py
+- Deletes read notifications older than 7 days using filter(read_at__isnull=False, read_at__lt=seven_days_ago).delete()
+- Deletes unread notifications older than 30 days using filter(read_at__isnull=True, created_at__lt=thirty_days_ago).delete()
+- Returns dict with read_deleted, unread_deleted, and total counts for monitoring
+- Added to Celery beat schedule in config/celery.py (runs daily at 2:00 AM UTC)
+- Created comprehensive test suite with 7 test cases:
+  - Deletes read notifications older than 7 days
+  - Deletes unread notifications older than 30 days
+  - Keeps unread notifications under 30 days
+  - Keeps read notifications under 7 days
+  - Logs correct deletion counts
+  - Handles empty database gracefully
+  - Mixed notifications cleanup (old and recent)
+- All tests pass (7/7), mypy typecheck passes
+- Commit 37caecd
+- Files changed:
+  - backend/apps/notifications/tasks.py (added cleanup_old_notifications task)
+  - backend/config/celery.py (added beat schedule entry)
+  - backend/apps/notifications/test_cleanup_task.py (new test file)
+  - PRD19.md (marked US-024 complete)
+- Learnings for future iterations:
+  - auto_now_add=True fields cannot be overridden in create(), must use update() after creation
+  - Use Notification.objects.filter(id=obj.id).update(created_at=...) to bypass auto_now_add
+  - timedelta needs to be imported from datetime module
+  - .delete() returns tuple (count, {model: count_dict}), use first element for total count
+  - Celery beat schedule uses crontab(hour=X, minute=Y) for daily tasks
+  - Return dict from cleanup tasks for monitoring/logging purposes
+  - Schedule cleanup tasks during off-peak hours (2 AM UTC)
+---
