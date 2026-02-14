@@ -399,3 +399,28 @@
   - Return HTTP 200 (not 201) for bulk operations since response contains mixed results
   - Check existing resources by filtering with __in lookup for performance
 ---
+
+## Iteration 18 - US-017: Add bulk_import action to SourceViewSet (Verification)
+- Task was already completed and committed in commit c79ffbd
+- Verified implementation exists in backend/apps/sources/views.py
+- Implementation details:
+  - Added @action(detail=False, methods=['post']) decorator to bulk_import method
+  - Validates request data using BulkSourceSerializer (max 50 URLs)
+  - Requires nested route: /api/v1/vaults/{vault_id}/sources/bulk_import/
+  - Checks Owner/Contributor permissions on vault before processing
+  - Queries existing sources to detect duplicates (is_deleted=False filter)
+  - Uses transaction.atomic() for atomicity - all or nothing
+  - Calls extract_metadata(url) for each new URL
+  - Returns {"created": [...], "skipped": [...], "errors": [...]}
+- Files already committed:
+  - backend/apps/sources/views.py (bulk_import method added)
+  - PRD3.md (marked US-017 complete)
+- Learnings for future iterations:
+  - Bulk operations should use database transactions for atomicity
+  - Duplicate detection by querying existing records before creation
+  - Return structured responses with created/skipped/errors for batch operations
+  - Each URL gets metadata extracted independently (may be slow for 50 URLs)
+  - Nested routes require vault_pk from kwargs to determine vault context
+  - Permission checks for bulk operations same as single create (Owner/Contributor)
+  - Django check passes with 0 errors
+---
