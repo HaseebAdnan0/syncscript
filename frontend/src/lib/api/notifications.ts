@@ -58,3 +58,27 @@ export async function getUnreadCount(): Promise<number> {
   const response = await api.get<UnreadCountResponse>('/notifications/unread-count/');
   return response.data.unread_count;
 }
+
+export interface NotificationPreferences {
+  notifications_enabled: boolean;
+  push_notifications_enabled: boolean;
+  sound_enabled: boolean;
+}
+
+/**
+ * Get user notification preferences
+ */
+export async function getPreferences(): Promise<NotificationPreferences> {
+  const response = await api.get<NotificationPreferences>('/users/me/preferences/');
+  return response.data;
+}
+
+/**
+ * Update user notification preferences
+ */
+export async function updatePreferences(
+  preferences: Partial<NotificationPreferences>
+): Promise<NotificationPreferences> {
+  const response = await api.patch<NotificationPreferences>('/users/me/preferences/', preferences);
+  return response.data;
+}

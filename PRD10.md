@@ -153,14 +153,14 @@ Integrate SyncScript's frontend with the existing backend WebSocket system and n
 **Description:** As a user, I want to configure my notification preferences so I control what alerts I receive.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/notifications/NotificationPreferences.tsx`
-- [ ] Toggle for enabling/disabling all notifications
-- [ ] Toggle for browser push notifications (with permission request)
-- [ ] Toggle for sound notifications (global on/off)
-- [ ] Saves preferences to backend API (`PATCH /api/v1/users/me/preferences/`)
-- [ ] Persists sound preference in localStorage for immediate access
-- [ ] Uses switch components with Bitcoin DeFi styling
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/notifications/NotificationPreferences.tsx`
+- [x] Toggle for enabling/disabling all notifications
+- [x] Toggle for browser push notifications (with permission request)
+- [x] Toggle for sound notifications (global on/off)
+- [x] Saves preferences to backend API (`PATCH /api/v1/users/me/preferences/`)
+- [x] Persists sound preference in localStorage for immediate access
+- [x] Uses switch components with Bitcoin DeFi styling
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-013: Integrate Pusher for browser push notifications
