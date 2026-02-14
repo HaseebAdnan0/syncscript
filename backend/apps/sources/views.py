@@ -12,11 +12,13 @@ from .serializers import (
     SourceSerializer,
     MultipartUploadRequestSerializer,
     MultipartUploadResponseSerializer,
+    MultipartUploadCompleteRequestSerializer,
 )
 from .storage import (
     generate_presigned_upload_url,
     generate_presigned_download_url,
     initiate_multipart_upload,
+    complete_multipart_upload,
 )
 from .permissions import VaultSourcePermission
 from .filters import SourceFilter
@@ -284,6 +286,68 @@ class PDFUploadViewSet(viewsets.ModelViewSet):
         response_serializer.is_valid(raise_exception=True)
 
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(detail=False, methods=['post'], url_path=r'multipart-upload/(?P<upload_id>[^/.]+)/complete')
+    def multipart_upload_complete(self, request, upload_id=None):
+        """
+        POST /api/v1/sources/pdfs/multipart-upload/{upload_id}/complete/
+
+        Complete a multipart upload after all parts have been uploaded.
+        Combines uploaded parts into final file and triggers post-processing.
+
+        URL Parameters:
+        - upload_id (str): S3 multipart upload ID from initiate endpoint
+
+        Request body:
+        - parts (array): List of {part_number: int, etag: str} for each uploaded part
+
+        Response:
+        - pdf_id (UUID): PDFUpload record ID
+        - status (str): Processing status
+        - message (str): Success message
+        """
+        # Validate request
+        request_serializer = MultipartUploadCompleteRequestSerializer(data=request.data)
+        request_serializer.is_valid(raise_exception=True)
+
+        parts = request_serializer.validated_data['parts']
+        pdf_upload_id = request_serializer.validated_data['pdf_upload_id']
+
+        # Get PDFUpload record
+        pdf_upload = get_object_or_404(PDFUpload, id=pdf_upload_id)
+
+        # Verify user has permission
+        self._check_vault_permission(pdf_upload.vault.id, request.user)
+
+        # Complete the multipart upload on S3
+        try:
+            complete_multipart_upload(
+                file_key=pdf_upload.file.name,
+                upload_id=upload_id,
+                parts=parts
+            )
+        except Exception as e:
+            # If completion fails, update status to failed
+            pdf_upload.processing_status = 'failed'
+            pdf_upload.save()
+            return Response(
+                {'error': f'Multipart upload completion failed: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+        # Update status to 'processing'
+        pdf_upload.processing_status = 'processing'
+        pdf_upload.save()
+
+        # Trigger Celery task for post-processing
+        from .tasks import process_uploaded_pdf
+        process_uploaded_pdf.delay(str(pdf_upload.id))
+
+        return Response({
+            'pdf_id': pdf_upload.id,
+            'status': pdf_upload.processing_status,
+            'message': 'Multipart upload completed. Processing will begin shortly.'
+        }, status=status.HTTP_200_OK)
 
 
 class SourceViewSet(viewsets.ModelViewSet):

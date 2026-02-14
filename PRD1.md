@@ -301,12 +301,12 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a user, I want to view and update my profile information.
 
 **Acceptance Criteria:**
-- [ ] Add ProfileView to `apps/users/views.py`
-- [ ] GET /api/v1/users/profile/ returns current user's profile (UserSerializer)
-- [ ] PATCH /api/v1/users/profile/ updates avatar_url, bio, institution
-- [ ] Require authentication (IsAuthenticated permission)
-- [ ] Reject attempts to change email or password via this endpoint
-- [ ] Typecheck passes
+- [x] Add ProfileView to `apps/users/views.py`
+- [x] GET /api/v1/users/profile/ returns current user's profile (UserSerializer)
+- [x] PATCH /api/v1/users/profile/ updates avatar_url, bio, institution
+- [x] Require authentication (IsAuthenticated permission)
+- [x] Reject attempts to change email or password via this endpoint
+- [x] Typecheck passes
 
 ---
 

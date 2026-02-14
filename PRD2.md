@@ -261,11 +261,11 @@ Create a secure, collaborative Knowledge Vault system where researchers can crea
 **Description:** As a system, I need to log vault creation and updates.
 
 **Acceptance Criteria:**
-- [ ] post_save signal on Vault
-- [ ] Creates AuditLog with action='vault.created' or 'vault.updated'
-- [ ] Metadata includes name and is_archived
-- [ ] Actor set to vault.owner
-- [ ] Typecheck passes
+- [x] post_save signal on Vault
+- [x] Creates AuditLog with action='vault.created' or 'vault.updated'
+- [x] Metadata includes name and is_archived
+- [x] Actor set to vault.owner
+- [x] Typecheck passes
 
 ### US-026: Create membership added audit signal
 **Description:** As a system, I need to log when members are added.

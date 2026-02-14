@@ -205,11 +205,11 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need POST `/api/v1/vaults/{vault_id}/sources/` to create sources within a vault.
 
 **Acceptance Criteria:**
-- [ ] Add nested route: `vaults/{vault_id}/sources/` using DRF nested routers or custom URL
-- [ ] Override `perform_create()` to set vault from URL `vault_id`
-- [ ] Validate user has Owner/Contributor role on vault
-- [ ] Return 201 with created source
-- [ ] Typecheck passes
+- [x] Add nested route: `vaults/{vault_id}/sources/` using DRF nested routers or custom URL
+- [x] Override `perform_create()` to set vault from URL `vault_id`
+- [x] Validate user has Owner/Contributor role on vault
+- [x] Return 201 with created source
+- [x] Typecheck passes
 
 ---
 

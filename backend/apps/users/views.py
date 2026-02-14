@@ -28,6 +28,7 @@ from .serializers import (
     RegisterSerializer,
     PasswordResetRequestSerializer,
     PasswordResetConfirmSerializer,
+    ProfileUpdateSerializer,
 )
 from .tokens import generate_verification_token, verify_token
 from .emails import send_verification_email, send_password_reset_email
@@ -497,3 +498,41 @@ class PasswordResetConfirmView(APIView):
             return Response({
                 'error': 'Invalid reset link.'
             }, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ProfileView(APIView):
+    """
+    View and update user profile (US-022).
+
+    GET /api/v1/users/profile/ returns current user's profile.
+    PATCH /api/v1/users/profile/ updates avatar_url, bio, institution.
+    Requires authentication.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        """Return current user's profile data."""
+        user = request.user
+        serializer = UserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def patch(self, request):
+        """Update current user's profile fields."""
+        user = request.user
+        serializer = ProfileUpdateSerializer(user, data=request.data, partial=True)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # Reject attempts to change email or password
+        if 'email' in request.data or 'password' in request.data:
+            return Response({
+                'error': 'Email and password cannot be changed through this endpoint.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer.save()
+
+        return Response({
+            'message': 'Profile updated successfully.',
+            'user': UserSerializer(user).data
+        }, status=status.HTTP_200_OK)
