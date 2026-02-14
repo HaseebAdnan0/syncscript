@@ -29,6 +29,11 @@ export function useVaultSocket({ vaultId }: VaultSocketOptions): VaultSocketRetu
   const connect = useCallback(() => {
     if (isUnmountedRef.current) return;
 
+    if (!vaultId) {
+      setStatus('disconnected');
+      return;
+    }
+
     const wsUrl = process.env.NEXT_PUBLIC_WS_URL;
     if (!wsUrl) {
       console.error('NEXT_PUBLIC_WS_URL is not defined');

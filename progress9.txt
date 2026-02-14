@@ -402,3 +402,35 @@ Learnings for future iterations:
 - Sources list empty state handled by SourcesList component internally
 - Modal state managed via useState in parent page component
 ---
+
+## Iteration 15 - US-016: Create SourceDetailPage layout
+- Created SourceDetailPage at frontend/src/app/(app)/vaults/[id]/sources/[sourceId]/page.tsx
+- Note: File was already created in previous iteration (commit b275c48) but PRD wasn't updated
+- Implemented two-column layout: PDF viewer (70% using flex-[7]) + Annotation sidebar (30% using flex-[3])
+- Header shows source title (font-heading), type badge, and metadata (URL, citation, contributor, date)
+- Back button (ArrowLeft icon) returns to sources list with router.push()
+- Breadcrumb navigation: Vault > Sources > [Source Title] with clickable links
+- Sticky header with glass morphism: bg-[#0F1115] border-b border-white/10 sticky top-0 z-10
+- Both columns show placeholder text indicating future implementation (US-017 for PDF, US-021 for annotations)
+- Loading state shows centered Loader2 spinner with Bitcoin orange color
+- Error state (source not found) shows helpful message with back button
+- Extracted citation from metadata with proper type narrowing: const citationText = typeof citation === 'string' ? citation : null
+- Fixed unrelated TypeScript error in AppHeader.tsx: conditional useVaultSocket hook call
+- Typecheck passes ✓
+
+Files changed:
+- frontend/src/app/(app)/vaults/[id]/sources/[sourceId]/page.tsx (already existed from previous iteration)
+- frontend/src/components/features/notifications/AppHeader.tsx (fixed conditional hook call)
+- PRD9.md (marked US-016 complete except browser verification)
+
+Learnings for future iterations:
+- Source type has contributor property (not addedBy) with nested user object { id, username, email }
+- Citation from metadata is typed as unknown, need explicit type narrowing for React rendering
+- Cannot conditionally call hooks - need to call always and handle undefined with ternary: vaultId ? useVaultSocket({ vaultId }) : null
+- AppHeader vaultId is string, useVaultSocket expects string in VaultSocketOptions
+- Layout uses flex-[7] and flex-[3] for 70/30 split instead of percentage widths
+- Breadcrumb navigation uses separate click handlers for each level (not Link components) for router control
+- Placeholder text in layout helps future developers know what components go where
+- max-w-[1800px] used for wide source detail layout (wider than standard max-w-7xl)
+- Source metadata can include unknown keys via index signature - need type checking before rendering
+---

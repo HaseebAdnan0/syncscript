@@ -170,7 +170,7 @@ SyncScript needs a complete frontend authentication system that enables users to
 - [x] Link to login: "Already have an account? Sign in"
 - [x] Form is presentational only (no logic yet)
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser
 
 ---
 
@@ -188,7 +188,7 @@ SyncScript needs a complete frontend authentication system that enables users to
 - [x] On success, auto-login and redirect to `/dashboard`
 - [x] On error, display error toast
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser
 
 ---
 

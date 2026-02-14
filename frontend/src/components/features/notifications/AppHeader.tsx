@@ -17,8 +17,8 @@ interface AppHeaderProps {
 export function AppHeader({ vaultId }: AppHeaderProps) {
   const [isNotificationPanelOpen, setIsNotificationPanelOpen] = useState(false);
   const { unreadCount } = useNotifications();
-  // Always call hook, but pass undefined when vaultId is not provided
-  const { status } = useVaultSocket(vaultId ? { vaultId } : { vaultId: '' });
+  // Always call hook - it handles undefined vaultId internally
+  const { status } = useVaultSocket({ vaultId });
   const panelRef = useRef<HTMLDivElement>(null);
   const bellButtonRef = useRef<HTMLButtonElement>(null);
 
