@@ -468,11 +468,11 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need the AuditLog model to support JSON diff tracking.
 
 **Acceptance Criteria:**
-- [ ] In `core/models.py`, ensure `AuditLog` model exists with: `action` (CharField), `user` (FK to users.User, SET_NULL), `timestamp` (DateTimeField auto_now_add), `object_type` (CharField), `object_id` (PositiveIntegerField), `changes` (JSONField default dict)
-- [ ] If model doesn't exist, create it
-- [ ] Add index on `['object_type', 'object_id']`
-- [ ] Run migrations
-- [ ] Typecheck passes
+- [x] In `core/models.py`, ensure `AuditLog` model exists with: `action` (CharField), `user` (FK to users.User, SET_NULL), `timestamp` (DateTimeField auto_now_add), `object_type` (CharField), `object_id` (PositiveIntegerField), `changes` (JSONField default dict)
+- [x] If model doesn't exist, create it
+- [x] Add index on `['object_type', 'object_id']`
+- [x] Run migrations
+- [x] Typecheck passes
 
 ---
 
