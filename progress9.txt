@@ -434,3 +434,39 @@ Learnings for future iterations:
 - max-w-[1800px] used for wide source detail layout (wider than standard max-w-7xl)
 - Source metadata can include unknown keys via index signature - need type checking before rendering
 ---
+
+## Iteration 16 - US-017: Create PDFViewer component with react-pdf
+- Installed react-pdf package (added 10 packages)
+- Created PDFViewer component at frontend/src/components/features/sources/PDFViewer.tsx
+- Configured PDF.js worker using unpkg CDN: `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`
+- Implemented Document and Page components from react-pdf with text and annotation layers enabled
+- Page navigation controls: prev/next buttons with disabled states, page number input (1-N range)
+- Displays "Page X of Y" indicator in glass morphism control bar
+- Loading state shows Loader2 spinner with Bitcoin orange color and "Loading PDF..." text
+- Error state shows red-themed alert box with retry button that reloads the page
+- Controls positioned at top with gap-4 spacing before PDF content
+- PDF content scrollable within flex-1 container with bg-[#030304] rounded border
+- Input uses bottom-border focus style: border-b-2 border-white/20 focus:border-[#F7931A]
+- Navigation buttons use glass morphism style: bg-white/5 border border-white/10 hover:bg-white/10
+- Imported CSS layers: 'react-pdf/dist/Page/AnnotationLayer.css' and 'react-pdf/dist/Page/TextLayer.css'
+- Typecheck passes ✓
+
+Files changed:
+- frontend/src/components/features/sources/PDFViewer.tsx (new)
+- frontend/package.json (added react-pdf dependency)
+- frontend/package-lock.json (updated with react-pdf and 10 new packages)
+- PRD9.md (marked US-017 complete except browser verification)
+
+Learnings for future iterations:
+- react-pdf requires PDF.js worker configuration before use - use unpkg CDN for simplicity
+- Document component needs onLoadSuccess callback to get numPages: { numPages: number }
+- Document component accepts file prop with URL string
+- Page component needs pageNumber prop (1-indexed, not 0-indexed)
+- Page component has renderTextLayer and renderAnnotationLayer boolean props (both true for full features)
+- Must import CSS for annotation and text layers or they won't display properly
+- onDocumentLoadError receives Error object for error handling
+- Document loading/error props set to null because we handle states manually
+- Page navigation uses Math.max(prev - 1, 1) and Math.min(prev + 1, numPages) to prevent out-of-bounds
+- Page input validation: parseInt with isNaN check and range validation (1 to numPages)
+- Worker configuration must happen before any Document rendering
+---
