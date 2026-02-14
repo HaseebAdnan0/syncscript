@@ -92,14 +92,14 @@ Create the complete vault management interface for SyncScript, enabling research
 **Description:** As a new user with no vaults, I want to see a helpful empty state so I know how to get started.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/vaults/EmptyVaultsState.tsx`
-- [ ] Displays illustration or icon (use Lucide `FolderOpen` or similar)
-- [ ] Heading: "No vaults yet"
-- [ ] Subtext: "Create your first Knowledge Vault to start organizing research"
-- [ ] Primary CTA button: "Create Vault" (triggers create modal)
-- [ ] Integrate into vaults listing page when vault count is 0
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/features/vaults/EmptyVaultsState.tsx`
+- [x] Displays illustration or icon (use Lucide `FolderOpen` or similar)
+- [x] Heading: "No vaults yet"
+- [x] Subtext: "Create your first Knowledge Vault to start organizing research"
+- [x] Primary CTA button: "Create Vault" (triggers create modal)
+- [x] Integrate into vaults listing page when vault count is 0
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-008: Search input for vaults filtering
 **Description:** As a user, I want to search my vaults by name so I can quickly find what I'm looking for.

@@ -7,8 +7,8 @@
 - [x] US-002: Create ConnectionStatus indicator component
 - [x] US-003: Create useRealtimeUpdates hook for optimistic updates with reconciliation
 - [x] US-004: Integrate real-time source updates in vault detail page
-- [ ] US-005: Integrate real-time annotation updates
-- [ ] US-006: Create usePresence hook for tracking active vault members
+- [x] US-005: Integrate real-time annotation updates
+- [x] US-006: Create usePresence hook for tracking active vault members
 - [ ] US-007: Create PresenceIndicator component with animate-ping effect
 - [ ] US-008: Create notification API client and useNotifications hook
 - [ ] US-009: Create toast notification system for vault events
@@ -119,3 +119,24 @@
 - Presence: member list with animate-ping for active users
 - Push notifications: high-priority only (new member, @mentions)
 - Sound: global on/off toggle with single notification sound
+## Iteration 6 - US-006: Create usePresence hook
+- Implemented presence tracking hook at `frontend/src/hooks/usePresence.ts`
+- Files changed:
+  - Created `frontend/src/hooks/usePresence.ts`
+  - Updated `PRD10.md` (marked US-006 complete)
+- Learnings for future iterations:
+  - useVaultSocket returns `status` not `connectionStatus`
+  - addEventListener returns cleanup function directly (no separate removeEventListener)
+  - Hook accepts `{ vaultId: string, currentUserId?: number }` options
+  - Returns: `{ activeMembers, activeMemberIds, isActive(userId), activeMembersCount }`
+  - PresenceMember type: `{ userId, username, lastActivity: timestamp }`
+  - Heartbeat sent every 30 seconds via `send('presence.heartbeat', { userId })`
+  - Initial heartbeat sent immediately on connection
+  - Event listeners for: `presence.join`, `presence.leave`, `presence.heartbeat`
+  - Event data: `{ userId, username }` for join/heartbeat, `{ userId }` for leave
+  - Inactive members removed after 60 seconds without heartbeat
+  - Inactivity check runs every 10 seconds
+  - Used Map<number, PresenceMember> for efficient member tracking
+  - Cleanup functions stored for all event listeners and intervals
+  - Typecheck passes without issues
+---

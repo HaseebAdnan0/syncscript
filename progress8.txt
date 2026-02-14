@@ -120,3 +120,28 @@ Learnings for future iterations:
 - line-clamp-2 utility class for multi-line text truncation
 ---
 
+## Iteration 6 - US-006: Vaults listing page with grid layout
+- Created `frontend/src/app/vaults/page.tsx` with complete vaults listing UI:
+  - Page header with gradient title "My Vaults" (using Bitcoin DeFi gradient)
+  - GradientButton component for "Create Vault" action
+  - Responsive grid: `grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6`
+  - Loading skeleton with 6 card placeholders using `animate-pulse` and `bg-white/5`
+  - Error state with centered red message
+  - Maps over `data.results` array from paginated VaultsListResponse
+- Uses useVaults hook to fetch vault data
+- Integrates useVaultsStore for openCreateModal action
+- Typecheck passes successfully
+
+Files changed:
+- frontend/src/app/vaults/page.tsx (created)
+- PRD8.md (marked US-006 complete)
+
+Learnings for future iterations:
+- VaultsListResponse is paginated, must access `data.results` not `data` directly
+- Default value for vaults should be `data?.results || []` to handle undefined
+- Loading skeletons should match the grid layout (same columns/gaps)
+- Gradient text uses: `bg-gradient-to-r from-[#F7931A] to-[#FFD600] bg-clip-text text-transparent`
+- GradientButton is already a component in the codebase at `@/components/ui/GradientButton`
+- The `@/` import alias is configured for `frontend/src/`
+---
+

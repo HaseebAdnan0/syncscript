@@ -103,11 +103,11 @@ SyncScript needs a complete frontend authentication system that enables users to
 **Description:** As a user, I want auth forms wrapped in glass cards so that they have the premium aesthetic.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/ui/GlassCard.tsx`
-- [ ] Style: `backdrop-blur-lg bg-white/5 border border-white/10 rounded-2xl`
-- [ ] Accept `className` prop for size customization
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/ui/GlassCard.tsx`
+- [x] Style: `backdrop-blur-lg bg-white/5 border border-white/10 rounded-2xl`
+- [x] Accept `className` prop for size customization
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 

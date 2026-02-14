@@ -2,6 +2,7 @@
 
 import { useVaults } from '@/hooks/useVaults';
 import { VaultCard } from '@/components/features/vaults/VaultCard';
+import { EmptyVaultsState } from '@/components/features/vaults/EmptyVaultsState';
 import GradientButton from '@/components/ui/GradientButton';
 import { useVaultsStore } from '@/stores/vaultsStore';
 import type { Vault } from '@/lib/types/vault';
@@ -71,12 +72,16 @@ export default function VaultsPage() {
           </GradientButton>
         </div>
 
-        {/* Vaults grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {vaults.map((vault) => (
-            <VaultCard key={vault.id} vault={vault} />
-          ))}
-        </div>
+        {/* Vaults grid or empty state */}
+        {vaults.length === 0 ? (
+          <EmptyVaultsState onCreateVault={openCreateModal} />
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {vaults.map((vault) => (
+              <VaultCard key={vault.id} vault={vault} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

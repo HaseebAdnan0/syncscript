@@ -120,3 +120,17 @@
   - Uses uppercase tracking-wider for bold CTA appearance
   - Disabled state prevents scale animation on hover
 ---
+
+## Iteration 7 - US-007: Create glass card container component
+- Created `frontend/src/components/ui/GlassCard.tsx` with glass morphism styling
+- Files changed: frontend/src/components/ui/GlassCard.tsx (new file)
+- Learnings for future iterations:
+  - GlassCard uses React.forwardRef for compatibility with ref-forwarding patterns
+  - Glass morphism style: `backdrop-blur-lg bg-white/5 border border-white/10 rounded-2xl`
+  - Default padding is p-8 (2rem) for comfortable spacing
+  - className prop allows size customization while preserving base styles
+  - Component accepts all standard HTMLDivElement props via spread operator
+  - Used 'use client' directive for client-side rendering
+  - Build compiled successfully - component has no type errors
+  - Pre-existing warnings in vaults/page.tsx don't affect new components
+---
