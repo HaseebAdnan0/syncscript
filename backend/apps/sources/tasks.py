@@ -312,3 +312,123 @@ def broadcast_source_deleted(source_id: int, vault_id: int, deleted_by_id: int |
         user=deleted_by,
     )
     logger.info(f"Broadcasted source.deleted for source {source_id} in vault {vault_id}")
+
+
+@shared_task
+def cleanup_deleted_pdfs() -> dict[str, Any]:
+    """
+    Permanently delete PDFs that were soft-deleted more than 30 days ago.
+
+    This task runs daily to clean up storage by:
+    1. Querying PDFUploads where deleted_at < 30 days ago
+    2. Deleting the PDF file from S3
+    3. Deleting the thumbnail file from S3 (if exists)
+    4. Deleting the database record
+
+    Returns:
+        dict with cleanup results:
+            - deleted_count: Number of PDFs permanently deleted
+            - errors: List of errors encountered during cleanup
+    """
+    thirty_days_ago = timezone.now() - timedelta(days=30)
+
+    # Query soft-deleted PDFs older than 30 days
+    pdfs_to_delete = PDFUpload.objects.filter(
+        deleted_at__isnull=False,
+        deleted_at__lt=thirty_days_ago,
+    ).select_related('vault')
+
+    deleted_count = 0
+    errors = []
+
+    # Initialize S3 client if we have PDFs to delete
+    s3_client = None
+    if pdfs_to_delete.exists() and getattr(settings, 'USE_S3', False):
+        s3_client = boto3.client(
+            's3',
+            endpoint_url=getattr(settings, 'AWS_S3_ENDPOINT_URL', None),
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+            region_name=getattr(settings, 'AWS_S3_REGION_NAME', 'auto'),
+        )
+
+    for pdf in pdfs_to_delete:
+        try:
+            # Delete PDF file from S3
+            if s3_client and pdf.file:
+                try:
+                    s3_client.delete_object(
+                        Bucket=settings.AWS_STORAGE_BUCKET_NAME,
+                        Key=pdf.file.name,
+                    )
+                    logger.info(f"Deleted PDF file from S3: {pdf.file.name}")
+                except Exception as s3_exc:
+                    logger.warning(
+                        f"Failed to delete PDF file {pdf.file.name} from S3: {s3_exc}",
+                        exc_info=True,
+                    )
+                    errors.append({
+                        'pdf_id': str(pdf.id),
+                        'error': f"S3 delete failed: {s3_exc}",
+                    })
+
+            # Delete thumbnail from S3 if exists
+            if s3_client and pdf.thumbnail_url:
+                try:
+                    # Extract thumbnail key from URL or construct it
+                    # Thumbnail path: vaults/{vault_id}/thumbnails/{uuid}.jpg
+                    # We need to extract the key from the file.name pattern
+                    # The thumbnail key should be in the same vault folder
+                    file_name = pdf.file.name if pdf.file else ''
+                    if file_name:
+                        # Extract vault_id and construct thumbnail path
+                        # Assuming file_name is like: vaults/{vault_id}/pdfs/{uuid}.pdf
+                        parts = file_name.split('/')
+                        if len(parts) >= 3 and parts[0] == 'vaults':
+                            vault_id_str = parts[1]
+                            # Extract UUID from filename (without .pdf extension)
+                            pdf_uuid = parts[-1].rsplit('.', 1)[0]
+                            thumbnail_key = f"vaults/{vault_id_str}/thumbnails/{pdf_uuid}.jpg"
+
+                            s3_client.delete_object(
+                                Bucket=settings.AWS_STORAGE_BUCKET_NAME,
+                                Key=thumbnail_key,
+                            )
+                            logger.info(f"Deleted thumbnail from S3: {thumbnail_key}")
+                except Exception as thumb_exc:
+                    # Thumbnail deletion is best-effort, log but don't fail
+                    logger.warning(
+                        f"Failed to delete thumbnail for PDF {pdf.id}: {thumb_exc}",
+                        exc_info=True,
+                    )
+
+            # Delete database record
+            pdf_id = str(pdf.id)
+            pdf_filename = pdf.original_filename
+            pdf.delete()
+            deleted_count += 1
+
+            logger.info(
+                f"Permanently deleted PDF {pdf_id} ({pdf_filename}) "
+                f"from vault {pdf.vault_id}"
+            )
+
+        except Exception as exc:
+            logger.error(
+                f"Failed to delete PDF {pdf.id}: {exc}",
+                exc_info=True,
+            )
+            errors.append({
+                'pdf_id': str(pdf.id),
+                'error': str(exc),
+            })
+
+    logger.info(
+        f"Cleanup completed: {deleted_count} PDFs permanently deleted, "
+        f"{len(errors)} errors"
+    )
+
+    return {
+        'deleted_count': deleted_count,
+        'errors': errors,
+    }

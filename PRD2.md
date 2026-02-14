@@ -334,10 +334,10 @@ Create a secure, collaborative Knowledge Vault system where researchers can crea
 **Description:** As a system, I need to prevent removing/downgrading the last owner.
 
 **Acceptance Criteria:**
-- [ ] Before role change or delete, check if user is last OWNER
-- [ ] If last owner, raise ValidationError
-- [ ] Returns 400 with message "Vault must have at least one owner"
-- [ ] Typecheck passes
+- [x] Before role change or delete, check if user is last OWNER
+- [x] If last owner, raise ValidationError
+- [x] Returns 400 with message "Vault must have at least one owner"
+- [x] Typecheck passes
 
 ### US-034: Add ownership transfer logic
 **Description:** As a vault owner, I want to transfer ownership to another member.

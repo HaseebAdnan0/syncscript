@@ -6,8 +6,9 @@ from rest_framework.filters import OrderingFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
 
-from .models import Vault, VaultMembership, AuditLog
+from .models import Vault, VaultMembership, AuditLog, RoleChoices
 from .permissions import IsVaultOwner, IsVaultMember
 from .serializers import VaultSerializer, VaultMembershipSerializer, AuditLogSerializer
 
@@ -106,6 +107,22 @@ class VaultMembershipViewSet(viewsets.ModelViewSet):
         vault_pk = self.kwargs.get('vault_pk')
         vault = Vault.objects.get(pk=vault_pk)
         serializer.save(vault=vault, added_by=self.request.user)
+
+    def perform_destroy(self, instance):
+        """
+        Prevent deletion of the last owner (US-033).
+        """
+        # Check if this is the last owner being deleted
+        if instance.role == RoleChoices.OWNER:
+            owner_count = VaultMembership.objects.filter(
+                vault=instance.vault,
+                role=RoleChoices.OWNER
+            ).count()
+
+            if owner_count <= 1:
+                raise ValidationError("Vault must have at least one owner")
+
+        instance.delete()
 
 
 class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
