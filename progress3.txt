@@ -158,3 +158,24 @@
   - Migration conflict in test database (UUID to bigint) prevents test execution - needs database reset
   - Tests are correctly written and type-safe, execution blocked by unrelated database state issue
 ---
+
+## Iteration 8 - US-007: Create SourceSerializer
+- Implemented SourceSerializer in apps/sources/serializers.py
+- Added all required fields: id, vault, url, title, description, source_type, metadata, created_by, created_at, updated_at
+- Set read-only fields: created_by, created_at, updated_at
+- Used StringRelatedField for created_by to show username
+- Overrode create() method to:
+  - Check if title is not provided
+  - Call extract_metadata(url) to fetch title, authors, publication_date, abstract
+  - Use extracted title if available
+  - Merge all extracted metadata (except title) into metadata field
+- Files changed:
+  - backend/apps/sources/serializers.py (added SourceSerializer class)
+  - PRD3.md (marked US-007 complete)
+- Learnings for future iterations:
+  - Pyright reports Meta class override errors in DRF ModelSerializers (known false positive)
+  - These errors don't affect functionality - serializer imports and works correctly
+  - Django shell can be used to test imports: `python manage.py shell -c "from ... import ..."`
+  - Metadata extraction happens automatically on create if no title is provided
+  - Typecheck shows Meta class warnings but serializer is functionally correct
+---

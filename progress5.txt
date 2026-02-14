@@ -80,3 +80,20 @@
   - Parse query string with urllib.parse.parse_qs, returns dict[str, list[str]]
   - database_sync_to_async decorator enables async database queries in middleware
 ---
+## Iteration 6 - US-007: Implement room join/leave with channel layer
+- Discovered US-007 implementation already present in backend/apps/vaults/consumers.py from previous commit
+- Updated PRD5.md to mark US-007 as complete
+- Verified implementation includes:
+  - group_add on successful connect
+  - group_discard on disconnect
+  - connection.success message with sequence number (placeholder seq=0)
+  - vault_event method for forwarding group messages to WebSocket clients
+- Files changed: PRD5.md
+- Typecheck passes (0 errors, 0 warnings)
+- Learnings for future iterations:
+  - Code implementation may exist from previous commits even if PRD task not marked complete
+  - Always check git log and diff to understand what's already committed
+  - channel_layer.group_add and group_discard require type: ignore[union-attr] for Pyright
+  - vault_event method name matches Channels convention for handling group messages
+  - Sequence number tracking will be implemented with Redis in later tasks (US-016/US-017)
+---

@@ -262,7 +262,7 @@ Establish the Next.js 16 frontend foundation for SyncScript with a Bitcoin DeFi-
 **Description:** As a developer, I want a Zustand store for auth with localStorage persistence so that users stay logged in across sessions.
 
 **Acceptance Criteria:**
-- [ ] Create `src/lib/stores/auth.ts` with:
+- [x] Create `src/lib/stores/auth.ts` with:
   - State interface:
     ```typescript
     interface AuthState {
@@ -278,9 +278,9 @@ Establish the Next.js 16 frontend foundation for SyncScript with a Bitcoin DeFi-
     - `setAccessToken(token)`
   - Use Zustand persist middleware with `localStorage`
   - Handle SSR hydration (avoid mismatch)
-- [ ] Create `src/lib/types/user.ts` with `User` type
-- [ ] Export `useAuthStore` hook
-- [ ] Typecheck passes
+- [x] Create `src/lib/types/user.ts` with `User` type
+- [x] Export `useAuthStore` hook
+- [x] Typecheck passes
 
 ---
 

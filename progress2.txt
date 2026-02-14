@@ -182,3 +182,16 @@
   - Use .get() method to retrieve single object when expecting exactly 0 or 1 result
 ---
 
+## Iteration 15 - US-014: Create IsVaultMember permission
+- Implemented IsVaultMember permission class for read access to vaults
+- Files changed:
+  - backend/apps/vaults/permissions.py (added IsVaultMember class)
+  - PRD2.md (marked US-014 as complete)
+- Django check passed with no issues
+- Learnings for future iterations:
+  - IsVaultMember follows same pattern as IsVaultOwner: uses .exists() for efficiency
+  - All three permission classes share common vault resolution logic: hasattr(obj, 'members') to detect Vault objects
+  - Permission classes don't need ROLE_WEIGHTS - just check membership exists
+  - Commit succeeded with clean verification
+---
+

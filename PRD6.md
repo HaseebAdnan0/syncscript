@@ -97,11 +97,11 @@ Implement cloud file storage for SyncScript using Cloudflare R2 (S3-compatible).
 **Description:** As a vault member, I want to download PDFs from my vault so I can access materials offline.
 
 **Acceptance Criteria:**
-- [ ] Add `GET /api/v1/sources/pdfs/{pdf_id}/download-url/` endpoint
-- [ ] Validate user has viewer/contributor/owner permission on vault
-- [ ] Generate presigned GET URL with content-disposition attachment
-- [ ] Return: download_url, expires_in, filename, file_size
-- [ ] Typecheck passes
+- [x] Add `GET /api/v1/sources/pdfs/{pdf_id}/download-url/` endpoint
+- [x] Validate user has viewer/contributor/owner permission on vault
+- [x] Generate presigned GET URL with content-disposition attachment
+- [x] Return: download_url, expires_in, filename, file_size
+- [x] Typecheck passes
 
 ### US-009: Create PDF serializers
 **Description:** As a developer, I need serializers for PDF upload API responses.
