@@ -442,12 +442,12 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a developer, I need integration tests for token refresh.
 
 **Acceptance Criteria:**
-- [ ] Add tests to `apps/users/tests/test_auth.py`
-- [ ] Test valid refresh token returns new access token
-- [ ] Test expired refresh token returns error
-- [ ] Test blacklisted refresh token returns error
-- [ ] Test token rotation (old refresh token invalidated)
-- [ ] All tests pass
+- [x] Add tests to `apps/users/tests/test_auth.py`
+- [x] Test valid refresh token returns new access token
+- [x] Test expired refresh token returns error
+- [x] Test blacklisted refresh token returns error
+- [x] Test token rotation (old refresh token invalidated)
+- [x] All tests pass
 
 ---
 

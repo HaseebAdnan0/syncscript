@@ -355,26 +355,36 @@ class RefreshTokenView(APIView):
             }, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            # Create RefreshToken instance from the provided token
-            refresh = RefreshToken(refresh_token)
+            # Create RefreshToken instance from the provided token to validate it
+            old_refresh = RefreshToken(refresh_token)
 
-            # Generate new access token
-            access = refresh.access_token
+            # Get the user from the token
+            user_id = old_refresh['user_id']
+            from apps.users.models import User
+            user = User.objects.get(id=user_id)
 
-            # Prepare response with new access token
+            # Blacklist the old refresh token (token rotation)
+            old_refresh.blacklist()
+
+            # Generate new refresh and access tokens
+            new_refresh = RefreshToken.for_user(user)
+            access = new_refresh.access_token
+
+            # Prepare response with new tokens
             response_data = {
                 'access': str(access),
+                'refresh': str(new_refresh),
             }
-
-            # If token rotation is enabled, new refresh token is automatically generated
-            # The new refresh token is available in the same refresh object
-            response_data['refresh'] = str(refresh)
 
             return Response(response_data, status=status.HTTP_200_OK)
 
         except TokenError as e:
             return Response({
                 'error': f'Invalid or expired refresh token: {str(e)}'
+            }, status=status.HTTP_401_UNAUTHORIZED)
+        except User.DoesNotExist:
+            return Response({
+                'error': 'Invalid refresh token: User not found.'
             }, status=status.HTTP_401_UNAUTHORIZED)
 
 

@@ -68,6 +68,12 @@ class VaultConsumer(AsyncWebsocketConsumer):
             await self._send_error_and_close('RATE_LIMIT_EXCEEDED', 'Connection limit exceeded (max 5 per user)')
             return
 
+        # Enforce room limit per vault (Layer 2)
+        room_available = await self._check_room_limit(self.vault_id)
+        if not room_available:
+            await self._send_error_and_close('ROOM_FULL', 'Vault room is full (max 100 connections)')
+            return
+
         # Accept connection
         await self.accept()
 
@@ -364,6 +370,31 @@ class VaultConsumer(AsyncWebsocketConsumer):
             await self.send(text_data=json.dumps(event))
 
         logger.info(f"Replayed {len(filtered_events)} events to user {self.user.id} (since_seq={since_seq})")
+
+    async def _check_room_limit(self, vault_id: int) -> bool:
+        """
+        Check if vault room has reached connection limit.
+
+        Layer 2 rate limiting: Limit connections per vault to prevent overload.
+
+        Args:
+            vault_id: Vault ID to check
+
+        Returns:
+            True if room has capacity, False if room is full (>= 100 connections)
+        """
+        presence_key = f"vault_{vault_id}:presence"
+        redis_conn = cache.client.get_client()  # type: ignore[attr-defined]
+
+        # Count current connections in presence set
+        connection_count = redis_conn.zcard(presence_key)
+
+        # If >= 100 connections, room is full
+        if connection_count >= 100:
+            logger.warning(f"Vault {vault_id} room is full: {connection_count} connections")
+            return False
+
+        return True
 
     async def _check_and_enforce_connection_limit(self, user_id: int) -> bool:
         """

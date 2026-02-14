@@ -431,10 +431,26 @@ class PDFUploadViewSet(viewsets.ModelViewSet):
             )
         except Exception as ws_exc:
             # Log but don't fail the request if WebSocket broadcast fails
-            import logging
-            logger = logging.getLogger(__name__)
             logger.warning(
                 f"Failed to send WebSocket notification for deleted PDF {pdf_upload.id}: {ws_exc}",
+                exc_info=True,
+            )
+
+        # Log pdf.deleted event to audit log (US-021)
+        try:
+            AuditLog.objects.create(
+                vault=pdf_upload.vault,
+                actor=request.user,
+                action='pdf.deleted',
+                metadata={
+                    'pdf_id': str(pdf_upload.id),
+                    'filename': pdf_upload.original_filename,
+                }
+            )
+        except Exception as audit_exc:
+            # Log but don't fail the request if audit logging fails
+            logger.warning(
+                f"Failed to create audit log for PDF deletion {pdf_upload.id}: {audit_exc}",
                 exc_info=True,
             )
 
