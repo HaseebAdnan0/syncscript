@@ -412,3 +412,29 @@
   - Python syntax check passed (ast.parse validation)
   - Django system check passed (6 security warnings expected in dev mode)
 ---
+
+## Iteration 18 - US-018: Create cleanup_orphaned_multipart_uploads Celery task
+- Task was already implemented in a previous session (found in commit 87cb5b0)
+- Verified implementation in backend/apps/sources/tasks.py:
+  - cleanup_orphaned_multipart_uploads() as @shared_task on line 437
+  - Lists all in-progress multipart uploads via s3_client.list_multipart_uploads()
+  - Calculates 24-hour threshold using timezone.now() - timedelta(hours=24)
+  - Aborts uploads where Initiated < threshold via s3_client.abort_multipart_upload()
+  - Returns dict with aborted_count and errors list for monitoring
+  - Comprehensive logging for each aborted upload and errors
+  - Only runs when USE_S3 flag is enabled (graceful skip for local development)
+- PRD6.md already marked US-018 complete in HEAD
+- Files verified:
+  - backend/apps/sources/tasks.py (implementation exists, lines 437-540)
+  - PRD6.md (already marked complete)
+- Learnings for future iterations:
+  - Always check git log first: git log --oneline -10
+  - Always check git show HEAD:<file> to compare with current commit
+  - Previous iterations may complete multiple tasks in a single commit
+  - S3 list_multipart_uploads returns all in-progress uploads for bucket
+  - boto3 returns timezone-aware datetime objects from S3 API (Initiated field)
+  - Comparison with threshold is direct: initiated < threshold (no conversion needed)
+  - abort_multipart_upload requires Bucket, Key, and UploadId parameters
+  - Task is idempotent and safe to run repeatedly (S3 operations handle missing uploads)
+  - Django system check passes (6 security warnings expected in dev mode)
+---
