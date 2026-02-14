@@ -2,6 +2,7 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
 from celery.result import AsyncResult
 from apps.sources.models import Source
@@ -10,6 +11,11 @@ from apps.citations.models import CitationFormat
 from apps.citations.serializers import CitationRequestSerializer, CitationResponseSerializer
 from apps.citations.services.structured_citation import has_complete_metadata, generate_structured_citation
 from apps.citations.tasks import generate_ai_citation_task
+from apps.citations.rate_limiting import (
+    check_ai_citation_rate_limit,
+    increment_ai_citation_counter,
+    get_ai_citation_quota,
+)
 
 
 class CitationViewSet(viewsets.ViewSet):
@@ -131,6 +137,29 @@ class CitationViewSet(viewsets.ViewSet):
 
             return Response(response_serializer.data, status=status.HTTP_200_OK)
         else:
+            # Check rate limits for AI citations
+            is_allowed, error_message = check_ai_citation_rate_limit(request.user, source.vault)
+            if not is_allowed:
+                # Get quota information for response headers
+                quota = get_ai_citation_quota(request.user, source.vault)
+
+                # Calculate seconds until midnight for Retry-After header
+                from datetime import datetime, timedelta
+                now = datetime.now()
+                midnight = (now + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+                retry_after = int((midnight - now).total_seconds())
+
+                # Return 429 Too Many Requests with quota info
+                response = Response({
+                    'error': error_message,
+                    'quota': quota,
+                }, status=status.HTTP_429_TOO_MANY_REQUESTS)
+                response['Retry-After'] = str(retry_after)
+                return response
+
+            # Increment counters before processing
+            increment_ai_citation_counter(request.user.id, source.vault.id)
+
             # Use AI citation (asynchronous via Celery)
             task = generate_ai_citation_task.delay(source.id, citation_format_str)  # type: ignore[misc]
 
@@ -163,7 +192,6 @@ class CitationViewSet(viewsets.ViewSet):
         ).first()
 
         if not membership:
-            from rest_framework.exceptions import PermissionDenied
             raise PermissionDenied("You do not have permission to access this vault.")
 
     def _get_cached_citation(self, source, citation_format):

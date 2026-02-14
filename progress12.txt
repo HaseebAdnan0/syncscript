@@ -484,3 +484,38 @@ Learnings for future iterations:
   - Visual feedback (spinner, checkmark, X) improves perceived performance
 ---
 
+
+## Iteration 18 - US-018: Create account linking confirmation modal
+- Created AccountLinkingModal component in components/features/auth/AccountLinkingModal.tsx
+- Modal displays when user tries to OAuth link with email that already exists
+- Shows provider-specific icon (Google official colors, GitHub white Octocat)
+- Header: "Link {Provider} Account" with explanation message
+- Password input field with show/hide toggle button
+- Cancel and Link Account buttons (styled with Bitcoin DeFi aesthetic)
+- Form validation: requires password before enabling submit
+- Calls POST /api/v1/auth/oauth/link/ with password and provider
+- Shows loading state during API call (button text: "Linking...")
+- On success: redirects to /vaults dashboard
+- On error: displays inline error message in red error card
+- Error handling: shows API error message or fallback "Failed to link account"
+- Fixed z-50 overlay to appear above all content
+- Full-width modal (max-w-md) centered on screen
+- Frontend typecheck passes
+- Committed successfully
+
+Files changed:
+  - frontend/src/components/features/auth/AccountLinkingModal.tsx (created)
+  - PRD12.md (marked US-018 complete except browser verification)
+
+Learnings for future iterations:
+  - Modal pattern: fixed inset-0 overlay with centered content container
+  - providerConfig object pattern for provider-specific icons and names
+  - Google icon uses multi-color SVG (official brand colors: #4285F4, #34A853, #FBBC05, #EA4335)
+  - GitHub icon uses fill-white class for single-color SVG
+  - Password show/hide toggle positioned absolute right-3 top-1/2 -translate-y-1/2
+  - Error display: rounded-lg border with red-500/20 border and red-500/10 background
+  - Disabled state for buttons: cursor-not-allowed opacity-50 disabled:hover:scale-100
+  - Router.push() for client-side navigation after successful API call
+  - Credentials: "include" needed for httpOnly cookie authentication
+  - Loading state prevents duplicate submissions and provides user feedback
+---

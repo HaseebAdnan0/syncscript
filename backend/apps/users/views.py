@@ -35,7 +35,7 @@ from .serializers import (
 )
 from .tokens import generate_verification_token, verify_token
 from .emails import send_verification_email, send_password_reset_email
-from .tasks import send_verification_email_task, send_password_reset_email_task
+from .tasks import send_verification_email_task, send_password_reset_email_task, send_welcome_email_task
 
 logger = logging.getLogger(__name__)
 
@@ -268,9 +268,20 @@ class VerifyEmailView(APIView):
                 'error': 'Invalid or expired verification token.'
             }, status=status.HTTP_400_BAD_REQUEST)
 
+        # Check if this is first-time verification
+        is_first_verification = not user.email_verified
+
         # Set email_verified = True
         user.email_verified = True
         user.save(update_fields=['email_verified'])
+
+        # Send welcome email only on first-time verification
+        if is_first_verification:
+            try:
+                send_welcome_email_task.delay(user.id)
+            except Exception as e:
+                # Log error but don't fail verification if Celery unavailable
+                logger.warning(f"Failed to queue welcome email for user {user.id}: {str(e)}")
 
         return Response({
             'message': 'Email verified successfully. You can now log in.',

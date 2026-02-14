@@ -202,12 +202,12 @@ Create a comprehensive user dashboard as the primary logged-in landing page for 
 **Description:** As a user, I want the analytics charts organized in a visually appealing section so I can quickly understand my research metrics.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/dashboard/AnalyticsSection.tsx`
-- [ ] Section title: "Analytics"
-- [ ] Responsive grid layout: 2 columns on desktop, 1 on mobile
-- [ ] Contains: SourcesTimelineChart, SourceTypesChart, TopCollaborators
-- [ ] Cards have consistent styling (dark bg, border, padding)
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/dashboard/AnalyticsSection.tsx`
+- [x] Section title: "Analytics"
+- [x] Responsive grid layout: 2 columns on desktop, 1 on mobile
+- [x] Contains: SourcesTimelineChart, SourceTypesChart, TopCollaborators
+- [x] Cards have consistent styling (dark bg, border, padding)
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-015: Create quick actions FAB
