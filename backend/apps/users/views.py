@@ -141,35 +141,6 @@ def resend_verification(request):
         }, status=status.HTTP_200_OK)
 
 
-def send_verification_email(user):
-    """
-    Send email verification link to user.
-    """
-    from django.template.loader import render_to_string
-
-    verification_url = f"{settings.SITE_URL}/verify-email?token={user.email_verification_token}"
-
-    context = {
-        'user': user,
-        'verification_url': verification_url,
-    }
-
-    # Render HTML and plain text versions
-    html_message = render_to_string('emails/verification_email.html', context)
-    plain_message = render_to_string('emails/verification_email.txt', context)
-
-    subject = 'Verify your SyncScript account'
-
-    send_mail(
-        subject=subject,
-        message=plain_message,
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        recipient_list=[user.email],
-        fail_silently=False,
-        html_message=html_message,
-    )
-
-
 @method_decorator(ratelimit(key='ip', rate='5/m', method='POST', block=True), name='dispatch')
 class CustomTokenObtainPairView(TokenObtainPairView):
     """

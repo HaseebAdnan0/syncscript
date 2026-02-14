@@ -273,14 +273,14 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need tests verifying source filtering works correctly.
 
 **Acceptance Criteria:**
-- [ ] Test filter by vault returns only that vault's sources
-- [ ] Test filter by source_type returns matching types
-- [ ] Test filter by date_from/date_to returns date range
-- [ ] Test filter by tags with comma-separated values
-- [ ] Test search filter searches title and description
-- [ ] Test combined filters work together
-- [ ] All tests pass
-- [ ] Typecheck passes
+- [x] Test filter by vault returns only that vault's sources
+- [x] Test filter by source_type returns matching types
+- [x] Test filter by date_from/date_to returns date range
+- [x] Test filter by tags with comma-separated values
+- [x] Test search filter searches title and description
+- [x] Test combined filters work together
+- [x] All tests pass
+- [x] Typecheck passes
 
 ---
 

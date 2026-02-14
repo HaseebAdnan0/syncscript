@@ -224,6 +224,15 @@ CACHES = {
     }
 }
 
+# Override cache backend for tests (use dummy cache to avoid Redis dependency)
+import sys
+if 'test' in sys.argv or 'test_coverage' in sys.argv:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        }
+    }
+
 # Rate limiting
 RATELIMIT_ENABLE = True
 RATELIMIT_USE_CACHE = 'default'

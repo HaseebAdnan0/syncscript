@@ -402,12 +402,12 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a developer, I need integration tests for the registration flow.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/users/tests/test_auth.py`
-- [ ] Test successful registration returns 201
-- [ ] Test registration creates unverified user
-- [ ] Test duplicate email returns 400
-- [ ] Test weak password returns 400
-- [ ] All tests pass
+- [x] Create `apps/users/tests/test_auth.py`
+- [x] Test successful registration returns 201
+- [x] Test registration creates unverified user
+- [x] Test duplicate email returns 400
+- [x] Test weak password returns 400
+- [x] All tests pass
 
 ---
 

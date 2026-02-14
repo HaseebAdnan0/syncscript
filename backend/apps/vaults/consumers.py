@@ -132,6 +132,10 @@ class VaultConsumer(AsyncWebsocketConsumer):
             if message_type == 'heartbeat':
                 # Update user's timestamp in presence tracking
                 await self._update_presence(self.user.id, self.vault_id)
+            elif message_type == 'replay_request':
+                # Replay missed events since given sequence number
+                since_seq = data.get('since_seq', 0)
+                await self._replay_events(since_seq)
             else:
                 logger.warning(f"Unknown message type: {message_type}")
 
@@ -308,3 +312,41 @@ class VaultConsumer(AsyncWebsocketConsumer):
                 }
             }
         )
+
+    async def _replay_events(self, since_seq: int) -> None:
+        """
+        Replay events from Redis buffer to client after reconnection.
+
+        Fetches events from Redis list and sends those with sequence number
+        greater than since_seq to the client in chronological order.
+
+        Args:
+            since_seq: Sequence number of last event client received
+        """
+        events_key = f"vault_{self.vault_id}:events"
+        redis_conn = cache.client.get_client()  # type: ignore[attr-defined]
+
+        # Fetch all events from Redis list (stored newest-first with lpush)
+        events_json = redis_conn.lrange(events_key, 0, -1)
+
+        # Parse events and filter by sequence number
+        filtered_events = []
+        for event_data in events_json:
+            try:
+                event = json.loads(event_data)
+                event_seq = event.get('seq', 0)
+
+                # Include events with seq > since_seq
+                if event_seq > since_seq:
+                    filtered_events.append(event)
+            except json.JSONDecodeError:
+                logger.error(f"Failed to parse event from Redis: {event_data}")
+
+        # Events are stored newest-first, so reverse to get chronological order
+        filtered_events.reverse()
+
+        # Send filtered events to client
+        for event in filtered_events:
+            await self.send(text_data=json.dumps(event))
+
+        logger.info(f"Replayed {len(filtered_events)} events to user {self.user.id} (since_seq={since_seq})")
