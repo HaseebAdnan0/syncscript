@@ -496,3 +496,31 @@ Learnings for future iterations:
 - Empty states guide users on minimum requirements (2+ sources for insights)
 ---
 
+## Iteration 17 - US-016: Create ThemeCloud component
+- Created ThemeCloud component for visualizing research themes as weighted tag cloud
+- Implemented dynamic font sizing based on weight normalization (0.875rem to 1.5rem range)
+- Orange gradient coloring with intensity calculated from weight (20% to 50% opacity)
+- Hover tooltip showing theme name, source count, and weight value
+- Clickable tags with optional onClick prop for future filtering functionality
+- Smooth animations on hover: scale(1.1) + translateY(-4px) for lift effect
+- Empty state handling with "No themes identified yet" message
+- Imported Theme type from ResearchInsightsPanel to avoid type duplication
+- Bitcoin DeFi design: gradient backgrounds, orange border accents, animated tooltips with arrows
+- All props fully typed with TypeScript interfaces
+- Commit successful: 3c658bc
+
+Files changed:
+- frontend/src/components/features/ai/ThemeCloud.tsx (created)
+- PRD15.md (marked US-016 complete)
+
+Learnings for future iterations:
+- Weight normalization creates better visual hierarchy: (weight - min) / (max - min)
+- Font size range should be reasonable: 0.875rem (14px) to 1.5rem (24px) works well
+- Gradient intensity should vary with weight for visual reinforcement
+- Tooltip positioning: absolute bottom-full with translate-x-1/2 centers it above tag
+- Tooltip arrow: border-t-4 border-l/r-transparent creates downward triangle
+- Hover animations improve UX: combine scale + translate for depth effect
+- Type reuse: import shared types to avoid duplication and maintain consistency
+- onClick is optional to allow component use as display-only or interactive
+---
+
