@@ -131,16 +131,16 @@ Add social authentication to SyncScript using Google and GitHub OAuth providers.
 **Description:** As a user with an existing password account, I want to link my OAuth provider after confirming my password.
 
 **Acceptance Criteria:**
-- [ ] Create `POST /api/v1/auth/oauth/link/` endpoint
-- [ ] Accept JSON body: `{ password: string, provider: 'google' | 'github' }`
-- [ ] Verify user password is correct
-- [ ] Retrieve OAuth data from session (stored during callback)
-- [ ] Create SocialAccount linking OAuth provider to existing user
-- [ ] Clear OAuth session data after successful link
-- [ ] Generate new JWT tokens and return them
-- [ ] Return 401 if password incorrect
-- [ ] Return 400 if no pending OAuth data in session
-- [ ] Typecheck passes
+- [x] Create `POST /api/v1/auth/oauth/link/` endpoint
+- [x] Accept JSON body: `{ password: string, provider: 'google' | 'github' }`
+- [x] Verify user password is correct
+- [x] Retrieve OAuth data from session (stored during callback)
+- [x] Create SocialAccount linking OAuth provider to existing user
+- [x] Clear OAuth session data after successful link
+- [x] Generate new JWT tokens and return them
+- [x] Return 401 if password incorrect
+- [x] Return 400 if no pending OAuth data in session
+- [x] Typecheck passes
 
 ---
 

@@ -208,3 +208,26 @@ vaults/{vault_id}/thumbnails/{uuid}.jpg
   - Typecheck passes (no new errors in tasks.py)
 
 ---
+
+## Iteration 8 - Add abort_multipart_upload function (US-008)
+- Added `abort_multipart_upload(file_key: str, upload_id: str) -> None` to backend/apps/sources/storage.py (lines 252-280)
+- Function implementation:
+  - Calls `s3_client.abort_multipart_upload()` with bucket, key, upload_id
+  - Prints log message on successful abort
+  - Handles exceptions gracefully with try/except
+  - Re-raises non-NoSuchUpload errors (if upload already doesn't exist, silently succeed)
+  - Logs errors but doesn't raise for best-effort cleanup
+- Follows same pattern as other storage.py functions (get_s3_client, boto3 operations)
+- Function signature and docstring match acceptance criteria
+- Files changed:
+  - backend/apps/sources/storage.py
+  - PRD13.md
+  - progress13.txt
+- Learnings for future iterations:
+  - Function verified to import successfully in Django shell
+  - Typecheck passes (mypy finds no issues)
+  - Test database drop issue is pre-existing and unrelated to this change
+  - NoSuchUpload error should be silently handled (upload already aborted or doesn't exist)
+  - abort_multipart_upload is a cleanup operation, so errors shouldn't block execution
+
+---
