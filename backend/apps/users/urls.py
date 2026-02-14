@@ -15,6 +15,7 @@ from .views import (
     DemoVaultResetView,
     GoogleOAuthRedirectView,
     GitHubOAuthRedirectView,
+    LinkOAuthAccountView,
 )
 
 app_name = 'users'
@@ -44,5 +45,6 @@ urlpatterns = [
     # OAuth endpoints (PRD12)
     path('auth/google/', GoogleOAuthRedirectView.as_view(), name='google-oauth'),
     path('auth/github/', GitHubOAuthRedirectView.as_view(), name='github-oauth'),
+    path('auth/oauth/link/', LinkOAuthAccountView.as_view(), name='oauth-link'),
     # Note: OAuth callbacks are handled by allauth URLs in config/urls.py
 ]

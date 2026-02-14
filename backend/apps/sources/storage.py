@@ -247,3 +247,42 @@ def complete_multipart_upload(
         UploadId=upload_id,
         MultipartUpload={'Parts': formatted_parts}
     )
+
+
+def abort_multipart_upload(
+    file_key: str,
+    upload_id: str
+) -> None:
+    """
+    Abort a multipart upload to S3 and free associated resources.
+
+    This function should be called when a multipart upload fails or is cancelled
+    to clean up partial uploads and prevent orphaned multipart upload records.
+
+    Args:
+        file_key: S3 object key where file was being uploaded
+        upload_id: S3 multipart upload ID from initiate_multipart_upload
+
+    Example:
+        >>> abort_multipart_upload(
+        ...     file_key='vaults/abc123/pdfs/uuid.pdf',
+        ...     upload_id='xyz789'
+        ... )
+        >>> # Multipart upload is cancelled, partial data is deleted
+    """
+    s3_client = get_s3_client()
+
+    try:
+        # Abort the multipart upload
+        s3_client.abort_multipart_upload(
+            Bucket=settings.AWS_STORAGE_BUCKET_NAME,
+            Key=file_key,
+            UploadId=upload_id
+        )
+        print(f"Aborted multipart upload: {file_key} (upload_id: {upload_id})")
+    except Exception as e:
+        # Log the error but don't raise - best effort cleanup
+        print(f"Error aborting multipart upload {upload_id} for {file_key}: {str(e)}")
+        # Re-raise if it's a critical error that needs handling
+        if "NoSuchUpload" not in str(e):
+            raise

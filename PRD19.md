@@ -98,10 +98,10 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a user, I want to mark all my notifications as read at once.
 
 **Acceptance Criteria:**
-- [ ] POST `/api/v1/notifications/read-all/` marks all unread as read
-- [ ] Only affects authenticated user's notifications
-- [ ] Return count of notifications marked
-- [ ] Typecheck passes
+- [x] POST `/api/v1/notifications/read-all/` marks all unread as read
+- [x] Only affects authenticated user's notifications
+- [x] Return count of notifications marked
+- [x] Typecheck passes
 
 ---
 

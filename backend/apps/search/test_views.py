@@ -38,12 +38,14 @@ class SearchViewTest(TestCase):
             owner=self.user2
         )
 
-        # Add user1 as contributor to vault1
-        VaultMembership.objects.create(
+        # Add user1 as contributor to vault1 (only if not exists)
+        VaultMembership.objects.get_or_create(
             vault=self.vault1,
             user=self.user1,
-            role=RoleChoices.CONTRIBUTOR,
-            added_by=self.user1
+            defaults={
+                'role': RoleChoices.CONTRIBUTOR,
+                'added_by': self.user1
+            }
         )
 
         # Create sources

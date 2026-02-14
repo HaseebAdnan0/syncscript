@@ -594,10 +594,11 @@ class DemoVaultResetView(APIView):
 
     def post(self, request):
         """Delete existing demo vault and create fresh one."""
-        from apps.vaults.models import Vault, AuditLog
+        from apps.vaults.models import Vault, VaultMembership
         from apps.vaults.serializers import VaultSerializer
         from .services.onboarding import create_demo_vault
         from django.db.models.signals import post_delete
+        from apps.vaults import signals as vault_signals
 
         user = request.user
 
@@ -609,12 +610,16 @@ class DemoVaultResetView(APIView):
         ).first()
 
         if demo_vault:
-            # Manually delete audit logs first to avoid FK constraint violations
-            # when membership deletion signals try to create audit logs
-            AuditLog.objects.filter(vault=demo_vault).delete()
+            # Temporarily disconnect the membership deletion signal to avoid
+            # audit log FK constraint violations during cascade deletion
+            post_delete.disconnect(vault_signals.log_membership_removed, sender=VaultMembership)
 
-            # Delete vault (cascade will delete sources, annotations, memberships)
-            demo_vault.delete()
+            try:
+                # Delete vault (cascade will delete sources, annotations, memberships, audit logs)
+                demo_vault.delete()
+            finally:
+                # Reconnect the signal
+                post_delete.connect(vault_signals.log_membership_removed, sender=VaultMembership)
 
         # Create fresh demo vault from template
         new_vault = create_demo_vault(user)
@@ -688,3 +693,126 @@ class GitHubOAuthRedirectView(APIView):
         # Use allauth's GitHub OAuth view to redirect to authorization screen
         from allauth.socialaccount.providers.github.views import oauth2_login
         return oauth2_login(request)
+
+
+class LinkOAuthAccountView(APIView):
+    """
+    Link OAuth provider to existing account with password confirmation (US-009).
+
+    POST /api/v1/auth/oauth/link/
+    Body: { password: string, provider: 'google' | 'github' }
+
+    Links pending OAuth provider (stored in session) to existing user account
+    after validating password.
+    """
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        """Link OAuth provider to existing account."""
+        password = request.data.get('password')
+        provider = request.data.get('provider')
+
+        # Validate inputs
+        if not password or not provider:
+            return Response({
+                'error': 'Password and provider are required'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        if provider not in ['google', 'github']:
+            return Response({
+                'error': 'Invalid provider. Must be "google" or "github"'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Check for pending OAuth data in session
+        pending_oauth = request.session.get('pending_oauth')
+        oauth_needs_linking = request.session.get('oauth_needs_linking', False)
+
+        if not pending_oauth or not oauth_needs_linking:
+            return Response({
+                'error': 'No pending OAuth data found. Please restart the OAuth flow'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Verify provider matches
+        if pending_oauth.get('provider') != provider:
+            return Response({
+                'error': 'Provider mismatch'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Get email from pending OAuth data
+        email = pending_oauth.get('email')
+        if not email:
+            return Response({
+                'error': 'No email found in OAuth data'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Get user by email
+        try:
+            user = User.objects.get(email__iexact=email)
+        except User.DoesNotExist:
+            return Response({
+                'error': 'User not found'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Verify password
+        if not user.check_password(password):
+            return Response({
+                'error': 'Incorrect password'
+            }, status=status.HTTP_401_UNAUTHORIZED)
+
+        # Create SocialAccount linking OAuth provider to user
+        from allauth.socialaccount.models import SocialAccount
+
+        # Check if social account already exists
+        social_account = SocialAccount.objects.filter(
+            user=user,
+            provider=provider
+        ).first()
+
+        if social_account:
+            # Already linked - just clear session and login
+            pass
+        else:
+            # Create new SocialAccount
+            social_account = SocialAccount.objects.create(
+                user=user,
+                provider=provider,
+                uid=pending_oauth.get('uid'),
+                extra_data=pending_oauth.get('extra_data', {})
+            )
+
+        # Clear OAuth session data
+        request.session.pop('pending_oauth', None)
+        request.session.pop('oauth_needs_linking', None)
+
+        # Generate JWT tokens
+        refresh = RefreshToken.for_user(user)
+        access = refresh.access_token
+
+        # Build response with tokens
+        response = Response({
+            'message': 'OAuth provider linked successfully',
+            'access_token': str(access),
+            'refresh_token': str(refresh),
+            'user': UserSerializer(user).data
+        }, status=status.HTTP_200_OK)
+
+        # Set tokens in httpOnly cookies
+        response.set_cookie(
+            key='access_token',
+            value=str(access),
+            httponly=True,
+            secure=not settings.DEBUG,
+            samesite='Lax',
+            max_age=60 * 15,  # 15 minutes
+        )
+
+        response.set_cookie(
+            key='refresh_token',
+            value=str(refresh),
+            httponly=True,
+            secure=not settings.DEBUG,
+            samesite='Lax',
+            max_age=60 * 60 * 24 * 7,  # 7 days
+        )
+
+        return response
