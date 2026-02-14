@@ -28,3 +28,17 @@
   - Django settings can be tested with python -c import to verify configuration
   - REDIS_URL should follow format: redis://host:port/db
 ---
+
+## Iteration 3 - US-003: Create ASGI application entry point
+- Updated config/asgi.py to use ProtocolTypeRouter
+  - HTTP protocol routes to django_asgi_app (get_asgi_application)
+  - WebSocket protocol routes through AllowedHostsOriginValidator
+  - Added placeholder comments for JWTAuthMiddleware and websocket_urlpatterns (to be implemented in later tasks)
+- Files changed: backend/config/asgi.py
+- Verified ASGI application loads successfully with both 'http' and 'websocket' protocol handlers
+- Learnings for future iterations:
+  - Django ASGI app must be initialized BEFORE importing code that uses ORM models
+  - ProtocolTypeRouter requires dictionary mapping protocol names to handlers
+  - Missing type stubs for channels is expected - don't need to install types-channels
+  - Can verify ASGI application by importing and checking application_mapping.keys()
+---
