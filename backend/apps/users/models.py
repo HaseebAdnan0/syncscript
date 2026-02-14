@@ -19,6 +19,21 @@ class User(AbstractUser):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # Onboarding fields
+    onboarding_completed = models.BooleanField(default=False)
+    onboarding_step = models.CharField(max_length=50, blank=True, null=True)
+    onboarding_data = models.JSONField(default=dict)
+    onboarding_path = models.CharField(
+        max_length=20,
+        blank=True,
+        null=True,
+        choices=[
+            ('guided', 'Guided'),
+            ('demo', 'Demo'),
+            ('skipped', 'Skipped'),
+        ]
+    )
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 

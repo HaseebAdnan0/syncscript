@@ -19,12 +19,12 @@ Create a comprehensive new user onboarding experience for SyncScript that guides
 **Description:** As a developer, I need to store onboarding state on the user model so we can track progress and resume from last step.
 
 **Acceptance Criteria:**
-- [ ] Add `onboarding_completed` BooleanField (default False)
-- [ ] Add `onboarding_step` CharField (max 50, nullable) to track current step
-- [ ] Add `onboarding_data` JSONField (default dict) for path choice and metadata
-- [ ] Add `onboarding_path` CharField choices: 'guided', 'demo', 'skipped' (nullable)
-- [ ] Generate and run migration successfully
-- [ ] Typecheck passes
+- [x] Add `onboarding_completed` BooleanField (default False)
+- [x] Add `onboarding_step` CharField (max 50, nullable) to track current step
+- [x] Add `onboarding_data` JSONField (default dict) for path choice and metadata
+- [x] Add `onboarding_path` CharField choices: 'guided', 'demo', 'skipped' (nullable)
+- [x] Generate and run migration successfully
+- [x] Typecheck passes
 
 ### US-002: Create onboarding progress API endpoint
 **Description:** As a frontend developer, I need an API endpoint to update onboarding progress so the UI can persist state.
