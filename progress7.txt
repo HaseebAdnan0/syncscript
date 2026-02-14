@@ -242,3 +242,23 @@
   - npm run build compiles and type-checks the entire Next.js app
   - Registration page already had all implementation from US-012 (validation, submission, password strength)
 ---
+
+## Iteration 14 - US-013: Build forgot password page
+- Created forgot password page at frontend/src/app/(auth)/forgot-password/page.tsx
+- Implemented email validation (required, valid format)
+- Integrated with /auth/password-reset/ API endpoint
+- Shows success message after sending reset link
+- Displays error toast on API failure
+- Files changed:
+  - frontend/src/app/(auth)/forgot-password/page.tsx (new file)
+  - PRD7.md (marked US-013 complete)
+- Learnings for future iterations:
+  - Forgot password page follows same pattern as login/register (GlassCard, FormInput, GradientButton)
+  - Success state shows green-themed message box with user's email confirmation
+  - isSuccess state switches UI between form and success message
+  - Email validation uses same regex pattern as login/register pages
+  - API call to /auth/password-reset/ expects { email } in request body
+  - Toast notifications used for both success and error feedback
+  - Link back to /login included in both form and success states
+  - Build passes successfully with no TypeScript errors
+---
