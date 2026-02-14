@@ -308,3 +308,32 @@ Learnings for future iterations:
 - Query key for sources includes vault ID for proper cache invalidation
 - Always fix unrelated TypeScript errors to ensure clean typecheck pass
 ---
+
+## Iteration 12 - US-013: Create BulkImportModal component
+- Created BulkImportModal at frontend/src/components/features/sources/BulkImportModal.tsx
+- Large textarea (10 rows) for pasting multiple URLs (one per line)
+- "Parse URLs" button with loading state (Loader2 icon + spinner)
+- URL validation using regex: /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/
+- Shows count of valid/invalid URLs in glass morphism summary box
+- Invalid URLs highlighted in red boxes (bg-red-500/10 border-red-500/30) with error message
+- Invalid list scrollable (max-h-32 overflow-y-auto) for long lists
+- "Continue with N URLs" button appears after parsing, disabled if no valid URLs
+- Modal doesn't auto-close - passes parsed URLs to parent via onParsedUrls callback
+- Exports ParsedUrl interface for use in next component (BulkImportPreviewList)
+- Typecheck passes ✓
+
+Files changed:
+- frontend/src/components/features/sources/BulkImportModal.tsx (new)
+- PRD9.md (marked US-013 complete except browser verification)
+
+Learnings for future iterations:
+- URL validation regex supports HTTP/HTTPS with common URL patterns
+- Textarea placeholder uses &#10; for newlines in attribute (shows example format)
+- Summary box uses Link icon with orange accent (#F7931A) to match design system
+- Invalid URL list needs max-height + overflow-y-auto to prevent modal from growing too large
+- ParsedUrl interface includes url, isValid, error? for structured validation results
+- Modal workflow: enter URLs → parse → show results → continue button → parent handles preview
+- Component doesn't close automatically - parent controls next step (preview or close)
+- font-mono class used for URL display for better readability
+- "Continue" button shows count dynamically: "Continue with {count} URL{s}"
+---

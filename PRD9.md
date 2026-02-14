@@ -209,13 +209,13 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 **Description:** As a user, I want to see a preview list of URLs before bulk importing so I can review and remove unwanted items.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/sources/BulkImportPreviewList.tsx`
-- [ ] Lists each valid URL with checkbox for selection
-- [ ] Shows validation status icon per URL (valid=green check, invalid=red X)
-- [ ] "Select All" / "Deselect All" toggle
-- [ ] Remove button per item
-- [ ] "Import Selected" button with count
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/sources/BulkImportPreviewList.tsx`
+- [x] Lists each valid URL with checkbox for selection
+- [x] Shows validation status icon per URL (valid=green check, invalid=red X)
+- [x] "Select All" / "Deselect All" toggle
+- [x] Remove button per item
+- [x] "Import Selected" button with count
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---
