@@ -719,3 +719,37 @@ Learnings for future iterations:
 - DRF serializers have pyright typing issues (not related to our changes)
 - Test database reuse with --keepdb flag speeds up test runs
 ---
+
+## Iteration 18 - US-014: Add vault citation format override
+- Added `default_citation_format` field to Vault model
+- Field is nullable CharField with choices for 6 citation formats (apa7, mla9, chicago17, bibtex, ieee, harvard)
+- Created migration 0006_add_default_citation_format
+- Updated VaultSerializer to include default_citation_format in fields list
+- Vault updates via PATCH require owner permission (existing permission structure)
+- Added 7 comprehensive tests in VaultViewSetTest class:
+  - test_vault_citation_format_initially_null: new vaults have null format
+  - test_owner_can_set_vault_citation_format: owner can set format to apa7
+  - test_update_vault_citation_format_all_formats: test all 6 formats
+  - test_clear_vault_citation_format: can clear by setting to null (using format='json')
+  - test_invalid_vault_citation_format_rejected: rejects invalid formats
+  - test_contributor_cannot_set_vault_citation_format: contributors get 403
+- Tests: All 6 tests pass
+- Typecheck: 0 errors on models.py and serializers.py (Pyright import warnings are pre-existing)
+- Files changed:
+  - backend/apps/vaults/models.py: Added default_citation_format field
+  - backend/apps/vaults/migrations/0006_add_default_citation_format.py: New migration
+  - backend/apps/vaults/serializers.py: Updated VaultSerializer fields
+  - backend/apps/vaults/tests/test_views.py: Added 7 tests to VaultViewSetTest
+  - PRD14.md: Marked US-014 complete
+- Committed: (next)
+
+Learnings for future iterations:
+- Vault settings follow existing permission model: only owners can update vault metadata
+- DRF test client requires format='json' parameter to send None values in PATCH requests
+- VaultViewSet already supports PATCH via ModelViewSet inheritance
+- Permission structure in get_permissions(): update/partial_update/destroy require IsVaultOwner
+- CharField with choices and null=True allows "no preference" state
+- Vault settings hierarchy documented: vault override > user preference > none
+- When testing None values with APIClient, use format='json' to avoid encoding errors
+- Test pattern: verify field is null initially, test setting values, test clearing values
+---
