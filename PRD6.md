@@ -53,11 +53,11 @@ Implement cloud file storage for SyncScript using Cloudflare R2 (S3-compatible).
 **Description:** As a developer, I need strict PDF validation so malicious files are rejected.
 
 **Acceptance Criteria:**
-- [ ] Create `backend/apps/sources/validators.py`
-- [ ] Add `python-magic` and `pypdf` to requirements.txt
-- [ ] Implement `validate_pdf_file()` that checks: size <= 50MB, content_type == application/pdf, magic number matches PDF, pypdf can parse structure
-- [ ] Raise ValidationError with descriptive message on failure
-- [ ] Typecheck passes
+- [x] Create `backend/apps/sources/validators.py`
+- [x] Add `python-magic` and `pypdf` to requirements.txt
+- [x] Implement `validate_pdf_file()` that checks: size <= 50MB, content_type == application/pdf, magic number matches PDF, pypdf can parse structure
+- [x] Raise ValidationError with descriptive message on failure
+- [x] Typecheck passes
 
 ### US-005: Create presigned URL generation utilities
 **Description:** As a developer, I need utility functions to generate presigned S3 URLs.
