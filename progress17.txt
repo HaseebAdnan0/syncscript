@@ -125,3 +125,25 @@
   - QuerySet.update() is efficient for bulk updates, bypasses model.save()
   - All 22 notification tests passing (list, filtering, ordering, mark-read, unread-count, mark-all-read)
 ---
+
+## Iteration 6 - US-006: Create dashboard page layout and sidebar
+- Created dashboard page with placeholder content structure
+- Created collapsible sidebar navigation component with mobile support
+- Updated app layout to include sidebar and proper flex layout
+- Files changed:
+  - frontend/src/app/(app)/dashboard/page.tsx (new dashboard page with placeholder sections)
+  - frontend/src/app/(app)/layout.tsx (added Sidebar component and flex layout)
+  - frontend/src/components/features/dashboard/Sidebar.tsx (new collapsible sidebar component)
+  - PRD17.md (marked US-006 acceptance criteria complete)
+- Learnings for future iterations:
+  - Sidebar uses fixed positioning with top offset to account for header (72px)
+  - Mobile: hamburger menu with overlay, sidebar slides in from left
+  - Desktop: inline collapse button, sidebar shrinks to icon-only mode (64px -> 256px)
+  - Active route detection using usePathname() with startsWith() for nested routes
+  - Bitcoin orange gradient (#F7931A to #FFD600) used for active state and buttons
+  - Navigation items use lucide-react icons (LayoutDashboard, Folder, Users, Clock, Settings)
+  - Sidebar spacer div prevents content overlap on desktop (matches sidebar width)
+  - Main content area uses flex-1 to fill remaining space
+  - All components follow Bitcoin DeFi design system (dark backgrounds, orange accents, glassmorphism)
+  - Typecheck passes with no errors
+---
