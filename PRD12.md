@@ -248,14 +248,14 @@ Add social authentication to SyncScript using Google and GitHub OAuth providers.
 **Description:** As a user returning from OAuth, I need a page to process the callback and redirect appropriately.
 
 **Acceptance Criteria:**
-- [ ] Create `/auth/callback` page in Next.js
-- [ ] Parse query params: `success`, `error`, `link_required`, `email_required`, `provider`
-- [ ] If `success=true`: show success message, redirect to dashboard after 1s
-- [ ] If `link_required=true`: redirect to account linking modal/page
-- [ ] If `email_required=true`: redirect to email prompt modal/page
-- [ ] If `error`: show error message with retry option
-- [ ] Handle token cookie setting (backend sets httpOnly cookie)
-- [ ] Typecheck passes
+- [x] Create `/auth/callback` page in Next.js
+- [x] Parse query params: `success`, `error`, `link_required`, `email_required`, `provider`
+- [x] If `success=true`: show success message, redirect to dashboard after 1s
+- [x] If `link_required=true`: redirect to account linking modal/page
+- [x] If `email_required=true`: redirect to email prompt modal/page
+- [x] If `error`: show error message with retry option
+- [x] Handle token cookie setting (backend sets httpOnly cookie)
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---

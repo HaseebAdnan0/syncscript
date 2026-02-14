@@ -163,8 +163,8 @@ const GuidedVaultWizard: React.FC = () => {
     setCreationError(null);
 
     try {
-      const finalVaultName = data?.vaultName || vaultName;
-      const finalSourceUrl = data?.sourceUrl || sourceUrl;
+      const finalVaultName = (data?.vaultName as string) || vaultName;
+      const finalSourceUrl = (data?.sourceUrl as string) || sourceUrl;
       const finalCollaboratorEmail = emailToUse.trim();
 
       // Step 1: Create the vault

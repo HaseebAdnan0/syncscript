@@ -248,3 +248,24 @@
   - All components follow Bitcoin DeFi aesthetic (dark backgrounds, orange accents)
   - Typecheck passes with no errors
 ---
+## Iteration 12 - US-012: Create source types donut chart
+- Created SourceTypesChart component using Recharts PieChart with donut styling
+- Files changed:
+  - frontend/src/components/features/dashboard/charts/SourceTypesChart.tsx (new component)
+  - PRD17.md (marked US-012 acceptance criteria complete)
+- Learnings for future iterations:
+  - Recharts Pie label function receives PieLabelRenderProps, not custom data type - use `any` for type safety
+  - Donut chart created with innerRadius={60} outerRadius={100} for hollow center
+  - Custom label function with entry.percentage renders percentage on each segment
+  - Custom tooltip receives active and payload props, payload[0].payload contains data
+  - Legend positioned with verticalAlign="bottom" and custom formatter for text styling
+  - Cell component maps chartGradient colors by index modulo length for consistent coloring
+  - paddingAngle={2} adds small gap between segments for visual clarity
+  - iconType="circle" for legend matches pie chart segments
+  - Empty state pattern: gradient circle icon + centered message
+  - Loading state: simple pulse animation with centered text
+  - Fetches from /api/v1/dashboard/analytics/source-types/ with Bearer token
+  - All components follow Bitcoin DeFi design system (dark bg, orange-gold gradient)
+  - Typecheck passes with no errors (unrelated errors in GuidedVaultWizard)
+---
+

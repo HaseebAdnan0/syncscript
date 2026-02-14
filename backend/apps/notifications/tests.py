@@ -705,3 +705,149 @@ class MutedVaultsTestCase(TestCase):
 
         response = client.delete(f'/api/v1/notifications/muted-vaults/{self.vault1.id}/')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+class NotificationServiceTestCase(TestCase):
+    """Test notification creation service (US-011)."""
+
+    def setUp(self) -> None:
+        """Create test user and vault."""
+        from apps.vaults.models import Vault
+
+        self.user = User.objects.create_user(  # type: ignore[attr-defined]
+            username='testuser',
+            email='test@example.com',
+            password='testpass123'
+        )
+        self.vault = Vault.objects.create(
+            name='Test Vault',
+            owner=self.user
+        )
+
+    def test_create_notification_success(self) -> None:
+        """Test successful notification creation."""
+        from apps.notifications.services import create_notification
+
+        notification = create_notification(
+            user=self.user,
+            notification_type='vault_invite',
+            title='Test Invite',
+            body='You were invited',
+            data={'vault_id': str(self.vault.id)}
+        )
+
+        self.assertIsNotNone(notification)
+        self.assertEqual(notification.user, self.user)  # type: ignore[union-attr]
+        self.assertEqual(notification.type, 'vault_invite')  # type: ignore[union-attr]
+        self.assertEqual(notification.title, 'Test Invite')  # type: ignore[union-attr]
+        self.assertEqual(notification.body, 'You were invited')  # type: ignore[union-attr]
+        self.assertEqual(notification.data['vault_id'], str(self.vault.id))  # type: ignore[union-attr, index]
+
+    def test_create_notification_muted_vault(self) -> None:
+        """Test notification skipped if vault is muted."""
+        from apps.notifications.services import create_notification
+
+        # Mute the vault
+        MutedVault.objects.create(user=self.user, vault=self.vault)
+
+        notification = create_notification(
+            user=self.user,
+            notification_type='source_added',
+            title='New Source',
+            body='A source was added',
+            data={'vault_id': str(self.vault.id)}
+        )
+
+        self.assertIsNone(notification)
+
+    def test_create_notification_respects_vault_activity_preference(self) -> None:
+        """Test notification skipped if email_vault_activity is False."""
+        from apps.notifications.services import create_notification
+
+        # Disable vault activity notifications
+        prefs = NotificationPreferences.objects.get(user=self.user)
+        prefs.email_vault_activity = False
+        prefs.save()
+
+        notification = create_notification(
+            user=self.user,
+            notification_type='source_added',
+            title='New Source',
+            body='A source was added',
+            data={'vault_id': str(self.vault.id)}
+        )
+
+        self.assertIsNone(notification)
+
+    def test_create_notification_respects_mentions_preference(self) -> None:
+        """Test notification skipped if email_mentions is False."""
+        from apps.notifications.services import create_notification
+
+        # Disable mention notifications
+        prefs = NotificationPreferences.objects.get(user=self.user)
+        prefs.email_mentions = False
+        prefs.save()
+
+        notification = create_notification(
+            user=self.user,
+            notification_type='mention',
+            title='You were mentioned',
+            body='Someone mentioned you',
+            data={'source_id': '123'}
+        )
+
+        self.assertIsNone(notification)
+
+    def test_create_notification_vault_invite_always_sent(self) -> None:
+        """Test vault invites always sent regardless of preferences."""
+        from apps.notifications.services import create_notification
+
+        # Disable all email preferences
+        prefs = NotificationPreferences.objects.get(user=self.user)
+        prefs.email_vault_activity = False
+        prefs.email_mentions = False
+        prefs.save()
+
+        notification = create_notification(
+            user=self.user,
+            notification_type='vault_invite',
+            title='Vault Invite',
+            body='You were invited',
+            data={'vault_id': str(self.vault.id)}
+        )
+
+        # Should still be created
+        self.assertIsNotNone(notification)
+
+    def test_create_notification_without_vault_id(self) -> None:
+        """Test notification created when no vault_id in data."""
+        from apps.notifications.services import create_notification
+
+        notification = create_notification(
+            user=self.user,
+            notification_type='mention',
+            title='Mention',
+            body='You were mentioned',
+            data={'source_id': '123'}
+        )
+
+        self.assertIsNotNone(notification)
+
+    def test_create_notification_auto_creates_preferences(self) -> None:
+        """Test preferences auto-created if missing."""
+        from apps.notifications.services import create_notification
+
+        # Delete preferences
+        NotificationPreferences.objects.filter(user=self.user).delete()
+
+        notification = create_notification(
+            user=self.user,
+            notification_type='vault_invite',
+            title='Test',
+            body='Test body',
+            data={}
+        )
+
+        self.assertIsNotNone(notification)
+        # Verify preferences were created
+        self.assertTrue(NotificationPreferences.objects.filter(user=self.user).exists())
