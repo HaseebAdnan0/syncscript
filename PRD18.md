@@ -79,12 +79,12 @@ Implement a global full-text search system for SyncScript that enables researche
 **Description:** As a developer, I need a background task to update Source search vectors when content changes.
 
 **Acceptance Criteria:**
-- [ ] Create `backend/apps/search/tasks.py`
-- [ ] Create `update_source_search_vector` task accepting source_id
-- [ ] Task combines title (weight A), description (weight B), metadata values (weight C)
-- [ ] Uses `SearchVector` with `config='english'`
-- [ ] Task is idempotent (safe to retry)
-- [ ] Typecheck passes
+- [x] Create `backend/apps/search/tasks.py`
+- [x] Create `update_source_search_vector` task accepting source_id
+- [x] Task combines title (weight A), description (weight B), metadata values (weight C)
+- [x] Uses `SearchVector` with `config='english'`
+- [x] Task is idempotent (safe to retry)
+- [x] Typecheck passes
 
 ---
 
