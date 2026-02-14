@@ -55,12 +55,12 @@ Establish the Next.js 16 frontend foundation for SyncScript with a Bitcoin DeFi-
 **Description:** As a developer, I want a Next.js 16 App Router project initialized with TypeScript and core dependencies so that I have a working foundation.
 
 **Acceptance Criteria:**
-- [ ] Run `npx create-next-app@latest frontend --typescript --tailwind --eslint --app --src-dir --import-alias "@/*"`
-- [ ] Navigate to `frontend/` directory
-- [ ] Install core dependencies: `npm install axios zustand @tanstack/react-query class-variance-authority clsx tailwind-merge lucide-react next-themes`
-- [ ] Install Radix UI: `npm install @radix-ui/react-dialog @radix-ui/react-dropdown-menu @radix-ui/react-tabs @radix-ui/react-toast`
-- [ ] Install dev dependencies: `npm install -D prettier`
-- [ ] Folder structure exists:
+- [x] Run `npx create-next-app@latest frontend --typescript --tailwind --eslint --app --src-dir --import-alias "@/*"`
+- [x] Navigate to `frontend/` directory
+- [x] Install core dependencies: `npm install axios zustand @tanstack/react-query class-variance-authority clsx tailwind-merge lucide-react next-themes`
+- [x] Install Radix UI: `npm install @radix-ui/react-dialog @radix-ui/react-dropdown-menu @radix-ui/react-tabs @radix-ui/react-toast`
+- [x] Install dev dependencies: `npm install -D prettier`
+- [x] Folder structure exists:
   ```
   frontend/
   ├── src/
@@ -72,14 +72,14 @@ Establish the Next.js 16 frontend foundation for SyncScript with a Bitcoin DeFi-
   │   ├── hooks/           (create empty)
   │   └── styles/          (create empty)
   ```
-- [ ] `.gitignore` includes `node_modules/`, `.next/`, `.env.local`
-- [ ] Create `.env.local.example` with:
+- [x] `.gitignore` includes `node_modules/`, `.next/`, `.env.local`
+- [x] Create `.env.local.example` with:
   ```
   NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
   NEXT_PUBLIC_WS_URL=ws://localhost:8000/ws
   ```
-- [ ] `npm run dev` starts without errors
-- [ ] Typecheck passes
+- [x] `npm run dev` starts without errors
+- [x] Typecheck passes
 
 ---
 
