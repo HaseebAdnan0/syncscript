@@ -2,11 +2,9 @@
 
 from datetime import datetime, timedelta
 from django.test import TestCase
-from django.contrib.auth import get_user_model
+from apps.users.models import User
 from apps.ai.services.usage import log_usage, get_daily_usage, get_remaining_requests
 from apps.ai.models import AIUsageLog
-
-User = get_user_model()
 
 
 class UsageTrackingTestCase(TestCase):

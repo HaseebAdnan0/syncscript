@@ -60,17 +60,20 @@ class DashboardStatsTests(TestCase):
             source=source1,
             user=self.user,
             content='Recent annotation',
-            position={'x': 0, 'y': 0},
-            created_at=timezone.now()
+            position={'x': 0, 'y': 0}
         )
         old_annotation = Annotation(
             source=source2,
             user=self.user,
             content='Old annotation',
-            position={'x': 0, 'y': 0},
-            created_at=timezone.now() - timedelta(days=10)
+            position={'x': 0, 'y': 0}
         )
         Annotation.objects.bulk_create([recent_annotation, old_annotation])
+
+        # Update old annotation's created_at to 10 days ago (direct SQL update to bypass validation)
+        Annotation.objects.filter(id=old_annotation.id).update(
+            created_at=timezone.now() - timedelta(days=10)
+        )
 
         # Authenticate and make request
         self.client.force_authenticate(user=self.user)
