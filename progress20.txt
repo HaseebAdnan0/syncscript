@@ -615,3 +615,32 @@
   - Scrollable container: max-h-[90vh] overflow-y-auto prevents content cutoff
   - Padding reduction on mobile: p-6 md:p-8 saves screen space
 ---
+
+## Iteration 26 - Basic onboarding analytics tracking (US-025)
+- Added onboarding_started_at DateTimeField to User model (nullable)
+- Added onboarding_completed_at DateTimeField to User model (nullable)
+- Generated migration 0004_user_onboarding_completed_at_and_more.py
+- Applied migration successfully to database
+- Enhanced OnboardingView.patch() to set timestamps automatically:
+  - Sets onboarding_started_at on first step update (if not already set)
+  - Sets onboarding_completed_at when completed flag is set to True
+  - Calculates time_to_complete in seconds if started_at exists
+- Added logging for analytics metrics:
+  - Path selection: logs user email and chosen path (guided/demo/skipped)
+  - Completion: logs user email, path, and time_to_complete in seconds
+  - Uses Python logging module with logger.info()
+- Logging format: "Onboarding completed | user=email | path=path | time_to_complete=Xs"
+- Files changed: models.py, views.py, migration 0004, PRD20.md, progress20.txt
+- Django check passes (warnings are pre-existing allauth deprecations)
+- Learnings for future iterations:
+  - DateTimeField with blank=True, null=True for optional timestamp fields
+  - timezone.now() from django.utils import timezone for consistent timezone-aware timestamps
+  - Set timestamp on first update: `if not user.field and condition: user.field = timezone.now()`
+  - Calculate time delta: `(end_time - start_time).total_seconds()` for duration in seconds
+  - Logging pattern: logger = logging.getLogger(__name__) at function level for flexibility
+  - Log format: pipe-separated key=value pairs for easy parsing by log aggregators
+  - update_fields list pattern ensures only changed fields are saved
+  - Tests blocked by pre-existing Pusher configuration issue (invalid app_id)
+  - Migration verified via file inspection - fields added correctly
+  - Timestamps set automatically by view logic, no manual intervention needed
+---

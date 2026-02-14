@@ -16,7 +16,7 @@ import { VaultDetailSkeleton } from '@/components/features/vaults/VaultDetailSke
 import { PresenceIndicator } from '@/components/features/notifications/PresenceIndicator';
 import { ResearchInsightsPanel } from '@/components/features/ai/ResearchInsightsPanel';
 import { AILoadingSkeleton } from '@/components/features/ai/AILoadingSkeleton';
-import { ChatHistory } from '@/components/features/ai/ChatHistory';
+import ChatHistory from '@/components/features/ai/ChatHistory';
 import AskAIChat from '@/components/features/ai/AskAIChat';
 import { VaultRole, VaultInsights, Conversation, ChatMessage } from '@/lib/types/vault';
 import { getVaultInsights, getConversations, getConversation, askQuestion } from '@/lib/api/vaults';
@@ -371,7 +371,7 @@ export default function VaultDetailPage() {
                     {/* Chat history sidebar */}
                     <div className="w-48 border-r border-white/10 flex-shrink-0">
                       <ChatHistory
-                        vaultId={vaultId}
+                        vaultId={vaultId.toString()}
                         conversations={conversations}
                         activeId={activeConversationId}
                         onSelect={handleSelectConversation}

@@ -39,15 +39,17 @@ def get_s3_client():
 def generate_presigned_upload_url(
     vault_id: str,
     filename: str,
-    content_type: str
+    content_type: str,
+    file_type: str = 'pdf'
 ) -> Tuple[str, str]:
     """
-    Generate a presigned URL for uploading a PDF file directly to S3.
+    Generate a presigned URL for uploading a file directly to S3.
 
     Args:
         vault_id: UUID of the vault (used in S3 key path)
         filename: Original filename (used to generate unique key)
-        content_type: MIME type of the file (should be 'application/pdf')
+        content_type: MIME type of the file (e.g., 'application/pdf', 'image/png')
+        file_type: Type of file ('pdf' or 'image'). Determines storage path.
 
     Returns:
         Tuple of (presigned_url, file_key):
@@ -58,17 +60,31 @@ def generate_presigned_upload_url(
         >>> url, key = generate_presigned_upload_url(
         ...     vault_id='abc123',
         ...     filename='research.pdf',
-        ...     content_type='application/pdf'
+        ...     content_type='application/pdf',
+        ...     file_type='pdf'
         ... )
         >>> # Client uploads file to `url` via PUT request
         >>> # File is stored at `vaults/abc123/pdfs/{uuid}.pdf`
+
+        >>> url, key = generate_presigned_upload_url(
+        ...     vault_id='abc123',
+        ...     filename='screenshot.png',
+        ...     content_type='image/png',
+        ...     file_type='image'
+        ... )
+        >>> # File is stored at `vaults/abc123/images/{uuid}.png`
     """
     s3_client = get_s3_client()
 
     # Generate unique file key using UUID to prevent collisions
     file_extension = filename.split('.')[-1] if '.' in filename else 'pdf'
     unique_filename = f"{uuid.uuid4()}.{file_extension}"
-    file_key = f"vaults/{vault_id}/pdfs/{unique_filename}"
+
+    # Determine storage path based on file type
+    if file_type == 'image':
+        file_key = f"vaults/{vault_id}/images/{unique_filename}"
+    else:
+        file_key = f"vaults/{vault_id}/pdfs/{unique_filename}"
 
     # Generate presigned URL for PUT operation (upload)
     # Expires in 1 hour (3600 seconds) as per acceptance criteria
@@ -131,7 +147,8 @@ def initiate_multipart_upload(
     filename: str,
     file_size: int,
     part_size: int,
-    content_type: str
+    content_type: str,
+    file_type: str = 'pdf'
 ) -> Tuple[str, str, list]:
     """
     Initiate a multipart upload to S3 and generate presigned URLs for each part.
@@ -141,7 +158,8 @@ def initiate_multipart_upload(
         filename: Original filename (used to generate unique key)
         file_size: Total file size in bytes
         part_size: Size of each part in bytes (minimum 5MB except last part)
-        content_type: MIME type of the file (should be 'application/pdf')
+        content_type: MIME type of the file (e.g., 'application/pdf', 'image/png')
+        file_type: Type of file ('pdf' or 'image'). Determines storage path.
 
     Returns:
         Tuple of (upload_id, file_key, part_urls):
@@ -155,7 +173,8 @@ def initiate_multipart_upload(
         ...     filename='large.pdf',
         ...     file_size=30000000,  # 30MB
         ...     part_size=10000000,  # 10MB per part
-        ...     content_type='application/pdf'
+        ...     content_type='application/pdf',
+        ...     file_type='pdf'
         ... )
         >>> # Client uploads each part to corresponding part_url
         >>> # Then calls complete endpoint with upload_id and ETags
@@ -165,7 +184,12 @@ def initiate_multipart_upload(
     # Generate unique file key using UUID to prevent collisions
     file_extension = filename.split('.')[-1] if '.' in filename else 'pdf'
     unique_filename = f"{uuid.uuid4()}.{file_extension}"
-    file_key = f"vaults/{vault_id}/pdfs/{unique_filename}"
+
+    # Determine storage path based on file type
+    if file_type == 'image':
+        file_key = f"vaults/{vault_id}/images/{unique_filename}"
+    else:
+        file_key = f"vaults/{vault_id}/pdfs/{unique_filename}"
 
     # Initiate multipart upload
     response = s3_client.create_multipart_upload(

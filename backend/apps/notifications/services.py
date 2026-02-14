@@ -1,8 +1,21 @@
 """Notification creation service with preference and mute checking."""
 
+import os
 from typing import Any, Dict, Optional
 
+import pusher  # type: ignore[import-untyped]
+
 from apps.notifications.models import MutedVault, Notification, NotificationPreferences
+
+
+# Initialize Pusher client
+pusher_client = pusher.Pusher(
+    app_id=os.getenv('PUSHER_APP_ID', ''),
+    key=os.getenv('PUSHER_KEY', ''),
+    secret=os.getenv('PUSHER_SECRET', ''),
+    cluster=os.getenv('PUSHER_CLUSTER', 'us2'),
+    ssl=True,
+)
 
 
 def create_notification(
@@ -70,4 +83,39 @@ def create_notification(
         data=data or {},
     )
 
+    # Send real-time notification via Pusher
+    _send_pusher_notification(user, notification)
+
     return notification
+
+
+def _send_pusher_notification(user: Any, notification: Notification) -> None:
+    """
+    Send real-time notification via Pusher to user's private channel.
+
+    Args:
+        user: User to notify
+        notification: Created notification object
+    """
+    from apps.notifications.serializers import NotificationSerializer
+
+    # Skip if Pusher is not configured
+    if not os.getenv('PUSHER_APP_ID'):
+        return
+
+    try:
+        # Serialize notification data
+        serializer = NotificationSerializer(notification)
+
+        # Send to private user channel
+        channel_name = f"private-user-{user.id}"
+        pusher_client.trigger(channel_name, "notification", serializer.data)
+
+        # Also send badge update with new unread count
+        unread_count = Notification.objects.filter(user=user, read_at__isnull=True).count()
+        pusher_client.trigger(channel_name, "badge_update", {"count": unread_count})
+
+    except Exception:  # type: ignore[misc]
+        # Silently fail if Pusher is unavailable
+        # Don't block notification creation
+        pass

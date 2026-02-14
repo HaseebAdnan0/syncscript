@@ -664,3 +664,33 @@
   - Component is ready for integration into search page (US-030)
 ---
 
+## Iteration 31 - US-033: Add search button to navigation header
+- Added search button to AppHeader component with glass morphism style
+- Button displays Search icon (lucide-react) with "Search..." text on sm+ screens
+- Keyboard hint (Cmd+K or Ctrl+K) shown on lg+ screens using <kbd> element
+- Platform detection using navigator.platform to show correct modifier key
+- Click handler opens GlobalSearchModal via onSearchClick prop
+- Updated AppHeader interface to accept optional onSearchClick callback
+- Updated (app)/layout.tsx to pass open function from useGlobalSearchShortcut to AppHeader
+- Button positioned between logo and right section (notifications/user menu)
+- Glass morphism styling: backdrop-blur-lg bg-white/5 border border-white/10
+- Hover effects: border changes to orange/50, background to white/10
+- Focus ring with orange color and offset for accessibility
+- TypeScript typecheck passes (no errors in modified files)
+- Dev server starts successfully on port 3000
+- Files changed:
+  - frontend/src/components/features/notifications/AppHeader.tsx (added Search import, onSearchClick prop, search button)
+  - frontend/src/app/(app)/layout.tsx (extracted open from useGlobalSearchShortcut, passed to AppHeader)
+  - PRD18.md (marked US-033 complete)
+- Learnings for future iterations:
+  - AppHeader is the main navigation component used in (app)/layout.tsx
+  - Pass callbacks as optional props to keep components flexible
+  - Platform detection pattern: navigator.platform.toUpperCase().indexOf('MAC') >= 0
+  - Glass morphism buttons: backdrop-blur-lg bg-white/5 border border-white/10
+  - <kbd> element for keyboard shortcuts with mono font and subtle styling
+  - Hidden responsive breakpoints: hidden sm:block (text), hidden lg:flex (kbd)
+  - Search button positioned using flex layout - no absolute positioning needed
+  - useGlobalSearchShortcut returns { isOpen, open, close, toggle } - extract all needed functions
+  - Conditional rendering with && for optional features (onSearchClick && <button>)
+---
+

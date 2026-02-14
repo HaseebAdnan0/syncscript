@@ -463,12 +463,12 @@ Implement a global full-text search system for SyncScript that enables researche
 **Description:** As a user, I want a visible search button in the header as an alternative to keyboard shortcut.
 
 **Acceptance Criteria:**
-- [ ] Add search icon button to main navigation header
-- [ ] Shows "Cmd+K" or "Ctrl+K" hint tooltip
-- [ ] Click opens GlobalSearchModal
-- [ ] Button uses glass morphism style
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Add search icon button to main navigation header
+- [x] Shows "Cmd+K" or "Ctrl+K" hint tooltip
+- [x] Click opens GlobalSearchModal
+- [x] Button uses glass morphism style
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 

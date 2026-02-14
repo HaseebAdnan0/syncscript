@@ -588,6 +588,9 @@ class OnboardingView(APIView):
 
     def patch(self, request):
         """Update current user's onboarding progress."""
+        from django.utils import timezone
+        import logging
+
         user = request.user
         serializer = OnboardingSerializer(data=request.data, partial=True)
 
@@ -597,6 +600,11 @@ class OnboardingView(APIView):
         # Update onboarding fields
         update_fields = []
 
+        # Set onboarding_started_at on first step (if not already set)
+        if not user.onboarding_started_at and 'step' in serializer.validated_data:
+            user.onboarding_started_at = timezone.now()
+            update_fields.append('onboarding_started_at')
+
         if 'step' in serializer.validated_data:
             user.onboarding_step = serializer.validated_data['step']
             update_fields.append('onboarding_step')
@@ -605,9 +613,35 @@ class OnboardingView(APIView):
             user.onboarding_completed = serializer.validated_data['completed']
             update_fields.append('onboarding_completed')
 
+            # Set onboarding_completed_at when completing onboarding
+            if serializer.validated_data['completed'] and not user.onboarding_completed_at:
+                user.onboarding_completed_at = timezone.now()
+                update_fields.append('onboarding_completed_at')
+
+                # Log completion metrics
+                logger = logging.getLogger(__name__)
+                time_to_complete = None
+                if user.onboarding_started_at:
+                    time_to_complete = (timezone.now() - user.onboarding_started_at).total_seconds()
+
+                logger.info(
+                    f"Onboarding completed | "
+                    f"user={user.email} | "
+                    f"path={user.onboarding_path or 'unknown'} | "
+                    f"time_to_complete={time_to_complete}s"
+                )
+
         if 'path' in serializer.validated_data:
             user.onboarding_path = serializer.validated_data['path']
             update_fields.append('onboarding_path')
+
+            # Log path selection
+            logger = logging.getLogger(__name__)
+            logger.info(
+                f"Onboarding path selected | "
+                f"user={user.email} | "
+                f"path={serializer.validated_data['path']}"
+            )
 
         if 'data' in serializer.validated_data:
             # Merge with existing data if it exists

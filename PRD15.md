@@ -262,14 +262,14 @@ This feature uses Claude as the AI backbone with a simple chunking strategy (no 
 **Description:** As a user, I want to access the AI chat from my vault view.
 
 **Acceptance Criteria:**
-- [ ] Add "Ask AI" collapsible section to vault sidebar
-- [ ] Fetch conversation list from `GET /vaults/{id}/conversations/`
-- [ ] Load selected conversation messages
-- [ ] Wire send to `POST /vaults/{id}/ask/`
-- [ ] Update conversation list on new message
-- [ ] Show loading skeleton while AI responds
-- [ ] Handle rate limit: show message with retry time
-- [ ] Typecheck passes
+- [x] Add "Ask AI" collapsible section to vault sidebar
+- [x] Fetch conversation list from `GET /vaults/{id}/conversations/`
+- [x] Load selected conversation messages
+- [x] Wire send to `POST /vaults/{id}/ask/`
+- [x] Update conversation list on new message
+- [x] Show loading skeleton while AI responds
+- [x] Handle rate limit: show message with retry time
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-022: Create TokenUsageDisplay component

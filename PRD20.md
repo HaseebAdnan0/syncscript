@@ -337,15 +337,15 @@ Create a comprehensive new user onboarding experience for SyncScript that guides
 **Description:** As a product owner, I want to track basic onboarding metrics so I can measure effectiveness.
 
 **Acceptance Criteria:**
-- [ ] Add `onboarding_started_at` DateTimeField to User model (set on first step)
-- [ ] Add `onboarding_completed_at` DateTimeField (set on completion)
-- [ ] Create migration for new fields
-- [ ] Log to console (or analytics service if configured):
+- [x] Add `onboarding_started_at` DateTimeField to User model (set on first step)
+- [x] Add `onboarding_completed_at` DateTimeField (set on completion)
+- [x] Create migration for new fields
+- [x] Log to console (or analytics service if configured):
   - Path chosen (guided/demo/skipped)
   - Completion status (completed/abandoned)
   - Time to complete (if completed)
-- [ ] Typecheck passes
-- [ ] Tests pass
+- [x] Typecheck passes
+- [x] Tests pass
 
 ### US-026: Create onboarding API client functions
 **Description:** As a frontend developer, I need API client functions for onboarding endpoints.

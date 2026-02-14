@@ -343,10 +343,10 @@ Enhance SyncScript's file storage system to production-ready status with Cloudfl
 **Description:** As a developer, I need presigned URLs to support image content types.
 
 **Acceptance Criteria:**
-- [ ] Update `generate_presigned_upload_url` to accept `file_type` parameter ('pdf', 'image')
-- [ ] Set correct content-type based on file type
-- [ ] Store in correct path: `vaults/{vault_id}/images/{uuid}.{ext}` for images
-- [ ] Typecheck passes
+- [x] Update `generate_presigned_upload_url` to accept `file_type` parameter ('pdf', 'image')
+- [x] Set correct content-type based on file type
+- [x] Store in correct path: `vaults/{vault_id}/images/{uuid}.{ext}` for images
+- [x] Typecheck passes
 
 ---
 

@@ -36,6 +36,7 @@ export default function TestimonialCard({
               alt={name}
               width={48}
               height={48}
+              loading="lazy"
               className="w-full h-full object-cover"
             />
           </div>
