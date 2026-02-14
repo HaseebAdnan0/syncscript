@@ -73,3 +73,22 @@
   - All color tokens from tailwind.config.ts work seamlessly (primary, secondary, accent, surface, etc.)
 ---
 
+## Iteration 6 - US-006: Layout & Theme Infrastructure
+- Created layout.tsx with three layout components (Container, Section, PageLayout)
+- Created theme-provider.tsx with forced dark mode using next-themes
+- Updated root layout.tsx to import and wrap children in ThemeProvider
+- All components properly export TypeScript types (ContainerProps, SectionProps, PageLayoutProps)
+- Container uses max-w-7xl mx-auto with responsive padding
+- Section uses py-24 spacing
+- PageLayout provides flexible layout with optional header/footer slots
+- Verified typecheck passes and dev server starts successfully
+- Files changed: frontend/src/components/layout.tsx, frontend/src/components/theme-provider.tsx, frontend/src/app/layout.tsx, PRD4.md
+- Learnings for future iterations:
+  - next-themes ThemeProvider needs 'use client' directive since it uses React context
+  - forcedTheme="dark" prevents theme toggle and locks app to dark mode
+  - attribute="class" is needed for Tailwind dark mode to work properly
+  - Layout components should accept className prop for flexibility
+  - PageLayout uses flex-col and flex-1 for sticky footer pattern
+  - Font CSS variables were already set up in previous iteration
+---
+

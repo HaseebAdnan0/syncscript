@@ -22,11 +22,11 @@ class MetadataExtractionTests(TestCase):
         result = extract_metadata("https://example.com/article")
 
         # Assertions
-        self.assertEqual(result['title'], "Test Article Title")
-        self.assertEqual(result['authors'], ["John Doe", "Jane Smith"])
-        self.assertEqual(result['publication_date'], "2024-01-15T10:30:00")
-        self.assertEqual(len(result['abstract']), 500)
-        self.assertIn('error', result.keys(), False)  # No error key
+        self.assertEqual(result.get('title'), "Test Article Title")
+        self.assertEqual(result.get('authors'), ["John Doe", "Jane Smith"])
+        self.assertEqual(result.get('publication_date'), "2024-01-15T10:30:00")
+        self.assertEqual(len(result.get('abstract', '')), 500)
+        self.assertNotIn('error', result)  # No error key
 
         # Verify Article was called correctly
         mock_article.download.assert_called_once()
@@ -45,9 +45,9 @@ class MetadataExtractionTests(TestCase):
         result = extract_metadata(url)
 
         # Assertions - should return fallback
-        self.assertEqual(result['title'], url)
+        self.assertEqual(result.get('title'), url)
         self.assertIn('error', result)
-        self.assertIn("Connection timeout", result['error'])
+        self.assertIn("Connection timeout", result.get('error', ''))
 
     @patch('apps.sources.services.Article')
     def test_invalid_url_handling(self, mock_article_class: MagicMock) -> None:

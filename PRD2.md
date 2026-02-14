@@ -130,10 +130,10 @@ Create a secure, collaborative Knowledge Vault system where researchers can crea
 **Description:** As a developer, I need serialization for audit log API responses.
 
 **Acceptance Criteria:**
-- [ ] ModelSerializer for AuditLog
-- [ ] Fields: id, vault, actor, action, metadata, created_at
-- [ ] All fields read_only (immutable logs)
-- [ ] Typecheck passes
+- [x] ModelSerializer for AuditLog
+- [x] Fields: id, vault, actor, action, metadata, created_at
+- [x] All fields read_only (immutable logs)
+- [x] Typecheck passes
 
 ### US-012: Create IsVaultOwner permission
 **Description:** As a developer, I need owner-only permission for vault management actions.

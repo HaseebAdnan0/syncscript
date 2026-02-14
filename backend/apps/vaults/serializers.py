@@ -54,3 +54,15 @@ class VaultMembershipSerializer(serializers.ModelSerializer):
             'id', 'user', 'username', 'email', 'role', 'added_at', 'added_by'
         ]
         read_only_fields = ['id', 'added_at', 'added_by']
+
+
+class AuditLogSerializer(serializers.ModelSerializer):
+    """
+    Serializer for AuditLog API responses (US-011).
+    All fields are read-only since audit logs are immutable.
+    """
+
+    class Meta:
+        model = AuditLog
+        fields = ['id', 'vault', 'actor', 'action', 'metadata', 'created_at']
+        read_only_fields = ['id', 'vault', 'actor', 'action', 'metadata', 'created_at']

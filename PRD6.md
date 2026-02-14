@@ -74,13 +74,13 @@ Implement cloud file storage for SyncScript using Cloudflare R2 (S3-compatible).
 **Description:** As a vault contributor, I want to request a presigned upload URL so I can upload PDFs directly to storage.
 
 **Acceptance Criteria:**
-- [ ] Add `POST /api/v1/sources/pdfs/upload-url/` endpoint
-- [ ] Request body: vault_id, filename, file_size, content_type
-- [ ] Validate user has contributor/owner permission on vault
-- [ ] Create PDFUpload record with status='pending'
-- [ ] Return: upload_id, upload_url, expires_in, callback_url
-- [ ] Add URL route to `backend/apps/sources/urls.py`
-- [ ] Typecheck passes
+- [x] Add `POST /api/v1/sources/pdfs/upload-url/` endpoint
+- [x] Request body: vault_id, filename, file_size, content_type
+- [x] Validate user has contributor/owner permission on vault
+- [x] Create PDFUpload record with status='pending'
+- [x] Return: upload_id, upload_url, expires_in, callback_url
+- [x] Add URL route to `backend/apps/sources/urls.py`
+- [x] Typecheck passes
 
 ### US-007: Create upload completion endpoint
 **Description:** As a client, I need to notify the backend when upload completes so processing can start.
