@@ -81,3 +81,23 @@ export interface VaultMembersListResponse {
   previous: string | null;
   results: VaultMember[];
 }
+
+// AI Insights types
+export interface Theme {
+  name: string;
+  weight: number;
+  source_count: number;
+}
+
+export interface CrossReference {
+  sources: string[];
+  connection: string;
+}
+
+export interface VaultInsights {
+  themes: Theme[];
+  research_gaps: string[];
+  cross_references: CrossReference[];
+  suggested_searches: string[];
+  generated_at: string;
+}

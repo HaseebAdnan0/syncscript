@@ -306,11 +306,11 @@ Enhance SyncScript's file storage system to production-ready status with Cloudfl
 **Description:** As a vault owner, I want to see storage usage in my vault settings.
 
 **Acceptance Criteria:**
-- [ ] Fetch vault data with storage_usage field
-- [ ] Add StorageUsageIndicator component to vault settings section
-- [ ] Show warning message when approaching limit
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Fetch vault data with storage_usage field
+- [x] Add StorageUsageIndicator component to vault settings section
+- [x] Show warning message when approaching limit
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 

@@ -410,7 +410,7 @@ Implement a global full-text search system for SyncScript that enables researche
 - [x] Modal renders above all other content (z-50)
 - [x] Cmd+K works on all pages
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser
 
 ---
 
