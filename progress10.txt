@@ -182,3 +182,28 @@
   - Hook returns both data and mutation functions for complete notification management
   - Typecheck passes without issues
 ---
+## Iteration 9 - US-009: Create toast notification system for vault events
+- Implemented toast notification system with Radix UI integration
+- Files changed:
+  - Created `frontend/src/components/ui/toast.tsx` (Radix toast wrapper with Bitcoin DeFi styling)
+  - Created `frontend/src/components/ui/toaster.tsx` (Toast renderer component)
+  - Created `frontend/src/hooks/useToast.ts` (Toast state management hook)
+  - Created `frontend/src/components/features/notifications/VaultToast.tsx` (Vault event toast listener)
+  - Updated `PRD10.md` (marked US-009 complete except browser verification)
+- Learnings for future iterations:
+  - Source types imported from `@/lib/types/sources` not `@/lib/types/api`
+  - Annotation types imported from `@/lib/types/annotations`
+  - Annotation has `author` property not `user` (check type definitions before assuming)
+  - Toast provider duration set to 5000ms (5 seconds) for auto-dismiss
+  - Toast viewport positioned bottom-right via Tailwind classes
+  - Bitcoin DeFi toast styling: bg-[#0F1115], border-[#F7931A]/50, shadow with orange glow
+  - VaultToast filters out current user's own actions to prevent noise
+  - VaultToast returns null (invisible component, only listens to events)
+  - Toast component uses slide-in/fade-out animations from Radix primitives
+  - useToast hook uses global state pattern (listeners array + memoryState)
+  - TOAST_LIMIT set to 1 to prevent toast spam (only shows latest toast)
+  - Toast dismiss delay set to 1000000ms to prevent premature removal from DOM
+  - Event handlers check data.user?.id !== currentUserId to filter self-events
+  - Member events (member.added, member.removed, member.role_changed) shown to all users
+  - Typecheck passes without issues (pre-existing errors in login page are unrelated)
+---
