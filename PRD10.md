@@ -78,12 +78,12 @@ Integrate SyncScript's frontend with the existing backend WebSocket system and n
 **Description:** As a developer, I need a hook to track which members are currently active in a vault.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/hooks/usePresence.ts`
-- [ ] Sends presence heartbeat every 30 seconds via WebSocket
-- [ ] Receives and tracks `presence.join`, `presence.leave`, `presence.heartbeat` events
-- [ ] Returns list of active member IDs with last activity timestamp
-- [ ] Marks members as inactive after 60 seconds without heartbeat
-- [ ] Typecheck passes
+- [x] Create `frontend/src/hooks/usePresence.ts`
+- [x] Sends presence heartbeat every 30 seconds via WebSocket
+- [x] Receives and tracks `presence.join`, `presence.leave`, `presence.heartbeat` events
+- [x] Returns list of active member IDs with last activity timestamp
+- [x] Marks members as inactive after 60 seconds without heartbeat
+- [x] Typecheck passes
 
 ### US-007: Create PresenceIndicator component with animate-ping effect
 **Description:** As a user, I want to see which collaborators are currently active in the vault so I know who I'm working with.
