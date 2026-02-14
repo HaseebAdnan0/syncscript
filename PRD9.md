@@ -268,13 +268,13 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 **Description:** As a user, I want zoom and navigation controls for the PDF viewer so I can read documents comfortably.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/sources/PDFViewerControls.tsx`
-- [ ] Zoom in/out buttons with percentage display
-- [ ] Fit to width / Fit to page toggle
-- [ ] Download original PDF button
-- [ ] Fullscreen toggle button
-- [ ] Controls fixed at top of viewer area
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/sources/PDFViewerControls.tsx`
+- [x] Zoom in/out buttons with percentage display
+- [x] Fit to width / Fit to page toggle
+- [x] Download original PDF button
+- [x] Fullscreen toggle button
+- [x] Controls fixed at top of viewer area
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---
