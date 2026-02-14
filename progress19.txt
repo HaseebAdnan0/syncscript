@@ -1,17 +1,29 @@
 # Progress Log - PRD 19: Notification System
 
 ## Current Status
-Not started
+In Progress - US-001 complete
 
 ## Learnings
-(Patterns discovered during implementation)
+- Notification model was already created in a previous session
+- Model includes all required fields: user FK, type, title, body, data (JSON), read_at, created_at
+- Indexes added for efficient querying on user+read_at, user+created_at, created_at
+- Type annotations required for mypy typecheck compliance
 
+---
+
+## Iteration 1 - US-001: Notification Model
+- Verified Notification model exists with all required fields
+- Confirmed migration 0001_initial was already generated and applied
+- Verified admin registration
+- Typecheck passes with proper type annotations
+- Files: backend/apps/notifications/models.py, admin.py, apps.py
+- Learnings: App was previously created, task verification successful
 ---
 
 ## Story Progress
 
 ### Backend Foundation
-- [ ] US-001: Notification model
+- [x] US-001: Notification model
 - [ ] US-002: NotificationPreferences model
 - [ ] US-003: MutedVault model
 - [ ] US-004: Serializers

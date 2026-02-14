@@ -41,11 +41,11 @@ Implement a global full-text search system for SyncScript that enables researche
 **Description:** As a developer, I need a searchable tsvector column on the Annotation model for full-text search on annotation content.
 
 **Acceptance Criteria:**
-- [ ] Add `search_vector` field to Annotation model: `SearchVectorField(null=True)`
-- [ ] Create migration adding the column
-- [ ] Add GIN index on `search_vector` column
-- [ ] Migration runs successfully
-- [ ] Typecheck passes
+- [x] Add `search_vector` field to Annotation model: `SearchVectorField(null=True)`
+- [x] Create migration adding the column
+- [x] Add GIN index on `search_vector` column
+- [x] Migration runs successfully
+- [x] Typecheck passes
 
 ---
 
