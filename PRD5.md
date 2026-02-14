@@ -162,13 +162,13 @@ This PRD covers the full implementation: core infrastructure, event broadcasting
 **Description:** As a developer, I need Source model changes to trigger broadcasts so collaborators see new sources instantly.
 
 **Acceptance Criteria:**
-- [ ] Create/update `apps/sources/signals.py`
-- [ ] Connect `post_save` signal for Source model
-- [ ] On created=True, enqueue `broadcast_source_created` Celery task
-- [ ] On created=False, enqueue `broadcast_source_updated` Celery task
-- [ ] Connect `post_delete` signal, enqueue `broadcast_source_deleted` task
-- [ ] Register signals in `apps/sources/apps.py` ready()
-- [ ] Typecheck passes
+- [x] Create/update `apps/sources/signals.py`
+- [x] Connect `post_save` signal for Source model
+- [x] On created=True, enqueue `broadcast_source_created` Celery task
+- [x] On created=False, enqueue `broadcast_source_updated` Celery task
+- [x] Connect `post_delete` signal, enqueue `broadcast_source_deleted` task
+- [x] Register signals in `apps/sources/apps.py` ready()
+- [x] Typecheck passes
 
 ---
 
