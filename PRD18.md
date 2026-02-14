@@ -292,13 +292,13 @@ Implement a global full-text search system for SyncScript that enables researche
 **Description:** As a user, I want filter tabs to narrow results by type so I can find specific content types.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/search/SearchTypeFilter.tsx`
-- [ ] Tab options: All, Vaults, Sources, Annotations
-- [ ] Active tab has orange underline/highlight
-- [ ] Tabs show result count badge when results available
-- [ ] Clicking tab filters results immediately
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/features/search/SearchTypeFilter.tsx`
+- [x] Tab options: All, Vaults, Sources, Annotations
+- [x] Active tab has orange underline/highlight
+- [x] Tabs show result count badge when results available
+- [x] Clicking tab filters results immediately
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 
