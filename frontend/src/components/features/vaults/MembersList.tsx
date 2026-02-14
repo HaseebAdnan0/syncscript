@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { useVaultMembers, useUpdateRole } from '@/hooks/useVaultMembers';
+import { useVaultMembers, useUpdateRole, useRemoveMember } from '@/hooks/useVaultMembers';
 import { VaultRole } from '@/lib/types/vault';
 import { Badge } from '@/components/ui/badge';
-import { Users, UserPlus, ChevronDown } from 'lucide-react';
+import { Users, UserPlus, ChevronDown, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import GradientButton from '@/components/ui/GradientButton';
 import AddMemberModal from './AddMemberModal';
@@ -14,6 +14,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/useToast';
 
 interface MembersListProps {
   vaultId: number;
@@ -58,8 +68,11 @@ function sortMembers(members: any[]) {
 export function MembersList({ vaultId, userRole, currentUserId }: MembersListProps) {
   const { data: membersResponse, isLoading, error } = useVaultMembers(vaultId);
   const updateRoleMutation = useUpdateRole(vaultId);
+  const removeMemberMutation = useRemoveMember(vaultId);
+  const { toast } = useToast();
   const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
   const [updatingMemberId, setUpdatingMemberId] = useState<number | null>(null);
+  const [removingMember, setRemovingMember] = useState<{ id: number; name: string } | null>(null);
 
   // Extract members from paginated response
   const members = membersResponse?.results || [];
@@ -80,6 +93,26 @@ export function MembersList({ vaultId, userRole, currentUserId }: MembersListPro
       console.error('Failed to update member role:', error);
     } finally {
       setUpdatingMemberId(null);
+    }
+  };
+
+  // Handle remove member
+  const handleRemoveMember = async () => {
+    if (!removingMember) return;
+
+    try {
+      await removeMemberMutation.mutateAsync(removingMember.id);
+      toast({
+        title: 'Member removed',
+        description: `${removingMember.name} has been removed from this vault`,
+      });
+      setRemovingMember(null);
+    } catch (error) {
+      console.error('Failed to remove member:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to remove member. Please try again.',
+      });
     }
   };
 
@@ -145,6 +178,7 @@ export function MembersList({ vaultId, userRole, currentUserId }: MembersListPro
           const isCurrentUser = currentUserId === member.user_id;
           const isMemberOwner = member.role === VaultRole.OWNER;
           const canChangeRole = isOwner && !isMemberOwner && !isCurrentUser;
+          const canRemove = isOwner && !isMemberOwner && !isCurrentUser;
           const isUpdating = updatingMemberId === member.id;
 
           return (
@@ -217,6 +251,17 @@ export function MembersList({ vaultId, userRole, currentUserId }: MembersListPro
                     Pending
                   </Badge>
                 )}
+
+                {/* Remove button (only for owners, not for other owners or self) */}
+                {canRemove && (
+                  <button
+                    onClick={() => setRemovingMember({ id: member.id, name: member.user_name })}
+                    className="p-2 rounded-lg text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors"
+                    aria-label={`Remove ${member.user_name}`}
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
+                )}
               </div>
             </div>
           );
@@ -229,6 +274,37 @@ export function MembersList({ vaultId, userRole, currentUserId }: MembersListPro
         isOpen={isAddMemberModalOpen}
         onClose={() => setIsAddMemberModalOpen(false)}
       />
+
+      {/* Remove Member Confirmation Dialog */}
+      <Dialog open={!!removingMember} onOpenChange={(open) => !open && setRemovingMember(null)}>
+        <DialogContent className="bg-[#0F1115] border border-white/10">
+          <DialogHeader>
+            <DialogTitle className="text-white">Remove Member</DialogTitle>
+            <DialogDescription className="text-[#94A3B8]">
+              Remove {removingMember?.name} from this vault?
+            </DialogDescription>
+          </DialogHeader>
+          <p className="text-[#94A3B8] text-sm">
+            They will lose access to all sources and annotations in this vault. This action cannot be undone.
+          </p>
+          <DialogFooter>
+            <Button
+              variant="ghost"
+              onClick={() => setRemovingMember(null)}
+              disabled={removeMemberMutation.isPending}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleRemoveMember}
+              disabled={removeMemberMutation.isPending}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              {removeMemberMutation.isPending ? 'Removing...' : 'Remove Member'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

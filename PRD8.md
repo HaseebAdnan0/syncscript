@@ -227,13 +227,13 @@ Create the complete vault management interface for SyncScript, enabling research
 **Description:** As a vault owner, I want to remove a member so they no longer have access.
 
 **Acceptance Criteria:**
-- [ ] Add remove button (trash icon) to each member row (except Owner)
-- [ ] Click shows confirm dialog: "Remove {name} from this vault?"
-- [ ] Confirm triggers useRemoveMember mutation
-- [ ] On success: remove from list, show toast
-- [ ] Only visible to Owner role
-- [ ] Cannot remove self (Owner)
-- [ ] Typecheck passes
+- [x] Add remove button (trash icon) to each member row (except Owner)
+- [x] Click shows confirm dialog: "Remove {name} from this vault?"
+- [x] Confirm triggers useRemoveMember mutation
+- [x] On success: remove from list, show toast
+- [x] Only visible to Owner role
+- [x] Cannot remove self (Owner)
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-018: Settings tab - rename vault

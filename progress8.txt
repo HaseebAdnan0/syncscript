@@ -456,3 +456,34 @@ Learnings for future iterations:
 - No additional code needed - just verification that existing implementation meets all AC
 ---
 
+## Iteration 17 - US-016: Change member role
+- Added role dropdown to member rows with Radix DropdownMenu component
+- Dropdown shows Contributor and Viewer options (not Owner - can't change to Owner)
+- Implemented permission checks:
+  - Only visible to vault Owners (isOwner check)
+  - Cannot change own role (currentUserId comparison)
+  - Cannot change other Owner's role (isMemberOwner check)
+- Loading state while updating: shows "Updating..." text and disabled dropdown
+- Uses useUpdateRole mutation with { memberId, data: { role } } payload
+- React Query automatically invalidates members list on success (optimistic UI update)
+- Added currentUserId prop to MembersList component
+- Updated vault detail page to pass user?.id from auth store
+- Typecheck passes successfully
+- Committed changes with feat: message
+
+Files changed:
+- frontend/src/components/features/vaults/MembersList.tsx (added dropdown, permission logic)
+- frontend/src/app/(app)/vaults/[id]/page.tsx (passed currentUserId prop)
+- PRD8.md (marked US-016 complete except browser verification)
+
+Learnings for future iterations:
+- Radix DropdownMenu pattern: DropdownMenu > DropdownMenuTrigger + DropdownMenuContent > DropdownMenuItem
+- Permission checks should be done at render time: canChangeRole = isOwner && !isMemberOwner && !isCurrentUser
+- Loading state pattern: track updatingMemberId in state, compare with current member.id
+- DropdownMenuTrigger can be disabled with disabled prop during mutations
+- Dropdown styling: use getRoleBadgeStyles() for consistent role colors, add ChevronDown icon
+- Current selection highlighting: check member.role === VaultRole.X and add bg-white/10 class
+- MembersList needs currentUserId to prevent editing own role (user?.id from auth store)
+- VaultMember has user_id field for comparison with currentUserId
+- Dropdown triggers on click, no need for separate onChange handler (onClick on DropdownMenuItem)
+---
