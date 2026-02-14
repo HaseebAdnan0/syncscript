@@ -3,4 +3,23 @@
 ## Learnings
 (Patterns discovered during implementation)
 
+- Annotation model has custom save() that calls full_clean() - use bulk_create() in tests to bypass validation
+- Test database needs to be migrated before running tests (use --keepdb flag to preserve database)
+- When testing with timestamps, use QuerySet.update() to bypass model validation
+
+---
+
+## Iteration 1 - US-001: Create dashboard stats API endpoint
+- Implemented GET /api/v1/dashboard/stats/ endpoint
+- Created new dashboard Django app with views, URLs, and tests
+- Files changed:
+  - backend/apps/dashboard/ (new app)
+  - backend/config/settings.py (added dashboard to INSTALLED_APPS)
+  - backend/config/urls.py (added dashboard URLs)
+  - PRD17.md (marked US-001 complete)
+- Learnings for future iterations:
+  - Dashboard app structure mirrors other apps (vaults, sources, annotations)
+  - Use Q objects for complex queries (owner OR member)
+  - Annotation model requires bulk_create for test data due to custom save validation
+  - All 3 tests passing (auth required, success case, no data case)
 ---

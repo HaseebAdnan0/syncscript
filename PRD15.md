@@ -38,9 +38,9 @@ This feature uses Claude as the AI backbone with a simple chunking strategy (no 
 - [x] Create `apps/ai/services/usage.py`
 - [x] `log_usage(user, request_type, tokens_used)` function saves AIUsageLog
 - [x] `get_daily_usage(user)` returns total tokens and request count for today
-- [ ] `get_remaining_requests(user)` returns requests left (default limit: 20/day)
-- [ ] `AI_DAILY_LIMIT` setting in config (default 20)
-- [ ] Typecheck passes
+- [x] `get_remaining_requests(user)` returns requests left (default limit: 20/day)
+- [x] `AI_DAILY_LIMIT` setting in config (default 20)
+- [x] Typecheck passes
 
 ### US-003: Create rate limiting decorator for AI endpoints
 **Description:** As a developer, I need to rate limit AI requests so we control API costs.

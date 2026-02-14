@@ -72,6 +72,7 @@ class DOILookupTests(TestCase):
         result = fetch_doi_metadata("10.1234/test")
 
         self.assertIsNotNone(result)
+        assert result is not None  # Type narrowing
         self.assertEqual(result['title'], 'Test Article Title')
         self.assertEqual(result['authors'], ['Doe, John', 'Smith, Jane'])
         self.assertEqual(result['publication_date'], '2024-01-15')
@@ -93,6 +94,7 @@ class DOILookupTests(TestCase):
         result = fetch_doi_metadata("10.1234/minimal")
 
         self.assertIsNotNone(result)
+        assert result is not None  # Type narrowing
         self.assertEqual(result['title'], 'Minimal Article')
         self.assertEqual(result['authors'], ['Unknown'])
         self.assertEqual(result['publication_date'], 'n.d.')
