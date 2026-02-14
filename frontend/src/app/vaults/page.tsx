@@ -1,15 +1,29 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useVaults } from '@/hooks/useVaults';
 import { VaultCard } from '@/components/features/vaults/VaultCard';
 import { EmptyVaultsState } from '@/components/features/vaults/EmptyVaultsState';
 import GradientButton from '@/components/ui/GradientButton';
 import { useVaultsStore } from '@/stores/vaultsStore';
 import type { Vault } from '@/lib/types/vault';
+import { Search, X } from 'lucide-react';
 
 export default function VaultsPage() {
   const { openCreateModal } = useVaultsStore();
-  const { data, isLoading, error } = useVaults();
+  const [searchInput, setSearchInput] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+
+  // Debounce search input by 300ms
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchInput);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchInput]);
+
+  const { data, isLoading, error } = useVaults(debouncedSearch);
 
   const vaults: Vault[] = data?.results || [];
 
@@ -63,13 +77,38 @@ export default function VaultsPage() {
     <div className="min-h-screen bg-[#030304]">
       <div className="max-w-7xl mx-auto px-6 py-12">
         {/* Page header */}
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-[#F7931A] to-[#FFD600] bg-clip-text text-transparent">
-            My Vaults
-          </h1>
-          <GradientButton onClick={openCreateModal}>
-            Create Vault
-          </GradientButton>
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-[#F7931A] to-[#FFD600] bg-clip-text text-transparent">
+              My Vaults
+            </h1>
+            <GradientButton onClick={openCreateModal}>
+              Create Vault
+            </GradientButton>
+          </div>
+
+          {/* Search input */}
+          <div className="relative max-w-md">
+            <div className="relative">
+              <Search className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-5 text-[#94A3B8]" />
+              <input
+                type="text"
+                placeholder="Search vaults..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                className="w-full bg-transparent border-0 border-b-2 border-white/20 h-12 pl-8 pr-10 text-white placeholder:text-[#94A3B8] focus:border-[#F7931A] focus:outline-none transition-colors"
+              />
+              {searchInput && (
+                <button
+                  onClick={() => setSearchInput('')}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 h-8 w-8 flex items-center justify-center text-[#94A3B8] hover:text-[#F7931A] transition-colors"
+                  aria-label="Clear search"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Vaults grid or empty state */}
