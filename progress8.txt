@@ -355,3 +355,39 @@ Learnings for future iterations:
 - Vault interface has user_role field with current user's role in that vault
 - Browser verification tasks are left unchecked per Ralph protocol (manual user verification)
 ---
+## Iteration 14 - US-013: Members tab list component
+- Created `frontend/src/components/features/vaults/MembersList.tsx` with complete members list UI:
+  - Member cards display avatar with initials (2 letters from name)
+  - Shows member name, email, and role badge
+  - Role badges use getRoleBadgeStyles() helper (same as VaultCard): Owner (orange), Contributor (blue), Viewer (gray)
+  - sortMembers() helper sorts Owners first, then alphabetically by user_name
+  - Loading skeleton with 3 card placeholders using animate-pulse
+  - Error state with centered red message
+  - Empty state with Users icon (unlikely but good to have)
+  - Pending status badge for invited users (is_pending field)
+  - Card hover effects: `-translate-y-1` lift and `border-[#F7931A]/50` orange glow
+- Integrated MembersList into vault detail page:
+  - Added useVaultMembers import and hook call
+  - Fetched membersResponse to extract members from paginated results
+  - Updated Members tab to show count badge: "Members (5)"
+  - Replaced placeholder content with <MembersList vaultId={vaultId} />
+- Typecheck passes successfully
+- Committed changes with feat: commit message
+
+Files changed:
+- frontend/src/components/features/vaults/MembersList.tsx (created)
+- frontend/src/app/(app)/vaults/[id]/page.tsx (updated to integrate MembersList)
+- PRD8.md (marked US-013 complete except browser verification)
+
+Learnings for future iterations:
+- Vault pages are in `frontend/src/app/(app)/vaults/` not `frontend/src/app/vaults/`
+- The (app) route group was likely added for authentication layout
+- VaultMembersListResponse is paginated, must access `membersResponse?.results || []`
+- getInitials() helper extracts first and last initial from name, fallback to first 2 chars
+- sortMembers() creates a copy with [...members] to avoid mutating original array
+- Members sorting logic: Owners first (role === VaultRole.OWNER), then alphabetically
+- Avatar gradient uses Bitcoin DeFi colors: `from-[#F7931A] to-[#EA580C]`
+- VaultMember interface has is_pending field for invited but not yet joined users
+- Badge component can be stacked (role badge + pending badge) for multiple statuses
+---
+

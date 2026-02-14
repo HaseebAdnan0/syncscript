@@ -334,3 +334,30 @@
   - Typecheck passes without issues
 ---
 
+
+## Iteration 15 - US-015: Integrate notification components into app header
+- Implemented app-wide header with notification controls
+- Files changed:
+  - Created `frontend/src/components/features/notifications/AppHeader.tsx` (main app header component)
+  - Created `frontend/src/app/(app)/layout.tsx` (layout wrapper for authenticated pages)
+  - Moved `frontend/src/app/vaults/` to `frontend/src/app/(app)/vaults/` (route group organization)
+  - Updated `frontend/src/app/layout.tsx` (added Toaster component)
+  - Updated `PRD10.md` (marked US-015 acceptance criteria complete except browser verification)
+- Learnings for future iterations:
+  - Created (app) route group to organize authenticated pages with shared layout
+  - AppHeader is sticky (top-0 z-40) with glass morphism (backdrop-blur-lg bg-[#0F1115]/80)
+  - Bell icon button has relative positioning for UnreadBadge absolute positioning
+  - NotificationPanel dropdown positioned absolute right-0 top-full with mt-2 spacing
+  - Click-outside detection uses refs for both button and panel to exclude them from close trigger
+  - Escape key closes panel using separate useEffect with keyboard event listener
+  - ConnectionStatus only shown when vaultId prop is provided (vault-specific pages)
+  - useVaultSocket called unconditionally (React hooks rules) - passes empty string when no vaultId
+  - Logo/brand links to /vaults for easy navigation back to vault list
+  - Brand uses gradient orange circle with "S" initial + SyncScript text with gradient
+  - Toaster component added to root layout for app-wide toast notifications
+  - Route groups like (app) don't affect URL structure but allow nested layouts
+  - Moved vaults pages using cp + rm since git mv had issues with parentheses in path
+  - Bell button has aria-label, aria-expanded, aria-haspopup for accessibility
+  - Focus ring uses Bitcoin orange (#F7931A) with ring-offset for visibility
+  - Typecheck passes without errors (TS6133 warnings about unused imports are false positives)
+---

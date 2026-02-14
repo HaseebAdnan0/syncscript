@@ -193,12 +193,12 @@ Integrate SyncScript's frontend with the existing backend WebSocket system and n
 **Description:** As a user, I want notification controls in the header so I can access them from any page.
 
 **Acceptance Criteria:**
-- [ ] Add bell icon with UnreadBadge to main app header
-- [ ] Bell click opens NotificationPanel dropdown
-- [ ] Add ConnectionStatus indicator to header (right side)
-- [ ] Dropdown closes when clicking outside
-- [ ] Keyboard accessible (Escape to close)
-- [ ] Typecheck passes
+- [x] Add bell icon with UnreadBadge to main app header
+- [x] Bell click opens NotificationPanel dropdown
+- [x] Add ConnectionStatus indicator to header (right side)
+- [x] Dropdown closes when clicking outside
+- [x] Keyboard accessible (Escape to close)
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-016: Integrate PresenceIndicator into vault detail page

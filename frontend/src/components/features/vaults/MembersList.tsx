@@ -1,13 +1,17 @@
 'use client';
 
+import { useState } from 'react';
 import { useVaultMembers } from '@/hooks/useVaultMembers';
 import { VaultRole } from '@/lib/types/vault';
 import { Badge } from '@/components/ui/badge';
-import { Users } from 'lucide-react';
+import { Users, UserPlus } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import GradientButton from '@/components/ui/GradientButton';
+import AddMemberModal from './AddMemberModal';
 
 interface MembersListProps {
   vaultId: number;
+  userRole?: VaultRole;
 }
 
 // Get role badge colors
@@ -44,12 +48,16 @@ function sortMembers(members: any[]) {
   });
 }
 
-export function MembersList({ vaultId }: MembersListProps) {
+export function MembersList({ vaultId, userRole }: MembersListProps) {
   const { data: membersResponse, isLoading, error } = useVaultMembers(vaultId);
+  const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
 
   // Extract members from paginated response
   const members = membersResponse?.results || [];
   const sortedMembers = sortMembers(members);
+
+  // Check if user is owner
+  const isOwner = userRole === VaultRole.OWNER;
 
   // Loading state
   if (isLoading) {
@@ -97,8 +105,19 @@ export function MembersList({ vaultId }: MembersListProps) {
   }
 
   return (
-    <div className="space-y-4">
-      {sortedMembers.map((member) => (
+    <>
+      {/* Add Member button (only for owners) */}
+      {isOwner && (
+        <div className="mb-6">
+          <GradientButton onClick={() => setIsAddMemberModalOpen(true)}>
+            <UserPlus className="w-5 h-5 mr-2" />
+            Add Member
+          </GradientButton>
+        </div>
+      )}
+
+      <div className="space-y-4">
+        {sortedMembers.map((member) => (
         <div
           key={member.id}
           className="bg-[#0F1115] border border-white/10 rounded-2xl p-6 hover:-translate-y-1 hover:border-[#F7931A]/50 transition-all"
@@ -135,6 +154,14 @@ export function MembersList({ vaultId }: MembersListProps) {
           </div>
         </div>
       ))}
-    </div>
+      </div>
+
+      {/* Add Member Modal */}
+      <AddMemberModal
+        vaultId={vaultId}
+        isOpen={isAddMemberModalOpen}
+        onClose={() => setIsAddMemberModalOpen(false)}
+      />
+    </>
   );
 }

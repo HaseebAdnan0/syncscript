@@ -185,15 +185,15 @@ Create the complete vault management interface for SyncScript, enabling research
 **Description:** As a vault owner, I want to add an existing user to my vault so they can collaborate.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/vaults/AddMemberModal.tsx`
-- [ ] Modal has two tabs: "Add Existing" and "Invite New"
-- [ ] "Add Existing" tab: email/username search input with autocomplete dropdown
-- [ ] Role selector dropdown: Contributor (default), Viewer
-- [ ] Add button uses useAddMember mutation
-- [ ] On success: close modal, show toast, refresh members list
-- [ ] On error: show error message (e.g., "User not found")
-- [ ] Only accessible to Owner role
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/vaults/AddMemberModal.tsx`
+- [x] Modal has two tabs: "Add Existing" and "Invite New"
+- [x] "Add Existing" tab: email/username search input with autocomplete dropdown
+- [x] Role selector dropdown: Contributor (default), Viewer
+- [x] Add button uses useAddMember mutation
+- [x] On success: close modal, show toast, refresh members list
+- [x] On error: show error message (e.g., "User not found")
+- [x] Only accessible to Owner role
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-015: Invite new user by email
