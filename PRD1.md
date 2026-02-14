@@ -89,11 +89,11 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a developer, I need email backend configured for sending verification and reset emails.
 
 **Acceptance Criteria:**
-- [ ] Add EMAIL_BACKEND setting (SMTP backend)
-- [ ] Add EMAIL_HOST, EMAIL_PORT, EMAIL_USE_TLS settings from environment
-- [ ] Add EMAIL_HOST_USER, EMAIL_HOST_PASSWORD from environment
-- [ ] Add DEFAULT_FROM_EMAIL setting
-- [ ] Typecheck passes
+- [x] Add EMAIL_BACKEND setting (SMTP backend)
+- [x] Add EMAIL_HOST, EMAIL_PORT, EMAIL_USE_TLS settings from environment
+- [x] Add EMAIL_HOST_USER, EMAIL_HOST_PASSWORD from environment
+- [x] Add DEFAULT_FROM_EMAIL setting
+- [x] Typecheck passes
 
 ---
 

@@ -47,3 +47,15 @@
   - related_name on added_by must be unique: 'memberships_created' not 'memberships'
   - Sometimes Django check shows transient errors (re-run if suspicious)
 ---
+
+## Iteration 5 - US-005: Add members ManyToMany to Vault
+- Added members ManyToManyField to Vault model with VaultMembership as through model
+- Files changed:
+  - backend/apps/vaults/models.py (added members field)
+  - PRD2.md (marked US-005 as complete)
+- Learnings for future iterations:
+  - ManyToManyField with through model that has multiple FKs to target requires through_fields parameter
+  - through_fields specifies which FKs to use: ('source_field', 'target_field')
+  - In this case: through_fields=('vault', 'user') to use vault and user FKs (not added_by)
+  - Django check error E335 indicates missing through_fields when ambiguous
+---

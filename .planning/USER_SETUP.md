@@ -190,16 +190,42 @@ After installing all dependencies and configuring environment variables:
 
 ---
 
-## Optional: Cloud Storage (AWS S3 / Cloudflare R2)
-### Required For: PDF uploads (future feature)
-### Steps:
-Will be configured when implementing PDF upload functionality (US-004)
+## Cloud Storage (AWS S3 / Cloudflare R2)
+### Required For: PDF uploads and file storage
+### Option 1: Cloudflare R2 (Recommended for this project)
+1. Create Cloudflare account at https://dash.cloudflare.com/
+2. Navigate to R2 Object Storage
+3. Create a new bucket (e.g., "syncscript-pdfs")
+4. Generate R2 API tokens:
+   - Go to "Manage R2 API Tokens"
+   - Create API token with "Edit" permissions
+   - Copy Access Key ID and Secret Access Key
+5. Get your account-specific endpoint URL:
+   - Format: `https://<account_id>.r2.cloudflarestorage.com`
+   - Find your account ID in Cloudflare dashboard
 
-### Environment Variables (for future):
-- `AWS_ACCESS_KEY_ID`: Your access key
-- `AWS_SECRET_ACCESS_KEY`: Your secret key
-- `AWS_STORAGE_BUCKET_NAME`: Your bucket name
-- `AWS_S3_REGION_NAME`: us-east-1 (or your region)
+### Option 2: AWS S3
+1. Create AWS account at https://aws.amazon.com/
+2. Navigate to S3 service
+3. Create a new bucket in your preferred region
+4. Create IAM user with S3 access:
+   - Go to IAM → Users → Create user
+   - Attach policy: `AmazonS3FullAccess` (or create custom policy)
+   - Generate access keys under "Security credentials"
+5. Note your bucket region (e.g., us-east-1, eu-west-1)
+
+### Option 3: Local Development (No Cloud Storage)
+If you want to test without cloud storage, files will be stored locally in `backend/media/`.
+Simply don't set the AWS environment variables, and Django will use local filesystem storage.
+
+### Environment Variables:
+- `AWS_ACCESS_KEY_ID`: Your S3/R2 access key ID
+- `AWS_SECRET_ACCESS_KEY`: Your S3/R2 secret access key
+- `AWS_STORAGE_BUCKET_NAME`: Your bucket name (e.g., "syncscript-pdfs")
+- `AWS_S3_REGION_NAME`: Region name (use "auto" for Cloudflare R2, or actual region for AWS S3)
+- `AWS_S3_ENDPOINT_URL`: Full endpoint URL (Required for Cloudflare R2, e.g., "https://abc123.r2.cloudflarestorage.com")
+
+**Note:** If AWS environment variables are not set, the application will use local filesystem storage (`MEDIA_ROOT`). This is suitable for development but not recommended for production.
 
 ---
 

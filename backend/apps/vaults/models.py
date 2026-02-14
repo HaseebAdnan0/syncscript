@@ -96,3 +96,35 @@ class VaultMembership(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.vault.name} ({self.role})"
+
+
+class AuditLog(models.Model):
+    """
+    Immutable audit log for research integrity tracking.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    vault = models.ForeignKey(
+        Vault,
+        on_delete=models.CASCADE,
+        related_name='audit_logs'
+    )
+    actor = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='audit_actions'
+    )
+    action = models.CharField(max_length=100)
+    metadata = models.JSONField(default=dict)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'audit_logs'
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['vault', '-created_at']),
+            models.Index(fields=['action']),
+        ]
+
+    def __str__(self):
+        return f"{self.action} on {self.vault.name} at {self.created_at}"
