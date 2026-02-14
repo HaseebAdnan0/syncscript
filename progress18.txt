@@ -312,3 +312,23 @@
   - --help flag automatically generated from help attribute and add_arguments()
 ---
 
+## Iteration 15 - US-015: Create search TypeScript types and API client
+- Created frontend/src/lib/types/search.ts with all required types
+- Types: SearchResult, SearchResultType, SearchSuggestion, SearchHistory, SearchResponse, SearchFilters
+- Created frontend/src/lib/api/search.ts with API functions
+- Functions: search(), getSuggestions(), getRecentSearches(), clearRecentSearches(), deleteRecentSearch()
+- All functions properly typed with TypeScript generics
+- Files changed:
+  - frontend/src/lib/types/search.ts (created)
+  - frontend/src/lib/api/search.ts (created)
+  - PRD18.md (marked US-015 complete)
+- Learnings for future iterations:
+  - API client is exported as `api` from `../api` (not `apiClient` from `./client`)
+  - Check existing API files (vaults.ts, sources.ts) for import patterns
+  - SearchResponse wraps results in nested object structure: { results: { vaults, sources, annotations }, total_count, query }
+  - SearchFilters interface used for optional filtering parameters in search function
+  - URLSearchParams is the standard way to build query strings with conditional parameters
+  - Use api.get<T>() with generic type for proper response typing
+  - All types should match backend serializer field names exactly
+---
+

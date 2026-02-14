@@ -104,6 +104,16 @@ export function NotificationPanel() {
           </div>
         )}
       </div>
+
+      {/* Footer with settings link */}
+      <div className="border-t border-white/10 p-3 text-center">
+        <a
+          href="/settings/notifications"
+          className="text-xs text-[#F7931A] hover:text-[#FFD600] transition-colors uppercase tracking-wide font-medium"
+        >
+          Notification Settings
+        </a>
+      </div>
     </div>
   );
 }

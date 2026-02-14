@@ -851,3 +851,119 @@ class NotificationServiceTestCase(TestCase):
         self.assertIsNotNone(notification)
         # Verify preferences were created
         self.assertTrue(NotificationPreferences.objects.filter(user=self.user).exists())
+
+
+class VaultInviteSignalTestCase(TestCase):
+    """Test vault_invite notification signal (US-012)."""
+
+    def setUp(self) -> None:
+        """Create test users and vault."""
+        from apps.vaults.models import Vault
+
+        self.owner = User.objects.create_user(  # type: ignore[attr-defined]
+            username='owner',
+            email='owner@example.com',
+            password='testpass123'
+        )
+        self.invitee = User.objects.create_user(  # type: ignore[attr-defined]
+            username='invitee',
+            email='invitee@example.com',
+            password='testpass123'
+        )
+        self.vault = Vault.objects.create(
+            name='Test Vault',
+            owner=self.owner
+        )
+
+    def test_signal_creates_notification_on_vault_invite(self) -> None:
+        """Test notification created when user is added to vault."""
+        from apps.vaults.models import VaultMembership
+
+        # Add invitee to vault (triggers signal)
+        VaultMembership.objects.create(
+            vault=self.vault,
+            user=self.invitee,
+            added_by=self.owner
+        )
+
+        # Verify notification was created
+        notifications = Notification.objects.filter(user=self.invitee)
+        self.assertEqual(notifications.count(), 1)
+
+        notification = notifications.first()
+        self.assertEqual(notification.type, 'vault_invite')  # type: ignore[union-attr]
+        self.assertEqual(notification.title, f'Invited to {self.vault.name}')  # type: ignore[union-attr]
+        self.assertIn(self.owner.username, notification.body)  # type: ignore[union-attr]
+        self.assertIn(self.vault.name, notification.body)  # type: ignore[union-attr]
+
+        # Verify data includes vault and inviter info
+        self.assertEqual(notification.data['vault_id'], str(self.vault.id))  # type: ignore[union-attr, index]
+        self.assertEqual(notification.data['vault_name'], self.vault.name)  # type: ignore[union-attr, index]
+        self.assertEqual(notification.data['inviter_id'], self.owner.id)  # type: ignore[union-attr, index]
+        self.assertEqual(notification.data['inviter_name'], self.owner.username)  # type: ignore[union-attr, index]
+
+    def test_signal_does_not_notify_vault_owner(self) -> None:
+        """Test owner doesn't get notified when auto-added to vault."""
+        # Owner membership is auto-created by vault creation signal
+        # Verify no notification was created for owner
+        notifications = Notification.objects.filter(user=self.owner)
+        self.assertEqual(notifications.count(), 0)
+
+    def test_signal_does_not_trigger_on_membership_update(self) -> None:
+        """Test signal doesn't fire when membership is updated (only created)."""
+        from apps.vaults.models import VaultMembership, RoleChoices
+
+        # Create membership
+        membership = VaultMembership.objects.create(
+            vault=self.vault,
+            user=self.invitee,
+            added_by=self.owner
+        )
+
+        # Clear notifications
+        Notification.objects.all().delete()
+
+        # Update membership role
+        membership.role = RoleChoices.VIEWER
+        membership.save()
+
+        # Verify no new notification was created
+        notifications = Notification.objects.filter(user=self.invitee)
+        self.assertEqual(notifications.count(), 0)
+
+    def test_signal_respects_muted_vault(self) -> None:
+        """Test signal respects muted vaults."""
+        from apps.vaults.models import VaultMembership
+
+        # Mute the vault before being invited
+        MutedVault.objects.create(user=self.invitee, vault=self.vault)
+
+        # Add invitee to vault
+        VaultMembership.objects.create(
+            vault=self.vault,
+            user=self.invitee,
+            added_by=self.owner
+        )
+
+        # Verify no notification was created (vault is muted)
+        notifications = Notification.objects.filter(user=self.invitee)
+        self.assertEqual(notifications.count(), 0)
+
+    def test_signal_handles_unknown_inviter(self) -> None:
+        """Test signal handles case where added_by is None."""
+        from apps.vaults.models import VaultMembership
+
+        # Add invitee without specifying who added them
+        VaultMembership.objects.create(
+            vault=self.vault,
+            user=self.invitee,
+            added_by=None
+        )
+
+        # Verify notification was created with "Unknown" as inviter
+        notifications = Notification.objects.filter(user=self.invitee)
+        self.assertEqual(notifications.count(), 1)
+
+        notification = notifications.first()
+        self.assertEqual(notification.data['inviter_name'], 'Unknown')  # type: ignore[union-attr, index]
+        self.assertIsNone(notification.data['inviter_id'])  # type: ignore[union-attr, index]

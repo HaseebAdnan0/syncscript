@@ -299,12 +299,12 @@ Add social authentication to SyncScript using Google and GitHub OAuth providers.
 **Description:** As a user, I want to manage my connected OAuth providers in settings.
 
 **Acceptance Criteria:**
-- [ ] Create `components/features/settings/ConnectedAccounts.tsx`
-- [ ] Fetch connected accounts from `GET /api/v1/auth/oauth/connected/`
-- [ ] Display each provider: icon, name, connected email, "Disconnect" button
-- [ ] Show "Connect" button for providers not yet connected
-- [ ] Connect button redirects to OAuth flow with `next=/settings`
-- [ ] Typecheck passes
+- [x] Create `components/features/settings/ConnectedAccounts.tsx`
+- [x] Fetch connected accounts from `GET /api/v1/auth/oauth/connected/`
+- [x] Display each provider: icon, name, connected email, "Disconnect" button
+- [x] Show "Connect" button for providers not yet connected
+- [x] Connect button redirects to OAuth flow with `next=/settings`
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---

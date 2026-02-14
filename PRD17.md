@@ -229,17 +229,17 @@ Create a comprehensive user dashboard as the primary logged-in landing page for 
 **Description:** As a user, I want a notifications bell in the header with dropdown so I can see and manage notifications without leaving the page.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/dashboard/NotificationsDropdown.tsx`
-- [ ] Bell icon in header area
-- [ ] Unread badge showing count (red dot with number)
-- [ ] Click opens dropdown with recent notifications
-- [ ] Each notification shows: title, message preview, relative time
-- [ ] Unread items visually distinguished (brighter, left border)
-- [ ] "Mark as read" button per notification
-- [ ] "Mark all as read" button at top
-- [ ] "Notification settings" link at bottom
-- [ ] Fetches from `/api/v1/notifications/` and `/api/v1/notifications/unread-count/`
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/dashboard/NotificationsDropdown.tsx`
+- [x] Bell icon in header area
+- [x] Unread badge showing count (red dot with number)
+- [x] Click opens dropdown with recent notifications
+- [x] Each notification shows: title, message preview, relative time
+- [x] Unread items visually distinguished (brighter, left border)
+- [x] "Mark as read" button per notification
+- [x] "Mark all as read" button at top
+- [x] "Notification settings" link at bottom
+- [x] Fetches from `/api/v1/notifications/` and `/api/v1/notifications/unread-count/`
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-017: Integrate notifications into app header

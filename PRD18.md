@@ -223,13 +223,13 @@ Implement a global full-text search system for SyncScript that enables researche
 **Description:** As a developer, I need a React Query hook for search with debouncing.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/hooks/useSearchQuery.ts`
-- [ ] Accepts query string and optional filters (type, vaultId)
-- [ ] Debounces API calls by 200ms
-- [ ] Only fires when query >= 2 characters
-- [ ] Returns `{ data, isLoading, error }`
-- [ ] Stale time: 30 seconds
-- [ ] Typecheck passes
+- [x] Create `frontend/src/hooks/useSearchQuery.ts`
+- [x] Accepts query string and optional filters (type, vaultId)
+- [x] Debounces API calls by 200ms
+- [x] Only fires when query >= 2 characters
+- [x] Returns `{ data, isLoading, error }`
+- [x] Stale time: 30 seconds
+- [x] Typecheck passes
 
 ---
 
