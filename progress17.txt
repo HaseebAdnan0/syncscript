@@ -165,3 +165,21 @@
     - Bitcoin DeFi design system applied (dark cards, orange accents, hover effects)
   - Typecheck passes
 ---
+
+## Iteration 8 - US-008: Create continue research section
+- Created ContinueResearch component showing 3 most recently accessed vaults
+- Files changed:
+  - frontend/src/components/features/dashboard/ContinueResearch.tsx (new component)
+  - PRD17.md (marked US-008 complete)
+- Learnings for future iterations:
+  - Component fetches from /api/v1/dashboard/recent-vaults/ using native fetch with Bearer token
+  - Relative time formatting logic: < 1min = "Just now", < 60min = "Xm ago", < 24h = "Xh ago", < 7d = "Xd ago", else date
+  - Empty state pattern: centered card with icon, message, and CTA button
+  - Loading state: skeleton cards with animate-pulse matching final layout
+  - Vault cards show role badge (OWNER/CONTRIBUTOR/VIEWER) in top-right
+  - Quick actions: primary button (Open) uses gradient, secondary (Add Source) uses border style
+  - "View all vaults" link uses orange-to-gold gradient hover transition
+  - Grid responsive: grid-cols-1 md:grid-cols-3 for mobile-first layout
+  - Hover effects: -translate-y-1 for lift, border color change to orange/50
+  - Typecheck passes with no errors
+---

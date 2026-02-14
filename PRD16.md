@@ -210,15 +210,15 @@ Create SyncScript's production landing page following the Bitcoin DeFi aesthetic
 **Description:** As a user, I want to see pricing options so I can choose the right plan.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/marketing/PricingSection.tsx`
-- [ ] Section heading centered with subtext
-- [ ] 3 tiers: Free ($0), Pro ($12/mo), Team ($29/mo)
-- [ ] Pro tier is highlighted as popular (center position)
-- [ ] Feature comparison appropriate for each tier
-- [ ] Responsive: stacks on mobile with popular tier first
-- [ ] Framer Motion scale animation on scroll
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/marketing/PricingSection.tsx`
+- [x] Section heading centered with subtext
+- [x] 3 tiers: Free ($0), Pro ($12/mo), Team ($29/mo)
+- [x] Pro tier is highlighted as popular (center position)
+- [x] Feature comparison appropriate for each tier
+- [x] Responsive: stacks on mobile with popular tier first
+- [x] Framer Motion scale animation on scroll
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-016: Create CTA Section
 **Description:** As a user, I want a final compelling CTA so I'm motivated to sign up.

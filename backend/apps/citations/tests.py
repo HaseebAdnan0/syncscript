@@ -1321,7 +1321,6 @@ class AsyncCitationTaskTests(TestCase):
     def setUp(self):
         """Set up test data"""
         from django.contrib.auth import get_user_model
-        from apps.users.models import Profile
         from apps.vaults.models import Vault
         from apps.sources.models import Source
 
@@ -1331,10 +1330,9 @@ class AsyncCitationTaskTests(TestCase):
             username='testuser',
             password='testpass123'
         )
-        Profile.objects.create(user=self.user)
 
         self.vault = Vault.objects.create(
-            title='Test Vault',
+            name='Test Vault',
             description='Test description',
             owner=self.user
         )
@@ -1430,7 +1428,6 @@ class AsyncCitationEndpointTests(TestCase):
     def setUp(self):
         """Set up test data"""
         from django.contrib.auth import get_user_model
-        from apps.users.models import Profile
         from apps.vaults.models import Vault
         from apps.sources.models import Source
         from rest_framework.test import APIClient
@@ -1441,10 +1438,9 @@ class AsyncCitationEndpointTests(TestCase):
             username='testuser',
             password='testpass123'
         )
-        Profile.objects.create(user=self.user)
 
         self.vault = Vault.objects.create(
-            title='Test Vault',
+            name='Test Vault',
             description='Test description',
             owner=self.user
         )
