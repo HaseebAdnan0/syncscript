@@ -141,3 +141,24 @@
   - PRD may already have tasks marked complete from previous iterations
   - Pattern: Check git status AND git show HEAD before creating files
 ---
+
+## Iteration 9 - Create PathSelection component (US-009)
+- Created PathSelection.tsx with 3 path option cards
+- Path options:
+  - Guided: Sparkles icon, gradient from-[#EA580C] to-[#F7931A]
+  - Demo: Compass icon, gradient from-[#F7931A] to-[#FFD600]
+  - Skipped: SkipForward icon, gradient from-[#94A3B8] to-[#64748B]
+- Card hover effects: -translate-y-2, border glow, shadow, icon scale-110
+- Updates onboarding via updateOnboarding() with path, step, and completed fields
+- Responsive grid: grid-cols-1 md:grid-cols-3
+- Files changed: PathSelection.tsx (new), PRD20.md, progress20.txt
+- Commit: 1f99500
+- Typecheck passes
+- Learnings for future iterations:
+  - Use lucide-react icons that match semantic meaning (Sparkles=guided, Compass=explore)
+  - Path selection sets different steps: guided-1, demo, complete (for skipped)
+  - Skip path marks completed=true immediately
+  - Group hover effects using group and group-hover: modifiers
+  - Icon container uses gradient background matching path theme
+  - CTA text revealed on hover with opacity transition
+---

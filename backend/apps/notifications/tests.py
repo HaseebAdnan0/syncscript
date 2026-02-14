@@ -525,3 +525,183 @@ class NotificationPreferencesTestCase(TestCase):
 
         response = client.patch('/api/v1/notifications/preferences/', data={})
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+class MutedVaultsTestCase(TestCase):
+    """Test muted vaults endpoints (US-010)."""
+
+    def setUp(self) -> None:
+        """Create test user, vaults, and memberships."""
+        # Import here to avoid circular dependency at module level
+        from apps.vaults.models import Vault, VaultMembership
+
+        self.user = User.objects.create_user(  # type: ignore[attr-defined]
+            username='testuser',
+            email='test@example.com',
+            password='testpass123'
+        )
+        self.other_user = User.objects.create_user(  # type: ignore[attr-defined]
+            username='otheruser',
+            email='other@example.com',
+            password='testpass123'
+        )
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.user)
+
+        # Create test vaults (owner membership auto-created by signal)
+        self.vault1 = Vault.objects.create(
+            name='Test Vault 1',
+            owner=self.user
+        )
+        self.vault2 = Vault.objects.create(
+            name='Test Vault 2',
+            owner=self.other_user
+        )
+
+        # Add user as contributor to vault2 (vault1 membership already exists from owner signal)
+        VaultMembership.objects.create(
+            vault=self.vault2,
+            user=self.user,
+            role='CONTRIBUTOR'
+        )
+
+    def test_get_empty_muted_vaults(self) -> None:
+        """Test GET /api/v1/notifications/muted-vaults/ returns empty list initially."""
+        response = self.client.get('/api/v1/notifications/muted-vaults/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 0)  # type: ignore[attr-defined]
+
+    def test_mute_vault(self) -> None:
+        """Test POST /api/v1/notifications/muted-vaults/ mutes a vault."""
+        response = self.client.post(
+            '/api/v1/notifications/muted-vaults/',
+            data={'vault_id': str(self.vault1.id)}
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['vault_id'], self.vault1.id)  # type: ignore[attr-defined]
+        self.assertEqual(response.data['vault_name'], self.vault1.name)  # type: ignore[attr-defined]
+
+        # Verify muted vault was created in database
+        self.assertTrue(
+            MutedVault.objects.filter(user=self.user, vault=self.vault1).exists()
+        )
+
+    def test_mute_vault_idempotent(self) -> None:
+        """Test muting same vault twice is idempotent."""
+        # First mute
+        response1 = self.client.post(
+            '/api/v1/notifications/muted-vaults/',
+            data={'vault_id': str(self.vault1.id)}
+        )
+        self.assertEqual(response1.status_code, status.HTTP_201_CREATED)
+
+        # Second mute
+        response2 = self.client.post(
+            '/api/v1/notifications/muted-vaults/',
+            data={'vault_id': str(self.vault1.id)}
+        )
+        self.assertEqual(response2.status_code, status.HTTP_200_OK)
+
+        # Verify only one MutedVault record exists
+        self.assertEqual(
+            MutedVault.objects.filter(user=self.user, vault=self.vault1).count(),
+            1
+        )
+
+    def test_mute_vault_requires_vault_id(self) -> None:
+        """Test POST without vault_id returns 400."""
+        response = self.client.post(
+            '/api/v1/notifications/muted-vaults/',
+            data={}
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('vault_id', response.data['detail'])  # type: ignore[attr-defined]
+
+    def test_mute_vault_validates_membership(self) -> None:
+        """Test cannot mute a vault user is not a member of."""
+        from apps.vaults.models import Vault
+
+        # Create a vault the user is not a member of
+        vault_not_member = Vault.objects.create(
+            name='Not Member Vault',
+            owner=self.other_user
+        )
+
+        response = self.client.post(
+            '/api/v1/notifications/muted-vaults/',
+            data={'vault_id': str(vault_not_member.id)}
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertIn('member', response.data['detail'].lower())  # type: ignore[attr-defined]
+
+    def test_mute_vault_validates_vault_exists(self) -> None:
+        """Test muting non-existent vault returns 404."""
+        import uuid
+        fake_id = uuid.uuid4()
+
+        response = self.client.post(
+            '/api/v1/notifications/muted-vaults/',
+            data={'vault_id': str(fake_id)}
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_get_muted_vaults(self) -> None:
+        """Test GET returns list of muted vaults with details."""
+        # Mute both vaults
+        MutedVault.objects.create(user=self.user, vault=self.vault1)
+        MutedVault.objects.create(user=self.user, vault=self.vault2)
+
+        response = self.client.get('/api/v1/notifications/muted-vaults/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)  # type: ignore[attr-defined]
+
+        # Verify vault details are included
+        vault_ids = [item['vault_id'] for item in response.data]  # type: ignore[attr-defined]
+        self.assertIn(self.vault1.id, vault_ids)
+        self.assertIn(self.vault2.id, vault_ids)
+
+    def test_unmute_vault(self) -> None:
+        """Test DELETE /api/v1/notifications/muted-vaults/{vault_id}/ unmutes a vault."""
+        # Mute vault first
+        MutedVault.objects.create(user=self.user, vault=self.vault1)
+
+        response = self.client.delete(
+            f'/api/v1/notifications/muted-vaults/{self.vault1.id}/'
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        # Verify muted vault was deleted
+        self.assertFalse(
+            MutedVault.objects.filter(user=self.user, vault=self.vault1).exists()
+        )
+
+    def test_unmute_vault_idempotent(self) -> None:
+        """Test unmuting a vault that isn't muted is idempotent."""
+        response = self.client.delete(
+            f'/api/v1/notifications/muted-vaults/{self.vault1.id}/'
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_get_muted_vaults_filters_by_user(self) -> None:
+        """Test GET only returns current user's muted vaults."""
+        # User mutes vault1
+        MutedVault.objects.create(user=self.user, vault=self.vault1)
+        # Other user mutes vault2
+        MutedVault.objects.create(user=self.other_user, vault=self.vault2)
+
+        response = self.client.get('/api/v1/notifications/muted-vaults/')
+        self.assertEqual(len(response.data), 1)  # type: ignore[attr-defined]
+        self.assertEqual(response.data[0]['vault_id'], self.vault1.id)  # type: ignore[attr-defined]
+
+    def test_requires_authentication(self) -> None:
+        """Test muted vaults endpoints require authentication."""
+        client = APIClient()
+
+        response = client.get('/api/v1/notifications/muted-vaults/')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        response = client.post('/api/v1/notifications/muted-vaults/', data={})
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        response = client.delete(f'/api/v1/notifications/muted-vaults/{self.vault1.id}/')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)

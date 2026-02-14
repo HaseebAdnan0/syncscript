@@ -114,16 +114,16 @@ Create a comprehensive user dashboard as the primary logged-in landing page for 
 **Description:** As a user, I want to see my recently accessed vaults so I can quickly continue where I left off.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/dashboard/ContinueResearch.tsx`
-- [ ] Section title: "Continue Research"
-- [ ] Displays 3 most recently accessed vault cards
-- [ ] Each card shows: vault name, last accessed time (relative), source count
-- [ ] Quick action buttons on each card: Open, Add Source
-- [ ] "View all vaults" link at bottom navigates to `/vaults`
-- [ ] Cards follow design system (dark bg, border, hover lift)
-- [ ] Fetches from `/api/v1/dashboard/recent-vaults/`
-- [ ] Empty state if no vaults: "Create your first vault to get started"
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/dashboard/ContinueResearch.tsx`
+- [x] Section title: "Continue Research"
+- [x] Displays 3 most recently accessed vault cards
+- [x] Each card shows: vault name, last accessed time (relative), source count
+- [x] Quick action buttons on each card: Open, Add Source
+- [x] "View all vaults" link at bottom navigates to `/vaults`
+- [x] Cards follow design system (dark bg, border, hover lift)
+- [x] Fetches from `/api/v1/dashboard/recent-vaults/`
+- [x] Empty state if no vaults: "Create your first vault to get started"
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-009: Create recent activity section

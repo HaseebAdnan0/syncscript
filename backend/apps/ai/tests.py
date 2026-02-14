@@ -833,6 +833,15 @@ class VaultInsightsTestCase(APITestCase):
     def test_vault_insights_success(self):
         """Test successful generation of vault insights."""
         from unittest.mock import patch, Mock
+        from django.urls import resolve
+
+        # Debug: Test URL resolution
+        url = f'/api/v1/vaults/{self.vault.id}/insights/'
+        try:
+            match = resolve(url)
+            print(f'\nURL resolves to: {match.func.__name__} (URL name: {match.url_name})')
+        except Exception as e:
+            print(f'\nURL resolution failed: {e}')
 
         with patch('apps.ai.views.ClaudeClient') as MockClient:
             mock_instance = Mock()

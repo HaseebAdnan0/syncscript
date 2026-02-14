@@ -294,3 +294,32 @@ Learnings for future iterations:
   - Session tokens provide simple validation for multi-step OAuth flows
 ---
 
+## Iteration 11 - US-011: Create connected accounts list endpoint
+- Created ConnectedAccountsListView in apps/users/views.py
+- Implemented GET /api/v1/auth/oauth/connected/ endpoint
+- Returns list of connected OAuth providers with metadata (provider, connected_at, email)
+- Includes provider-specific data: Google profile_picture, GitHub username + avatar_url
+- Extracted data from SocialAccount.extra_data (allauth stores provider response)
+- Returns empty array if user has no OAuth accounts connected
+- Requires authentication (IsAuthenticated permission class)
+- URL routing configured at auth/oauth/connected/
+- Tested with authenticated requests: returns correct data for multiple providers
+- Tested with user having no OAuth accounts: returns empty array
+- Import and URL reverse tests pass
+- Typecheck passes (pre-existing model errors unrelated)
+- Committed successfully
+
+Files changed:
+  - backend/apps/users/views.py (added ConnectedAccountsListView)
+  - backend/apps/users/urls.py (added import and route for oauth-connected)
+  - PRD12.md (marked US-011 complete)
+
+Learnings for future iterations:
+  - SocialAccount model stores provider metadata in extra_data field (JSON)
+  - Use select_related('user') to optimize queries when iterating over SocialAccounts
+  - date_joined field on SocialAccount tracks when provider was linked
+  - Provider-specific fields vary: Google has 'picture', GitHub has 'login' and 'avatar_url'
+  - Empty arrays are the correct response for users with no OAuth accounts (not 404)
+  - DRF's force_authenticate() in tests properly sets request.user for permission checks
+---
+

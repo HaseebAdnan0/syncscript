@@ -20,6 +20,7 @@ from .views import (
     LinkOAuthAccountView,
     CompleteOAuthEmailView,
     ConnectedAccountsListView,
+    DisconnectOAuthProviderView,
     UnsubscribeView,
     EmailPreferenceUpdateView,
 )
@@ -56,6 +57,7 @@ urlpatterns = [
     path('auth/oauth/link/', LinkOAuthAccountView.as_view(), name='oauth-link'),
     path('auth/oauth/complete-email/', CompleteOAuthEmailView.as_view(), name='oauth-complete-email'),
     path('auth/oauth/connected/', ConnectedAccountsListView.as_view(), name='oauth-connected'),
+    path('auth/oauth/connected/<str:provider>/', DisconnectOAuthProviderView.as_view(), name='oauth-disconnect'),
     # Note: OAuth callbacks are handled by allauth URLs in config/urls.py
 
     # Email preferences endpoints (US-011)

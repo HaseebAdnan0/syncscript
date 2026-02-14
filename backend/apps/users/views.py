@@ -34,6 +34,7 @@ from .serializers import (
 )
 from .tokens import generate_verification_token, verify_token
 from .emails import send_verification_email, send_password_reset_email
+from .tasks import send_verification_email_task
 
 
 @api_view(['POST'])
@@ -203,9 +204,19 @@ class RegisterView(APIView):
         # Create user with email_verified=False (default in model)
         user = serializer.save()
 
-        # Generate verification token and send email
+        # Generate verification token and save to database before queuing task
         token = generate_verification_token(user)
-        send_verification_email(user, token)
+
+        # Send verification email asynchronously via Celery
+        # Fallback to synchronous if Celery is unavailable
+        try:
+            send_verification_email_task.delay(user.id, token)
+        except Exception as e:
+            # Celery not available - send synchronously as fallback
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.warning(f"Celery unavailable, sending verification email synchronously: {str(e)}")
+            send_verification_email(user, token)
 
         # Return user data with message
         user_data = UserSerializer(user).data
@@ -1062,6 +1073,53 @@ class ConnectedAccountsListView(APIView):
             connected_accounts.append(provider_data)
 
         return Response(connected_accounts, status=status.HTTP_200_OK)
+
+
+class DisconnectOAuthProviderView(APIView):
+    """
+    Disconnect an OAuth provider from authenticated user's account (US-012).
+
+    DELETE /api/v1/auth/oauth/connected/{provider}/
+    Removes OAuth provider link. Requires at least one other auth method to prevent lockout.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, provider):
+        """Disconnect OAuth provider from user account."""
+        from allauth.socialaccount.models import SocialAccount
+
+        # Validate provider is valid
+        if provider not in ['google', 'github']:
+            return Response({
+                'error': f'Invalid provider. Must be "google" or "github", got "{provider}"'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        user = request.user
+
+        # Check if user has this provider connected
+        try:
+            social_account = SocialAccount.objects.get(user=user, provider=provider)
+        except SocialAccount.DoesNotExist:
+            return Response({
+                'error': f'No {provider} account connected to your profile'
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        # Check if user has at least one other auth method
+        # User must have either:
+        # - A usable password (has_usable_password = True), OR
+        # - At least one other OAuth provider
+        has_password = user.has_usable_password()
+        other_oauth_count = SocialAccount.objects.filter(user=user).exclude(provider=provider).count()
+
+        if not has_password and other_oauth_count == 0:
+            return Response({
+                'error': 'Cannot disconnect your only authentication method. Please set a password first or connect another OAuth provider.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Safe to delete - user has another way to login
+        social_account.delete()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class UnsubscribeView(APIView):

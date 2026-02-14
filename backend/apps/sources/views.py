@@ -27,6 +27,7 @@ from .storage import (
     abort_multipart_upload,
 )
 from .services import extract_metadata
+from .services.storage_quota import check_storage_quota
 from .permissions import VaultSourcePermission
 from .filters import SourceFilter
 from .utils import update_vault_storage_usage
@@ -163,6 +164,16 @@ class PDFUploadViewSet(viewsets.ModelViewSet):
 
         # Check user has contributor or owner permission on vault
         vault = self._check_vault_permission(vault_id, request.user)
+
+        # Check storage quota before allowing upload
+        quota_result = check_storage_quota(vault_id)
+        if quota_result['exceeded']:
+            return Response({
+                'error': 'Storage quota exceeded',
+                'used_bytes': quota_result['used_bytes'],
+                'limit_bytes': quota_result['limit_bytes'],
+                'percentage': round(quota_result['percentage'] * 100, 2)
+            }, status=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE)
 
         # Generate presigned upload URL
         upload_url, file_key = generate_presigned_upload_url(
@@ -331,6 +342,16 @@ class PDFUploadViewSet(viewsets.ModelViewSet):
 
         # Check user has contributor or owner permission on vault
         vault = self._check_vault_permission(vault_id, request.user)
+
+        # Check storage quota before allowing upload
+        quota_result = check_storage_quota(vault_id)
+        if quota_result['exceeded']:
+            return Response({
+                'error': 'Storage quota exceeded',
+                'used_bytes': quota_result['used_bytes'],
+                'limit_bytes': quota_result['limit_bytes'],
+                'percentage': round(quota_result['percentage'] * 100, 2)
+            }, status=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE)
 
         # Initiate S3 multipart upload
         upload_id, file_key, part_urls = initiate_multipart_upload(

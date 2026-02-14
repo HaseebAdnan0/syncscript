@@ -1313,3 +1313,254 @@ class CitationCacheInvalidationTests(TestCase):
         # Reload and verify citations were NOT invalidated (signal should not run on create)
         new_source.refresh_from_db()
         self.assertIn('citations', new_source.metadata)
+
+
+class AsyncCitationTaskTests(TestCase):
+    """Tests for async citation generation via Celery tasks"""
+
+    def setUp(self):
+        """Set up test data"""
+        from django.contrib.auth import get_user_model
+        from apps.users.models import Profile
+        from apps.vaults.models import Vault
+        from apps.sources.models import Source
+
+        User = get_user_model()
+        self.user = User.objects.create_user(
+            email='test@example.com',
+            username='testuser',
+            password='testpass123'
+        )
+        Profile.objects.create(user=self.user)
+
+        self.vault = Vault.objects.create(
+            title='Test Vault',
+            description='Test description',
+            owner=self.user
+        )
+
+        self.source = Source.objects.create(
+            title='Test Source',
+            url='https://example.com/article',
+            vault=self.vault,
+            created_by=self.user,
+            metadata={
+                'title': 'Test Article'
+                # Incomplete metadata (no authors/date) to trigger AI citation
+            }
+        )
+
+    @patch('apps.citations.tasks.generate_ai_citation')
+    def test_generate_ai_citation_task_success(self, mock_ai_citation):
+        """Test successful async AI citation generation"""
+        from apps.citations.tasks import generate_ai_citation_task
+
+        # Mock AI citation service
+        mock_ai_citation.return_value = (
+            'Test, A. (2024). Test Article.',
+            'Test, A. (2024). <i>Test Article</i>.'
+        )
+
+        # Run task synchronously (not via .delay())
+        result = generate_ai_citation_task(self.source.id, 'apa7')
+
+        # Verify result structure
+        self.assertEqual(result['source_id'], self.source.id)
+        self.assertEqual(result['format'], 'apa7')
+        self.assertEqual(result['citation'], 'Test, A. (2024). Test Article.')
+        self.assertEqual(result['citation_html'], 'Test, A. (2024). <i>Test Article</i>.')
+        self.assertFalse(result['cached'])
+
+        # Verify citation was cached in source metadata
+        self.source.refresh_from_db()
+        self.assertIn('citations', self.source.metadata)
+        self.assertIn('apa7', self.source.metadata['citations'])
+        cached = self.source.metadata['citations']['apa7']
+        self.assertEqual(cached['text'], 'Test, A. (2024). Test Article.')
+        self.assertEqual(cached['html'], 'Test, A. (2024). <i>Test Article</i>.')
+        self.assertEqual(cached['source'], 'ai')
+
+    @patch('apps.citations.tasks.generate_ai_citation')
+    def test_generate_ai_citation_task_different_formats(self, mock_ai_citation):
+        """Test task handles different citation formats"""
+        from apps.citations.tasks import generate_ai_citation_task
+
+        # Mock AI citation service
+        mock_ai_citation.return_value = (
+            'Test. "Article." Journal.',
+            'Test. "Article." <i>Journal</i>.'
+        )
+
+        # Generate BibTeX citation
+        result = generate_ai_citation_task(self.source.id, 'bibtex')
+
+        self.assertEqual(result['format'], 'bibtex')
+        self.assertIn('Test. "Article." Journal.', result['citation'])
+
+        # Verify BibTeX was cached
+        self.source.refresh_from_db()
+        self.assertIn('bibtex', self.source.metadata['citations'])
+
+    @patch('apps.citations.tasks.generate_ai_citation')
+    def test_generate_ai_citation_task_api_error(self, mock_ai_citation):
+        """Test task handles API errors and retries"""
+        from apps.citations.tasks import generate_ai_citation_task
+        from celery.exceptions import Retry
+
+        # Mock API error
+        mock_ai_citation.side_effect = Exception("API error")
+
+        # Task should raise Retry exception
+        with self.assertRaises(Retry):
+            generate_ai_citation_task(self.source.id, 'apa7')
+
+    def test_generate_ai_citation_task_source_not_found(self):
+        """Test task handles non-existent source"""
+        from apps.citations.tasks import generate_ai_citation_task
+        from django.http import Http404
+
+        # Non-existent source ID
+        with self.assertRaises(Http404):
+            generate_ai_citation_task(99999, 'apa7')
+
+
+class AsyncCitationEndpointTests(TestCase):
+    """Tests for async citation generation endpoints"""
+
+    def setUp(self):
+        """Set up test data"""
+        from django.contrib.auth import get_user_model
+        from apps.users.models import Profile
+        from apps.vaults.models import Vault
+        from apps.sources.models import Source
+        from rest_framework.test import APIClient
+
+        User = get_user_model()
+        self.user = User.objects.create_user(
+            email='test@example.com',
+            username='testuser',
+            password='testpass123'
+        )
+        Profile.objects.create(user=self.user)
+
+        self.vault = Vault.objects.create(
+            title='Test Vault',
+            description='Test description',
+            owner=self.user
+        )
+
+        self.source_incomplete = Source.objects.create(
+            title='Incomplete Source',
+            url='https://example.com/article',
+            vault=self.vault,
+            created_by=self.user,
+            metadata={
+                'title': 'Test Article'
+                # No authors/date - incomplete metadata to trigger async
+            }
+        )
+
+        self.source_complete = Source.objects.create(
+            title='Complete Source',
+            url='https://example.com/article2',
+            vault=self.vault,
+            created_by=self.user,
+            metadata={
+                'title': 'Complete Article',
+                'authors': ['Smith, John', 'Doe, Jane'],
+                'publication_date': '2024-01-15',
+                'journal': 'Test Journal'
+            }
+        )
+
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.user)
+
+    @patch('apps.citations.tasks.generate_ai_citation_task.delay')
+    def test_incomplete_metadata_returns_202_with_task_id(self, mock_task_delay):
+        """Test endpoint returns 202 Accepted for incomplete metadata (async AI)"""
+        # Mock Celery task
+        mock_result = MagicMock()
+        mock_result.id = 'test-task-id-1234'
+        mock_task_delay.return_value = mock_result
+
+        response = self.client.post(
+            f'/api/v1/citations/sources/{self.source_incomplete.id}/citation/',
+            {'format': 'apa7'}
+        )
+
+        # Should return 202 Accepted
+        self.assertEqual(response.status_code, 202)
+        self.assertIn('task_id', response.data)
+        self.assertIn('status_url', response.data)
+        self.assertEqual(response.data['task_id'], 'test-task-id-1234')
+        self.assertEqual(response.data['status_url'], '/api/v1/citations/tasks/test-task-id-1234/')
+
+        # Verify task was queued
+        mock_task_delay.assert_called_once_with(self.source_incomplete.id, 'apa7')
+
+    def test_complete_metadata_returns_200_synchronously(self):
+        """Test endpoint returns 200 OK for complete metadata (structured citation)"""
+        response = self.client.post(
+            f'/api/v1/citations/sources/{self.source_complete.id}/citation/',
+            {'format': 'apa7'}
+        )
+
+        # Should return 200 OK synchronously
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('citation', response.data)
+        self.assertIn('citation_html', response.data)
+        self.assertEqual(response.data['format'], 'apa7')
+        self.assertEqual(response.data['source'], 'structured')
+        self.assertFalse(response.data['cached'])
+
+    @patch('apps.citations.tasks.AsyncResult')
+    def test_task_status_pending(self, mock_async_result):
+        """Test task status endpoint for pending task"""
+        # Mock pending task
+        mock_task = MagicMock()
+        mock_task.state = 'PENDING'
+        mock_async_result.return_value = mock_task
+
+        response = self.client.get('/api/v1/citations/tasks/test-task-id/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['status'], 'pending')
+        self.assertNotIn('result', response.data)
+
+    @patch('apps.citations.tasks.AsyncResult')
+    def test_task_status_completed(self, mock_async_result):
+        """Test task status endpoint for completed task"""
+        # Mock completed task
+        mock_task = MagicMock()
+        mock_task.state = 'SUCCESS'
+        mock_task.result = {
+            'source_id': self.source_incomplete.id,
+            'format': 'apa7',
+            'citation': 'Test, A. (2024). Test Article.',
+            'citation_html': 'Test, A. (2024). <i>Test Article</i>.',
+            'cached': False
+        }
+        mock_async_result.return_value = mock_task
+
+        response = self.client.get('/api/v1/citations/tasks/test-task-id/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['status'], 'completed')
+        self.assertIn('result', response.data)
+        self.assertEqual(response.data['result']['citation'], 'Test, A. (2024). Test Article.')
+
+    @patch('apps.citations.tasks.AsyncResult')
+    def test_task_status_failed(self, mock_async_result):
+        """Test task status endpoint for failed task"""
+        # Mock failed task
+        mock_task = MagicMock()
+        mock_task.state = 'FAILURE'
+        mock_task.info = Exception("API error")
+        mock_async_result.return_value = mock_task
+
+        response = self.client.get('/api/v1/citations/tasks/test-task-id/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['status'], 'failed')
+        self.assertIn('error', response.data)
