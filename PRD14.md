@@ -20,12 +20,12 @@ SyncScript's AI-powered citation generation system enables researchers to genera
 **Description:** As a developer, I need the Django app scaffolding for citations so I can build the citation system in a clean, isolated module.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/citations/` with `__init__.py`, `apps.py`, `admin.py`, `urls.py`
-- [ ] Create `models.py` with `CitationFormat` TextChoices enum (APA7, MLA9, CHICAGO17, BIBTEX, IEEE, HARVARD)
-- [ ] Create empty `services.py`, `views.py`, `serializers.py`, `tasks.py`
-- [ ] Register app in `config/settings.py` INSTALLED_APPS
-- [ ] Add `path('citations/', include('apps.citations.urls'))` to main urlconf
-- [ ] Typecheck passes
+- [x] Create `apps/citations/` with `__init__.py`, `apps.py`, `admin.py`, `urls.py`
+- [x] Create `models.py` with `CitationFormat` TextChoices enum (APA7, MLA9, CHICAGO17, BIBTEX, IEEE, HARVARD)
+- [x] Create empty `services.py`, `views.py`, `serializers.py`, `tasks.py`
+- [x] Register app in `config/settings.py` INSTALLED_APPS
+- [x] Add `path('citations/', include('apps.citations.urls'))` to main urlconf
+- [x] Typecheck passes
 
 ### US-002: Implement DOI metadata lookup service
 **Description:** As a researcher, I want DOI URLs to automatically fetch metadata from CrossRef so citations are accurate without manual entry.
