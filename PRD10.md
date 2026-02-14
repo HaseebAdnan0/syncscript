@@ -101,12 +101,12 @@ Integrate SyncScript's frontend with the existing backend WebSocket system and n
 **Description:** As a developer, I need to fetch and manage notifications from the backend API.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/lib/api/notifications.ts` with API functions
-- [ ] Implement: `getNotifications()`, `markAsRead(id)`, `markAllAsRead()`, `getUnreadCount()`
-- [ ] Create `frontend/src/hooks/useNotifications.ts` using TanStack Query
-- [ ] Hook returns notifications list, unread count, and mutation functions
-- [ ] Polling every 60 seconds for unread count (when tab visible)
-- [ ] Typecheck passes
+- [x] Create `frontend/src/lib/api/notifications.ts` with API functions
+- [x] Implement: `getNotifications()`, `markAsRead(id)`, `markAllAsRead()`, `getUnreadCount()`
+- [x] Create `frontend/src/hooks/useNotifications.ts` using TanStack Query
+- [x] Hook returns notifications list, unread count, and mutation functions
+- [x] Polling every 60 seconds for unread count (when tab visible)
+- [x] Typecheck passes
 
 ### US-009: Create toast notification system for vault events
 **Description:** As a user, I want to see toast notifications when vault events occur so I'm aware of collaborator activity.
