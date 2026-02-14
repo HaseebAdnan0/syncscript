@@ -82,16 +82,16 @@ Create SyncScript's production landing page following the Bitcoin DeFi aesthetic
 **Description:** As a user, I want to watch a demo video in a modal so I can learn about the product without leaving the page.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/marketing/VideoModal.tsx`
-- [ ] Modal opens when "Watch Demo" is clicked
-- [ ] Uses Radix Dialog for accessibility
-- [ ] Dark overlay with backdrop blur
-- [ ] Embedded video player (YouTube/Vimeo iframe placeholder)
-- [ ] Close button in top-right corner
-- [ ] Closes on overlay click or Escape key
-- [ ] Video pauses when modal closes
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/marketing/VideoModal.tsx`
+- [x] Modal opens when "Watch Demo" is clicked
+- [x] Uses Radix Dialog for accessibility
+- [x] Dark overlay with backdrop blur
+- [x] Embedded video player (YouTube/Vimeo iframe placeholder)
+- [x] Close button in top-right corner
+- [x] Closes on overlay click or Escape key
+- [x] Video pauses when modal closes
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-007: Assemble Complete Hero Section
 **Description:** As a developer, I need to combine all hero components into a cohesive section.

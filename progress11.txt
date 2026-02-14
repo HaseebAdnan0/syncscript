@@ -117,3 +117,23 @@
 - All emails sent async via Celery tasks
 - Unverified users blocked from login, redirected to pending page
 - Vault invites work for unverified users, but content access requires verification
+
+## Iteration 4 - US-004: Create base email template with Bitcoin DeFi styling
+- Created templates/emails/base.html with Bitcoin DeFi dark theme
+- Used table-based layout for maximum email client compatibility
+- Inline CSS for all styling (email clients strip <style> tags)
+- Implemented template blocks: preheader, content, title, unsubscribe
+- Color scheme: #030304 background, #0F1115 content, #F7931A primary orange
+- Orange gradient header (#EA580C to #F7931A) with SyncScript branding
+- Responsive 600px max-width container
+- Footer with support link, unsubscribe placeholder, and copyright
+- Files changed:
+  - backend/templates/emails/base.html (new)
+  - PRD11.md (marked US-004 complete)
+- Learnings for future iterations:
+  - Email templates MUST use table-based layouts, not divs (email client compatibility)
+  - All CSS must be inline for email clients
+  - Use {% now "Y" %} for dynamic year in copyright
+  - Test template rendering with render_to_string before committing
+  - Windows console needs ASCII-safe output (no unicode checkmarks)
+---

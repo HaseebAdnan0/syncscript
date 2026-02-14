@@ -1,0 +1,15 @@
+Welcome to SyncScript, {{ user.first_name|default:user.username }}!
+
+Thanks for signing up! We're excited to have you join our community of researchers building collaborative Knowledge Vaults.
+
+To get started, please verify your email address by clicking the link below:
+
+{{ verification_url }}
+
+This link expires in 24 hours.
+
+If you didn't create a SyncScript account, you can safely ignore this email.
+
+---
+SyncScript - Collaborative Research & Citation Engine
+{{ site_url }}

@@ -588,7 +588,7 @@ class StructuredCitationTests(TestCase):
 
     @patch('apps.citations.services.structured_citation.CitationStylesBibliography')
     @patch('apps.citations.services.structured_citation.CitationStylesStyle')
-    @patch('apps.citations.services.structured_citation.get_style_filepath')
+    @patch('apps.citations.services.structured_citation._get_style_file')
     def test_generate_chicago_citation(self, mock_get_style, mock_style, mock_bib):
         """Test Chicago 17th edition citation generation"""
         mock_get_style.return_value = '/fake/path/chicago.csl'
@@ -609,11 +609,11 @@ class StructuredCitationTests(TestCase):
         citation = generate_structured_citation(metadata, CitationFormat.CHICAGO17)
 
         self.assertIn('2024', citation)
-        mock_get_style.assert_called_once_with('chicago-author-date')
+        mock_get_style.assert_called_once_with(CitationFormat.CHICAGO17)
 
     @patch('apps.citations.services.structured_citation.CitationStylesBibliography')
     @patch('apps.citations.services.structured_citation.CitationStylesStyle')
-    @patch('apps.citations.services.structured_citation.get_style_filepath')
+    @patch('apps.citations.services.structured_citation._get_style_file')
     def test_generate_ieee_citation(self, mock_get_style, mock_style, mock_bib):
         """Test IEEE citation generation"""
         mock_get_style.return_value = '/fake/path/ieee.csl'
@@ -634,11 +634,11 @@ class StructuredCitationTests(TestCase):
         citation = generate_structured_citation(metadata, CitationFormat.IEEE)
 
         self.assertIn('J. Smith', citation)
-        mock_get_style.assert_called_once_with('ieee')
+        mock_get_style.assert_called_once_with(CitationFormat.IEEE)
 
     @patch('apps.citations.services.structured_citation.CitationStylesBibliography')
     @patch('apps.citations.services.structured_citation.CitationStylesStyle')
-    @patch('apps.citations.services.structured_citation.get_style_filepath')
+    @patch('apps.citations.services.structured_citation._get_style_file')
     def test_generate_harvard_citation(self, mock_get_style, mock_style, mock_bib):
         """Test Harvard citation generation"""
         mock_get_style.return_value = '/fake/path/harvard.csl'
@@ -659,7 +659,7 @@ class StructuredCitationTests(TestCase):
         citation = generate_structured_citation(metadata, CitationFormat.HARVARD)
 
         self.assertIn('Smith, J.', citation)
-        mock_get_style.assert_called_once_with('harvard-cite-them-right')
+        mock_get_style.assert_called_once_with(CitationFormat.HARVARD)
 
     def test_generate_citation_incomplete_metadata(self):
         """Test citation generation fails with incomplete metadata"""

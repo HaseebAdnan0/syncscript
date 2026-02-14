@@ -225,6 +225,9 @@ class ActivityFeedTests(TestCase):
     def setUp(self):
         """Set up test fixtures."""
         self.client = APIClient()
+        # Clear any existing audit logs from previous tests
+        AuditLog.objects.all().delete()
+
         self.user = User.objects.create_user(
             username='testuser',
             email='test@example.com',
