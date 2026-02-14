@@ -168,12 +168,12 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 **Description:** As a user, I want to preview fetched metadata before adding a source so I can verify it's correct.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/sources/SourceMetadataPreview.tsx`
-- [ ] Displays: title (editable), description, favicon, detected type
-- [ ] Shows source type badge based on URL/content-type detection
-- [ ] "Add Source" primary button and "Cancel" secondary button
-- [ ] Error state if metadata fetch fails with retry option
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/sources/SourceMetadataPreview.tsx`
+- [x] Displays: title (editable), description, favicon, detected type
+- [x] Shows source type badge based on URL/content-type detection
+- [x] "Add Source" primary button and "Cancel" secondary button
+- [x] Error state if metadata fetch fails with retry option
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---
