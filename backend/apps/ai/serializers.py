@@ -28,4 +28,5 @@ class AskQuestionSerializer(serializers.Serializer):
     """
     Serializer for AI question request parameters.
     """
-    question = serializers.CharField()
+    question = serializers.CharField(min_length=1, max_length=2000)
+    conversation_id = serializers.UUIDField(required=False, allow_null=True)
