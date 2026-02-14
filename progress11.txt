@@ -437,3 +437,29 @@
   - Rate limit errors (429) should throw descriptive user-friendly messages
   - Response interfaces defined above the function for type safety
 ---
+
+## Iteration 17 - US-017: Create email verification success page (Already Complete)
+- Discovered US-017 was already implemented in commit 6eaacaf
+- File created: frontend/src/app/(auth)/verify-email/page.tsx
+- Implementation details verified - all acceptance criteria met:
+  - Page reads token from URL search params
+  - Calls verifyEmail API function on mount using useEffect
+  - Shows loading state with spinning icon while verifying
+  - On success: displays green CheckCircle icon, "Email Verified!" message, "Continue to Login" button
+  - Auto-redirects to /login after 3 seconds on success
+  - On error: displays red XCircle icon, error message, "Resend Verification Email" button linking to /verify-email/pending
+  - Bitcoin DeFi dark theme styling with GlassCard and GradientButton
+  - Responsive centered layout (max-w-md)
+- Added verifyEmail(token: string) function to frontend/src/lib/api.ts
+  - POSTs to /api/v1/auth/verify-email/ with token in body
+  - Returns typed VerifyEmailResponse interface with message property
+  - Exported for use in components
+- TypeScript typecheck passes
+- PRD11.md already marked complete
+- Files already committed in previous session
+- Learnings for future iterations:
+  - Always check git log and current file state before implementing
+  - Page follows existing auth page patterns (pending, login, register)
+  - Three-state UI pattern (loading/success/error) is clean and user-friendly
+  - Auto-redirect after success improves UX flow
+---
