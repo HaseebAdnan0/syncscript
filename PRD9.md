@@ -357,12 +357,12 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 **Description:** As a developer, I need a React Query hook to fetch annotations for a source with real-time invalidation support.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/hooks/useAnnotationsQuery.ts`
-- [ ] Accepts `sourceId` parameter
-- [ ] Fetches annotations with nested replies
-- [ ] Returns `{ data, isLoading, error, refetch }`
-- [ ] Stale time set to 10 seconds (shorter for collaboration)
-- [ ] Typecheck passes
+- [x] Create `frontend/src/hooks/useAnnotationsQuery.ts`
+- [x] Accepts `sourceId` parameter
+- [x] Fetches annotations with nested replies
+- [x] Returns `{ data, isLoading, error, refetch }`
+- [x] Stale time set to 10 seconds (shorter for collaboration)
+- [x] Typecheck passes
 
 ---
 
