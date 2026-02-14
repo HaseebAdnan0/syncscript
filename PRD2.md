@@ -158,10 +158,10 @@ Create a secure, collaborative Knowledge Vault system where researchers can crea
 **Description:** As a developer, I need member permission for read access.
 
 **Acceptance Criteria:**
-- [ ] Extends BasePermission
-- [ ] `has_object_permission` returns True if any membership exists
-- [ ] Uses `.exists()` for efficiency
-- [ ] Typecheck passes
+- [x] Extends BasePermission
+- [x] `has_object_permission` returns True if any membership exists
+- [x] Uses `.exists()` for efficiency
+- [x] Typecheck passes
 
 ### US-015: Create VaultViewSet with CRUD
 **Description:** As a developer, I need the main vault API endpoints.

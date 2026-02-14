@@ -44,3 +44,22 @@ class IsVaultContributor(BasePermission):
             return ROLE_WEIGHTS.get(membership.role, 0) >= ROLE_WEIGHTS[RoleChoices.CONTRIBUTOR]
         except VaultMembership.DoesNotExist:
             return False
+
+
+class IsVaultMember(BasePermission):
+    """
+    Permission that checks if the user has any membership in the vault.
+    Used for read access to vault resources.
+    """
+    def has_object_permission(self, request, view, obj):
+        # Get the vault - either the object itself or via .vault attribute
+        vault = obj if hasattr(obj, 'members') else getattr(obj, 'vault', None)
+
+        if vault is None:
+            return False
+
+        # Check if any membership exists for this user
+        return VaultMembership.objects.filter(
+            vault=vault,
+            user=request.user
+        ).exists()
