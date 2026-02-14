@@ -29,15 +29,15 @@ This feature uses Claude as the AI backbone with a simple chunking strategy (no 
 - [ ] Add `ai_insights_cache` JSONField + `ai_insights_updated_at` to Vault model (nullable)
 - [ ] Generate and run migrations
 - [ ] Register app in INSTALLED_APPS
-- [ ] Typecheck passes
+- [x] Typecheck passes
 
 ### US-002: Implement token usage tracking service
 **Description:** As a developer, I need a service to track AI token usage so we can monitor costs and enforce limits.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/ai/services/usage.py`
-- [ ] `log_usage(user, request_type, tokens_used)` function saves AIUsageLog
-- [ ] `get_daily_usage(user)` returns total tokens and request count for today
+- [x] Create `apps/ai/services/usage.py`
+- [x] `log_usage(user, request_type, tokens_used)` function saves AIUsageLog
+- [x] `get_daily_usage(user)` returns total tokens and request count for today
 - [ ] `get_remaining_requests(user)` returns requests left (default limit: 20/day)
 - [ ] `AI_DAILY_LIMIT` setting in config (default 20)
 - [ ] Typecheck passes

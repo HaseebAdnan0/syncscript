@@ -518,3 +518,65 @@ class ProfileView(APIView):
             'message': 'Profile updated successfully.',
             'user': UserSerializer(user).data
         }, status=status.HTTP_200_OK)
+
+
+class OnboardingView(APIView):
+    """
+    View and update onboarding progress (US-002).
+
+    GET /api/v1/users/me/onboarding/ returns current onboarding state.
+    PATCH /api/v1/users/me/onboarding/ updates onboarding progress.
+    Requires authentication.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        """Return current user's onboarding state."""
+        user = request.user
+
+        return Response({
+            'step': user.onboarding_step,
+            'completed': user.onboarding_completed,
+            'path': user.onboarding_path,
+            'data': user.onboarding_data or {}
+        }, status=status.HTTP_200_OK)
+
+    def patch(self, request):
+        """Update current user's onboarding progress."""
+        user = request.user
+        serializer = OnboardingSerializer(data=request.data, partial=True)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # Update onboarding fields
+        update_fields = []
+
+        if 'step' in serializer.validated_data:
+            user.onboarding_step = serializer.validated_data['step']
+            update_fields.append('onboarding_step')
+
+        if 'completed' in serializer.validated_data:
+            user.onboarding_completed = serializer.validated_data['completed']
+            update_fields.append('onboarding_completed')
+
+        if 'path' in serializer.validated_data:
+            user.onboarding_path = serializer.validated_data['path']
+            update_fields.append('onboarding_path')
+
+        if 'data' in serializer.validated_data:
+            # Merge with existing data if it exists
+            existing_data = user.onboarding_data or {}
+            new_data = serializer.validated_data['data']
+            user.onboarding_data = {**existing_data, **new_data}
+            update_fields.append('onboarding_data')
+
+        if update_fields:
+            user.save(update_fields=update_fields)
+
+        return Response({
+            'step': user.onboarding_step,
+            'completed': user.onboarding_completed,
+            'path': user.onboarding_path,
+            'data': user.onboarding_data or {}
+        }, status=status.HTTP_200_OK)

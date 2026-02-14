@@ -11,6 +11,7 @@ from .views import (
     PasswordResetRequestView,
     PasswordResetConfirmView,
     ProfileView,
+    OnboardingView,
 )
 
 app_name = 'users'
@@ -32,4 +33,7 @@ urlpatterns = [
 
     # User profile endpoint
     path('users/profile/', ProfileView.as_view(), name='profile'),
+
+    # Onboarding endpoints (US-002)
+    path('users/me/onboarding/', OnboardingView.as_view(), name='onboarding'),
 ]

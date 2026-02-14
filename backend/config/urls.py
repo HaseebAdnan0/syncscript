@@ -10,4 +10,5 @@ urlpatterns = [
     path('api/v1/', include('apps.vaults.urls')),
     path('api/v1/sources/', include('apps.sources.urls')),
     path('api/v1/dashboard/', include('apps.dashboard.urls')),
+    path('api/v1/citations/', include('apps.citations.urls')),
 ]

@@ -174,8 +174,9 @@ def process_uploaded_pdf(self, pdf_upload_id: str) -> dict[str, Any]:
         pdf_upload.pdf_author = str(pdf_author) if pdf_author else None
         pdf_upload.page_count = page_count
         pdf_upload.thumbnail_url = thumbnail_url
+        pdf_upload.extracted_text = extracted_text
         pdf_upload.processing_status = 'completed'
-        pdf_upload.save(update_fields=['pdf_title', 'pdf_author', 'page_count', 'thumbnail_url', 'processing_status'])
+        pdf_upload.save(update_fields=['pdf_title', 'pdf_author', 'page_count', 'thumbnail_url', 'extracted_text', 'processing_status'])
 
         logger.info(
             f"Successfully processed PDF {pdf_upload_id}: "
