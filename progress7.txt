@@ -88,3 +88,18 @@
   - useEffect with refreshUser() runs on mount to check existing session via cookies
   - Build compiles successfully - pre-existing warnings in other files don't affect new code
 ---
+
+## Iteration 5 - US-005: Create reusable form input component (Bitcoin DeFi style)
+- Created `frontend/src/components/ui/FormInput.tsx` with bottom-border styling
+- Files changed: frontend/src/components/ui/FormInput.tsx (new file)
+- Learnings for future iterations:
+  - FormInput uses React.forwardRef to support ref forwarding for form libraries
+  - Bottom border style: `border-b-2 border-white/20` with orange focus: `focus:border-[#F7931A]`
+  - Background is semi-transparent black: `bg-black/50`
+  - Error prop changes border to red and displays error message below input
+  - Label prop is optional - shows above input when provided
+  - Extends standard HTMLInputElement props for full compatibility
+  - Error state overrides border color even on focus
+  - Component is client-side ('use client' directive)
+  - TypeScript interface extends React.InputHTMLAttributes<HTMLInputElement>
+---

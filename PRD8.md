@@ -57,10 +57,10 @@ Create the complete vault management interface for SyncScript, enabling research
 **Description:** As a developer, I need a Zustand store to manage vaults UI state like modals and filters.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/stores/vaultsStore.ts`
-- [ ] Store state: isCreateModalOpen, searchQuery, activeTab (for detail page)
-- [ ] Store actions: openCreateModal, closeCreateModal, setSearchQuery, setActiveTab
-- [ ] Typecheck passes
+- [x] Create `frontend/src/stores/vaultsStore.ts`
+- [x] Store state: isCreateModalOpen, searchQuery, activeTab (for detail page)
+- [x] Store actions: openCreateModal, closeCreateModal, setSearchQuery, setActiveTab
+- [x] Typecheck passes
 
 ### US-005: VaultCard component
 **Description:** As a user, I want to see vault information in a card format so I can quickly scan my vaults.
