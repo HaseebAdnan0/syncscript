@@ -216,10 +216,10 @@ Implement cloud file storage for SyncScript using Cloudflare R2 (S3-compatible).
 **Description:** As a developer, I need cleanup tasks to run on schedule.
 
 **Acceptance Criteria:**
-- [ ] Add `cleanup_deleted_pdfs` to Celery Beat: daily at 2am
-- [ ] Add `cleanup_orphaned_multipart_uploads` to Celery Beat: daily at 3am
-- [ ] Update `backend/config/celery.py` with beat_schedule
-- [ ] Typecheck passes
+- [x] Add `cleanup_deleted_pdfs` to Celery Beat: daily at 2am
+- [x] Add `cleanup_orphaned_multipart_uploads` to Celery Beat: daily at 3am
+- [x] Update `backend/config/celery.py` with beat_schedule
+- [x] Typecheck passes
 
 ### US-020: Add WebSocket notifications for PDF events
 **Description:** As a user, I want real-time notifications when PDFs are uploaded or deleted.
