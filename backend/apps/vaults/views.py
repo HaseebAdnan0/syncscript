@@ -7,9 +7,9 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from .models import Vault
+from .models import Vault, VaultMembership
 from .permissions import IsVaultOwner
-from .serializers import VaultSerializer
+from .serializers import VaultSerializer, VaultMembershipSerializer
 
 
 class VaultViewSet(viewsets.ModelViewSet):
@@ -75,3 +75,18 @@ class VaultViewSet(viewsets.ModelViewSet):
         vault.is_archived = False
         vault.save()
         return Response({'status': 'restored'})
+
+
+class VaultMembershipViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for managing vault members.
+
+    Nested under /vaults/{vault_pk}/members/
+    """
+    serializer_class = VaultMembershipSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        """Filter memberships by vault from URL."""
+        vault_pk = self.kwargs.get('vault_pk')
+        return VaultMembership.objects.filter(vault_id=vault_pk)

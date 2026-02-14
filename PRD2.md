@@ -217,10 +217,10 @@ Create a secure, collaborative Knowledge Vault system where researchers can crea
 **Description:** As a developer, I need member management API endpoints.
 
 **Acceptance Criteria:**
-- [ ] ModelViewSet with VaultMembershipSerializer
-- [ ] Default permission: IsAuthenticated
-- [ ] `get_queryset` filters by vault_pk from URL kwargs
-- [ ] Typecheck passes
+- [x] ModelViewSet with VaultMembershipSerializer
+- [x] Default permission: IsAuthenticated
+- [x] `get_queryset` filters by vault_pk from URL kwargs
+- [x] Typecheck passes
 
 ### US-021: Add permissions to VaultMembershipViewSet
 **Description:** As a system, I need proper access control for member management.

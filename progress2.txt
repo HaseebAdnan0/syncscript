@@ -264,3 +264,17 @@
   - Same decorator configuration: detail=True, methods=['post'], permission_classes=[IsVaultOwner]
   - Returns {'status': 'restored'} for consistency with archive endpoint
 ---
+
+## Iteration 21 - US-020: Create VaultMembershipViewSet
+- Implemented VaultMembershipViewSet for member management API
+- Files changed:
+  - backend/apps/vaults/views.py (added VaultMembershipViewSet class, imported VaultMembership and VaultMembershipSerializer)
+  - PRD2.md (marked US-020 as complete)
+- Django check passed with no issues
+- Learnings for future iterations:
+  - Nested viewsets access parent ID via self.kwargs.get('vault_pk')
+  - Filter queryset using vault_id=vault_pk to get memberships for specific vault
+  - Import both model and serializer at top of file
+  - ModelViewSet provides all CRUD operations by default
+  - Permission classes will be refined in next US (US-021)
+---
