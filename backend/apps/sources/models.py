@@ -46,7 +46,7 @@ class Source(DirtyFieldsMixin, models.Model):
     is_deleted = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    search_vector = SearchVectorField(null=True)
+    search_vector = SearchVectorField(null=True, blank=True)
 
     class Meta:
         ordering = ['-created_at']

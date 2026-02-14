@@ -84,3 +84,52 @@ Learnings for future iterations:
 
 ---
 
+## Iteration 4 - US-004: Implement citeproc-py structured citation service
+- Created apps/citations/services/structured_citation.py with comprehensive citation generation
+- Implemented has_complete_metadata() function:
+  - Validates presence of title, authors, and date (minimum required fields)
+  - Accepts flexible field names (author/authors, date/publication_date/year)
+  - Returns boolean indicating if metadata is complete enough for citation
+- Implemented generate_structured_citation() function:
+  - Supports all 6 citation formats (APA7, MLA9, CHICAGO17, BIBTEX, IEEE, HARVARD)
+  - Uses citeproc-py library for CSL-based formats (APA, MLA, Chicago, IEEE, Harvard)
+  - Manual BibTeX generation (not CSL-based) with proper entry types
+- Implemented _convert_to_csl_json() helper:
+  - Converts metadata dict to CSL JSON format
+  - Parses author names ("Last, First" or "First Last" format)
+  - Extracts year from publication date with regex
+  - Determines source type (article-journal, book, webpage) based on metadata fields
+- Implemented _get_style_file() helper:
+  - Maps CitationFormat enum to CSL style file names
+  - Tries citeproc-py-styles package first (bundled styles)
+  - Fallback to local apps/citations/styles/ directory
+  - Raises FileNotFoundError if style not found
+- Implemented _generate_bibtex() helper:
+  - Manual BibTeX generation for @article, @book, @misc entry types
+  - Proper field mapping (journal, volume, number, pages, publisher, edition, isbn, doi, url)
+  - No trailing comma on last field
+- Added citeproc-py>=0.6.0 and citeproc-py-styles>=0.1.3 to requirements.txt
+- Added 19 comprehensive unit tests:
+  - 8 tests for has_complete_metadata() with various edge cases
+  - 3 tests for BibTeX generation (article, book, web source)
+  - 5 tests for CSL format generation (APA, MLA, Chicago, IEEE, Harvard) with mocking
+  - 3 tests for error cases and edge cases (incomplete metadata, DOI, URL)
+- Tests: All 19 tests pass
+- Typecheck: Passes with 0 errors (fixed with Dict[str, Any] type annotation and type: ignore for formatter)
+- Files changed: backend/apps/citations/services/structured_citation.py (360 lines), backend/apps/citations/tests.py (+300 lines), backend/requirements.txt
+- Committed: b991609
+
+Learnings for future iterations:
+- citeproc-py uses CSL (Citation Style Language) for formatting
+- CSL JSON format requires specific structure: {'id', 'type', 'title', 'author': [{'family', 'given'}], 'issued': {'date-parts': [[year]]}}
+- citeproc-py-styles package provides bundled CSL style files (no need to download separately)
+- BibTeX is not CSL-based and needs manual generation
+- BibTeX entry types: @article (journals), @book (books), @misc (web sources, general)
+- Pyright requires explicit type annotations for dict values that can be mixed types (use Dict[str, Any])
+- Mocking citeproc library requires mocking _get_style_file() function, not get_style_filepath()
+- Author name parsing: support both "Last, First" and "First Last" formats
+- Date extraction: use regex to find 4-digit year in publication_date strings
+- Source type detection: journal → article-journal, isbn/publisher → book, url without journal → webpage
+
+---
+

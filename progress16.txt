@@ -136,3 +136,24 @@
   - YouTube iframe autoplay parameter requires user interaction on most browsers
   - aspect-video utility class maintains 16:9 ratio for responsive video containers
 ---
+
+## Iteration 7 - US-007: Assemble Complete Hero Section
+- Created `frontend/src/components/marketing/HeroSection.tsx` component
+- Extracted hero section from landing page into dedicated component
+- Integrates all sub-components: HeroBackground, HeroContent, AnimatedOrb, FloatingStatCards
+- Two-column grid layout on desktop using `lg:grid-cols-2` (content left, orb right)
+- Stacked layout on mobile with order classes (order-2 lg:order-1 for content, order-1 lg:order-2 for orb)
+- Section has `min-h-screen` for full viewport height
+- Proper z-index layering: background relative, content wrapper `relative z-10`
+- Simplified landing page to single HeroSection import
+- Files changed:
+  - Created: `frontend/src/components/marketing/HeroSection.tsx`
+  - Modified: `frontend/src/app/(marketing)/page.tsx` (simplified to use HeroSection)
+  - Modified: `PRD16.md` (marked US-007 complete)
+- Learnings for future iterations:
+  - Extracting complex sections into components improves maintainability
+  - Order classes (order-1, order-2) with breakpoint prefixes control stacking on mobile
+  - Container pattern (section > background + container > grid) provides good structure
+  - Using relative + z-10 on content wrapper ensures it appears above background
+  - Two separate layouts (mobile stack, desktop absolute positioning) work better than trying to make one responsive
+---

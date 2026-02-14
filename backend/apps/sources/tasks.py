@@ -18,7 +18,7 @@ from pdf2image import convert_from_bytes
 from PIL import Image
 from pypdf import PdfReader
 
-from apps.sources.models import PDFUpload
+from apps.sources.models import PDFUpload, FileUpload
 from apps.vaults.models import AuditLog
 from core.websocket_utils import broadcast_to_vault
 
@@ -286,6 +286,152 @@ def process_uploaded_pdf(self, pdf_upload_id: str) -> dict[str, Any]:
             logger.error(f"Max retries exceeded for PDF {pdf_upload_id}")
             return {
                 'pdf_id': pdf_upload_id,
+                'status': 'failed',
+                'error': str(exc),
+            }
+
+
+@shared_task(bind=True, max_retries=3, default_retry_delay=60)
+def process_uploaded_image(self, file_upload_id: str) -> dict[str, Any]:
+    """
+    Process an uploaded image: generate thumbnail.
+
+    This task downloads the image from S3, generates a 300px wide thumbnail,
+    uploads it back to S3, and updates the FileUpload record.
+
+    Args:
+        self: Celery task instance (bound task)
+        file_upload_id: UUID of the FileUpload record to process
+
+    Returns:
+        dict with processing results:
+            - file_id: UUID of the processed image
+            - status: 'completed' or 'failed'
+            - thumbnail_url: URL to the generated thumbnail
+            - error: Error message if failed
+
+    Raises:
+        Retry exception on transient failures (network, S3 errors)
+    """
+    try:
+        # Fetch the FileUpload record
+        file_upload = FileUpload.objects.get(id=file_upload_id)
+
+        # Download image from S3
+        s3_client = boto3.client(
+            's3',
+            endpoint_url=getattr(settings, 'AWS_S3_ENDPOINT_URL', None),
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+            region_name=getattr(settings, 'AWS_S3_REGION_NAME', 'auto'),
+        )
+
+        # Get the file key (path in S3)
+        file_key = file_upload.file.name
+
+        # Download file into memory
+        image_bytes = io.BytesIO()
+        s3_client.download_fileobj(
+            Bucket=settings.AWS_STORAGE_BUCKET_NAME,
+            Key=file_key,
+            Fileobj=image_bytes,
+        )
+        image_bytes.seek(0)  # Reset to beginning
+
+        # Generate thumbnail (300px wide, proportional height)
+        thumbnail_url = None
+        try:
+            # Open image with Pillow
+            image = Image.open(image_bytes)
+
+            # Calculate proportional height for 300px width
+            target_width = 300
+            width, height = image.size
+            aspect_ratio = height / width
+            target_height = int(target_width * aspect_ratio)
+
+            # Resize image
+            thumbnail = image.resize((target_width, target_height), Image.Resampling.LANCZOS)
+
+            # Convert to RGB if needed (handles RGBA, grayscale, etc.)
+            if thumbnail.mode not in ('RGB', 'L'):
+                thumbnail = thumbnail.convert('RGB')
+
+            # Save as JPEG with 80% quality
+            thumb_bytes = io.BytesIO()
+            thumbnail.save(thumb_bytes, format='JPEG', quality=80, optimize=True)
+            thumb_bytes.seek(0)
+
+            # Upload thumbnail to S3
+            thumb_uuid = uuid.uuid4()
+            thumb_key = f"vaults/{file_upload.vault_id}/thumbnails/{thumb_uuid}.jpg"
+
+            s3_client.upload_fileobj(
+                thumb_bytes,
+                Bucket=settings.AWS_STORAGE_BUCKET_NAME,
+                Key=thumb_key,
+                ExtraArgs={
+                    'ContentType': 'image/jpeg',
+                }
+            )
+
+            # Generate presigned URL for thumbnail (7-day expiry)
+            thumbnail_url = s3_client.generate_presigned_url(
+                'get_object',
+                Params={
+                    'Bucket': settings.AWS_STORAGE_BUCKET_NAME,
+                    'Key': thumb_key,
+                },
+                ExpiresIn=7 * 24 * 60 * 60,  # 7 days
+            )
+
+            logger.info(f"Generated thumbnail for image {file_upload_id} at {thumb_key}")
+
+        except Exception as thumb_exc:
+            # Log thumbnail generation error and fail the task
+            logger.error(
+                f"Failed to generate thumbnail for image {file_upload_id}: {thumb_exc}",
+                exc_info=True,
+            )
+            raise
+
+        # Update FileUpload record
+        file_upload.thumbnail_url = thumbnail_url
+        file_upload.save(update_fields=['thumbnail_url'])
+
+        logger.info(
+            f"Successfully processed image {file_upload_id}: "
+            f"thumbnail={thumbnail_url}"
+        )
+
+        return {
+            'file_id': str(file_upload.id),
+            'status': 'completed',
+            'thumbnail_url': thumbnail_url,
+        }
+
+    except FileUpload.DoesNotExist:
+        logger.error(f"FileUpload {file_upload_id} not found")
+        return {
+            'file_id': file_upload_id,
+            'status': 'failed',
+            'error': 'FileUpload record not found',
+        }
+
+    except Exception as exc:
+        # Log the error
+        logger.error(
+            f"Error processing image {file_upload_id}: {exc}",
+            exc_info=True,
+        )
+
+        # Retry with exponential backoff
+        try:
+            raise self.retry(exc=exc, countdown=2 ** self.request.retries * 60)
+        except self.MaxRetriesExceededError:
+            logger.error(f"Max retries exceeded for image {file_upload_id}")
+            return {
+                'file_id': file_upload_id,
                 'status': 'failed',
                 'error': str(exc),
             }

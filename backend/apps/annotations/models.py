@@ -14,7 +14,7 @@ class Annotation(DirtyFieldsMixin, models.Model):
     page_number = models.IntegerField(null=True, blank=True)
     position = models.JSONField(default=dict)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='replies')
-    search_vector = SearchVectorField(null=True)
+    search_vector = SearchVectorField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

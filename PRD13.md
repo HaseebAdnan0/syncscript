@@ -90,13 +90,13 @@ Enhance SyncScript's file storage system to production-ready status with Cloudfl
 **Description:** As a user, I want thumbnails generated for my uploaded images.
 
 **Acceptance Criteria:**
-- [ ] Create `process_uploaded_image` task in `apps/sources/tasks.py`
-- [ ] Download image from S3
-- [ ] Generate 300px wide thumbnail using Pillow
-- [ ] Upload thumbnail to `vaults/{vault_id}/thumbnails/{uuid}.jpg`
-- [ ] Update FileUpload record with thumbnail_url
-- [ ] Handle errors with retry logic (max 3 retries)
-- [ ] Typecheck passes
+- [x] Create `process_uploaded_image` task in `apps/sources/tasks.py`
+- [x] Download image from S3
+- [x] Generate 300px wide thumbnail using Pillow
+- [x] Upload thumbnail to `vaults/{vault_id}/thumbnails/{uuid}.jpg`
+- [x] Update FileUpload record with thumbnail_url
+- [x] Handle errors with retry logic (max 3 retries)
+- [x] Typecheck passes
 
 ---
 

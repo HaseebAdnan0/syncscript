@@ -45,13 +45,13 @@ Create a comprehensive user dashboard as the primary logged-in landing page for 
 **Description:** As a developer, I need an endpoint that returns recent activity across all user's vaults using existing AuditLog data.
 
 **Acceptance Criteria:**
-- [ ] Create `GET /api/v1/dashboard/activity/` endpoint
-- [ ] Returns last 10 audit log entries for vaults user has access to
-- [ ] Create `ActivityFeedSerializer` with fields: `id`, `action`, `description`, `actor` (user info), `vault_id`, `vault_name`, `target_type`, `target_id`, `created_at`
-- [ ] Format `description` as human-readable (e.g., "added source 'Research Paper'")
-- [ ] Supports `?limit=N` query param (default 10, max 50)
-- [ ] Endpoint requires authentication
-- [ ] Typecheck passes
+- [x] Create `GET /api/v1/dashboard/activity/` endpoint
+- [x] Returns last 10 audit log entries for vaults user has access to
+- [x] Create `ActivityFeedSerializer` with fields: `id`, `action`, `description`, `actor` (user info), `vault_id`, `vault_name`, `target_type`, `target_id`, `created_at`
+- [x] Format `description` as human-readable (e.g., "added source 'Research Paper'")
+- [x] Supports `?limit=N` query param (default 10, max 50)
+- [x] Endpoint requires authentication
+- [x] Typecheck passes
 
 ### US-004: Create analytics endpoints
 **Description:** As a developer, I need analytics API endpoints for chart data so the frontend can render visualizations.
