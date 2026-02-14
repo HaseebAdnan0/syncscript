@@ -461,3 +461,34 @@ In Progress - US-004 complete
   - Both annotation_reply and mention notifications can be created from same annotation
   - Always check existing signal handlers before creating new ones
 ---
+
+## Iteration 18 - US-018: Integrate Pusher for Real-time Notification Delivery
+- Integrated Pusher into create_notification() service to deliver real-time notifications
+- Created lazy-loaded get_pusher_client() function to avoid initialization errors when Pusher not configured
+- Implemented _send_pusher_notification() helper that triggers two events:
+  - 'notification' event with serialized notification data (NotificationSerializer)
+  - 'badge_update' event with current unread count
+- Events sent to private channel: `private-user-{user_id}`
+- Pusher client auto-created on first use with credentials from environment variables
+- Silently fails if Pusher not configured (returns None) or if trigger raises exception
+- Created comprehensive test suite with 6 test cases in test_pusher_integration.py:
+  - Test notification and badge_update events triggered
+  - Test badge count reflects correct unread count
+  - Test badge count excludes read notifications
+  - Test Pusher skipped when not configured
+  - Test notification created even if Pusher fails
+  - Test correct private channel format used
+- All tests pass (6/6), commit 0bb5041
+- Files changed:
+  - backend/apps/notifications/services.py (added Pusher integration)
+  - backend/apps/notifications/test_pusher_integration.py (new test file)
+  - PRD19.md (marked US-018 complete)
+- Learnings for future iterations:
+  - Lazy-load external clients to avoid initialization errors at module import time
+  - Use global variable with getter function pattern for singleton clients
+  - Pusher requires valid app_id, can't be empty string (use None check instead)
+  - Mock get_pusher_client in tests and return MagicMock for client
+  - Wrap Pusher trigger in try/except to prevent blocking notification creation on errors
+  - SerializerMethodField and serializer.data work seamlessly for Pusher payloads
+  - Private channel format: `private-user-{user_id}` (will require auth endpoint later)
+---
