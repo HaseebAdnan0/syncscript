@@ -343,3 +343,23 @@
   - Tab triggers use hover:text-white for better UX
   - Build passes successfully with no TypeScript errors
 ---
+
+## Iteration 19 - US-018: Build profile info form
+- Profile form implementation was already completed in commit 873aeba alongside US-017
+- Form includes first_name, last_name, email (read-only), and bio (optional textarea)
+- Files already committed:
+  - frontend/src/app/(protected)/profile/page.tsx (profile form implementation)
+  - PRD7.md (marked US-018 complete)
+- Learnings for future iterations:
+  - Profile form uses useState to pre-populate fields from useAuthStore user data
+  - firstName and lastName use FormInput component, bio uses Textarea component
+  - Email field is disabled with opacity-60 and cursor-not-allowed for read-only display
+  - Validation ensures first name is required and at least 2 characters long
+  - handleProfileSubmit calls api.put('/auth/me/') with first_name, last_name, bio
+  - On success, setUser(response.data) updates auth store with new user information
+  - Toast notifications show success or error messages after form submission
+  - isProfileLoading state controls GradientButton loading spinner during API call
+  - Form uses space-y-6 for vertical spacing between fields
+  - All validation errors stored in profileErrors object with field-specific keys
+  - Typecheck and build pass successfully with no errors
+---
