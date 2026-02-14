@@ -45,14 +45,14 @@ SyncScript needs a complete frontend authentication system that enables users to
 **Description:** As a developer, I need a custom hook encapsulating auth operations so that components can easily trigger login/register/logout.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/hooks/useAuth.ts`
-- [ ] Expose: `login(email, password)`, `register(data)`, `logout()`, `refreshUser()`
-- [ ] `login` calls POST `/auth/login/`, updates store on success
-- [ ] `register` calls POST `/auth/register/`, auto-logs in on success
-- [ ] `logout` calls POST `/auth/logout/`, clears store
-- [ ] `refreshUser` calls GET `/auth/me/` to hydrate user on app load
-- [ ] All methods return `{ success, error }` for UI handling
-- [ ] Typecheck passes
+- [x] Create `frontend/src/hooks/useAuth.ts`
+- [x] Expose: `login(email, password)`, `register(data)`, `logout()`, `refreshUser()`
+- [x] `login` calls POST `/auth/login/`, updates store on success
+- [x] `register` calls POST `/auth/register/`, auto-logs in on success
+- [x] `logout` calls POST `/auth/logout/`, clears store
+- [x] `refreshUser` calls GET `/auth/me/` to hydrate user on app load
+- [x] All methods return `{ success, error }` for UI handling
+- [x] Typecheck passes
 
 ---
 
