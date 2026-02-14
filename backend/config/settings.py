@@ -351,3 +351,6 @@ CLAMAV_ENABLED = False  # Set to True when ClamAV daemon is configured
 # Storage Quota Settings
 VAULT_STORAGE_LIMIT = 1 * 1024 * 1024 * 1024  # 1GB per vault
 VAULT_STORAGE_WARNING_THRESHOLD = 0.8  # Warn at 80% usage
+
+# Onboarding Feature Flag
+ONBOARDING_ENABLED = os.getenv('ONBOARDING_ENABLED', 'True') == 'True'

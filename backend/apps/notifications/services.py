@@ -8,14 +8,29 @@ import pusher  # type: ignore[import-untyped]
 from apps.notifications.models import MutedVault, Notification, NotificationPreferences
 
 
-# Initialize Pusher client
-pusher_client = pusher.Pusher(
-    app_id=os.getenv('PUSHER_APP_ID', ''),
-    key=os.getenv('PUSHER_KEY', ''),
-    secret=os.getenv('PUSHER_SECRET', ''),
-    cluster=os.getenv('PUSHER_CLUSTER', 'us2'),
-    ssl=True,
-)
+# Pusher client (lazy-loaded)
+_pusher_client: Optional[pusher.Pusher] = None  # type: ignore[name-defined]
+
+
+def get_pusher_client() -> Optional[pusher.Pusher]:  # type: ignore[name-defined]
+    """Get or create Pusher client instance."""
+    global _pusher_client
+
+    # Skip if not configured
+    if not os.getenv('PUSHER_APP_ID'):
+        return None
+
+    # Create client if not exists
+    if _pusher_client is None:
+        _pusher_client = pusher.Pusher(
+            app_id=os.getenv('PUSHER_APP_ID', ''),
+            key=os.getenv('PUSHER_KEY', ''),
+            secret=os.getenv('PUSHER_SECRET', ''),
+            cluster=os.getenv('PUSHER_CLUSTER', 'us2'),
+            ssl=True,
+        )
+
+    return _pusher_client
 
 
 def create_notification(
@@ -99,8 +114,9 @@ def _send_pusher_notification(user: Any, notification: Notification) -> None:
     """
     from apps.notifications.serializers import NotificationSerializer
 
-    # Skip if Pusher is not configured
-    if not os.getenv('PUSHER_APP_ID'):
+    # Get Pusher client (returns None if not configured)
+    client = get_pusher_client()
+    if client is None:
         return
 
     try:
@@ -109,11 +125,11 @@ def _send_pusher_notification(user: Any, notification: Notification) -> None:
 
         # Send to private user channel
         channel_name = f"private-user-{user.id}"
-        pusher_client.trigger(channel_name, "notification", serializer.data)
+        client.trigger(channel_name, "notification", serializer.data)
 
         # Also send badge update with new unread count
         unread_count = Notification.objects.filter(user=user, read_at__isnull=True).count()
-        pusher_client.trigger(channel_name, "badge_update", {"count": unread_count})
+        client.trigger(channel_name, "badge_update", {"count": unread_count})
 
     except Exception:  # type: ignore[misc]
         # Silently fail if Pusher is unavailable

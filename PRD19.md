@@ -233,12 +233,12 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a user, I want to receive notifications in real-time without refreshing.
 
 **Acceptance Criteria:**
-- [ ] Add Pusher trigger in `create_notification()` service
-- [ ] Send to private channel `private-user-{user_id}`
-- [ ] Event name: `notification`
-- [ ] Payload: serialized notification data
-- [ ] Also send `badge_update` event with new unread count
-- [ ] Typecheck passes
+- [x] Add Pusher trigger in `create_notification()` service
+- [x] Send to private channel `private-user-{user_id}`
+- [x] Event name: `notification`
+- [x] Payload: serialized notification data
+- [x] Also send `badge_update` event with new unread count
+- [x] Typecheck passes
 
 ---
 

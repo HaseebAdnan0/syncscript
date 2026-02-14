@@ -21,6 +21,9 @@ export default function OnboardingFlow() {
   const router = useRouter();
   const hasShownResumeToast = useRef(false);
 
+  // Check if onboarding is enabled via feature flag
+  const onboardingEnabled = process.env.NEXT_PUBLIC_ONBOARDING_ENABLED !== 'false';
+
   // Show "resuming" toast when user returns to incomplete onboarding
   useEffect(() => {
     // Only show toast if:

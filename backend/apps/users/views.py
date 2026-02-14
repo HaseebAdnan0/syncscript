@@ -577,6 +577,15 @@ class OnboardingView(APIView):
 
     def get(self, request):
         """Return current user's onboarding state."""
+        from django.conf import settings
+
+        # Check if onboarding is enabled
+        if not settings.ONBOARDING_ENABLED:
+            return Response(
+                {'detail': 'Onboarding feature is currently disabled.'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
         user = request.user
 
         return Response({
@@ -589,7 +598,15 @@ class OnboardingView(APIView):
     def patch(self, request):
         """Update current user's onboarding progress."""
         from django.utils import timezone
+        from django.conf import settings
         import logging
+
+        # Check if onboarding is enabled
+        if not settings.ONBOARDING_ENABLED:
+            return Response(
+                {'detail': 'Onboarding feature is currently disabled.'},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
         user = request.user
         serializer = OnboardingSerializer(data=request.data, partial=True)
@@ -678,6 +695,14 @@ class DemoVaultResetView(APIView):
         from .services.onboarding import create_demo_vault
         from django.db.models.signals import post_delete
         from apps.vaults import signals as vault_signals
+        from django.conf import settings
+
+        # Check if onboarding is enabled
+        if not settings.ONBOARDING_ENABLED:
+            return Response(
+                {'detail': 'Onboarding feature is currently disabled.'},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
         user = request.user
 
@@ -725,6 +750,14 @@ class DemoVaultStatusView(APIView):
     def get(self, request):
         """Return demo vault existence status."""
         from apps.vaults.models import Vault
+        from django.conf import settings
+
+        # Check if onboarding is enabled
+        if not settings.ONBOARDING_ENABLED:
+            return Response(
+                {'detail': 'Onboarding feature is currently disabled.'},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
         user = request.user
 
@@ -762,6 +795,14 @@ class DemoVaultCreateView(APIView):
         from apps.vaults.models import Vault
         from apps.vaults.serializers import VaultSerializer
         from .services.onboarding import create_demo_vault
+        from django.conf import settings
+
+        # Check if onboarding is enabled
+        if not settings.ONBOARDING_ENABLED:
+            return Response(
+                {'detail': 'Onboarding feature is currently disabled.'},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
         user = request.user
 
