@@ -39,13 +39,13 @@ Enhance SyncScript's file storage system to production-ready status with Cloudfl
 **Description:** As a user, I want PDF text extracted so my documents can be searched later.
 
 **Acceptance Criteria:**
-- [ ] Update `process_uploaded_pdf` task in `apps/sources/tasks.py`
-- [ ] Extract text from all pages using `pypdf` reader
-- [ ] Concatenate text with page separators (e.g., `\n--- Page X ---\n`)
-- [ ] Truncate to 500KB max to prevent DB bloat
-- [ ] Save to `pdf_upload.extracted_text` field
-- [ ] Log extraction success with character count
-- [ ] Typecheck passes
+- [x] Update `process_uploaded_pdf` task in `apps/sources/tasks.py`
+- [x] Extract text from all pages using `pypdf` reader
+- [x] Concatenate text with page separators (e.g., `\n--- Page X ---\n`)
+- [x] Truncate to 500KB max to prevent DB bloat
+- [x] Save to `pdf_upload.extracted_text` field
+- [x] Log extraction success with character count
+- [x] Typecheck passes
 
 ---
 

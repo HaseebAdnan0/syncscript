@@ -30,3 +30,24 @@
   - Migration automatically creates both the field and the GIN index in one migration
   - Django check is the reliable validation - mypy warnings on Django model fields are expected
 ---
+
+## Iteration 3 - US-003: Create search app with SearchHistory model
+- Created new Django app `apps.search` with all required files
+- Added `SearchHistory` model with user FK, query, result_count, and created_at fields
+- Added composite index on (user, -created_at) for efficient retrieval
+- Registered app in settings.py INSTALLED_APPS
+- Migration 0001_initial.py created and applied successfully
+- Files changed:
+  - backend/apps/search/models.py (created with SearchHistory model)
+  - backend/apps/search/apps.py (configured app name as 'apps.search')
+  - backend/apps/search/views.py (placeholder)
+  - backend/apps/search/urls.py (placeholder with empty urlpatterns)
+  - backend/apps/search/serializers.py (placeholder)
+  - backend/apps/search/migrations/0001_initial.py (created)
+  - backend/config/settings.py (added 'apps.search' to INSTALLED_APPS)
+- Learnings for future iterations:
+  - When using `startapp`, the app is created in the current directory; move it to `apps/` afterward
+  - Update `apps.py` to set `name = 'apps.search'` (not just 'search')
+  - Django automatically creates composite indexes when specified in Meta.indexes list
+  - Placeholder files (views.py, urls.py, serializers.py) should be created with minimal content to satisfy project structure
+---

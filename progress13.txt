@@ -1,7 +1,7 @@
 # Progress Log - PRD 13: Cloudflare R2 File Storage
 
 ## Status
-In progress - US-001 complete
+In progress - US-001, US-002 complete
 
 ## Learnings
 - Django settings had missing `django.contrib.postgres` app - required for SearchVectorField
@@ -54,5 +54,26 @@ vaults/{vault_id}/thumbnails/{uuid}.jpg
   - Check for missing Django contrib apps when SearchVectorField errors occur
   - Clean up INSTALLED_APPS references to non-existent apps before running migrations
   - Pre-existing type errors in models.py are expected (no type annotations on Django fields)
+
+---
+
+## Iteration 2 - Extract full text during PDF processing (US-002)
+- Updated `process_uploaded_pdf` task in backend/apps/sources/tasks.py
+- Added text extraction logic after PDF metadata extraction (lines 87-118):
+  - Iterate through all pages using pypdf's PdfReader
+  - Extract text from each page with `page.extract_text()`
+  - Concatenate with page separators: `\n--- Page X ---\n`
+  - Truncate to 500KB max (500 * 1024 bytes) to prevent DB bloat
+  - Log character count and any truncation
+- Updated PDFUpload save call to include `extracted_text` field (line 177)
+- Files changed:
+  - backend/apps/sources/tasks.py
+  - PRD13.md
+  - progress13.txt
+- Learnings for future iterations:
+  - Stale test databases cause column not found errors - drop with Django shell command
+  - Text extraction should handle exceptions per-page (already implemented in code)
+  - pypdf can be imported and used successfully with existing dependencies
+  - Test database drop command: `python manage.py shell -c "from django.db import connections; cursor = connections['default'].cursor(); cursor.execute('DROP DATABASE IF EXISTS test_syncscript')"`
 
 ---

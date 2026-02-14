@@ -1,13 +1,16 @@
 # Progress Log - PRD 19: Notification System
 
 ## Current Status
-In Progress - US-001 complete
+In Progress - US-002 complete
 
 ## Learnings
 - Notification model was already created in a previous session
 - Model includes all required fields: user FK, type, title, body, data (JSON), read_at, created_at
 - Indexes added for efficient querying on user+read_at, user+created_at, created_at
 - Type annotations required for mypy typecheck compliance
+- Signal handlers need `del sender, kwargs` to avoid unused variable warnings
+- OneToOneField requires related_name for reverse lookups
+- post_save signals work correctly for auto-creating related models
 
 ---
 
@@ -20,11 +23,28 @@ In Progress - US-001 complete
 - Learnings: App was previously created, task verification successful
 ---
 
+## Iteration 2 - US-002: NotificationPreferences Model
+- Added NotificationPreferences model with OneToOneField to User
+- Implemented all boolean fields with correct defaults
+- Added email_digest_frequency CharField with 4 choices
+- Created post_save signal to auto-create preferences on user creation
+- Registered model in admin with relevant filters
+- Generated and applied migration 0002_notificationpreferences
+- Tested signal - confirmed preferences auto-created for new users
+- Mypy typecheck passes
+- Files changed: backend/apps/notifications/models.py, admin.py, migrations/0002_notificationpreferences.py
+- Learnings for future iterations:
+  - Signal receiver functions need type: ignore[misc] annotation for Django signals
+  - Use `del sender, kwargs` to mark unused but required signal parameters
+  - OneToOneField creates reverse accessor via related_name
+  - Test signals with simple user creation, avoid complex cleanup operations
+---
+
 ## Story Progress
 
 ### Backend Foundation
 - [x] US-001: Notification model
-- [ ] US-002: NotificationPreferences model
+- [x] US-002: NotificationPreferences model
 - [ ] US-003: MutedVault model
 - [ ] US-004: Serializers
 
