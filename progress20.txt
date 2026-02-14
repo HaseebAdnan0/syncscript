@@ -236,3 +236,29 @@
   - Wizard completion sets step='tutorial' for next phase of onboarding
   - Enter key support updated to include Step 3 submission
 ---
+
+## Iteration 13 - GuidedVaultWizard submission logic (US-013)
+- Implemented complete vault creation flow with API integration
+- Added vault creation via createVault() API call
+- Added optional source creation via createSource() if URL was provided
+- Added optional collaborator invite via inviteVaultMember() if email was provided
+- Implemented comprehensive error handling with retry capability
+- Non-blocking errors: source/invite failures don't stop the overall flow
+- Shows loading state during multi-step creation process
+- Displays error messages in styled error container
+- Advances to 'tutorial' step on successful vault creation
+- Stores createdVaultId in onboarding.data for future reference
+- Files changed: GuidedVaultWizard.tsx, PRD20.md, progress20.txt
+- Commit: (already in f61dd71)
+- Typecheck passes, build succeeds
+- Learnings for future iterations:
+  - Multi-step creation pattern: create vault → add source → invite member → update state
+  - Use try/catch for each optional step to prevent blocking the main flow
+  - Store created resource IDs in onboarding.data for reference (createdVaultId)
+  - Type-cast onboarding.data fields: `(data?.vaultName as string)` to satisfy TypeScript
+  - Error display pattern: conditional error div below input with red background/border
+  - setCreationError(null) on input change to clear errors when user retries
+  - API imports from lib/api/vaults and lib/api/sources
+  - SourceType.URL for URL-based sources, VaultRole.CONTRIBUTOR for invites
+  - Default description: "Created via guided onboarding" for tracking source
+---
