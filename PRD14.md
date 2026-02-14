@@ -133,11 +133,11 @@ SyncScript's AI-powered citation generation system enables researchers to genera
 **Description:** As a platform operator, I need AI citation usage tracked in the audit log for billing and analytics.
 
 **Acceptance Criteria:**
-- [ ] Log each AI citation generation with: user_id, vault_id, source_id, format, token_count, model_used
-- [ ] Use existing AuditLog model with action type `AI_CITATION_GENERATED`
-- [ ] Include input/output token counts from Claude response
-- [ ] Add helper `log_ai_citation_usage(user, vault, source, format, usage_data)`
-- [ ] Typecheck passes
+- [x] Log each AI citation generation with: user_id, vault_id, source_id, format, token_count, model_used
+- [x] Use existing AuditLog model with action type `AI_CITATION_GENERATED`
+- [x] Include input/output token counts from Claude response
+- [x] Add helper `log_ai_citation_usage(user, vault, source, format, usage_data)`
+- [x] Typecheck passes
 
 ### US-011: Implement batch citation export endpoint
 **Description:** As a researcher, I want to export all citations from a vault so I can import them into reference managers or include in papers.

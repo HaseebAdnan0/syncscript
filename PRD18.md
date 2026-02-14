@@ -306,14 +306,14 @@ Implement a global full-text search system for SyncScript that enables researche
 **Description:** As a user, I want search results displayed with highlighted matches so I can quickly identify relevant content.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/search/SearchResultItem.tsx`
-- [ ] Shows type icon (vault, file, annotation icons)
-- [ ] Title with `<mark>` highlights rendered as orange background
-- [ ] Breadcrumb for context: "Vault Name > Source Title" for annotations
-- [ ] Preview snippet with highlighted text (max 2 lines)
-- [ ] Hover state with `bg-white/5`
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/features/search/SearchResultItem.tsx`
+- [x] Shows type icon (vault, file, annotation icons)
+- [x] Title with `<mark>` highlights rendered as orange background
+- [x] Breadcrumb for context: "Vault Name > Source Title" for annotations
+- [x] Preview snippet with highlighted text (max 2 lines)
+- [x] Hover state with `bg-white/5`
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 

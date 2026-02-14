@@ -320,4 +320,29 @@ export const disconnectOAuthProvider = async (provider: OAuthProvider): Promise<
   await api.delete(`/auth/oauth/connected/${provider}/`);
 };
 
+/**
+ * Resend verification email response
+ */
+export interface ResendVerificationEmailResponse {
+  message: string;
+}
+
+/**
+ * Resend verification email to user
+ * Rate limited to 3 requests per hour per IP
+ */
+export const resendVerificationEmail = async (
+  email: string
+): Promise<ResendVerificationEmailResponse> => {
+  try {
+    const response = await api.post('/auth/resend-verification/', { email });
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response?.status === 429) {
+      throw new Error('Too many requests. Please wait a moment before trying again.');
+    }
+    throw error;
+  }
+};
+
 export default api;
