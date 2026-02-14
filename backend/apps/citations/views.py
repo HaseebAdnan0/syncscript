@@ -41,7 +41,9 @@ class CitationViewSet(viewsets.ViewSet):
         request_serializer = CitationRequestSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
 
-        citation_format = request_serializer.validated_data['format']
+        citation_format_str = request_serializer.validated_data['format']
+        # Convert string to CitationFormat enum
+        citation_format = CitationFormat(citation_format_str)
 
         # Get source and verify it exists
         source = get_object_or_404(Source, id=source_id, is_deleted=False)
@@ -50,12 +52,12 @@ class CitationViewSet(viewsets.ViewSet):
         self._check_vault_permission(source.vault, request.user)
 
         # Check if citation is cached
-        cached_citation = self._get_cached_citation(source, citation_format)
+        cached_citation = self._get_cached_citation(source, citation_format_str)
         if cached_citation:
             response_data = {
                 'citation': cached_citation['text'],
                 'citation_html': cached_citation['html'],
-                'format': citation_format,
+                'format': citation_format_str,
                 'source': cached_citation['source'],
                 'cached': True
             }
@@ -80,13 +82,13 @@ class CitationViewSet(viewsets.ViewSet):
             generation_source = 'ai'
 
         # Cache the generated citation
-        self._cache_citation(source, citation_format, citation_text, citation_html, generation_source)
+        self._cache_citation(source, citation_format_str, citation_text, citation_html, generation_source)
 
         # Prepare response
         response_data = {
             'citation': citation_text,
             'citation_html': citation_html,
-            'format': citation_format,
+            'format': citation_format_str,
             'source': generation_source,
             'cached': False
         }

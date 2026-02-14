@@ -505,3 +505,269 @@ class ChunkingServiceTestCase(TestCase):
 
         # First chunk has both keywords close together, should rank higher
         self.assertEqual(relevant[0]['chunk_id'], 0)
+
+
+class SourceSummarizationTestCase(APITestCase):
+    """Test source summarization endpoint (US-006)."""
+
+    def setUp(self):
+        """Create test fixtures."""
+        from apps.vaults.models import Vault
+        from apps.sources.models import Source, PDFUpload
+
+        # Create test user
+        self.user = User.objects.create_user(
+            email='test@example.com',
+            username='testuser',
+            password='testpass123'
+        )
+
+        # Create vault
+        self.vault = Vault.objects.create(
+            name='Test Vault',
+            owner=self.user
+        )
+
+        # Create URL source with description
+        self.url_source = Source.objects.create(
+            vault=self.vault,
+            url='https://example.com/article',
+            title='Test Article',
+            description='This is a test article about machine learning.',
+            source_type='URL',
+            created_by=self.user
+        )
+
+        # Create PDF source
+        self.pdf_source = Source.objects.create(
+            vault=self.vault,
+            url='https://example.com/paper.pdf',
+            title='Test Paper',
+            source_type='PDF',
+            created_by=self.user
+        )
+
+        # Create PDFUpload with extracted text
+        self.pdf_upload = PDFUpload.objects.create(
+            vault=self.vault,
+            source=self.pdf_source,
+            file='test.pdf',
+            original_filename='test.pdf',
+            file_size=1000,
+            uploaded_by=self.user,
+            processing_status='completed',
+            extracted_text='This is the extracted text from the PDF. It contains information about neural networks and deep learning.'
+        )
+
+        # Authentication
+        self.client.force_authenticate(user=self.user)
+
+    def test_summarize_url_source_success(self):
+        """Test successful summarization of URL source."""
+        from unittest.mock import patch, Mock
+
+        # Mock Claude client
+        with patch('apps.ai.views.ClaudeClient') as MockClient:
+            mock_instance = Mock()
+            MockClient.return_value = mock_instance
+            mock_instance.summarize.return_value = {
+                'abstract': 'Test summary',
+                'key_findings': ['Finding 1', 'Finding 2'],
+                'methodology': 'Test methodology',
+                'limitations': 'Test limitations',
+                'keywords': ['machine learning', 'AI'],
+                'language': 'en',
+                'quality_flags': [],
+                'tokens_used': 250
+            }
+
+            response = self.client.post(f'/api/v1/sources/{self.url_source.id}/summarize/')
+
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.data['abstract'], 'Test summary')
+            self.assertEqual(len(response.data['key_findings']), 2)
+            self.assertIn('generated_at', response.data)
+
+    def test_summarize_pdf_source_success(self):
+        """Test successful summarization of PDF source."""
+        from unittest.mock import patch, Mock
+
+        with patch('apps.ai.views.ClaudeClient') as MockClient:
+            mock_instance = Mock()
+            MockClient.return_value = mock_instance
+            mock_instance.summarize.return_value = {
+                'abstract': 'PDF summary',
+                'key_findings': ['Finding A'],
+                'methodology': 'Research method',
+                'limitations': 'Study limits',
+                'keywords': ['neural networks'],
+                'language': 'en',
+                'quality_flags': [],
+                'tokens_used': 300
+            }
+
+            response = self.client.post(f'/api/v1/sources/{self.pdf_source.id}/summarize/')
+
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.data['abstract'], 'PDF summary')
+
+    def test_summarize_returns_cached_summary(self):
+        """Test that cached summary is returned when regenerate=false."""
+        # Set cached summary
+        cached_summary = {
+            'abstract': 'Cached summary',
+            'key_findings': ['Cached finding'],
+            'methodology': 'Cached method',
+            'limitations': 'Cached limits',
+            'keywords': ['cached'],
+            'language': 'en',
+            'quality_flags': [],
+            'generated_at': '2024-01-01T00:00:00Z'
+        }
+        self.url_source.ai_summary = cached_summary
+        self.url_source.save()
+
+        # Should return cached without calling Claude
+        response = self.client.post(f'/api/v1/sources/{self.url_source.id}/summarize/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['abstract'], 'Cached summary')
+
+    def test_summarize_regenerates_with_flag(self):
+        """Test that summary is regenerated when regenerate=true."""
+        from unittest.mock import patch, Mock
+
+        # Set cached summary
+        self.url_source.ai_summary = {'abstract': 'Old summary'}
+        self.url_source.save()
+
+        with patch('apps.ai.views.ClaudeClient') as MockClient:
+            mock_instance = Mock()
+            MockClient.return_value = mock_instance
+            mock_instance.summarize.return_value = {
+                'abstract': 'New summary',
+                'key_findings': [],
+                'methodology': '',
+                'limitations': '',
+                'keywords': [],
+                'language': 'en',
+                'quality_flags': [],
+                'tokens_used': 200
+            }
+
+            response = self.client.post(
+                f'/api/v1/sources/{self.url_source.id}/summarize/?regenerate=true'
+            )
+
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.data['abstract'], 'New summary')
+
+    def test_summarize_requires_authentication(self):
+        """Test that endpoint requires authentication."""
+        self.client.force_authenticate(user=None)
+
+        response = self.client.post(f'/api/v1/sources/{self.url_source.id}/summarize/')
+
+        self.assertEqual(response.status_code, 401)
+
+    def test_summarize_checks_vault_permission(self):
+        """Test that user must have vault access."""
+        # Create another user without access
+        other_user = User.objects.create_user(
+            email='other@example.com',
+            username='otheruser',
+            password='testpass123'
+        )
+        self.client.force_authenticate(user=other_user)
+
+        response = self.client.post(f'/api/v1/sources/{self.url_source.id}/summarize/')
+
+        self.assertEqual(response.status_code, 403)
+
+    def test_summarize_logs_usage(self):
+        """Test that token usage is logged."""
+        from unittest.mock import patch, Mock
+
+        with patch('apps.ai.views.ClaudeClient') as MockClient:
+            mock_instance = Mock()
+            MockClient.return_value = mock_instance
+            mock_instance.summarize.return_value = {
+                'abstract': 'Test',
+                'key_findings': [],
+                'methodology': '',
+                'limitations': '',
+                'keywords': [],
+                'language': 'en',
+                'quality_flags': [],
+                'tokens_used': 500
+            }
+
+            response = self.client.post(f'/api/v1/sources/{self.url_source.id}/summarize/')
+
+            self.assertEqual(response.status_code, 200)
+
+            # Check usage log
+            from apps.ai.models import AIUsageLog
+            logs = AIUsageLog.objects.filter(user=self.user, request_type='summary')
+            self.assertEqual(logs.count(), 1)
+            self.assertEqual(logs.first().tokens_used, 500)
+
+    def test_summarize_handles_missing_content(self):
+        """Test error when source has no content."""
+        # Create source without description
+        empty_source = Source.objects.create(
+            vault=self.vault,
+            url='https://example.com/empty',
+            title='Empty Source',
+            description='',
+            source_type='URL',
+            created_by=self.user
+        )
+
+        response = self.client.post(f'/api/v1/sources/{empty_source.id}/summarize/')
+
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('error', response.data)
+
+    def test_summarize_handles_pdf_not_processed(self):
+        """Test error when PDF is not yet processed."""
+        # Create PDF without extracted text
+        unprocessed_pdf = Source.objects.create(
+            vault=self.vault,
+            url='https://example.com/pending.pdf',
+            title='Pending PDF',
+            source_type='PDF',
+            created_by=self.user
+        )
+
+        PDFUpload.objects.create(
+            vault=self.vault,
+            source=unprocessed_pdf,
+            file='pending.pdf',
+            original_filename='pending.pdf',
+            file_size=1000,
+            uploaded_by=self.user,
+            processing_status='pending'
+        )
+
+        response = self.client.post(f'/api/v1/sources/{unprocessed_pdf.id}/summarize/')
+
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('extraction not available', response.data['error'])
+
+    def test_summarize_handles_claude_error(self):
+        """Test error handling when Claude API fails."""
+        from unittest.mock import patch, Mock
+
+        with patch('apps.ai.views.ClaudeClient') as MockClient:
+            mock_instance = Mock()
+            MockClient.return_value = mock_instance
+            mock_instance.summarize.return_value = {
+                'error': 'API rate limit exceeded',
+                'tokens_used': 0
+            }
+
+            response = self.client.post(f'/api/v1/sources/{self.url_source.id}/summarize/')
+
+            self.assertEqual(response.status_code, 500)
+            self.assertIn('error', response.data)

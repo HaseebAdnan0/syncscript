@@ -1,3 +1,7 @@
+from django.urls import path
+from . import views
+
 urlpatterns = [
-    # AI endpoints will be added in later user stories
+    # Source summarization (US-006)
+    path('sources/<int:source_id>/summarize/', views.summarize_source, name='summarize-source'),
 ]

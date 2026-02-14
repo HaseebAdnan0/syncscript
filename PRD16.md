@@ -138,15 +138,15 @@ Create SyncScript's production landing page following the Bitcoin DeFi aesthetic
 **Description:** As a user, I want to see SyncScript's key features so I understand what the platform offers.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/marketing/FeaturesSection.tsx`
-- [ ] Section heading with gradient text accent
-- [ ] 3x2 grid of FeatureCards on desktop
-- [ ] 6 features: Real-time Collaboration, Smart Citations, PDF Annotations, Knowledge Vaults, Team Permissions, AI Insights
-- [ ] Each feature has appropriate Lucide icon
-- [ ] Grid becomes 2x3 on tablet, 1x6 on mobile
-- [ ] Framer Motion stagger animation on scroll
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/marketing/FeaturesSection.tsx`
+- [x] Section heading with gradient text accent
+- [x] 3x2 grid of FeatureCards on desktop
+- [x] 6 features: Real-time Collaboration, Smart Citations, PDF Annotations, Knowledge Vaults, Team Permissions, AI Insights
+- [x] Each feature has appropriate Lucide icon
+- [x] Grid becomes 2x3 on tablet, 1x6 on mobile
+- [x] Framer Motion stagger animation on scroll
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-011: Create How It Works Timeline Component
 **Description:** As a user, I want to see how the platform works in simple steps so I understand the user journey.

@@ -582,6 +582,47 @@ class OnboardingView(APIView):
         }, status=status.HTTP_200_OK)
 
 
+class DemoVaultResetView(APIView):
+    """
+    Reset demo vault to its original state (US-005).
+
+    POST /api/v1/users/me/demo-vault/reset/
+    Deletes existing demo vault and creates a fresh one from template.
+    Requires authentication.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        """Delete existing demo vault and create fresh one."""
+        from apps.vaults.models import Vault
+        from apps.vaults.serializers import VaultSerializer
+        from .services.onboarding import create_demo_vault
+
+        user = request.user
+
+        # Delete existing demo vault if it exists
+        # Use the same name as in create_demo_vault function
+        demo_vault = Vault.objects.filter(
+            owner=user,
+            name="AI Research Papers 2025"
+        ).first()
+
+        if demo_vault:
+            # Delete vault (cascade will delete sources, annotations, memberships)
+            demo_vault.delete()
+
+        # Create fresh demo vault from template
+        new_vault = create_demo_vault(user)
+
+        # Serialize and return vault data
+        serializer = VaultSerializer(new_vault, context={'request': request})
+
+        return Response({
+            'message': 'Demo vault reset successfully.',
+            'vault': serializer.data
+        }, status=status.HTTP_200_OK)
+
+
 # OAuth Views (PRD12)
 
 class GoogleOAuthRedirectView(APIView):

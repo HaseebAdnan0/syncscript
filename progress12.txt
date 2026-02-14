@@ -183,3 +183,27 @@ Learnings for future iterations:
   - sociallogin.is_existing checks if SocialAccount already exists (not if email exists)
   - SOCIALACCOUNT_AUTO_SIGNUP=True makes allauth create users automatically when email is new
 ---
+## Iteration 7 - US-007: Create GitHub OAuth redirect endpoint
+- Verified GitHubOAuthRedirectView was already implemented in Iteration 5
+- Endpoint exists at GET /api/v1/auth/github/ in apps/users/views.py (lines 617-644)
+- Accepts optional 'next' query parameter and stores in session
+- Validates GitHub OAuth configuration before redirecting
+- Returns 503 error if GitHub credentials are missing/invalid
+- Uses allauth's oauth2_login() to redirect to GitHub authorization screen
+- URL routing configured in apps/users/urls.py (line 44)
+- Typecheck confirmed (pre-existing model errors are unrelated)
+- Marked task complete in PRD12.md and committed
+
+Files verified:
+  - backend/apps/users/views.py (GitHubOAuthRedirectView)
+  - backend/apps/users/urls.py (github-oauth route)
+  - PRD12.md (marked US-007 complete)
+
+Learnings for future iterations:
+  - Always check if a task was already implemented in a previous iteration
+  - GitHubOAuthRedirectView follows same pattern as GoogleOAuthRedirectView
+  - Both OAuth redirect views implemented together in Iteration 5 for consistency
+  - django-allauth provides provider-specific oauth2_login functions (google, github)
+  - Same validation pattern: check provider config before redirecting, return 503 if missing
+---
+

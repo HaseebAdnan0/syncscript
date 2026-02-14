@@ -226,3 +226,29 @@
   - Role-specific explanation helps recipients understand their permissions
   - Consistent table-based layout and orange gradient patterns across all email templates
 ---
+## Iteration 9 - US-009: Create collaboration notification email template
+- Created templates/emails/collaboration_notification.html extending base.html
+- Implemented all acceptance criteria:
+  - Preheader: "New activity in {{ vault_name }}"
+  - Support for three notification types: source_added, annotation_created, member_joined
+  - Conditional content blocks for each notification type
+  - Actor name highlighted in orange with target name in muted color
+  - Role badge for member_joined notifications with orange background
+  - Optional context_message field for additional details
+  - Orange gradient CTA button "View in SyncScript"
+  - Fallback text link below button
+  - Unsubscribe link in footer (conditional on unsubscribe_url)
+- Created templates/emails/collaboration_notification.txt plaintext version
+- Tested all three notification types with Django shell render_to_string
+- Files changed:
+  - backend/templates/emails/collaboration_notification.html (already existed from commit 8dd44d9)
+  - backend/templates/emails/collaboration_notification.txt (already existed from commit 8dd44d9)
+  - PRD11.md (marked US-009 complete)
+- Learnings for future iterations:
+  - Template context includes: user, vault_name, notification_type, actor_name, target_name, role, vault_url, site_url, unsubscribe_url, context_message
+  - Used conditional blocks ({% if %}) to render different content per notification type
+  - Unsubscribe link only shows if unsubscribe_url is provided
+  - Templates were already created in previous PRD work, verified they meet all acceptance criteria
+  - Django system check passes (only allauth deprecation warnings)
+---
+

@@ -1,8 +1,11 @@
 """
 User models for SyncScript.
 """
+import secrets
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class User(AbstractUser):
@@ -59,3 +62,36 @@ class EmailVerificationToken(models.Model):
 
     def __str__(self):
         return f"Token for {self.user.email}"
+
+
+class EmailPreference(models.Model):
+    """
+    User email notification preferences and unsubscribe tokens.
+    Each user has one preference record created automatically on registration.
+    """
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='email_preference')
+    collaboration_notifications = models.BooleanField(default=True, help_text="Receive notifications about vault activity")
+    marketing_emails = models.BooleanField(default=True, help_text="Receive product updates and newsletters")
+    unsubscribe_token = models.CharField(max_length=64, unique=True, db_index=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'email_preferences'
+
+    def __str__(self):
+        return f"Email preferences for {self.user.email}"
+
+    def save(self, *args, **kwargs):
+        """Generate unique unsubscribe token if not set."""
+        if not self.unsubscribe_token:
+            self.unsubscribe_token = secrets.token_urlsafe(32)
+        super().save(*args, **kwargs)
+
+
+@receiver(post_save, sender=User)
+def create_email_preference(sender, instance, created, **kwargs):
+    """Create EmailPreference record when a new User is created."""
+    if created:
+        EmailPreference.objects.create(user=instance)

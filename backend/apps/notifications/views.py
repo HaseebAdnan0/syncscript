@@ -47,3 +47,30 @@ class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
         queryset = queryset.order_by(F('read_at').asc(nulls_first=True), '-created_at')
 
         return queryset
+
+    @action(detail=True, methods=['patch'], url_path='read')
+    def mark_read(self, request, pk=None) -> Response:  # type: ignore[no-untyped-def]
+        """
+        Mark a notification as read.
+
+        PATCH /api/v1/notifications/{id}/read/
+
+        Idempotent: re-marking doesn't change timestamp.
+        Only allows marking own notifications.
+        """
+        notification = self.get_object()
+
+        # Ensure user owns this notification
+        if notification.user != request.user:
+            return Response(
+                {'detail': 'You do not have permission to mark this notification as read.'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        # Mark as read (idempotent - only sets timestamp if not already read)
+        if notification.read_at is None:
+            notification.read_at = timezone.now()
+            notification.save(update_fields=['read_at'])
+
+        serializer = self.get_serializer(notification)
+        return Response(serializer.data)

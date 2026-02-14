@@ -86,11 +86,11 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a user, I want to mark individual notifications as read.
 
 **Acceptance Criteria:**
-- [ ] PATCH `/api/v1/notifications/{id}/read/` sets `read_at` to current time
-- [ ] Only allow marking own notifications
-- [ ] Return updated notification
-- [ ] Idempotent (re-marking doesn't change timestamp)
-- [ ] Typecheck passes
+- [x] PATCH `/api/v1/notifications/{id}/read/` sets `read_at` to current time
+- [x] Only allow marking own notifications
+- [x] Return updated notification
+- [x] Idempotent (re-marking doesn't change timestamp)
+- [x] Typecheck passes
 
 ---
 

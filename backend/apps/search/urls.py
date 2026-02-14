@@ -1,4 +1,8 @@
 from django.urls import path
+from . import views
 
-# URL patterns will be added in subsequent user stories
-urlpatterns = []
+app_name = 'search'
+
+urlpatterns = [
+    path('', views.search_view, name='search'),
+]
