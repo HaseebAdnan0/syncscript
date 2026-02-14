@@ -1202,3 +1202,285 @@ class CacheInvalidationSignalsTestCase(TestCase):
 
         # Should still be null (no error)
         self.assertIsNone(self.vault.ai_insights_updated_at)
+
+
+class QuestionAnsweringTestCase(APITestCase):
+    """Test question answering endpoint (US-009)."""
+
+    def setUp(self):
+        """Create test fixtures."""
+        from apps.vaults.models import Vault
+        from apps.sources.models import Source, PDFUpload
+
+        # Create test user
+        self.user = User.objects.create_user(
+            email='test@example.com',
+            username='testuser',
+            password='testpass123'
+        )
+
+        # Create vault
+        self.vault = Vault.objects.create(
+            name='Research Vault',
+            owner=self.user
+        )
+
+        # Create source with AI summary
+        self.source1 = Source.objects.create(
+            vault=self.vault,
+            url='https://example.com/paper1',
+            title='Machine Learning Paper',
+            description='A paper about neural networks and deep learning',
+            source_type='URL',
+            created_by=self.user,
+            ai_summary={
+                'abstract': 'This paper explores neural networks for image classification.',
+                'key_findings': ['Deep learning achieves 95% accuracy', 'CNNs are effective for images'],
+                'keywords': ['machine learning', 'neural networks', 'CNN'],
+            }
+        )
+
+        # Create PDF source with extracted text
+        self.source2 = Source.objects.create(
+            vault=self.vault,
+            url='https://example.com/paper2.pdf',
+            title='AI Ethics Paper',
+            description='A paper about AI ethics and fairness',
+            source_type='PDF',
+            created_by=self.user
+        )
+
+        PDFUpload.objects.create(
+            vault=self.vault,
+            source=self.source2,
+            file='paper2.pdf',
+            original_filename='paper2.pdf',
+            file_size=2000,
+            uploaded_by=self.user,
+            processing_status='completed',
+            extracted_text='AI systems must be designed with fairness and transparency in mind. Bias in training data can lead to discriminatory outcomes. Ethical AI requires diverse datasets and regular audits.'
+        )
+
+        # Authentication
+        self.client.force_authenticate(user=self.user)
+
+    def test_ask_question_success(self):
+        """Test successful question answering."""
+        from unittest.mock import patch, Mock
+
+        with patch('apps.ai.views.ClaudeClient') as MockClient:
+            mock_instance = Mock()
+            MockClient.return_value = mock_instance
+            mock_instance.answer_question.return_value = {
+                'answer': 'Neural networks can achieve 95% accuracy on image classification tasks.',
+                'citations': [0, 1],
+                'confidence': 'high',
+                'tokens_used': 350
+            }
+
+            response = self.client.post(
+                f'/api/v1/vaults/{self.vault.id}/ask/',
+                {'question': 'What accuracy can neural networks achieve?'},
+                format='json'
+            )
+
+            self.assertEqual(response.status_code, 200)
+            self.assertIn('answer', response.data)
+            self.assertIn('citations', response.data)
+            self.assertIn('conversation_id', response.data)
+
+    def test_ask_question_creates_conversation(self):
+        """Test that asking creates a new conversation."""
+        from unittest.mock import patch, Mock
+        from apps.ai.models import ChatConversation
+
+        initial_count = ChatConversation.objects.count()
+
+        with patch('apps.ai.views.ClaudeClient') as MockClient:
+            mock_instance = Mock()
+            MockClient.return_value = mock_instance
+            mock_instance.answer_question.return_value = {
+                'answer': 'Test answer',
+                'citations': [],
+                'confidence': 'medium',
+                'tokens_used': 200
+            }
+
+            response = self.client.post(
+                f'/api/v1/vaults/{self.vault.id}/ask/',
+                {'question': 'Test question?'},
+                format='json'
+            )
+
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(ChatConversation.objects.count(), initial_count + 1)
+
+    def test_ask_question_continues_conversation(self):
+        """Test that providing conversation_id continues existing conversation."""
+        from unittest.mock import patch, Mock
+        from apps.ai.models import ChatConversation, ChatMessage
+
+        conversation = ChatConversation.objects.create(
+            vault=self.vault,
+            user=self.user
+        )
+
+        with patch('apps.ai.views.ClaudeClient') as MockClient:
+            mock_instance = Mock()
+            MockClient.return_value = mock_instance
+            mock_instance.answer_question.return_value = {
+                'answer': 'Follow-up answer',
+                'citations': [],
+                'confidence': 'high',
+                'tokens_used': 250
+            }
+
+            response = self.client.post(
+                f'/api/v1/vaults/{self.vault.id}/ask/',
+                {
+                    'question': 'Follow-up question?',
+                    'conversation_id': str(conversation.id)
+                },
+                format='json'
+            )
+
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(str(response.data['conversation_id']), str(conversation.id))
+            messages = ChatMessage.objects.filter(conversation=conversation)
+            self.assertEqual(messages.count(), 2)
+
+    def test_ask_question_saves_messages(self):
+        """Test that user and assistant messages are saved."""
+        from unittest.mock import patch, Mock
+        from apps.ai.models import ChatMessage
+
+        with patch('apps.ai.views.ClaudeClient') as MockClient:
+            mock_instance = Mock()
+            MockClient.return_value = mock_instance
+            mock_instance.answer_question.return_value = {
+                'answer': 'The answer is 42.',
+                'citations': [0],
+                'confidence': 'high',
+                'tokens_used': 300
+            }
+
+            response = self.client.post(
+                f'/api/v1/vaults/{self.vault.id}/ask/',
+                {'question': 'What is the answer?'},
+                format='json'
+            )
+
+            self.assertEqual(response.status_code, 200)
+
+            conversation_id = response.data['conversation_id']
+            messages = ChatMessage.objects.filter(conversation_id=conversation_id).order_by('created_at')
+            self.assertEqual(messages.count(), 2)
+            self.assertEqual(messages[0].role, 'user')
+            self.assertEqual(messages[0].content, 'What is the answer?')
+            self.assertEqual(messages[1].role, 'assistant')
+            self.assertEqual(messages[1].content, 'The answer is 42.')
+
+    def test_ask_question_requires_authentication(self):
+        """Test that endpoint requires authentication."""
+        self.client.force_authenticate(user=None)
+
+        response = self.client.post(
+            f'/api/v1/vaults/{self.vault.id}/ask/',
+            {'question': 'Test?'},
+            format='json'
+        )
+
+        self.assertEqual(response.status_code, 401)
+
+    def test_ask_question_checks_vault_permission(self):
+        """Test that user must have vault access."""
+        other_user = User.objects.create_user(
+            email='other@example.com',
+            username='otheruser',
+            password='testpass123'
+        )
+        self.client.force_authenticate(user=other_user)
+
+        response = self.client.post(
+            f'/api/v1/vaults/{self.vault.id}/ask/',
+            {'question': 'Test?'},
+            format='json'
+        )
+
+        self.assertEqual(response.status_code, 403)
+
+    def test_ask_question_handles_empty_vault(self):
+        """Test error when vault has no sources."""
+        from apps.vaults.models import Vault
+
+        empty_vault = Vault.objects.create(
+            name='Empty Vault',
+            owner=self.user
+        )
+
+        response = self.client.post(
+            f'/api/v1/vaults/{empty_vault.id}/ask/',
+            {'question': 'Test?'},
+            format='json'
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('no sources', response.data['error'].lower())
+
+    def test_ask_question_logs_usage(self):
+        """Test that token usage is logged."""
+        from unittest.mock import patch, Mock
+
+        with patch('apps.ai.views.ClaudeClient') as MockClient:
+            mock_instance = Mock()
+            MockClient.return_value = mock_instance
+            mock_instance.answer_question.return_value = {
+                'answer': 'Answer',
+                'citations': [],
+                'confidence': 'medium',
+                'tokens_used': 450
+            }
+
+            response = self.client.post(
+                f'/api/v1/vaults/{self.vault.id}/ask/',
+                {'question': 'Test?'},
+                format='json'
+            )
+
+            self.assertEqual(response.status_code, 200)
+
+            from apps.ai.models import AIUsageLog
+            logs = AIUsageLog.objects.filter(user=self.user, request_type='question')
+            self.assertEqual(logs.count(), 1)
+            self.assertEqual(logs.first().tokens_used, 450)
+
+    def test_ask_question_validates_input(self):
+        """Test that invalid input is rejected."""
+        response = self.client.post(
+            f'/api/v1/vaults/{self.vault.id}/ask/',
+            {'question': ''},
+            format='json'
+        )
+
+        self.assertEqual(response.status_code, 400)
+
+    def test_ask_question_handles_claude_error(self):
+        """Test error handling when Claude API fails."""
+        from unittest.mock import patch, Mock
+
+        with patch('apps.ai.views.ClaudeClient') as MockClient:
+            mock_instance = Mock()
+            MockClient.return_value = mock_instance
+            mock_instance.answer_question.return_value = {
+                'error': 'API timeout',
+                'tokens_used': 0
+            }
+
+            response = self.client.post(
+                f'/api/v1/vaults/{self.vault.id}/ask/',
+                {'question': 'Test?'},
+                format='json'
+            )
+
+            self.assertEqual(response.status_code, 500)
+            self.assertIn('error', response.data)

@@ -8,7 +8,6 @@ Usage:
 """
 from django.core.management.base import BaseCommand
 from django.contrib.postgres.search import SearchVector
-from django.db.models import F
 
 from apps.sources.models import Source
 from apps.annotations.models import Annotation
@@ -133,6 +132,6 @@ class Command(BaseCommand):
                 )
 
             processed += len(annotations)
-            self.stdout.write(self.style.SUCCESS(f'  ✓ Processed {processed}/{total} annotations'))
+            self.stdout.write(self.style.SUCCESS(f'  Processed {processed}/{total} annotations'))
 
         self.stdout.write(self.style.SUCCESS(f'Completed {total} annotations'))

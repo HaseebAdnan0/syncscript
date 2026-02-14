@@ -1556,3 +1556,247 @@ class AsyncCitationEndpointTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['status'], 'failed')
         self.assertIn('error', response.data)
+
+
+class RateLimitingTests(TestCase):
+    """Tests for AI citation rate limiting"""
+
+    def setUp(self):
+        """Set up test data"""
+        from django.contrib.auth import get_user_model
+        from apps.vaults.models import Vault
+        from apps.sources.models import Source
+        from django.core.cache import cache
+
+        User = get_user_model()
+
+        # Clear cache before each test
+        cache.clear()
+
+        # Create test user
+        self.user = User.objects.create_user(
+            email='test@example.com',
+            username='testuser',
+            password='testpass123'
+        )
+
+        # Create test vault
+        self.vault = Vault.objects.create(
+            title='Test Vault',
+            description='Test vault description',
+            owner=self.user
+        )
+
+        # Create test source with incomplete metadata (triggers AI citation)
+        self.source = Source.objects.create(
+            title='Test Article',
+            url='https://example.com/article',
+            vault=self.vault,
+            created_by=self.user,
+            metadata={'abstract': 'Test abstract'}  # Missing required fields for structured citation
+        )
+
+    def test_increment_ai_citation_counter(self):
+        """Test incrementing AI citation counters"""
+        from apps.citations.rate_limiting import increment_ai_citation_counter
+        from django.core.cache import cache
+        from datetime import datetime
+
+        today = datetime.now().strftime('%Y-%m-%d')
+        user_key = f"ai_citation:user:{self.user.id}:daily:{today}"
+        vault_key = f"ai_citation:vault:{self.vault.id}:daily:{today}"
+
+        # Initial state
+        self.assertEqual(cache.get(user_key, 0), 0)
+        self.assertEqual(cache.get(vault_key, 0), 0)
+
+        # Increment once
+        increment_ai_citation_counter(self.user.id, self.vault.id)
+
+        self.assertEqual(cache.get(user_key), 1)
+        self.assertEqual(cache.get(vault_key), 1)
+
+        # Increment again
+        increment_ai_citation_counter(self.user.id, self.vault.id)
+
+        self.assertEqual(cache.get(user_key), 2)
+        self.assertEqual(cache.get(vault_key), 2)
+
+    def test_check_ai_citation_rate_limit_allowed(self):
+        """Test rate limit check when within limits"""
+        from apps.citations.rate_limiting import check_ai_citation_rate_limit
+
+        is_allowed, error_message = check_ai_citation_rate_limit(self.user, self.vault)
+
+        self.assertTrue(is_allowed)
+        self.assertIsNone(error_message)
+
+    def test_check_ai_citation_rate_limit_user_exceeded(self):
+        """Test rate limit check when user limit exceeded"""
+        from apps.citations.rate_limiting import (
+            check_ai_citation_rate_limit,
+            USER_DAILY_LIMIT,
+        )
+        from django.core.cache import cache
+        from datetime import datetime
+
+        today = datetime.now().strftime('%Y-%m-%d')
+        user_key = f"ai_citation:user:{self.user.id}:daily:{today}"
+
+        # Set user count to limit
+        cache.set(user_key, USER_DAILY_LIMIT, timeout=86400)
+
+        is_allowed, error_message = check_ai_citation_rate_limit(self.user, self.vault)
+
+        self.assertFalse(is_allowed)
+        self.assertIsNotNone(error_message)
+        self.assertIn('user', error_message)
+        self.assertIn(str(USER_DAILY_LIMIT), error_message)
+
+    def test_check_ai_citation_rate_limit_vault_exceeded(self):
+        """Test rate limit check when vault limit exceeded"""
+        from apps.citations.rate_limiting import (
+            check_ai_citation_rate_limit,
+            VAULT_DAILY_LIMIT,
+        )
+        from django.core.cache import cache
+        from datetime import datetime
+
+        today = datetime.now().strftime('%Y-%m-%d')
+        vault_key = f"ai_citation:vault:{self.vault.id}:daily:{today}"
+
+        # Set vault count to limit
+        cache.set(vault_key, VAULT_DAILY_LIMIT, timeout=86400)
+
+        is_allowed, error_message = check_ai_citation_rate_limit(self.user, self.vault)
+
+        self.assertFalse(is_allowed)
+        self.assertIsNotNone(error_message)
+        self.assertIn('vault', error_message)
+        self.assertIn(str(VAULT_DAILY_LIMIT), error_message)
+
+    def test_get_ai_citation_quota(self):
+        """Test getting AI citation quota information"""
+        from apps.citations.rate_limiting import (
+            get_ai_citation_quota,
+            increment_ai_citation_counter,
+            USER_DAILY_LIMIT,
+            VAULT_DAILY_LIMIT,
+        )
+
+        # Initial quota
+        quota = get_ai_citation_quota(self.user, self.vault)
+
+        self.assertEqual(quota['user_used'], 0)
+        self.assertEqual(quota['user_limit'], USER_DAILY_LIMIT)
+        self.assertEqual(quota['user_remaining'], USER_DAILY_LIMIT)
+        self.assertEqual(quota['vault_used'], 0)
+        self.assertEqual(quota['vault_limit'], VAULT_DAILY_LIMIT)
+        self.assertEqual(quota['vault_remaining'], VAULT_DAILY_LIMIT)
+        self.assertIn('reset_at', quota)
+
+        # Increment and check again
+        increment_ai_citation_counter(self.user.id, self.vault.id)
+        increment_ai_citation_counter(self.user.id, self.vault.id)
+
+        quota = get_ai_citation_quota(self.user, self.vault)
+
+        self.assertEqual(quota['user_used'], 2)
+        self.assertEqual(quota['user_remaining'], USER_DAILY_LIMIT - 2)
+        self.assertEqual(quota['vault_used'], 2)
+        self.assertEqual(quota['vault_remaining'], VAULT_DAILY_LIMIT - 2)
+
+    @patch('apps.citations.tasks.generate_ai_citation_task.delay')
+    def test_rate_limit_endpoint_returns_429(self, mock_task):
+        """Test endpoint returns 429 when rate limit exceeded"""
+        from apps.citations.rate_limiting import USER_DAILY_LIMIT
+        from django.core.cache import cache
+        from datetime import datetime
+
+        today = datetime.now().strftime('%Y-%m-%d')
+        user_key = f"ai_citation:user:{self.user.id}:daily:{today}"
+
+        # Set user count to limit
+        cache.set(user_key, USER_DAILY_LIMIT, timeout=86400)
+
+        # Authenticate
+        self.client.force_authenticate(user=self.user)
+
+        # Try to generate AI citation
+        response = self.client.post(
+            f'/api/v1/citations/sources/{self.source.id}/citation/',
+            {'format': 'apa7'},
+            format='json'
+        )
+
+        self.assertEqual(response.status_code, 429)
+        self.assertIn('error', response.data)
+        self.assertIn('quota', response.data)
+        self.assertIn('Retry-After', response)
+
+    @patch('apps.citations.tasks.generate_ai_citation_task.delay')
+    def test_rate_limit_endpoint_quota_info(self, mock_task):
+        """Test 429 response includes quota information"""
+        from apps.citations.rate_limiting import USER_DAILY_LIMIT
+        from django.core.cache import cache
+        from datetime import datetime
+
+        today = datetime.now().strftime('%Y-%m-%d')
+        user_key = f"ai_citation:user:{self.user.id}:daily:{today}"
+
+        # Set user count to limit
+        cache.set(user_key, USER_DAILY_LIMIT, timeout=86400)
+
+        # Authenticate
+        self.client.force_authenticate(user=self.user)
+
+        # Try to generate AI citation
+        response = self.client.post(
+            f'/api/v1/citations/sources/{self.source.id}/citation/',
+            {'format': 'apa7'},
+            format='json'
+        )
+
+        self.assertEqual(response.status_code, 429)
+
+        # Check quota information in response
+        quota = response.data['quota']
+        self.assertEqual(quota['user_used'], USER_DAILY_LIMIT)
+        self.assertEqual(quota['user_limit'], USER_DAILY_LIMIT)
+        self.assertEqual(quota['user_remaining'], 0)
+        self.assertIn('reset_at', quota)
+
+    @patch('apps.citations.services.ai_citation.generate_ai_citation')
+    @patch('apps.citations.tasks.generate_ai_citation_task.delay')
+    def test_rate_limit_allows_within_limit(self, mock_task, mock_ai_citation):
+        """Test endpoint allows AI citation generation when within limits"""
+        from django.core.cache import cache
+
+        # Clear cache
+        cache.clear()
+
+        # Mock task ID
+        mock_task.return_value.id = '12345678-1234-1234-1234-123456789abc'
+
+        # Authenticate
+        self.client.force_authenticate(user=self.user)
+
+        # Generate AI citation (should succeed)
+        response = self.client.post(
+            f'/api/v1/citations/sources/{self.source.id}/citation/',
+            {'format': 'apa7'},
+            format='json'
+        )
+
+        self.assertEqual(response.status_code, 202)
+        self.assertIn('task_id', response.data)
+        self.assertIn('status_url', response.data)
+
+        # Verify counter was incremented
+        from datetime import datetime
+        today = datetime.now().strftime('%Y-%m-%d')
+        user_key = f"ai_citation:user:{self.user.id}:daily:{today}"
+        vault_key = f"ai_citation:vault:{self.vault.id}:daily:{today}"
+
+        self.assertEqual(cache.get(user_key), 1)
+        self.assertEqual(cache.get(vault_key), 1)

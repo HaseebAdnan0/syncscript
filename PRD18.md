@@ -198,12 +198,12 @@ Implement a global full-text search system for SyncScript that enables researche
 **Description:** As a developer, I need a command to populate search vectors for existing data.
 
 **Acceptance Criteria:**
-- [ ] Create `python manage.py rebuild_search_index` command
-- [ ] Processes all Sources in batches of 100
-- [ ] Processes all Annotations in batches of 100
-- [ ] Shows progress bar with total count
-- [ ] Supports `--sources-only` and `--annotations-only` flags
-- [ ] Typecheck passes
+- [x] Create `python manage.py rebuild_search_index` command
+- [x] Processes all Sources in batches of 100
+- [x] Processes all Annotations in batches of 100
+- [x] Shows progress bar with total count
+- [x] Supports `--sources-only` and `--annotations-only` flags
+- [x] Typecheck passes
 
 ---
 

@@ -144,12 +144,12 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a developer, I need a service to create notifications with preference/mute checking.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/notifications/services.py` with `create_notification()` function
-- [ ] Parameters: `user`, `notification_type`, `title`, `body`, `data`
-- [ ] Check if vault is muted (skip if muted)
-- [ ] Check user preferences for the notification type
-- [ ] Return created Notification or None if skipped
-- [ ] Typecheck passes
+- [x] Create `apps/notifications/services.py` with `create_notification()` function
+- [x] Parameters: `user`, `notification_type`, `title`, `body`, `data`
+- [x] Check if vault is muted (skip if muted)
+- [x] Check user preferences for the notification type
+- [x] Return created Notification or None if skipped
+- [x] Typecheck passes
 
 ---
 
