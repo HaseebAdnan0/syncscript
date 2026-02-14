@@ -167,15 +167,15 @@ Create a secure, collaborative Knowledge Vault system where researchers can crea
 **Description:** As a developer, I need the main vault API endpoints.
 
 **Acceptance Criteria:**
-- [ ] ModelViewSet with VaultSerializer
-- [ ] Default permission: IsAuthenticated
-- [ ] PageNumberPagination
-- [ ] filter_backends: DjangoFilterBackend, OrderingFilter
-- [ ] filterset_fields: ['is_archived']
-- [ ] ordering_fields: ['created_at', 'name']
-- [ ] `get_queryset` filters to user's vaults (owned or member)
-- [ ] `perform_create` sets owner to request.user
-- [ ] Typecheck passes
+- [x] ModelViewSet with VaultSerializer
+- [x] Default permission: IsAuthenticated
+- [x] PageNumberPagination
+- [x] filter_backends: DjangoFilterBackend, OrderingFilter
+- [x] filterset_fields: ['is_archived']
+- [x] ordering_fields: ['created_at', 'name']
+- [x] `get_queryset` filters to user's vaults (owned or member)
+- [x] `perform_create` sets owner to request.user
+- [x] Typecheck passes
 
 ### US-016: Add role filter to vault list
 **Description:** As a user, I want to filter vaults by my role so I can find owned vs contributed vaults.
