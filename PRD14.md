@@ -215,28 +215,28 @@ SyncScript's AI-powered citation generation system enables researchers to genera
 **Description:** As a user, I want a modal that shows my formatted citation with copy functionality so I can review and copy it.
 
 **Acceptance Criteria:**
-- [ ] Create `components/features/sources/CitationPreviewModal.tsx`
-- [ ] Modal header shows format name (e.g., "APA 7th Edition")
-- [ ] Body shows rendered citation with proper typography
-- [ ] HTML version for formats with italics (journal names, etc.)
-- [ ] "Copy Citation" button (primary action)
-- [ ] "Copy as Plain Text" secondary option (strips HTML)
-- [ ] Close button and click-outside-to-close
-- [ ] Matches Bitcoin DeFi design system
-- [ ] Typecheck passes
+- [x] Create `components/features/sources/CitationPreviewModal.tsx`
+- [x] Modal header shows format name (e.g., "APA 7th Edition")
+- [x] Body shows rendered citation with proper typography
+- [x] HTML version for formats with italics (journal names, etc.)
+- [x] "Copy Citation" button (primary action)
+- [x] "Copy as Plain Text" secondary option (strips HTML)
+- [x] Close button and click-outside-to-close
+- [x] Matches Bitcoin DeFi design system
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-018: Implement copy to clipboard with toast
 **Description:** As a user, I want one-click copy with confirmation so I know the citation was copied successfully.
 
 **Acceptance Criteria:**
-- [ ] Copy button uses `navigator.clipboard.writeText()`
-- [ ] Success shows toast: "Copied APA 7th citation to clipboard"
-- [ ] Toast includes format name and source title (truncated)
-- [ ] Toast auto-dismisses after 3 seconds
-- [ ] Toast matches design system (dark with orange accent)
-- [ ] Fallback for browsers without clipboard API
-- [ ] Typecheck passes
+- [x] Copy button uses `navigator.clipboard.writeText()`
+- [x] Success shows toast: "Copied APA 7th citation to clipboard"
+- [x] Toast includes format name and source title (truncated)
+- [x] Toast auto-dismisses after 3 seconds
+- [x] Toast matches design system (dark with orange accent)
+- [x] Fallback for browsers without clipboard API
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-019: Add batch export button to vault page
