@@ -98,10 +98,10 @@ Create a secure, collaborative Knowledge Vault system where researchers can crea
 **Description:** As a developer, I need admin access to manage vaults during development.
 
 **Acceptance Criteria:**
-- [ ] Register Vault model with list_display=['name', 'owner', 'is_archived', 'created_at']
-- [ ] Register VaultMembership with list_display=['vault', 'user', 'role', 'added_at']
-- [ ] Register AuditLog with list_display=['vault', 'actor', 'action', 'created_at']
-- [ ] Typecheck passes
+- [x] Register Vault model with list_display=['name', 'owner', 'is_archived', 'created_at']
+- [x] Register VaultMembership with list_display=['vault', 'user', 'role', 'added_at']
+- [x] Register AuditLog with list_display=['vault', 'actor', 'action', 'created_at']
+- [x] Typecheck passes
 
 ### US-009: Create VaultSerializer
 **Description:** As a developer, I need serialization for vault API responses.
