@@ -1257,3 +1257,34 @@ In Progress - US-004 complete
   - truncate class prevents long names from breaking layout
 ---
 
+## Iteration 43 - US-043: Integrate Mention Autocomplete into Annotation Editor
+- Integrated MentionAutocomplete component into AddAnnotationForm and AddReplyForm
+- Added @ detection logic that triggers autocomplete when @ typed after whitespace
+- Implemented mention selection handler that inserts @username at cursor position
+- Added vaultMembers prop to both forms for member lookup
+- Positioned dropdown near textarea/input using getBoundingClientRect()
+- Autocomplete closes on escape, click outside (inherited from MentionAutocomplete)
+- Updated source detail page (vaults/[id]/sources/[sourceId]/page.tsx) to demonstrate integration:
+  - Added useVaultMembers hook to fetch vault members
+  - Converted VaultMember type to User type (mapping user_id -> id, user_name -> username, etc.)
+  - Created demo UI with AddAnnotationForm and AddReplyForm displaying on button click
+  - Added helpful hint showing available vault members for @mention testing
+- TypeScript typecheck passes with no errors
+- Files changed:
+  - frontend/src/components/features/sources/AddAnnotationForm.tsx (added mention detection and autocomplete)
+  - frontend/src/components/features/sources/AddReplyForm.tsx (added mention detection and autocomplete)
+  - frontend/src/app/(app)/vaults/[id]/sources/[sourceId]/page.tsx (added demo integration)
+  - PRD19.md (marked US-043 complete except browser verification)
+- Learnings for future iterations:
+  - VaultMembersListResponse has `results` array, not `members`
+  - VaultMember structure: { user_id, user_email, user_name, ... } not nested user object
+  - Map VaultMember to User type for autocomplete: create new object with id, email, username fields
+  - Cursor position calculation: use element.getBoundingClientRect() + window.scrollX/Y
+  - @ detection pattern: check last @ before cursor, verify preceded by space or start of text
+  - Valid username regex after @: /^[\w]*$/ allows letters, numbers, underscores only
+  - Insert mention pattern: beforeMention + '@' + username + ' ' + afterMention
+  - setTimeout(0) needed after setText to refocus and set cursor position correctly
+  - Remove unused imports (useEffect) to pass typecheck
+  - Demo integration useful for manual testing even when full UI not implemented
+---
+

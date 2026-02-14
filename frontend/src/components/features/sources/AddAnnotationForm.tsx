@@ -1,13 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { MessageSquarePlus, X } from 'lucide-react';
+import { MentionAutocomplete } from '../annotations/MentionAutocomplete';
+import type { User } from '@/lib/types/user';
 
 interface AddAnnotationFormProps {
   onSubmit: (text: string, pageNumber?: number) => void;
   onCancel: () => void;
   isLoading?: boolean;
   maxLength?: number;
+  vaultMembers?: User[];
 }
 
 export function AddAnnotationForm({
@@ -15,9 +18,82 @@ export function AddAnnotationForm({
   onCancel,
   isLoading = false,
   maxLength = 2000,
+  vaultMembers = [],
 }: AddAnnotationFormProps) {
   const [text, setText] = useState('');
   const [pageNumber, setPageNumber] = useState<string>('');
+  const [showMentions, setShowMentions] = useState(false);
+  const [mentionTrigger, setMentionTrigger] = useState('');
+  const [cursorPosition, setCursorPosition] = useState({ top: 0, left: 0 });
+  const [mentionStartIndex, setMentionStartIndex] = useState(0);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Detect @ mentions
+  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newText = e.target.value;
+    setText(newText);
+
+    const cursorPos = e.target.selectionStart;
+
+    // Find last @ before cursor
+    const textBeforeCursor = newText.substring(0, cursorPos);
+    const lastAtIndex = textBeforeCursor.lastIndexOf('@');
+
+    if (lastAtIndex !== -1) {
+      // Check if @ is at start or after whitespace
+      const charBeforeAt = lastAtIndex === 0 ? ' ' : newText[lastAtIndex - 1];
+      if (charBeforeAt === ' ' || lastAtIndex === 0) {
+        const textAfterAt = newText.substring(lastAtIndex + 1, cursorPos);
+        // Only show if no spaces after @ and valid username chars
+        if (!textAfterAt.includes(' ') && /^[\w]*$/.test(textAfterAt)) {
+          setMentionTrigger(textAfterAt);
+          setMentionStartIndex(lastAtIndex);
+          setShowMentions(true);
+
+          // Calculate cursor position for dropdown
+          if (textareaRef.current) {
+            const textarea = textareaRef.current;
+            const rect = textarea.getBoundingClientRect();
+            // Position dropdown near textarea (simplified positioning)
+            setCursorPosition({
+              top: rect.bottom + window.scrollY,
+              left: rect.left + window.scrollX,
+            });
+          }
+          return;
+        }
+      }
+    }
+
+    setShowMentions(false);
+  };
+
+  const handleMentionSelect = (username: string) => {
+    if (!textareaRef.current) return;
+
+    const cursorPos = textareaRef.current.selectionStart;
+    const beforeMention = text.substring(0, mentionStartIndex);
+    const afterMention = text.substring(cursorPos);
+    const newText = `${beforeMention}@${username} ${afterMention}`;
+
+    setText(newText);
+    setShowMentions(false);
+    setMentionTrigger('');
+
+    // Set cursor position after inserted mention
+    setTimeout(() => {
+      if (textareaRef.current) {
+        const newCursorPos = mentionStartIndex + username.length + 2; // +2 for @ and space
+        textareaRef.current.focus();
+        textareaRef.current.setSelectionRange(newCursorPos, newCursorPos);
+      }
+    }, 0);
+  };
+
+  const handleCloseMentions = () => {
+    setShowMentions(false);
+    setMentionTrigger('');
+  };
 
   const handleSubmit = () => {
     if (!text.trim()) return;
@@ -28,6 +104,8 @@ export function AddAnnotationForm({
     // Reset form
     setText('');
     setPageNumber('');
+    setShowMentions(false);
+    setMentionTrigger('');
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -65,16 +143,28 @@ export function AddAnnotationForm({
       </div>
 
       {/* Textarea */}
-      <div className="space-y-2">
+      <div className="space-y-2 relative">
         <textarea
+          ref={textareaRef}
           value={text}
-          onChange={(e) => setText(e.target.value)}
+          onChange={handleTextChange}
           onKeyDown={handleKeyDown}
-          placeholder="Add your annotation... (Cmd/Ctrl + Enter to submit)"
+          placeholder="Add your annotation... (Use @ to mention someone, Cmd/Ctrl + Enter to submit)"
           className="w-full h-32 bg-black/50 border-b-2 border-white/20 px-4 py-3 text-white placeholder:text-[#94A3B8] focus:border-[#F7931A] focus:outline-none resize-none rounded-t-lg transition-colors"
           disabled={isLoading}
           maxLength={maxLength}
         />
+
+        {/* Mention Autocomplete */}
+        {showMentions && vaultMembers.length > 0 && (
+          <MentionAutocomplete
+            vaultMembers={vaultMembers}
+            trigger={mentionTrigger}
+            position={cursorPosition}
+            onSelect={handleMentionSelect}
+            onClose={handleCloseMentions}
+          />
+        )}
 
         {/* Character count */}
         <div className={`text-xs text-right transition-colors ${

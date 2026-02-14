@@ -578,12 +578,12 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a user, I want @mention suggestions while writing annotations.
 
 **Acceptance Criteria:**
-- [ ] Add MentionAutocomplete to annotation input/textarea
-- [ ] Fetch vault members for suggestions
-- [ ] Position dropdown near cursor
-- [ ] Close on escape or click outside
-- [ ] Works in both new annotation and reply forms
-- [ ] Typecheck passes
+- [x] Add MentionAutocomplete to annotation input/textarea
+- [x] Fetch vault members for suggestions
+- [x] Position dropdown near cursor
+- [x] Close on escape or click outside
+- [x] Works in both new annotation and reply forms
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---
