@@ -9,6 +9,9 @@ from datetime import timedelta
 from rest_framework import status
 from rest_framework.test import APIClient
 from apps.users.models import User, EmailVerificationToken
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
 
 
 class RegistrationFlowTests(TestCase):
@@ -401,3 +404,126 @@ class TokenRefreshFlowTests(TestCase):
         # Old token should be blacklisted after rotation
         self.assertEqual(old_token_response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertIn('error', old_token_response.data)
+
+
+class PasswordResetFlowTests(TestCase):
+    """Test password reset request and confirmation flows."""
+
+    def setUp(self):
+        self.client = APIClient()
+        self.password_reset_url = reverse('users:password-reset')
+        self.password_reset_confirm_url = reverse('users:password-reset-confirm')
+
+        # Create a user for password reset tests
+        self.user = User.objects.create_user(
+            email='resettest@example.com',
+            username='resetuser',
+            password='OldP@ssw0rd123',
+            email_verified=True
+        )
+
+    def test_password_reset_request_returns_success_for_existing_email(self):
+        """Test that password reset request returns success for existing email."""
+        data = {'email': 'resettest@example.com'}
+        response = self.client.post(self.password_reset_url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('message', response.data)
+        self.assertIn('If an account exists with this email', response.data['message'])
+
+    def test_password_reset_request_returns_success_for_nonexistent_email(self):
+        """Test that password reset request returns success even for non-existent email (prevents user enumeration)."""
+        data = {'email': 'nonexistent@example.com'}
+        response = self.client.post(self.password_reset_url, data, format='json')
+
+        # Should still return success to prevent user enumeration
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('message', response.data)
+        self.assertIn('If an account exists with this email', response.data['message'])
+
+    def test_valid_reset_token_allows_password_change(self):
+        """Test that valid reset token allows password to be changed."""
+        # Generate valid reset token
+        token_generator = PasswordResetTokenGenerator()
+        token = token_generator.make_token(self.user)
+        uid = urlsafe_base64_encode(force_bytes(self.user.pk))
+
+        # Reset password
+        data = {
+            'uid': uid,
+            'token': token,
+            'new_password': 'NewSecureP@ss123'
+        }
+        response = self.client.post(self.password_reset_confirm_url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('message', response.data)
+        self.assertIn('Password reset successful', response.data['message'])
+
+        # Verify password was changed by attempting login with new password
+        login_url = reverse('users:login')
+        login_data = {
+            'email': 'resettest@example.com',
+            'password': 'NewSecureP@ss123'
+        }
+        login_response = self.client.post(login_url, login_data, format='json')
+        self.assertEqual(login_response.status_code, status.HTTP_200_OK)
+
+    def test_expired_reset_token_returns_error(self):
+        """Test that expired reset token returns error."""
+        # Create a token, then change user's password to invalidate it
+        token_generator = PasswordResetTokenGenerator()
+        token = token_generator.make_token(self.user)
+        uid = urlsafe_base64_encode(force_bytes(self.user.pk))
+
+        # Change password to invalidate token (Django's token generator uses password hash)
+        self.user.set_password('IntermediateP@ss456')
+        self.user.save()
+
+        # Try to use the now-invalid token
+        data = {
+            'uid': uid,
+            'token': token,
+            'new_password': 'AnotherNewP@ss789'
+        }
+        response = self.client.post(self.password_reset_confirm_url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('error', response.data)
+        self.assertIn('Invalid reset link', response.data['error'])
+
+    def test_new_password_must_meet_strength_requirements(self):
+        """Test that new password must meet strength requirements (min 8 chars, not all numeric)."""
+        # Generate valid reset token
+        token_generator = PasswordResetTokenGenerator()
+        token = token_generator.make_token(self.user)
+        uid = urlsafe_base64_encode(force_bytes(self.user.pk))
+
+        # Try to set a weak password (too short)
+        data = {
+            'uid': uid,
+            'token': token,
+            'new_password': 'short'  # Less than 8 characters
+        }
+        response = self.client.post(self.password_reset_confirm_url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('new_password', response.data)
+
+    def test_invalid_uid_returns_error(self):
+        """Test that invalid uid returns error."""
+        # Generate valid token but use invalid uid
+        token_generator = PasswordResetTokenGenerator()
+        token = token_generator.make_token(self.user)
+        invalid_uid = 'invalid-uid-string'
+
+        data = {
+            'uid': invalid_uid,
+            'token': token,
+            'new_password': 'NewSecureP@ss123'
+        }
+        response = self.client.post(self.password_reset_confirm_url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('error', response.data)
+        self.assertIn('Invalid reset link', response.data['error'])

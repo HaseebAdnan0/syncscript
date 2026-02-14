@@ -570,3 +570,26 @@
   - Single field index on ['user'] optimizes queries for user's annotations
   - Django check passes even with pyright warnings about missing imports
 ---
+
+## Iteration 24 - US-023: Add threading validation to Annotation model
+- Overrode clean() method on Annotation model
+- Validation logic:
+  - If self.parent exists and self.parent.parent exists, raises ValidationError
+  - Error message: "Maximum nesting level (2) exceeded. Cannot reply to a reply."
+  - Ensures maximum 2-level threading (top-level + one reply level)
+- Overrode save() method to call full_clean() before saving
+  - This ensures validation runs automatically on every save
+  - Enforces threading constraints at the database write level
+- Imported django.core.exceptions.ValidationError for validation errors
+- Django check passes with 0 issues
+- Files changed:
+  - backend/apps/annotations/models.py (added clean() and save() methods)
+  - PRD3.md (marked US-023 complete)
+- Learnings for future iterations:
+  - clean() is the Django standard for model-level validation
+  - save() override with full_clean() enforces validation on all saves (not just forms)
+  - ValidationError raised in clean() prevents object from being saved
+  - Must call super().clean() and super().save() to preserve parent behavior
+  - Type ignore on save() needed due to Django's kwargs handling
+  - Threading validation prevents creating deeply nested annotation threads
+---

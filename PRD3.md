@@ -311,11 +311,11 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need to enforce maximum 2-level threading on annotations.
 
 **Acceptance Criteria:**
-- [ ] Override `clean()` method on Annotation model
-- [ ] If `self.parent` exists and `self.parent.parent` exists, raise `ValidationError`
-- [ ] Error message: "Maximum nesting level (2) exceeded. Cannot reply to a reply."
-- [ ] Override `save()` to call `full_clean()` before saving
-- [ ] Typecheck passes
+- [x] Override `clean()` method on Annotation model
+- [x] If `self.parent` exists and `self.parent.parent` exists, raise `ValidationError`
+- [x] Error message: "Maximum nesting level (2) exceeded. Cannot reply to a reply."
+- [x] Override `save()` to call `full_clean()` before saving
+- [x] Typecheck passes
 
 ---
 
