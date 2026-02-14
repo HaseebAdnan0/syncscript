@@ -524,3 +524,36 @@ Learnings for future iterations:
 - onClick is optional to allow component use as display-only or interactive
 ---
 
+## Iteration 18 - US-017: Integrate ResearchInsightsPanel into vault dashboard
+- Added VaultInsights types (Theme, CrossReference, VaultInsights) to frontend/src/lib/types/vault.ts
+- Created getVaultInsights API function in frontend/src/lib/api/vaults.ts
+- Integrated Insights tab into vault dashboard page (frontend/src/app/(app)/vaults/[id]/page.tsx):
+  - Added state management for insights (insights, isLoadingInsights, isCachedInsights)
+  - Implemented handleFetchInsights function with rate limit and error handling
+  - Added "Insights" tab to tab list (positioned between Sources and Members)
+  - Integrated ResearchInsightsPanel component with proper props
+  - Display AILoadingSkeleton during insights generation
+  - Show "Using cached data" badge when rate limit is hit
+  - Toast notifications for success and error states
+- Added comprehensive manual verification checklist to .planning/MANUAL_VERIFICATION.md
+- All acceptance criteria met, typecheck passes
+- Commit successful: dc5bf3a
+
+Files changed:
+- frontend/src/lib/types/vault.ts (added VaultInsights types)
+- frontend/src/lib/api/vaults.ts (added getVaultInsights function)
+- frontend/src/app/(app)/vaults/[id]/page.tsx (integrated Insights tab)
+- .planning/MANUAL_VERIFICATION.md (added US-017 verification checklist)
+- PRD15.md (marked US-017 complete)
+
+Learnings for future iterations:
+- Insights tab positioned between Sources and Members for logical UX flow
+- Rate limit errors should show cached data badge instead of replacing insights
+- useToast hook provides consistent toast notifications across app
+- VaultInsights types imported from vault.ts to avoid type duplication
+- Loading state managed separately from cached state for better UX
+- Toast descriptions provide context for rate limit vs general errors
+- Empty state handled by ResearchInsightsPanel based on sourceCount prop
+- Manual verification tasks must be appended to .planning/MANUAL_VERIFICATION.md per CLAUDE.md rules
+---
+

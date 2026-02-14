@@ -577,3 +577,26 @@
   - Real-time validation feedback (green/red) guides users effectively
   - Auto-redirect after success (3s) balances user feedback with flow efficiency
 ---
+
+## Iteration 21 - US-021: Redirect unverified users to verification pending page
+- Added email_verified field to User type interface
+- Updated (app)/layout.tsx to check user.email_verified status after auth check
+- Redirect unverified users to /auth/verify-email/pending?email={email}&returnUrl={currentPath}
+- Implemented redirect intent storage using localStorage (verificationReturnUrl key)
+- Updated verify-email/pending page to store returnUrl in localStorage on mount
+- Updated verify-email success page to retrieve and use returnUrl from localStorage
+- Updated button text dynamically based on returnUrl ('Continue to Login' vs 'Continue to App')
+- TypeScript typecheck passes with no errors
+- Files changed:
+  - frontend/src/lib/types/user.ts (added email_verified field)
+  - frontend/src/app/(app)/layout.tsx (added email verification check and redirect)
+  - frontend/src/app/(auth)/verify-email/pending/page.tsx (store returnUrl in localStorage)
+  - frontend/src/app/(auth)/verify-email/page.tsx (retrieve returnUrl from localStorage)
+  - PRD11.md (marked US-021 complete)
+- Learnings for future iterations:
+  - Use localStorage to persist redirect intent across page navigations
+  - (app)/layout.tsx is the right place to enforce email verification for all app routes
+  - Check !isLoading && user && !user.email_verified to ensure we have user data before checking verification
+  - Clean up localStorage after retrieving stored values to prevent stale data
+  - Email verification flow now supports returning users to their intended destination
+---

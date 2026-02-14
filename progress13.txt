@@ -704,3 +704,26 @@ vaults/{vault_id}/thumbnails/{uuid}.jpg
   - VaultSettings displays storage section only when storage_usage is present
 ---
 
+## Iteration 22 - Register Celery beat schedule for cleanup tasks (US-022)
+- Updated backend/config/celery.py beat_schedule configuration
+- Added cleanup_orphaned_files task scheduled daily at 3:00 AM
+- Updated cleanup_orphaned_multipart_uploads from 3 AM to 4:00 AM
+- Updated cleanup_deleted_pdfs from 2 AM to 5:00 AM
+- Schedule now runs cleanup tasks in sequence during low-traffic hours
+- Verified all tasks exist and import successfully:
+  - cleanup_orphaned_files (created in US-013)
+  - cleanup_orphaned_multipart_uploads (pre-existing)
+  - cleanup_deleted_pdfs (pre-existing)
+- Django system checks pass (only deprecation warnings, no errors)
+- Files changed:
+  - backend/config/celery.py (beat_schedule updated)
+  - PRD13.md (marked US-022 complete)
+  - progress13.txt
+- Learnings for future iterations:
+  - Celery beat schedule uses crontab(hour=X, minute=0) for daily tasks
+  - Task names in schedule use dot notation: 'apps.sources.tasks.task_name'
+  - Schedule keys use kebab-case: 'cleanup-orphaned-files-daily'
+  - Tasks run in order specified (3 AM, 4 AM, 5 AM) to avoid S3 API throttling
+  - Django shell can verify task imports: from apps.sources.tasks import task_name
+---
+

@@ -300,14 +300,14 @@ Create a comprehensive new user onboarding experience for SyncScript that guides
 **Description:** As a user, I want to reset the demo vault from settings so I can restore it to original state.
 
 **Acceptance Criteria:**
-- [ ] "Reset Demo Vault" button in onboarding settings section
-- [ ] Shows current demo vault status (exists/deleted)
-- [ ] If deleted: button says "Recreate Demo Vault"
-- [ ] Confirmation dialog explaining reset will delete changes
-- [ ] Calls appropriate API endpoint
-- [ ] Shows success/error toast
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] "Reset Demo Vault" button in onboarding settings section
+- [x] Shows current demo vault status (exists/deleted)
+- [x] If deleted: button says "Recreate Demo Vault"
+- [x] Confirmation dialog explaining reset will delete changes
+- [x] Calls appropriate API endpoint
+- [x] Shows success/error toast
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-023: Demo vault deletion prompt
 **Description:** As a user deleting the demo vault, I want to be informed I can recreate it later.

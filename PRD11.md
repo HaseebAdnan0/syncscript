@@ -329,11 +329,11 @@ Replace stub email implementation with production-ready email system using Hosti
 **Description:** As a user, I want a link on the login page to reset my password.
 
 **Acceptance Criteria:**
-- [ ] Update `frontend/src/app/auth/login/page.tsx`
-- [ ] Add "Forgot your password?" link below password field
-- [ ] Link navigates to `/auth/forgot-password`
-- [ ] Styled as subtle link (muted color, underline on hover)
-- [ ] Typecheck passes
+- [x] Update `frontend/src/app/auth/login/page.tsx`
+- [x] Add "Forgot your password?" link below password field
+- [x] Link navigates to `/auth/forgot-password`
+- [x] Styled as subtle link (muted color, underline on hover)
+- [x] Typecheck passes
 
 ---
 
