@@ -312,13 +312,13 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 **Description:** As a user, I want a sidebar panel listing all annotations for the current source so I can review and add notes.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/sources/AnnotationSidebar.tsx`
-- [ ] Fixed height with scrollable content
-- [ ] Header shows "Annotations" title with count badge
-- [ ] "Add Annotation" button at top
-- [ ] Lists AnnotationCards sorted by newest first
-- [ ] Empty state: "No annotations yet. Be the first to add one!"
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/sources/AnnotationSidebar.tsx`
+- [x] Fixed height with scrollable content
+- [x] Header shows "Annotations" title with count badge
+- [x] "Add Annotation" button at top
+- [x] Lists AnnotationCards sorted by newest first
+- [x] Empty state: "No annotations yet. Be the first to add one!"
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---

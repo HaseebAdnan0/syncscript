@@ -487,3 +487,37 @@ Learnings for future iterations:
 - VaultMember has user_id field for comparison with currentUserId
 - Dropdown triggers on click, no need for separate onChange handler (onClick on DropdownMenuItem)
 ---
+
+## Iteration 18 - US-017: Remove member from vault
+- Added remove button (Trash2 icon) to each member row in MembersList component
+- Remove button only visible to vault Owners (isOwner check)
+- Cannot remove Owners or self (canRemove = isOwner && !isMemberOwner && !isCurrentUser)
+- Implemented confirmation dialog using Radix Dialog component:
+  - Opens when remove button clicked, stores { id, name } in removingMember state
+  - Dialog shows member name in description: "Remove {name} from this vault?"
+  - Warning text about losing access and irreversible action
+  - Cancel button closes dialog without action
+  - Confirm button triggers useRemoveMember mutation with member.id
+  - Loading state shows "Removing..." and disables buttons during mutation
+- Success flow: displays toast notification "{name} has been removed from this vault"
+- Error handling: shows error toast if removal fails
+- React Query automatically invalidates members list on success (no manual refresh)
+- Typecheck passes successfully
+- Committed changes with feat: commit message
+
+Files changed:
+- frontend/src/components/features/vaults/MembersList.tsx (added remove button, dialog, handler)
+- PRD8.md (marked US-017 complete except browser verification)
+
+Learnings for future iterations:
+- Remove button styling: red color scheme with hover state (text-red-400 hover:bg-red-500/10)
+- Confirmation dialog pattern: store object {id, name} in state for dialog content interpolation
+- Dialog open state: !!removingMember converts object/null to boolean for Radix Dialog open prop
+- Dialog onOpenChange: handler to clear state when dialog closes (both cancel and outside click)
+- Toast component does NOT have variant prop (unlike shadcn/ui standard) - just use title/description
+- DialogFooter for action buttons: Cancel (ghost variant) + Confirm (custom red styling)
+- Button red styling: bg-red-600 hover:bg-red-700 text-white (not variant, use className override)
+- useRemoveMember mutation takes memberId directly (number), not an object
+- Trash2 icon from Lucide for delete actions (consistent with design system)
+- Permission logic: canRemove same as canChangeRole (Owner, not targeting Owner, not self)
+---

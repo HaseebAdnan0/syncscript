@@ -1,9 +1,74 @@
 'use client';
 
+import { useState, FormEvent } from 'react';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { useAuthStore } from '@/stores/authStore';
+import { FormInput } from '@/components/ui/FormInput';
+import { Textarea } from '@/components/ui/textarea';
+import GradientButton from '@/components/ui/GradientButton';
+import { useToast } from '@/hooks/useToast';
+import { api } from '@/lib/api';
 import * as Tabs from '@radix-ui/react-tabs';
 
 export default function ProfilePage() {
+  const { user, setUser } = useAuthStore();
+  const { toast } = useToast();
+
+  // Profile form state
+  const [firstName, setFirstName] = useState(user?.first_name || '');
+  const [lastName, setLastName] = useState(user?.last_name || '');
+  const [bio, setBio] = useState('');
+  const [isProfileLoading, setIsProfileLoading] = useState(false);
+  const [profileErrors, setProfileErrors] = useState<{ firstName?: string; lastName?: string }>({});
+
+  // Validate profile form
+  const validateProfileForm = (): boolean => {
+    const errors: typeof profileErrors = {};
+
+    if (!firstName.trim()) {
+      errors.firstName = 'First name is required';
+    } else if (firstName.trim().length < 2) {
+      errors.firstName = 'First name must be at least 2 characters';
+    }
+
+    setProfileErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  // Handle profile form submission
+  const handleProfileSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+
+    if (!validateProfileForm()) {
+      return;
+    }
+
+    setIsProfileLoading(true);
+
+    try {
+      const response = await api.put('/auth/me/', {
+        first_name: firstName.trim(),
+        last_name: lastName.trim(),
+        bio: bio.trim(),
+      });
+
+      // Update auth store with new user data
+      setUser(response.data);
+
+      toast({
+        title: 'Success',
+        description: 'Profile updated successfully',
+      });
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: error.response?.data?.message || 'Failed to update profile',
+      });
+    } finally {
+      setIsProfileLoading(false);
+    }
+  };
+
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-[#030304] py-12">
@@ -44,9 +109,61 @@ export default function ProfilePage() {
                 <h2 className="text-2xl font-heading font-bold text-white mb-6">
                   Profile Information
                 </h2>
-                <p className="text-[#94A3B8]">
-                  Profile form will be implemented in US-018
-                </p>
+
+                <form onSubmit={handleProfileSubmit} className="space-y-6">
+                  {/* Email (read-only) */}
+                  <FormInput
+                    label="Email"
+                    type="email"
+                    value={user?.email || ''}
+                    disabled
+                    className="opacity-60 cursor-not-allowed"
+                  />
+
+                  {/* First Name */}
+                  <FormInput
+                    label="First Name"
+                    type="text"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    error={profileErrors.firstName}
+                    placeholder="Enter your first name"
+                  />
+
+                  {/* Last Name */}
+                  <FormInput
+                    label="Last Name"
+                    type="text"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    error={profileErrors.lastName}
+                    placeholder="Enter your last name"
+                  />
+
+                  {/* Bio (optional textarea) */}
+                  <div className="w-full">
+                    <label className="block text-sm font-medium text-white/80 mb-2">
+                      Bio (Optional)
+                    </label>
+                    <Textarea
+                      value={bio}
+                      onChange={(e) => setBio(e.target.value)}
+                      placeholder="Tell us about yourself..."
+                      rows={4}
+                    />
+                  </div>
+
+                  {/* Submit Button */}
+                  <div className="pt-4">
+                    <GradientButton
+                      type="submit"
+                      isLoading={isProfileLoading}
+                      className="w-full sm:w-auto"
+                    >
+                      Save Changes
+                    </GradientButton>
+                  </div>
+                </form>
               </div>
             </Tabs.Content>
 
