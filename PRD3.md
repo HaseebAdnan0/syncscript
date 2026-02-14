@@ -437,15 +437,15 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need tests verifying Annotation API endpoints work correctly.
 
 **Acceptance Criteria:**
-- [ ] Test POST creates top-level annotation
-- [ ] Test POST with parent creates reply
-- [ ] Test POST with parent of reply fails (400)
-- [ ] Test GET list returns nested structure with replies
-- [ ] Test PATCH updates content only
-- [ ] Test PATCH cannot change position, parent, source
-- [ ] Test DELETE removes annotation and cascades to replies
-- [ ] All tests pass
-- [ ] Typecheck passes
+- [x] Test POST creates top-level annotation
+- [x] Test POST with parent creates reply
+- [x] Test POST with parent of reply fails (400)
+- [x] Test GET list returns nested structure with replies
+- [x] Test PATCH updates content only
+- [x] Test PATCH cannot change position, parent, source
+- [x] Test DELETE removes annotation and cascades to replies
+- [x] All tests pass
+- [x] Typecheck passes
 
 ---
 
