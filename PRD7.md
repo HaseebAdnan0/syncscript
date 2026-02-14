@@ -324,14 +324,14 @@ SyncScript needs a complete frontend authentication system that enables users to
 **Description:** As a user, I want to see password strength feedback so that I create secure passwords.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/ui/PasswordStrength.tsx`
-- [ ] Accepts `password` prop, calculates strength
-- [ ] Strength levels: weak (red), medium (yellow), strong (green)
-- [ ] Visual bar that fills based on strength
-- [ ] Text label showing current strength
-- [ ] Criteria: length, uppercase, lowercase, numbers, special chars
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/ui/PasswordStrength.tsx`
+- [x] Accepts `password` prop, calculates strength
+- [x] Strength levels: weak (red), medium (yellow), strong (green)
+- [x] Visual bar that fills based on strength
+- [x] Text label showing current strength
+- [x] Criteria: length, uppercase, lowercase, numbers, special chars
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 
