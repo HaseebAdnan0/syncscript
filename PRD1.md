@@ -350,13 +350,13 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a developer, I need rate limiting applied consistently to prevent brute force attacks.
 
 **Acceptance Criteria:**
-- [ ] Verify @ratelimit decorators on RegisterView (5/min)
-- [ ] Verify @ratelimit decorators on LoginView (5/min)
-- [ ] Verify @ratelimit decorators on VerifyEmailView (10/min)
-- [ ] Verify @ratelimit decorators on RefreshTokenView (20/min)
-- [ ] Verify @ratelimit decorators on PasswordResetRequestView (3/hour per email)
-- [ ] Verify @ratelimit decorators on PasswordResetConfirmView (10/min)
-- [ ] Typecheck passes
+- [x] Verify @ratelimit decorators on RegisterView (5/min)
+- [x] Verify @ratelimit decorators on LoginView (5/min)
+- [x] Verify @ratelimit decorators on VerifyEmailView (10/min)
+- [x] Verify @ratelimit decorators on RefreshTokenView (20/min)
+- [x] Verify @ratelimit decorators on PasswordResetRequestView (3/hour per email)
+- [x] Verify @ratelimit decorators on PasswordResetConfirmView (10/min)
+- [x] Typecheck passes
 
 ---
 
