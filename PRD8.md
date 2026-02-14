@@ -47,11 +47,11 @@ Create the complete vault management interface for SyncScript, enabling research
 **Description:** As a developer, I need API functions and hooks for vault membership management.
 
 **Acceptance Criteria:**
-- [ ] Add to `frontend/src/lib/api/vaults.ts`: getVaultMembers, addVaultMember, inviteVaultMember, updateMemberRole, removeMember
-- [ ] Create `frontend/src/hooks/useVaultMembers.ts` with useVaultMembers, useAddMember, useInviteMember, useUpdateRole, useRemoveMember
-- [ ] inviteVaultMember sends email invite for new users
-- [ ] addVaultMember adds existing users by email/username
-- [ ] Typecheck passes
+- [x] Add to `frontend/src/lib/api/vaults.ts`: getVaultMembers, addVaultMember, inviteVaultMember, updateMemberRole, removeMember
+- [x] Create `frontend/src/hooks/useVaultMembers.ts` with useVaultMembers, useAddMember, useInviteMember, useUpdateRole, useRemoveMember
+- [x] inviteVaultMember sends email invite for new users
+- [x] addVaultMember adds existing users by email/username
+- [x] Typecheck passes
 
 ### US-004: Zustand store for vaults UI state
 **Description:** As a developer, I need a Zustand store to manage vaults UI state like modals and filters.
