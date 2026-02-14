@@ -266,12 +266,12 @@ Implement cloud file storage for SyncScript using Cloudflare R2 (S3-compatible).
 **Description:** As a developer, I need tests to verify PDF validation works correctly.
 
 **Acceptance Criteria:**
-- [ ] Create `backend/apps/sources/tests/test_validators.py`
-- [ ] Test: valid PDF passes validation
-- [ ] Test: non-PDF file (txt) raises ValidationError
-- [ ] Test: file > 50MB raises ValidationError
-- [ ] Test: corrupted PDF raises ValidationError
-- [ ] All tests pass
+- [x] Create `backend/apps/sources/tests/test_validators.py`
+- [x] Test: valid PDF passes validation
+- [x] Test: non-PDF file (txt) raises ValidationError
+- [x] Test: file > 50MB raises ValidationError
+- [x] Test: corrupted PDF raises ValidationError
+- [x] All tests pass
 
 ### US-025: Write unit tests for storage utilities
 **Description:** As a developer, I need tests for presigned URL generation and storage tracking.
