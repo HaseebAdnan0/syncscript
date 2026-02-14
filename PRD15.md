@@ -307,23 +307,23 @@ This feature uses Claude as the AI backbone with a simple chunking strategy (no 
 **Description:** As a developer, I need well-crafted prompts for academic rigor in AI responses.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/ai/prompts.py` with prompt templates
-- [ ] `SOURCE_SUMMARY_PROMPT`: extracts abstract, findings, methodology, limitations, keywords; handles non-English; flags preprints/retractions
-- [ ] `VAULT_INSIGHTS_PROMPT`: identifies themes, gaps, cross-references across sources
-- [ ] `QUESTION_ANSWER_PROMPT`: answers with citations, admits uncertainty, academic tone
-- [ ] All prompts request JSON-formatted responses
-- [ ] Typecheck passes
+- [x] Create `apps/ai/prompts.py` with prompt templates
+- [x] `SOURCE_SUMMARY_PROMPT`: extracts abstract, findings, methodology, limitations, keywords; handles non-English; flags preprints/retractions
+- [x] `VAULT_INSIGHTS_PROMPT`: identifies themes, gaps, cross-references across sources
+- [x] `QUESTION_ANSWER_PROMPT`: answers with citations, admits uncertainty, academic tone
+- [x] All prompts request JSON-formatted responses
+- [x] Typecheck passes
 
 ### US-026: Handle non-English sources and quality flags
 **Description:** As a user, I want AI to handle non-English sources and flag potential issues.
 
 **Acceptance Criteria:**
-- [ ] Summary prompt includes instruction to detect and note source language
-- [ ] Summary response includes `language` field
-- [ ] Summary prompt instructs detection of: preprints, retracted papers, non-peer-reviewed
-- [ ] Summary response includes `quality_flags[]` (e.g., "preprint", "not_peer_reviewed")
-- [ ] AISummaryCard displays quality flags as warning badges
-- [ ] Typecheck passes
+- [x] Summary prompt includes instruction to detect and note source language
+- [x] Summary response includes `language` field
+- [x] Summary prompt instructs detection of: preprints, retracted papers, non-peer-reviewed
+- [x] Summary response includes `quality_flags[]` (e.g., "preprint", "not_peer_reviewed")
+- [x] AISummaryCard displays quality flags as warning badges
+- [x] Typecheck passes
 
 ## Non-Goals
 

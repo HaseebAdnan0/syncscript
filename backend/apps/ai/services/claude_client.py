@@ -5,6 +5,11 @@ Handles summarization, vault insights, and question answering.
 from typing import Any, Dict, List
 from django.conf import settings
 import anthropic
+from apps.ai.prompts import (
+    format_source_summary_prompt,
+    format_vault_insights_prompt,
+    format_question_answer_prompt,
+)
 
 
 class ClaudeClient:
@@ -33,23 +38,7 @@ class ClaudeClient:
             On error: {"error": "error message", "tokens_used": 0}
         """
         try:
-            prompt = f"""You are an academic research assistant. Analyze the following {source_type} content and provide a structured summary.
-
-Content:
-{text[:50000]}  # Limit to ~50k chars to avoid context overflow
-
-Provide a JSON response with this exact structure:
-{{
-  "abstract": "Brief 2-3 sentence overview",
-  "key_findings": ["Finding 1", "Finding 2", ...],
-  "methodology": "Description of research methods used",
-  "limitations": "Study limitations or gaps",
-  "keywords": ["keyword1", "keyword2", ...],
-  "language": "detected language code (e.g., 'en', 'es', 'fr')",
-  "quality_flags": ["preprint", "not_peer_reviewed", "retracted"] // include only if applicable
-}}
-
-Focus on academic rigor. If this is not an academic source, adapt the structure appropriately."""
+            prompt = format_source_summary_prompt(text, source_type)
 
             message = self.client.messages.create(
                 model=self.model,
@@ -118,26 +107,7 @@ Focus on academic rigor. If this is not an academic source, adapt the structure 
                 for s in sources_data
             ])
 
-            prompt = f"""You are an academic research assistant analyzing a collection of sources in a researcher's vault.
-
-Sources:
-{sources_text[:40000]}  # Limit context
-
-Identify patterns and provide insights in JSON format:
-{{
-  "themes": [
-    {{"name": "Theme name", "weight": 0.0-1.0, "source_count": N}},
-    ...
-  ],
-  "research_gaps": ["Gap description 1", "Gap description 2", ...],
-  "cross_references": [
-    {{"sources": ["Title A", "Title B"], "connection": "How they relate"}},
-    ...
-  ],
-  "suggested_searches": ["Search term 1", "Search term 2", ...]
-}}
-
-Focus on identifying conceptual themes, methodological gaps, and opportunities for synthesis."""
+            prompt = format_vault_insights_prompt(sources_text)
 
             message = self.client.messages.create(
                 model=self.model,
@@ -200,25 +170,7 @@ Focus on identifying conceptual themes, methodological gaps, and opportunities f
                 for i, chunk in enumerate(context_chunks)
             ])
 
-            prompt = f"""You are an academic research assistant. Answer the user's question based ONLY on the provided context chunks.
-
-Context:
-{context_text[:45000]}
-
-Question: {question}
-
-Provide a JSON response:
-{{
-  "answer": "Your detailed answer with academic rigor",
-  "citations": [0, 2, 5],  // List of chunk indices you referenced
-  "confidence": "high|medium|low"  // How well the context supports your answer
-}}
-
-Rules:
-- Cite specific chunks by their index number
-- If the context doesn't contain enough information, say so clearly (confidence: low)
-- Use academic tone
-- Admit uncertainty when appropriate"""
+            prompt = format_question_answer_prompt(question, context_text)
 
             message = self.client.messages.create(
                 model=self.model,
