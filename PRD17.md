@@ -57,15 +57,15 @@ Create a comprehensive user dashboard as the primary logged-in landing page for 
 **Description:** As a developer, I need analytics API endpoints for chart data so the frontend can render visualizations.
 
 **Acceptance Criteria:**
-- [ ] Create `GET /api/v1/dashboard/analytics/sources-timeline/` - sources added per day, last 30 days
-- [ ] Returns array: `[{ date: "2026-02-01", count: 5 }, ...]`
-- [ ] Create `GET /api/v1/dashboard/analytics/source-types/` - breakdown by source type
-- [ ] Returns array: `[{ type: "pdf", count: 15, percentage: 45 }, ...]`
-- [ ] Create `GET /api/v1/dashboard/analytics/top-collaborators/` - users with most contributions
-- [ ] Returns array: `[{ user_id, name, avatar_url, contributions_count }, ...]` (top 5)
-- [ ] All endpoints scoped to vaults user has access to
-- [ ] All endpoints require authentication
-- [ ] Typecheck passes
+- [x] Create `GET /api/v1/dashboard/analytics/sources-timeline/` - sources added per day, last 30 days
+- [x] Returns array: `[{ date: "2026-02-01", count: 5 }, ...]`
+- [x] Create `GET /api/v1/dashboard/analytics/source-types/` - breakdown by source type
+- [x] Returns array: `[{ type: "pdf", count: 15, percentage: 45 }, ...]`
+- [x] Create `GET /api/v1/dashboard/analytics/top-collaborators/` - users with most contributions
+- [x] Returns array: `[{ user_id, name, avatar_url, contributions_count }, ...]` (top 5)
+- [x] All endpoints scoped to vaults user has access to
+- [x] All endpoints require authentication
+- [x] Typecheck passes
 
 ### US-005: Extend notifications app for dashboard
 **Description:** As a developer, I need notification endpoints that support unread counts and mark-as-read so the dashboard can display notification panel.
