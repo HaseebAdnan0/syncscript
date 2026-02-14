@@ -258,14 +258,14 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a user, I want to request a password reset email when I forget my password.
 
 **Acceptance Criteria:**
-- [ ] Add PasswordResetRequestView to `apps/users/views.py`
-- [ ] POST /api/v1/auth/password-reset/ accepts email
-- [ ] Generate reset token using Django's PasswordResetTokenGenerator
-- [ ] Encode user ID in base64
-- [ ] Send password reset email (create if needed)
-- [ ] Always return success (no user enumeration)
-- [ ] Apply @ratelimit decorator (3/hour per email)
-- [ ] Typecheck passes
+- [x] Add PasswordResetRequestView to `apps/users/views.py`
+- [x] POST /api/v1/auth/password-reset/ accepts email
+- [x] Generate reset token using Django's PasswordResetTokenGenerator
+- [x] Encode user ID in base64
+- [x] Send password reset email (create if needed)
+- [x] Always return success (no user enumeration)
+- [x] Apply @ratelimit decorator (3/hour per email)
+- [x] Typecheck passes
 
 ---
 
