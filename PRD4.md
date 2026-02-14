@@ -163,16 +163,16 @@ Establish the Next.js 16 frontend foundation for SyncScript with a Bitcoin DeFi-
 **Description:** As a developer, I want ShadCN UI initialized and configured so that I can use accessible headless components.
 
 **Acceptance Criteria:**
-- [ ] Run `npx shadcn@latest init` with options:
+- [x] Run `npx shadcn@latest init` with options:
   - Style: `default`
   - Base color: `neutral`
   - CSS variables: `yes`
-- [ ] `components.json` exists with:
+- [x] `components.json` exists with:
   - `"style": "default"`
   - `"tailwind.config": "tailwind.config.ts"`
   - `"aliases.components": "@/components"`
   - `"aliases.utils": "@/lib/utils"`
-- [ ] Create `src/lib/utils.ts` with `cn()` function:
+- [x] Create `src/lib/utils.ts` with `cn()` function:
   ```typescript
   import { type ClassValue, clsx } from 'clsx';
   import { twMerge } from 'tailwind-merge';
@@ -181,7 +181,7 @@ Establish the Next.js 16 frontend foundation for SyncScript with a Bitcoin DeFi-
     return twMerge(clsx(inputs));
   }
   ```
-- [ ] Typecheck passes
+- [x] Typecheck passes
 
 ---
 
