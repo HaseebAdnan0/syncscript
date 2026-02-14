@@ -200,13 +200,13 @@ Create the complete vault management interface for SyncScript, enabling research
 **Description:** As a vault owner, I want to invite someone by email so they can join even if they don't have an account yet.
 
 **Acceptance Criteria:**
-- [ ] "Invite New" tab in AddMemberModal
-- [ ] Email input field with validation
-- [ ] Role selector: Contributor (default), Viewer
-- [ ] "Send Invite" button uses useInviteMember mutation
-- [ ] On success: show toast "Invitation sent to {email}"
-- [ ] Pending invites shown in members list with "Pending" status badge
-- [ ] Typecheck passes
+- [x] "Invite New" tab in AddMemberModal
+- [x] Email input field with validation
+- [x] Role selector: Contributor (default), Viewer
+- [x] "Send Invite" button uses useInviteMember mutation
+- [x] On success: show toast "Invitation sent to {email}"
+- [x] Pending invites shown in members list with "Pending" status badge
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-016: Change member role

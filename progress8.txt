@@ -431,3 +431,28 @@ Learnings for future iterations:
 - Note autocomplete dropdown was mentioned in AC but simplified to plain input (can enhance later if needed)
 ---
 
+## Iteration 16 - US-015: Invite new user by email
+- Verified that US-015 was already fully implemented as part of US-014
+- The AddMemberModal created in US-014 already includes the "Invite New" tab with all required functionality:
+  - Email input field with regex validation (/^[^\s@]+@[^\s@]+\.[^\s@]+$/)
+  - Role selector dropdown with Contributor (default) and Viewer options
+  - "Send Invite" button that uses useInviteMember mutation
+  - Success toast: "Invitation sent to {email}"
+  - Error handling for invalid emails and API failures
+- MembersList already shows pending invites with "Pending" status badge (implemented in US-013)
+- Typecheck passes successfully
+- Build passes successfully
+
+Files changed:
+- PRD8.md (marked US-015 complete except browser verification)
+
+Learnings for future iterations:
+- US-014 and US-015 were naturally implemented together as a single modal with two tabs
+- The "Invite New" functionality was included in AddMemberModal from the start
+- Pending status badge for invited members was already part of MembersList implementation
+- Email validation pattern for invites: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+- Toast notification format for invites: "Invitation sent to {email}" (matches AC exactly)
+- Both useAddMember and useInviteMember have identical signatures and mutation patterns
+- No additional code needed - just verification that existing implementation meets all AC
+---
+
