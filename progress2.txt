@@ -71,3 +71,21 @@
   - AuditLog uses related_name='audit_actions' for actor to avoid conflicts
   - All tests passed with python manage.py check vaults
 ---
+
+## Iteration 7 - US-007: Generate and run initial migration
+- Ran python manage.py makemigrations vaults successfully
+- Migration file created: backend/apps/vaults/migrations/0002_alter_vault_id_auditlog_vaultmembership_and_more.py
+- Migration includes all models: AuditLog, VaultMembership, Vault.members field, and all indexes
+- Django check passes with no errors
+- Files changed:
+  - Created backend/apps/vaults/migrations/0002_alter_vault_id_auditlog_vaultmembership_and_more.py
+- **BLOCKER**: Cannot run python manage.py migrate because PostgreSQL database "syncscript" does not exist
+  - Database creation is documented in .planning/USER_SETUP.md but requires user action
+  - Cannot verify "All tables created without errors" without database
+  - Task cannot be marked complete until user creates database and migrations run successfully
+- Learnings for future iterations:
+  - Migration file generation (makemigrations) can succeed without database connection
+  - Actual migration application (migrate) requires live database
+  - US-007 acceptance criteria requires database to exist first - this is a user setup dependency
+  - PRD2.md assumes database is already set up from USER_SETUP.md
+---

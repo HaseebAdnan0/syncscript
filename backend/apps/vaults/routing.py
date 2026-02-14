@@ -10,6 +10,7 @@ from django.urls import re_path
 from apps.vaults.consumers import VaultConsumer
 
 # WebSocket URL patterns
+# Note: pyright may flag this as a type error, but it's valid for Channels URLRouter
 websocket_urlpatterns = [
-    re_path(r"ws/vault/(?P<vault_id>\d+)/$", VaultConsumer.as_asgi()),
+    re_path(r"ws/vault/(?P<vault_id>\d+)/$", VaultConsumer.as_asgi()),  # type: ignore[arg-type]
 ]

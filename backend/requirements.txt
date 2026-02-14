@@ -17,3 +17,5 @@ python-dotenv>=1.0
 django-filter>=25.1
 python-magic>=0.4.27
 pypdf>=5.1.0
+newspaper3k>=0.2.8
+lxml>=5.0

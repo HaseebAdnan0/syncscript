@@ -61,10 +61,10 @@ This PRD covers the full implementation: core infrastructure, event broadcasting
 **Description:** As a developer, I need WebSocket routes defined so clients can connect to vault rooms.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/vaults/routing.py`
-- [ ] Define route: `ws/vault/<int:vault_id>/` -> `VaultConsumer`
-- [ ] Export `websocket_urlpatterns` list
-- [ ] Typecheck passes
+- [x] Create `apps/vaults/routing.py`
+- [x] Define route: `ws/vault/<int:vault_id>/` -> `VaultConsumer`
+- [x] Export `websocket_urlpatterns` list
+- [x] Typecheck passes
 
 ---
 

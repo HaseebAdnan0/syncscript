@@ -68,3 +68,39 @@ Learnings for future iterations:
 - SITE_URL also configured (line 209) for email verification links
 - All infrastructure (DB, Redis, Email, S3) now verified complete - ready for application logic
 ---
+
+## Iteration 5 - Create UserSerializer (US-007)
+- Verified UserSerializer already exists in apps/users/serializers.py (lines 76-84)
+- Contains all required fields: id, email, username, avatar_url, bio, institution, email_verified, created_at
+- email and created_at marked as read_only in read_only_fields
+- Django system check passes
+
+Files changed:
+- PRD1.md (marked US-007 complete)
+
+Learnings for future iterations:
+- UserSerializer was already implemented from previous work
+- File also contains UserRegistrationSerializer and CustomTokenObtainPairSerializer for future tasks
+- Always verify existing code before creating new files to avoid duplication
+- read_only_fields in Meta class is the proper way to mark fields as read-only in DRF serializers
+---
+## Iteration 6 - Create RegisterSerializer with password validation (US-008)
+- Created RegisterSerializer in apps/users/serializers.py
+- Added password field with write_only=True and min_length=8
+- Implemented validate_password using Django's validate_password() function
+- Implemented validate_email to check uniqueness (case-insensitive)
+- Implemented create method that uses set_password() to hash passwords
+- Django system check passes
+
+Files changed:
+- backend/apps/users/serializers.py (added RegisterSerializer class)
+- PRD1.md (marked US-008 complete)
+
+Learnings for future iterations:
+- RegisterSerializer differs from UserRegistrationSerializer (no password_confirm field)
+- validate_password returns the value after validation (standard DRF pattern)
+- validate_email lowercases email for consistency
+- create() pops password before creating user, then calls set_password()
+- Django system check is the typecheck for Django projects
+---
+

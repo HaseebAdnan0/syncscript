@@ -56,3 +56,26 @@
   - Settings loaded successfully confirms no syntax errors
   - Pyright typecheck passed with 0 errors on modified files (pre-existing errors in other files not related)
 ---
+
+## Iteration 4 - US-004: Create PDF validation function
+- Created backend/apps/sources/validators.py with validate_pdf_file() function
+- Implemented 5-layer security validation:
+  1. File size check (max 50MB)
+  2. Content-Type header validation
+  3. Magic number verification (checks PDF header bytes)
+  4. MIME type detection via python-magic (content-based, not extension-based)
+  5. PDF structure validation via pypdf (ensures file can be parsed)
+- Added dependencies to backend/requirements.txt:
+  - python-magic>=0.4.27 (for MIME detection)
+  - pypdf>=5.1.0 (for PDF parsing and validation)
+- Files changed:
+  - backend/apps/sources/validators.py (created)
+  - backend/requirements.txt (added python-magic, pypdf)
+  - PRD6.md (marked US-004 complete)
+- Learnings for future iterations:
+  - python-magic reads file content, not just extension - provides real MIME type
+  - pypdf PdfReader can parse from BytesIO (in-memory file)
+  - Always reset file.seek(0) after reading to prevent issues in subsequent operations
+  - Multiple validation layers provide defense in depth against malicious files
+  - Pyright typecheck passed with 0 errors
+---

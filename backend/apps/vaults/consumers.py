@@ -19,6 +19,6 @@ class VaultConsumer(AsyncWebsocketConsumer):
         """Accept WebSocket connection. To be implemented in US-006."""
         await self.accept()
 
-    async def disconnect(self, close_code):
+    async def disconnect(self, code):
         """Handle WebSocket disconnection. To be implemented in US-006."""
         pass
