@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'channels',
 
     # Local apps
+    'core',
     'apps.users',
     'apps.sources',
     'apps.vaults',

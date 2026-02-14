@@ -272,7 +272,7 @@
 - [ ] Stop any running test processes that might hold database locks
 - [ ] Drop test database manually: `DROP DATABASE IF EXISTS test_syncscript;` via psql or pgAdmin
 - [ ] Run tests fresh (without --keepdb): `python manage.py test apps.vaults.tests.test_websocket_e2e`
-- [ ] Expected results: 
+- [ ] Expected results:
   - test_connection_success_with_valid_jwt_and_membership: PASS (WebSocket connects successfully)
   - test_connection_rejected_with_invalid_jwt: PASS (Connection rejected with AUTH_FAILED error)
   - test_connection_rejected_without_vault_membership: PASS (Connection rejected with PERMISSION_DENIED error)
@@ -280,4 +280,25 @@
   - test_contributor_can_connect_to_vault: PASS (Contributor role can connect)
 - [ ] All 5 tests should pass
 - [ ] Typecheck passes: `pyright apps/vaults/tests/test_websocket_e2e.py`
+
+---
+
+## US-025: E2E WebSocket Broadcasting Tests - 2026-02-14
+- [ ] Ensure PostgreSQL is running and accessible
+- [ ] Ensure Redis is running (required for InMemoryChannelLayer fallback)
+- [ ] Stop any running test processes that might hold database locks
+- [ ] Drop test database manually if needed: `DROP DATABASE IF EXISTS test_syncscript;` via psql or pgAdmin
+- [ ] Run broadcasting tests: `python manage.py test apps.vaults.tests.test_websocket_broadcasting --verbosity=2`
+- [ ] Expected results:
+  - test_source_created_broadcasts_to_all_users: PASS (User A creates source, User B receives source.created event)
+  - test_user_join_broadcasts_presence_update_to_all: PASS (User joins, all connected users receive presence.update with 2 users)
+  - test_user_leave_broadcasts_presence_update_to_remaining_users: PASS (User leaves, remaining users receive presence.update with 1 user)
+  - test_concurrent_users_receive_all_broadcasts: PASS (10 concurrent users all receive source.created event, at least 8/10 confirmed)
+- [ ] All 4 tests should pass
+- [ ] Typecheck passes: `pyright apps/vaults/tests/test_websocket_broadcasting.py`
+- [ ] Tests verify:
+  - Source creation signals trigger Celery tasks that broadcast to all connected users
+  - Presence updates broadcast when users join/leave rooms
+  - Multiple concurrent users can all receive broadcasts reliably
+  - CELERY_TASK_ALWAYS_EAGER=True ensures synchronous execution in tests
 

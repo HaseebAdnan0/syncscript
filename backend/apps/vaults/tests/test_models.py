@@ -96,10 +96,10 @@ class VaultMembershipModelTest(TestCase):
 
     def test_role_weight_calculation(self):
         """Test role weight calculation for different roles."""
-        owner_membership = VaultMembership.objects.create(
+        # Owner membership is auto-created by signal when vault is created
+        owner_membership = VaultMembership.objects.get(
             vault=self.vault,
-            user=self.owner,
-            role=RoleChoices.OWNER
+            user=self.owner
         )
         contributor_membership = VaultMembership.objects.create(
             vault=self.vault,

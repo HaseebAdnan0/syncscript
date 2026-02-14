@@ -14,6 +14,7 @@ class SourceType(models.TextChoices):
 
 
 class Source(models.Model):
+    id: int  # Auto-generated primary key
     vault = models.ForeignKey(
         'vaults.Vault',
         on_delete=models.CASCADE,
