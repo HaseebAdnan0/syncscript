@@ -4,11 +4,7 @@ import React, { useState } from 'react';
 import { useOnboarding } from '@/providers/OnboardingProvider';
 import GradientButton from '@/components/ui/GradientButton';
 
-interface GuidedVaultWizardProps {
-  onComplete: () => void;
-}
-
-const GuidedVaultWizard: React.FC<GuidedVaultWizardProps> = ({ onComplete }) => {
+const GuidedVaultWizard: React.FC = () => {
   const { updateOnboarding } = useOnboarding();
   const [vaultName, setVaultName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);

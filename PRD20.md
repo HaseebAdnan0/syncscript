@@ -134,14 +134,14 @@ Create a comprehensive new user onboarding experience for SyncScript that guides
 **Description:** As a new user choosing guided creation, I want to name my first vault as the first step.
 
 **Acceptance Criteria:**
-- [ ] Create `components/features/onboarding/GuidedVaultWizard.tsx`
-- [ ] Step 1: "Name your vault" with input field
-- [ ] Input styled per design system (bottom border, orange focus)
-- [ ] Progress indicator shows "Step 1 of 3"
-- [ ] "Next" button (disabled until name entered)
-- [ ] Stores vault name in local state
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `components/features/onboarding/GuidedVaultWizard.tsx`
+- [x] Step 1: "Name your vault" with input field
+- [x] Input styled per design system (bottom border, orange focus)
+- [x] Progress indicator shows "Step 1 of 3"
+- [x] "Next" button (disabled until name entered)
+- [x] Stores vault name in local state
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-011: GuidedVaultWizard Step 2 (Add Source)
 **Description:** As a new user, I want to add my first source URL as step 2 of vault creation.

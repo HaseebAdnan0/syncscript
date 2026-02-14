@@ -188,6 +188,9 @@ def search_view(request):
         len(results['vaults'])
     )
 
+    # Track search analytics (async, no user identity)
+    track_search_analytics(query_string)
+
     return Response(results)
 
 

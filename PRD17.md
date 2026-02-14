@@ -130,15 +130,15 @@ Create a comprehensive user dashboard as the primary logged-in landing page for 
 **Description:** As a user, I want to see a timeline of recent actions across my vaults so I stay aware of changes and collaboration.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/dashboard/RecentActivity.tsx`
-- [ ] Section title: "Recent Activity"
-- [ ] Timeline displays last 10 actions
-- [ ] Each item shows: user avatar, action description, relative time
-- [ ] Items are clickable and navigate to the relevant item (vault/source/annotation)
-- [ ] "View all activity" link at bottom (can link to a future activity page or show more)
-- [ ] Fetches from `/api/v1/dashboard/activity/`
-- [ ] Empty state: "No activity yet. Start by adding sources to a vault."
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/dashboard/RecentActivity.tsx`
+- [x] Section title: "Recent Activity"
+- [x] Timeline displays last 10 actions
+- [x] Each item shows: user avatar, action description, relative time
+- [x] Items are clickable and navigate to the relevant item (vault/source/annotation)
+- [x] "View all activity" link at bottom (can link to a future activity page or show more)
+- [x] Fetches from `/api/v1/dashboard/activity/`
+- [x] Empty state: "No activity yet. Start by adding sources to a vault."
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-010: Install and configure Recharts
