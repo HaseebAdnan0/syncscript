@@ -323,3 +323,34 @@ Learnings for future iterations:
   - DRF's force_authenticate() in tests properly sets request.user for permission checks
 ---
 
+## Iteration 12 - US-012: Create OAuth provider unlink endpoint
+- Created DisconnectOAuthProviderView in apps/users/views.py
+- Implemented DELETE /api/v1/auth/oauth/connected/{provider}/ endpoint
+- Validates provider is 'google' or 'github', returns 400 for invalid providers
+- Checks if SocialAccount exists for user, returns 404 if not found
+- Prevents account lockout by checking for alternative auth methods:
+  - User must have either a usable password (has_usable_password()), OR
+  - At least one other OAuth provider connected
+- Returns 400 error with helpful message if attempting to remove only auth method
+- Deletes SocialAccount on success and returns 204 No Content
+- Added DisconnectOAuthProviderView to urls.py imports
+- Configured URL routing: auth/oauth/connected/<str:provider>/
+- Django check passes (expected deprecation warnings)
+- Import and URL reverse tests pass
+- Committed successfully
+
+Files changed:
+  - backend/apps/users/views.py (added DisconnectOAuthProviderView)
+  - backend/apps/users/urls.py (added import and route)
+  - PRD12.md (marked US-012 complete)
+
+Learnings for future iterations:
+  - Use has_usable_password() to check if user has password authentication set up
+  - has_usable_password() returns False for OAuth-only users (password set to unusable)
+  - SocialAccount.objects.filter().exclude() can count other providers efficiently
+  - Security best practice: always ensure users have at least one way to authenticate
+  - 404 is appropriate when trying to disconnect a provider that isn't connected
+  - 400 is appropriate when business logic prevents an operation (last auth method)
+  - REST convention: DELETE returns 204 No Content on success (no response body)
+---
+
