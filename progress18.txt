@@ -424,3 +424,44 @@
   - Typecheck passes when using SearchResponse type with nested results structure
 ---
 
+## Iteration 21 - US-024: Create SearchResultsSkeleton component
+- Created SearchResultsSkeleton.tsx with loading skeleton for search results
+- Shows 5 skeleton items with animate-pulse animation
+- Matches SearchResultItem layout: icon (left), content (middle), relevance score (right)
+- Skeleton blocks use bg-white/10 for subtle shimmer effect
+- Content skeleton has 3 sections: title (h-5), breadcrumb (h-3), snippet (2 lines h-3 each)
+- Files changed:
+  - frontend/src/components/features/search/SearchResultsSkeleton.tsx (created)
+  - PRD18.md (marked US-024 complete)
+- Learnings for future iterations:
+  - Array.from({ length: 5 }) creates array for mapping 5 skeleton items
+  - animate-pulse is built-in Tailwind animation for loading states
+  - Skeleton dimensions should match real component: w-5 h-5 for icon, h-5 for title, h-3 for small text
+  - Skeleton structure: icon placeholder + content placeholders (varying widths for realism) + score placeholder
+  - space-y-2 between skeleton items, space-y-1 for tight spacing within (snippet lines)
+  - Width variations (w-3/4, w-1/2, w-full, w-5/6) make skeleton look more realistic
+  - flex-shrink-0 on icon and score prevents squishing
+---
+
+## Iteration 22 - US-025: Create RecentSearchesList component
+- Created RecentSearchesList.tsx to show user's recent search queries
+- Shows when search input is empty (conditional rendering controlled by parent)
+- Each search item displays: Clock icon, query text, result count badge
+- Click on search item populates search input and runs search via onSearchClick callback
+- "Clear all" link in header triggers onClearAll callback
+- Individual remove (X) button on hover triggers onRemove callback with search ID
+- Hover state uses bg-white/5 for subtle interaction feedback
+- Remove button opacity: 0 by default, group-hover:opacity-100 for clean UI
+- Files changed:
+  - frontend/src/components/features/search/RecentSearchesList.tsx (created)
+  - PRD18.md (marked US-025 complete)
+- Learnings for future iterations:
+  - Recent searches pattern: list with clock icon, query text, and result count
+  - Group hover pattern: opacity-0 on child, group-hover:opacity-100 for reveal effect
+  - e.stopPropagation() on remove button prevents triggering parent onClick
+  - Result count display: show "X result" or "X results" with conditional pluralization
+  - Return null when searches array is empty to avoid rendering empty section
+  - Props pattern: pass callbacks (onSearchClick, onClearAll, onRemove) for parent control
+  - Typecheck passes when SearchHistory type matches backend serializer fields
+---
+

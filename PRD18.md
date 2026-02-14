@@ -349,14 +349,14 @@ Implement a global full-text search system for SyncScript that enables researche
 **Description:** As a user, I want to see my recent searches when the search input is empty so I can quickly re-run queries.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/search/RecentSearchesList.tsx`
-- [ ] Shows when search input is empty
-- [ ] List of recent queries with clock icon
-- [ ] Click to populate search input and run search
-- [ ] "Clear all" link in header
-- [ ] Individual remove (X) button on hover
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/components/features/search/RecentSearchesList.tsx`
+- [x] Shows when search input is empty
+- [x] List of recent queries with clock icon
+- [x] Click to populate search input and run search
+- [x] "Clear all" link in header
+- [x] Individual remove (X) button on hover
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 
