@@ -252,10 +252,10 @@ This PRD covers the full implementation: core infrastructure, event broadcasting
 **Description:** As a developer, I need to limit connections per vault to prevent overload.
 
 **Acceptance Criteria:**
-- [ ] On connect, count members in `vault_{id}` group (via presence set)
-- [ ] If >= 100 connections, reject with error message and close
-- [ ] Error code: `ROOM_FULL`
-- [ ] Typecheck passes
+- [x] On connect, count members in `vault_{id}` group (via presence set)
+- [x] If >= 100 connections, reject with error message and close
+- [x] Error code: `ROOM_FULL`
+- [x] Typecheck passes
 
 ---
 

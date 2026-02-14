@@ -491,3 +491,30 @@
   - User context optional but helpful for client-side filtering and display
   - Django system check passes (validates all imports and configuration)
 ---
+
+## Iteration 21 - US-021: Add audit logging for file operations
+- Implemented audit logging for all four required PDF operations
+- Added AuditLog.objects.create() calls in tasks.py and views.py:
+  1. pdf.uploaded: Logged after successful PDF processing in process_uploaded_pdf task
+  2. pdf.processing_failed: Logged when PDF processing fails (with retry count)
+  3. pdf.downloaded: Logged in download_url view when user requests download URL
+  4. pdf.deleted: Logged in destroy view when PDF is soft-deleted
+- Each audit log includes:
+  - vault: ForeignKey to Vault
+  - actor: ForeignKey to User (uploaded_by or request.user)
+  - action: Event type string (pdf.uploaded, pdf.deleted, etc.)
+  - metadata: JSONField with pdf_id, filename, and event-specific details
+- Error handling: All audit log calls wrapped in try-except to prevent operation failures
+- Files changed:
+  - backend/apps/sources/tasks.py (added audit logging for uploaded and processing_failed events)
+  - backend/apps/sources/views.py (added audit logging for downloaded and deleted events)
+  - PRD6.md (marked US-021 complete)
+- Learnings for future iterations:
+  - Audit logging should not fail the main operation (use try-except wrapper)
+  - AuditLog model already existed in apps.vaults.models (reused existing infrastructure)
+  - metadata JSONField stores event-specific details (flexible schema)
+  - actor can be null (SET_NULL) but always provide it when user context available
+  - Django system check passes (0 errors)
+  - Linters may remove unused imports - need to re-add if they're used in the code
+  - Audit logs for task failures should include retry count for debugging
+---

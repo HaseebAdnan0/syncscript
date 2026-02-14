@@ -300,10 +300,10 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need the Annotation model to store user annotations on sources.
 
 **Acceptance Criteria:**
-- [ ] Create `Annotation` model with fields: `source` (FK to sources.Source, CASCADE), `user` (FK to users.User, CASCADE), `content` (TextField), `page_number` (IntegerField null/blank), `position` (JSONField default dict), `parent` (self-FK, CASCADE, null/blank, related_name='replies'), `created_at`, `updated_at`
-- [ ] Add `ordering = ['created_at']` to Meta
-- [ ] Add indexes on `['source', 'parent']` and `['user']`
-- [ ] Typecheck passes
+- [x] Create `Annotation` model with fields: `source` (FK to sources.Source, CASCADE), `user` (FK to users.User, CASCADE), `content` (TextField), `page_number` (IntegerField null/blank), `position` (JSONField default dict), `parent` (self-FK, CASCADE, null/blank, related_name='replies'), `created_at`, `updated_at`
+- [x] Add `ordering = ['created_at']` to Meta
+- [x] Add indexes on `['source', 'parent']` and `['user']`
+- [x] Typecheck passes
 
 ---
 

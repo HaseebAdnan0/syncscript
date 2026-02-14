@@ -235,12 +235,12 @@ Implement cloud file storage for SyncScript using Cloudflare R2 (S3-compatible).
 **Description:** As a researcher, I need file operations logged for research integrity.
 
 **Acceptance Criteria:**
-- [ ] Log `pdf.uploaded` event after processing completes (in Celery task)
-- [ ] Log `pdf.deleted` event in soft-delete view
-- [ ] Log `pdf.downloaded` event in download-url view
-- [ ] Log `pdf.processing_failed` event on task failure
-- [ ] Include: vault, user, action, details (pdf_id, filename)
-- [ ] Typecheck passes
+- [x] Log `pdf.uploaded` event after processing completes (in Celery task)
+- [x] Log `pdf.deleted` event in soft-delete view
+- [x] Log `pdf.downloaded` event in download-url view
+- [x] Log `pdf.processing_failed` event on task failure
+- [x] Include: vault, user, action, details (pdf_id, filename)
+- [x] Typecheck passes
 
 ### US-022: Add rate limiting to PDF endpoints
 **Description:** As a system, I need rate limiting to prevent abuse.

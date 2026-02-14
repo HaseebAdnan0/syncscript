@@ -173,6 +173,27 @@ def process_uploaded_pdf(self, pdf_upload_id: str) -> dict[str, Any]:
                 exc_info=True,
             )
 
+        # Log pdf.uploaded event to audit log (US-021)
+        try:
+            AuditLog.objects.create(
+                vault=pdf_upload.vault,
+                actor=pdf_upload.uploaded_by,
+                action='pdf.uploaded',
+                metadata={
+                    'pdf_id': str(pdf_upload.id),
+                    'filename': pdf_upload.original_filename,
+                    'pdf_title': pdf_upload.pdf_title,
+                    'file_size': pdf_upload.file_size,
+                    'page_count': page_count,
+                }
+            )
+        except Exception as audit_exc:
+            # Log but don't fail the task if audit logging fails
+            logger.warning(
+                f"Failed to create audit log for PDF {pdf_upload_id}: {audit_exc}",
+                exc_info=True,
+            )
+
         return {
             'pdf_id': str(pdf_upload.id),
             'status': 'completed',

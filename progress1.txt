@@ -603,3 +603,30 @@ Learnings for future iterations:
 - EmailVerificationToken model has expires_at field for expiration checking
 - verify_token() in tokens.py handles all validation logic (expiration, deletion)
 ---
+
+## Iteration 30 - Create token refresh tests (US-033)
+- Created TokenRefreshFlowTests class with 4 comprehensive tests
+- Test valid refresh token returns new access and refresh tokens
+- Test expired refresh token returns 401 error
+- Test blacklisted refresh token returns 401 error  
+- Test token rotation invalidates old refresh token
+- Fixed RefreshTokenView implementation to properly rotate tokens
+- RefreshTokenView now blacklists old token and creates new refresh token for user
+- All 4 tests pass, all 17 auth tests pass
+- Django system check passes
+
+Files changed:
+- backend/apps/users/tests/test_auth.py (added TokenRefreshFlowTests class)
+- backend/apps/users/views.py (fixed RefreshTokenView to implement proper token rotation)
+- PRD1.md (marked US-033 complete)
+
+Learnings for future iterations:
+- SimpleJWT token rotation requires manual implementation in custom views
+- Creating RefreshToken(token_string) validates but doesn't rotate the token
+- Proper rotation: old_refresh.blacklist() + RefreshToken.for_user(user)
+- Token rotation means old token is blacklisted, new token is generated
+- RefreshToken.set_exp(lifetime=timedelta(seconds=-3600)) creates expired token for testing
+- Token contains user_id claim accessible via refresh['user_id']
+- Token rotation test verifies old and new tokens are different strings
+- All 17 auth tests (registration, verification, login, logout, refresh) pass together
+---
