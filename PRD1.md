@@ -286,14 +286,14 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a user, I want to set a new password using the reset link.
 
 **Acceptance Criteria:**
-- [ ] Add PasswordResetConfirmView to `apps/users/views.py`
-- [ ] POST /api/v1/auth/password-reset-confirm/ accepts uid, token, new_password
-- [ ] Decode uid and fetch user
-- [ ] Validate token using PasswordResetTokenGenerator
-- [ ] Update user password (hashed)
-- [ ] Return success/error message
-- [ ] Apply @ratelimit decorator (10/min per IP)
-- [ ] Typecheck passes
+- [x] Add PasswordResetConfirmView to `apps/users/views.py`
+- [x] POST /api/v1/auth/password-reset-confirm/ accepts uid, token, new_password
+- [x] Decode uid and fetch user
+- [x] Validate token using PasswordResetTokenGenerator
+- [x] Update user password (hashed)
+- [x] Return success/error message
+- [x] Apply @ratelimit decorator (10/min per IP)
+- [x] Typecheck passes
 
 ---
 

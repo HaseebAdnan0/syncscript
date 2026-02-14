@@ -16,8 +16,8 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.utils.http import urlsafe_base64_encode
-from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
 
 from .models import User
 from .serializers import (
@@ -27,6 +27,7 @@ from .serializers import (
     CustomTokenObtainPairSerializer,
     RegisterSerializer,
     PasswordResetRequestSerializer,
+    PasswordResetConfirmSerializer,
 )
 from .tokens import generate_verification_token, verify_token
 from .emails import send_verification_email, send_password_reset_email
@@ -448,3 +449,51 @@ class PasswordResetRequestView(APIView):
         return Response({
             'message': 'If an account exists with this email, a password reset link has been sent.'
         }, status=status.HTTP_200_OK)
+
+
+@method_decorator(ratelimit(key='ip', rate='10/m', method='POST', block=True), name='dispatch')
+class PasswordResetConfirmView(APIView):
+    """
+    Confirm password reset with token and set new password (US-021).
+
+    POST /api/v1/auth/password-reset-confirm/
+    Rate limited to 10 attempts per minute per IP.
+    Accepts uid, token, and new_password to complete password reset.
+    """
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        """Validate reset token and update user password."""
+        serializer = PasswordResetConfirmSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        uid = serializer.validated_data['uid']
+        token = serializer.validated_data['token']
+        new_password = serializer.validated_data['new_password']
+
+        try:
+            # Decode uid and fetch user
+            user_id = force_str(urlsafe_base64_decode(uid))
+            user = User.objects.get(pk=user_id)
+
+            # Validate token using PasswordResetTokenGenerator
+            token_generator = PasswordResetTokenGenerator()
+            if not token_generator.check_token(user, token):
+                return Response({
+                    'error': 'Invalid or expired reset token.'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            # Update user password (hashed)
+            user.set_password(new_password)
+            user.save(update_fields=['password'])
+
+            return Response({
+                'message': 'Password reset successful. You can now log in with your new password.'
+            }, status=status.HTTP_200_OK)
+
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            return Response({
+                'error': 'Invalid reset link.'
+            }, status=status.HTTP_400_BAD_REQUEST)
