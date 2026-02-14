@@ -36,12 +36,12 @@ This PRD covers the full implementation: core infrastructure, event broadcasting
 **Description:** As a developer, I need the channel layer configured so WebSocket messages route through Redis.
 
 **Acceptance Criteria:**
-- [ ] Add `CHANNEL_LAYERS` dict to `config/settings.py`
-- [ ] Backend set to `channels_redis.core.RedisChannelLayer`
-- [ ] Hosts configured from `REDIS_URL` environment variable
-- [ ] Capacity set to 1500, expiry set to 10 seconds
-- [ ] Add `channels` and `daphne` to `INSTALLED_APPS`
-- [ ] Typecheck passes
+- [x] Add `CHANNEL_LAYERS` dict to `config/settings.py`
+- [x] Backend set to `channels_redis.core.RedisChannelLayer`
+- [x] Hosts configured from `REDIS_URL` environment variable
+- [x] Capacity set to 1500, expiry set to 10 seconds
+- [x] Add `channels` and `daphne` to `INSTALLED_APPS`
+- [x] Typecheck passes
 
 ---
 

@@ -22,13 +22,13 @@ Implement cloud file storage for SyncScript using Cloudflare R2 (S3-compatible).
 **Description:** As a developer, I need to store PDF upload records so file metadata persists.
 
 **Acceptance Criteria:**
-- [ ] Create `PDFUpload` model in `backend/apps/sources/models.py`
-- [ ] Fields: id (UUID), vault (FK), source (FK nullable), file (FileField), original_filename, file_size (BigInt), mime_type
-- [ ] Fields: uploaded_by (FK), uploaded_at, processing_status (pending/processing/completed/failed)
-- [ ] Fields: pdf_title, pdf_author, page_count, thumbnail_url, deleted_at (nullable)
-- [ ] Add indexes on (vault, deleted_at) and (uploaded_by, deleted_at)
-- [ ] Run makemigrations and migrate successfully
-- [ ] Typecheck passes
+- [x] Create `PDFUpload` model in `backend/apps/sources/models.py`
+- [x] Fields: id (UUID), vault (FK), source (FK nullable), file (FileField), original_filename, file_size (BigInt), mime_type
+- [x] Fields: uploaded_by (FK), uploaded_at, processing_status (pending/processing/completed/failed)
+- [x] Fields: pdf_title, pdf_author, page_count, thumbnail_url, deleted_at (nullable)
+- [x] Add indexes on (vault, deleted_at) and (uploaded_by, deleted_at)
+- [x] Run makemigrations and migrate successfully
+- [x] Typecheck passes
 
 ### US-002: Create VaultStorageUsage database model
 **Description:** As a developer, I need to cache storage usage per vault for fast retrieval.
