@@ -23,11 +23,11 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need the sources app scaffolding so I can build source management features.
 
 **Acceptance Criteria:**
-- [ ] Create `backend/apps/sources/` directory with `__init__.py`
-- [ ] Create `models.py`, `views.py`, `serializers.py`, `filters.py`, `permissions.py`, `services.py`
-- [ ] Create `tests/` directory with `__init__.py`, `test_models.py`, `test_views.py`, `test_services.py`
-- [ ] Add `'apps.sources'` to `INSTALLED_APPS` in settings
-- [ ] Typecheck passes
+- [x] Create `backend/apps/sources/` directory with `__init__.py`
+- [x] Create `models.py`, `views.py`, `serializers.py`, `filters.py`, `permissions.py`, `services.py`
+- [x] Create `tests/` directory with `__init__.py`, `test_models.py`, `test_views.py`, `test_services.py`
+- [x] Add `'apps.sources'` to `INSTALLED_APPS` in settings
+- [x] Typecheck passes
 
 ---
 
