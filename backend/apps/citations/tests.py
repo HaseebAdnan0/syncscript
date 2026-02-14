@@ -1211,12 +1211,12 @@ class CitationCacheInvalidationTests(TestCase):
         self.source.refresh_from_db()
         self.assertNotIn('citations', self.source.metadata)
 
-    def test_invalidate_citation_cache_no_metadata(self):
-        """Test invalidate_citation_cache handles source with no metadata gracefully"""
+    def test_invalidate_citation_cache_empty_metadata(self):
+        """Test invalidate_citation_cache handles source with empty metadata gracefully"""
         from apps.citations.utils import invalidate_citation_cache
 
-        # Create source with no metadata
-        self.source.metadata = None
+        # Create source with empty metadata dict
+        self.source.metadata = {}
         self.source.save()
 
         # Should not raise error

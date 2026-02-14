@@ -191,3 +191,120 @@ class SearchViewTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Total results should not exceed limit per type
         self.assertLessEqual(len(response.data['sources']), 1)
+
+
+class SuggestionsViewTest(TestCase):
+    def setUp(self):
+        """Set up test data"""
+        self.client = APIClient()
+
+        # Create test user
+        self.user = User.objects.create_user(
+            username='testuser',
+            email='test@example.com',
+            password='testpass123'
+        )
+
+        # Create vault
+        self.vault = Vault.objects.create(
+            name='Test Vault',
+            description='Test vault',
+            owner=self.user
+        )
+
+        # Create sources with various titles
+        self.source1 = Source.objects.create(
+            vault=self.vault,
+            url='https://example.com/1',
+            title='Machine Learning Basics',
+            created_by=self.user
+        )
+        self.source2 = Source.objects.create(
+            vault=self.vault,
+            url='https://example.com/2',
+            title='Machine Learning Advanced',
+            created_by=self.user
+        )
+        self.source3 = Source.objects.create(
+            vault=self.vault,
+            url='https://example.com/3',
+            title='Python Programming',
+            created_by=self.user
+        )
+
+        # Create annotation
+        self.annotation = Annotation.objects.create(
+            source=self.source1,
+            user=self.user,
+            content='This is a helpful annotation about neural networks'
+        )
+
+        self.url = reverse('search:suggestions')
+
+    def test_suggestions_requires_authentication(self):
+        """Test that suggestions endpoint requires authentication"""
+        response = self.client.get(self.url, {'q': 'machine'})
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_suggestions_minimum_query_length(self):
+        """Test that queries must be at least 2 characters"""
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.url, {'q': 'a'})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_suggestions_success(self):
+        """Test successful suggestions response"""
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.url, {'q': 'machine'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('suggestions', response.data)
+        self.assertIsInstance(response.data['suggestions'], list)
+
+    def test_suggestions_max_five_results(self):
+        """Test that suggestions returns max 5 results"""
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.url, {'q': 'machine'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertLessEqual(len(response.data['suggestions']), 5)
+
+    def test_suggestions_structure(self):
+        """Test that suggestions have expected structure"""
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.url, {'q': 'machine'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        if len(response.data['suggestions']) > 0:
+            suggestion = response.data['suggestions'][0]
+            self.assertIn('text', suggestion)
+            self.assertIn('type', suggestion)
+            self.assertIn('count', suggestion)
+            self.assertIn(suggestion['type'], ['source', 'annotation'])
+
+    def test_suggestions_respects_permissions(self):
+        """Test that suggestions only show accessible content"""
+        # Create another user with different vault
+        other_user = User.objects.create_user(
+            username='otheruser',
+            email='other@example.com',
+            password='testpass123'
+        )
+        other_vault = Vault.objects.create(
+            name='Other Vault',
+            description='Private vault',
+            owner=other_user
+        )
+        Source.objects.create(
+            vault=other_vault,
+            url='https://example.com/private',
+            title='Machine Learning Secret',
+            created_by=other_user
+        )
+
+        # User should only see their own vault's suggestions
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.url, {'q': 'machine'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Check that none of the suggestions are from the private vault
+        for suggestion in response.data['suggestions']:
+            self.assertNotIn('Secret', suggestion['text'])

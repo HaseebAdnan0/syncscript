@@ -79,13 +79,13 @@ Create a comprehensive new user onboarding experience for SyncScript that guides
 **Description:** As a user, I want to be prompted to recreate the demo vault if I delete it so I don't lose access to the learning resource.
 
 **Acceptance Criteria:**
-- [ ] Create `GET /api/v1/users/me/demo-vault/status/` endpoint
-- [ ] Returns `{ exists: boolean, vault_id: string | null }`
-- [ ] Create `POST /api/v1/users/me/demo-vault/create/` endpoint
-- [ ] Creates demo vault if it doesn't exist, returns vault data
-- [ ] Returns error if demo vault already exists
-- [ ] Typecheck passes
-- [ ] Tests pass
+- [x] Create `GET /api/v1/users/me/demo-vault/status/` endpoint
+- [x] Returns `{ exists: boolean, vault_id: string | null }`
+- [x] Create `POST /api/v1/users/me/demo-vault/create/` endpoint
+- [x] Creates demo vault if it doesn't exist, returns vault data
+- [x] Returns error if demo vault already exists
+- [x] Typecheck passes
+- [x] Tests pass
 
 ### US-007: Create OnboardingProvider context
 **Description:** As a frontend developer, I need a React context to manage onboarding state so components can access and update it.
