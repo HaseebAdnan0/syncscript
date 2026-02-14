@@ -887,3 +887,34 @@
   - Test execution blocked by pre-existing test database issue (same as previous iterations)
   - Tests are correctly written and will pass once database is reset
 ---
+
+## Iteration 36 - US-035: Extend AuditLog model for change tracking
+- Created backend/core/models.py with AuditLog model
+- AuditLog model includes all required fields:
+  - action (CharField max_length=100)
+  - user (FK to User, SET_NULL, null/blank, related_name='audit_logs')
+  - timestamp (DateTimeField auto_now_add=True)
+  - object_type (CharField max_length=100)
+  - object_id (PositiveIntegerField)
+  - changes (JSONField default=dict)
+- Added Meta class with:
+  - ordering = ['-timestamp']
+  - indexes on ['object_type', 'object_id']
+- Added 'core' to INSTALLED_APPS in settings.py (before apps.users)
+- Created migration: backend/core/migrations/0001_initial.py
+- Migration includes AuditLog model creation with all fields and index
+- Django check passes with 0 issues
+- Files changed:
+  - backend/core/models.py (created AuditLog model)
+  - backend/config/settings.py (added 'core' to INSTALLED_APPS)
+  - backend/core/migrations/0001_initial.py (created migration)
+  - PRD3.md (marked US-035 complete)
+- Learnings for future iterations:
+  - Core apps should be added to INSTALLED_APPS before app-specific apps
+  - AuditLog uses generic FK pattern with object_type + object_id (not ContentType framework)
+  - JSONField default=dict stores before/after diffs from dirty fields
+  - user FK is nullable since some actions may be system-initiated
+  - Composite index on object_type + object_id optimizes queries for specific object's audit history
+  - Migration created successfully even without database (same pattern as previous US)
+  - Django check sufficient for validation when database doesn't exist
+---
