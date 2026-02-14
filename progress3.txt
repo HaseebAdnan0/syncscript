@@ -650,3 +650,30 @@
   - Test execution blocked by pre-existing test database issue (same as previous iterations)
   - Tests are correctly written and will pass once database is reset
 ---
+
+## Iteration 27 - US-026: Create AnnotationSerializer with nested replies
+- Task already completed in previous development session (commit 6dc63f3)
+- Verified implementation in backend/apps/annotations/serializers.py
+- AnnotationSerializer includes all required fields:
+  - id, source, user, content, page_number, position, parent, replies, created_at, updated_at
+  - user uses StringRelatedField (read-only)
+  - replies uses SerializerMethodField (read-only)
+  - created_at, updated_at are read-only
+- get_replies() method implemented:
+  - Returns nested AnnotationSerializer for top-level annotations (parent=None)
+  - Returns empty list for reply-level annotations (no nested replies)
+  - Uses obj.replies.all() with many=True to serialize all replies
+  - Passes context to nested serializer
+- Django check passes with 0 issues
+- Files already committed:
+  - backend/apps/annotations/serializers.py (implementation exists)
+  - PRD3.md (marked US-026 complete)
+- Learnings for future iterations:
+  - SerializerMethodField allows custom field logic with get_<field_name>() method
+  - Recursive serialization: AnnotationSerializer calls itself for nested replies
+  - Context passing: nested serializers need context for request-dependent fields
+  - Conditional nesting: only top-level (parent=None) annotations include replies field
+  - Second-level replies return empty list to enforce 2-level max threading
+  - Pyright warnings about Meta class and return types are known DRF false positives
+  - Always check git history before implementing to avoid duplicate work
+---
