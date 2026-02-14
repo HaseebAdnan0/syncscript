@@ -216,11 +216,11 @@ Integrate SyncScript's frontend with the existing backend WebSocket system and n
 **Description:** As a user, I want to access notification settings from my profile/settings page.
 
 **Acceptance Criteria:**
-- [ ] Add "Notifications" section to user settings page
-- [ ] Embed NotificationPreferences component
-- [ ] Section header with bell icon
-- [ ] Consistent styling with other settings sections
-- [ ] Typecheck passes
+- [x] Add "Notifications" section to user settings page
+- [x] Embed NotificationPreferences component
+- [x] Section header with bell icon
+- [x] Consistent styling with other settings sections
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-018: Handle WebSocket reconnection with state recovery
