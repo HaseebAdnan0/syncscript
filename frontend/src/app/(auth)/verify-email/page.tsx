@@ -13,6 +13,18 @@ export default function VerifyEmailPage() {
   const router = useRouter();
   const token = searchParams.get('token');
 
+  // Retrieve stored redirect intent from localStorage
+  const [returnUrl, setReturnUrl] = useState('/login');
+
+  useEffect(() => {
+    const storedReturnUrl = localStorage.getItem('verificationReturnUrl');
+    if (storedReturnUrl) {
+      setReturnUrl(storedReturnUrl);
+      // Clear it after retrieving
+      localStorage.removeItem('verificationReturnUrl');
+    }
+  }, []);
+
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -28,9 +40,9 @@ export default function VerifyEmailPage() {
         await verifyEmail(token);
         setStatus('success');
 
-        // Redirect to login after 3 seconds
+        // Redirect to returnUrl (or login) after 3 seconds
         setTimeout(() => {
-          router.push('/login');
+          router.push(returnUrl);
         }, 3000);
       } catch (error) {
         setStatus('error');
@@ -95,10 +107,10 @@ export default function VerifyEmailPage() {
           </p>
         </div>
 
-        {/* Continue to Login Button */}
-        <Link href="/login">
+        {/* Continue Button */}
+        <Link href={returnUrl}>
           <GradientButton className="w-full">
-            Continue to Login
+            {returnUrl === '/login' ? 'Continue to Login' : 'Continue to App'}
           </GradientButton>
         </Link>
       </GlassCard>

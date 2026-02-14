@@ -9,6 +9,7 @@ import {
   AddMemberRequest,
   InviteMemberRequest,
   UpdateMemberRoleRequest,
+  VaultInsights,
 } from '../types/vault';
 
 /**
@@ -101,4 +102,12 @@ export const updateMemberRole = async (
  */
 export const removeMember = async (vaultId: number, memberId: number): Promise<void> => {
   await api.delete(`/vaults/${vaultId}/members/${memberId}/`);
+};
+
+/**
+ * Get AI-generated insights for a vault
+ */
+export const getVaultInsights = async (vaultId: number): Promise<VaultInsights> => {
+  const response = await api.get<VaultInsights>(`/vaults/${vaultId}/insights/`);
+  return response.data;
 };

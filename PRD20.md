@@ -287,14 +287,14 @@ Create a comprehensive new user onboarding experience for SyncScript that guides
 **Description:** As a user, I want to restart the tutorial from settings so I can refresh my memory.
 
 **Acceptance Criteria:**
-- [ ] Add "Onboarding" section to user settings page
-- [ ] "Restart Tutorial" button that:
+- [x] Add "Onboarding" section to user settings page
+- [x] "Restart Tutorial" button that:
   - Sets `onboarding_completed` to false
   - Sets `step` to 'tutorial'
   - Reloads to trigger tutorial
-- [ ] Confirmation dialog before restarting
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Confirmation dialog before restarting
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-022: Add reset demo vault to settings
 **Description:** As a user, I want to reset the demo vault from settings so I can restore it to original state.

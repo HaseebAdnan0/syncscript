@@ -19,9 +19,14 @@ export default function AppLayout({ children }: AppLayoutProps) {
   const { isOpen, close } = useGlobalSearchShortcut();
 
   // Redirect unauthenticated users to login
+  // Redirect unverified users to verification pending page
   useEffect(() => {
     if (!isLoading && !user) {
       router.push('/login?returnUrl=' + encodeURIComponent(window.location.pathname));
+    } else if (!isLoading && user && !user.email_verified) {
+      // Store redirect intent so user goes to original destination after verification
+      const returnUrl = encodeURIComponent(window.location.pathname);
+      router.push(`/auth/verify-email/pending?email=${encodeURIComponent(user.email)}&returnUrl=${returnUrl}`);
     }
   }, [user, isLoading, router]);
 

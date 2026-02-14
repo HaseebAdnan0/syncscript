@@ -528,3 +528,52 @@
   - Function signatures match Django backend endpoints exactly (uid, token, new_password)
 ---
 
+
+## Iteration 20 - US-020: Create password reset form page (frontend)
+- Created frontend/src/app/auth/reset-password/page.tsx
+- Implemented three-state page architecture:
+  1. Form state: password reset form
+  2. Success state: confirmation with auto-redirect
+  3. Error state: expired/invalid link handling
+- Form features:
+  - New password input with Eye/EyeOff visibility toggle
+  - Confirm password input with visibility toggle
+  - Real-time password match validation (green/red feedback)
+  - Password strength indicator checking 4 requirements:
+    - Minimum 8 characters
+    - At least one uppercase letter
+    - At least one lowercase letter
+    - At least one number
+  - Submit button disabled until all requirements met
+  - Reads uid and token from URL search params
+  - Calls confirmPasswordReset(uid, token, newPassword) API
+- Success state:
+  - Green CheckCircle icon with orange gradient background
+  - "Password Reset Complete" gradient title
+  - Auto-redirects to /login after 3 seconds
+  - "Go to Login Now" link for immediate navigation
+- Error state:
+  - Red XCircle icon for expired/invalid links
+  - "Request New Link" button linking to /auth/forgot-password
+  - "Back to Login" link
+- Bitcoin DeFi dark theme styling:
+  - GlassCard container with max-w-md
+  - Orange gradient (#F7931A to #FFD600) for title
+  - Black/50 inputs with white/10 borders
+  - Focus states with orange border
+  - Password requirements in black/30 box with white/10 border
+  - Green checkmarks for met requirements, gray circles for unmet
+- Toast notifications for success and error feedback
+- TypeScript typecheck passes
+- Files changed:
+  - frontend/src/app/auth/reset-password/page.tsx (new)
+  - PRD11.md (marked US-020 complete)
+- Learnings for future iterations:
+  - GradientButton doesn't support asChild prop - wrap button in Link instead
+  - Toast doesn't have variant prop - omit it for error toasts
+  - useEffect must return cleanup function or undefined explicitly (not void)
+  - Three-state pattern (form/success/error) works well for complex flows
+  - Password strength indicators improve UX and security
+  - Real-time validation feedback (green/red) guides users effectively
+  - Auto-redirect after success (3s) balances user feedback with flow efficiency
+---

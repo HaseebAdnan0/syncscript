@@ -11,9 +11,17 @@ import { toast } from '@/hooks/useToast';
 export default function VerifyEmailPendingPage() {
   const searchParams = useSearchParams();
   const email = searchParams.get('email') || '';
+  const returnUrl = searchParams.get('returnUrl');
 
   const [countdown, setCountdown] = useState(0);
   const [isResending, setIsResending] = useState(false);
+
+  // Store redirect intent in localStorage so it persists after verification
+  useEffect(() => {
+    if (returnUrl) {
+      localStorage.setItem('verificationReturnUrl', returnUrl);
+    }
+  }, [returnUrl]);
 
   // Countdown timer effect
   useEffect(() => {

@@ -1,8 +1,9 @@
 'use client';
 
-import { Bell, User, Shield, Palette, Link } from 'lucide-react';
+import { Bell, User, Shield, Palette, Link, GraduationCap } from 'lucide-react';
 import { NotificationPreferences } from '@/components/features/notifications/NotificationPreferences';
 import { ConnectedAccounts } from '@/components/features/settings/ConnectedAccounts';
+import { OnboardingSettings } from '@/components/features/settings/OnboardingSettings';
 
 export default function SettingsPage() {
   return (
@@ -60,6 +61,20 @@ export default function SettingsPage() {
               </div>
             </div>
             <p className="text-[#94A3B8]">Coming soon...</p>
+          </section>
+
+          {/* Onboarding Section */}
+          <section className="bg-[#0F1115] border border-white/10 rounded-2xl p-8">
+            <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
+              <div className="h-10 w-10 rounded-full bg-gradient-to-r from-[#EA580C] to-[#F7931A] flex items-center justify-center">
+                <GraduationCap className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-heading font-bold text-white">Onboarding</h2>
+                <p className="text-[#94A3B8] text-sm">Manage your tutorial and demo vault</p>
+              </div>
+            </div>
+            <OnboardingSettings />
           </section>
 
           {/* Connected Accounts Section */}

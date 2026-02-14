@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useVault } from '@/hooks/useVaults';
 import { useSources } from '@/hooks/useSources';
@@ -13,7 +14,11 @@ import { MembersList } from '@/components/features/vaults/MembersList';
 import { VaultSettings } from '@/components/features/vaults/VaultSettings';
 import { VaultDetailSkeleton } from '@/components/features/vaults/VaultDetailSkeleton';
 import { PresenceIndicator } from '@/components/features/notifications/PresenceIndicator';
-import { VaultRole } from '@/lib/types/vault';
+import { ResearchInsightsPanel } from '@/components/features/ai/ResearchInsightsPanel';
+import { AILoadingSkeleton } from '@/components/features/ai/AILoadingSkeleton';
+import { VaultRole, VaultInsights } from '@/lib/types/vault';
+import { getVaultInsights } from '@/lib/api/vaults';
+import { useToast } from '@/hooks/useToast';
 import * as Tabs from '@radix-ui/react-tabs';
 import { ArrowLeft } from 'lucide-react';
 
@@ -22,6 +27,7 @@ export default function VaultDetailPage() {
   const router = useRouter();
   const vaultId = parseInt(params.id as string, 10);
   const { user } = useAuthStore();
+  const { toast } = useToast();
 
   // Handle WebSocket reconnection with state recovery
   useReconnectionHandler({
@@ -45,6 +51,48 @@ export default function VaultDetailPage() {
 
   // Active tab from Zustand store
   const { activeTab, setActiveTab } = useVaultsStore();
+
+  // AI Insights state
+  const [insights, setInsights] = useState<VaultInsights | null>(null);
+  const [isLoadingInsights, setIsLoadingInsights] = useState(false);
+  const [isCachedInsights, setIsCachedInsights] = useState(false);
+
+  // Fetch insights handler
+  const handleFetchInsights = async () => {
+    setIsLoadingInsights(true);
+    setIsCachedInsights(false);
+    try {
+      const data = await getVaultInsights(vaultId);
+      setInsights(data);
+      toast({
+        title: 'Insights generated successfully',
+      });
+    } catch (error: any) {
+      // Handle rate limit error (429)
+      if (error.response?.status === 429) {
+        // Show cached insights if available
+        if (insights) {
+          setIsCachedInsights(true);
+          toast({
+            title: 'Rate limit reached',
+            description: 'Using cached insights. Try again later.',
+          });
+        } else {
+          toast({
+            title: 'Rate limit reached',
+            description: error.response?.data?.error || 'Try again later.',
+          });
+        }
+      } else {
+        toast({
+          title: 'Failed to generate insights',
+          description: error.response?.data?.error || 'Please try again later.',
+        });
+      }
+    } finally {
+      setIsLoadingInsights(false);
+    }
+  };
 
   // Loading state
   if (vaultLoading) {
@@ -116,6 +164,15 @@ export default function VaultDetailPage() {
             </Tabs.Trigger>
 
             <Tabs.Trigger
+              value="insights"
+              className="pb-4 px-2 text-[#94A3B8] hover:text-white transition-colors relative data-[state=active]:text-white"
+            >
+              <span className="text-lg font-medium">Insights</span>
+              {/* Active indicator */}
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#F7931A] opacity-0 data-[state=active]:opacity-100 transition-opacity" />
+            </Tabs.Trigger>
+
+            <Tabs.Trigger
               value="members"
               className="pb-4 px-2 text-[#94A3B8] hover:text-white transition-colors relative data-[state=active]:text-white"
             >
@@ -142,6 +199,29 @@ export default function VaultDetailPage() {
           {/* Tab content */}
           <Tabs.Content value="sources">
             <SourcesList vaultId={vaultId} userRole={vault.user_role} />
+          </Tabs.Content>
+
+          <Tabs.Content value="insights">
+            {isLoadingInsights ? (
+              <AILoadingSkeleton variant="insights" />
+            ) : (
+              <div className="relative">
+                {isCachedInsights && (
+                  <div className="mb-4 p-4 bg-[#F7931A]/10 border border-[#F7931A]/30 rounded-xl">
+                    <p className="text-[#F7931A] text-sm">
+                      <strong>Using cached data</strong> - You've reached your daily AI request limit. These insights may be outdated.
+                    </p>
+                  </div>
+                )}
+                <ResearchInsightsPanel
+                  insights={insights}
+                  onRefresh={handleFetchInsights}
+                  sourceCount={sources.length}
+                  isLoading={isLoadingInsights}
+                  lastUpdated={insights?.generated_at}
+                />
+              </div>
+            )}
           </Tabs.Content>
 
           <Tabs.Content value="members">

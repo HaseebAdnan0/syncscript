@@ -980,3 +980,75 @@
 ### Issues Found
 (Append any bugs, edge cases, or unexpected behavior discovered during testing)
 
+
+## US-021: Add restart tutorial to settings - 2026-02-14
+
+### What to Verify
+- Onboarding section appears in Settings page
+- Restart Tutorial button shows confirmation dialog
+- Tutorial restarts correctly after confirmation
+- Loading states work during restart
+- Error handling works if restart fails
+
+### Test Steps
+1. **Navigate to Settings**
+   - [ ] Login to application
+   - [ ] Go to Settings page (/settings)
+   - [ ] Verify "Onboarding" section appears with GraduationCap icon
+   - [ ] Section should be positioned before "Connected Accounts"
+
+2. **Restart Tutorial Button**
+   - [ ] Verify "Restart Tutorial" button is visible
+   - [ ] Button shows RotateCcw icon and "Restart" text
+   - [ ] Button has orange accent styling (border-[#F7931A])
+
+3. **Confirmation Dialog**
+   - [ ] Click "Restart Tutorial" button
+   - [ ] Confirmation dialog appears with:
+     - Title: "Restart Tutorial?"
+     - Description explaining the tutorial will restart
+     - "Cancel" button
+     - "Restart Tutorial" gradient button
+   - [ ] Click "Cancel" - dialog closes without action
+   - [ ] Click "Restart Tutorial" button again
+
+4. **Restart Flow**
+   - [ ] Click "Restart Tutorial" in confirmation dialog
+   - [ ] Button shows "Restarting..." loading text
+   - [ ] Success toast appears: "Tutorial Restarted"
+   - [ ] Dialog closes automatically
+   - [ ] Page refreshes (router.refresh())
+   - [ ] Interactive tutorial begins automatically
+   - [ ] Tutorial shows first step with pulsing beacon
+
+5. **Error Handling**
+   - [ ] Simulate API error (disconnect backend or invalid token)
+   - [ ] Click "Restart Tutorial" button
+   - [ ] Error toast appears with helpful message
+   - [ ] Dialog remains open for retry
+   - [ ] Button returns to "Restart Tutorial" text
+
+6. **Backend State**
+   - [ ] After restart, verify in Django admin or shell:
+     - `onboarding_completed` = False
+     - `onboarding_step` = 'tutorial'
+     - `onboarding_data` = {} (reset)
+
+### Expected Behavior
+- Settings page includes new Onboarding section
+- Restart button triggers confirmation before action
+- Confirmation dialog uses Bitcoin DeFi design system
+- Tutorial restarts successfully and shows immediately
+- Backend state is updated correctly
+- User can cancel restart without side effects
+- Loading and error states provide clear feedback
+
+### Prerequisites
+1. Backend server running: `cd backend && python manage.py runserver`
+2. Frontend dev server running: `cd frontend && npm run dev`
+3. User account with completed onboarding (onboarding_completed=true)
+4. Browser DevTools for network inspection
+
+### Issues Found
+(Append any bugs, edge cases, or unexpected behavior discovered during testing)
+
