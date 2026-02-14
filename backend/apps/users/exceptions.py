@@ -13,10 +13,9 @@ def custom_exception_handler(exc, context):
 
     Returns 429 status code with Retry-After header when rate limit is exceeded.
     """
-    # Call DRF's default exception handler first to get the standard error response
-    response = drf_exception_handler(exc, context)
-
-    # Handle Ratelimited exception from django-ratelimit
+    # Handle Ratelimited exception BEFORE calling DRF's exception handler
+    # This is necessary because Ratelimited inherits from PermissionDenied,
+    # and DRF's handler would convert it to a 403 response
     if isinstance(exc, Ratelimited):
         # Return 429 Too Many Requests with appropriate error message
         response = Response(
@@ -30,5 +29,9 @@ def custom_exception_handler(exc, context):
         # Add Retry-After header (60 seconds as a reasonable default)
         # django-ratelimit doesn't provide exact retry time, so we use a sensible default
         response['Retry-After'] = '60'
+        return response
+
+    # Call DRF's default exception handler for all other exceptions
+    response = drf_exception_handler(exc, context)
 
     return response

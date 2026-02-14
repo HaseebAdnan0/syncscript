@@ -336,13 +336,13 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need tests to verify Annotation threading constraints.
 
 **Acceptance Criteria:**
-- [ ] Test creating top-level annotation (parent=None) succeeds
-- [ ] Test creating reply to top-level (parent=top_level) succeeds
-- [ ] Test creating reply to reply raises ValidationError
-- [ ] Test position JSON field stores complex objects
-- [ ] Test cascade delete removes annotations when source deleted
-- [ ] All tests pass with `python manage.py test apps.annotations.tests.test_models`
-- [ ] Typecheck passes
+- [x] Test creating top-level annotation (parent=None) succeeds
+- [x] Test creating reply to top-level (parent=top_level) succeeds
+- [x] Test creating reply to reply raises ValidationError
+- [x] Test position JSON field stores complex objects
+- [x] Test cascade delete removes annotations when source deleted
+- [x] All tests pass with `python manage.py test apps.annotations.tests.test_models`
+- [x] Typecheck passes
 
 ---
 

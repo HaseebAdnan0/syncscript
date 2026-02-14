@@ -391,3 +391,34 @@
   - Auto-commit hooks committed consumers.py changes during editing
   - Layer 3 (message throttling) complements Layer 1 (connection limit) and Layer 2 (room limit)
 ---
+## Iteration 20 - US-021: Implement heartbeat timeout enforcement (Layer 4)
+- Implemented cleanup_stale_connections Celery periodic task
+  - Scans all vault presence sets (vault_*:presence) for stale entries
+  - Uses zrangebyscore to find users with timestamps > 300 seconds old
+  - Sends close_connection message via channel_layer.send to each stale connection
+  - Removes stale users from presence sets with zrem
+  - Cleans up empty presence sets to prevent Redis bloat
+  - Logs disconnected connections with user_id, vault_id, channel_name, and age
+- Updated VaultConsumer.close_connection handler
+  - Added 'reason' parameter support from event dict
+  - Distinguishes between IDLE_TIMEOUT (code 1000) and RATE_LIMIT_EXCEEDED (code 1008)
+  - Sends appropriate error message before closing connection
+- Registered periodic task in config/celery.py beat_schedule
+  - Task runs every 60.0 seconds (schedule: 60.0)
+  - Task path: apps.vaults.tasks.cleanup_stale_connections
+- Files changed: backend/apps/vaults/tasks.py, backend/apps/vaults/consumers.py, backend/config/celery.py, PRD5.md
+- Created test_us021_heartbeat.py - all 4 tests pass
+- Typecheck passes (0 errors, 0 warnings) for all modified files
+- Committed in 74e8efa
+- Learnings for future iterations:
+  - Celery Beat periodic tasks use schedule as number (seconds) or crontab object
+  - Redis keys() pattern returns byte strings - must decode() before parsing
+  - zrangebyscore(key, '-inf', cutoff, withscores=True) returns tuples of (member, score)
+  - async_to_sync wrapper required when calling channel_layer.send from sync Celery task
+  - Close code 1000 = normal closure, 1008 = policy violation (rate limit)
+  - Task scans all vaults (keys pattern matching) vs per-vault implementation
+  - Cleanup task also removes empty presence sets to prevent Redis memory bloat
+  - Layer 4 (heartbeat timeout) completes the 4-layer rate limiting strategy
+  - User connections tracked in user_{id}:connections sorted set (from Layer 1)
+  - Periodic cleanup complements client heartbeat mechanism (US-010)
+---

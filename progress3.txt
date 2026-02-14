@@ -593,3 +593,35 @@
   - Type ignore on save() needed due to Django's kwargs handling
   - Threading validation prevents creating deeply nested annotation threads
 ---
+## Iteration 25 - US-024: Create Annotation migration and register admin
+- Removed outdated migrations (0001_initial.py and 0002_initial.py from previous work)
+- Created fresh migration for Annotation model: apps/annotations/migrations/0001_initial.py
+- Migration includes all required fields:
+  - content (TextField)
+  - page_number (IntegerField, null/blank)
+  - position (JSONField with default dict)
+  - parent (self-FK for threading)
+  - source (FK to sources.Source)
+  - user (FK to users.User)
+  - Indexes on ['source', 'parent'] and ['user']
+  - ordering = ['created_at']
+- Ran python manage.py migrate (blocked by database not existing - same as previous iterations)
+- Created apps/annotations/admin.py with AnnotationAdmin:
+  - list_display: id, source, user, truncated_content, parent, created_at
+  - list_filter: source, user
+  - search_fields: content
+  - Custom truncated_content method displays first 50 chars
+- Django check passes with 0 issues
+- Files changed:
+  - backend/apps/annotations/migrations/0001_initial.py (regenerated fresh)
+  - backend/apps/annotations/migrations/0002_initial.py (deleted old migration)
+  - backend/apps/annotations/admin.py (implemented AnnotationAdmin)
+  - PRD3.md (marked US-024 complete)
+- Learnings for future iterations:
+  - When old migrations conflict with updated models, delete and regenerate fresh migrations
+  - Django makemigrations can detect field renames and prompt interactively - use echo "n" | to auto-answer
+  - Admin truncated display: create custom method and set short_description attribute
+  - Migration requires database but can be generated without it
+  - Django check sufficient for validation when database doesn't exist
+---
+

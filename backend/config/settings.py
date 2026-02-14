@@ -224,12 +224,13 @@ CACHES = {
     }
 }
 
-# Override cache backend for tests (use dummy cache to avoid Redis dependency)
+# Override cache backend for tests (use in-memory cache to avoid Redis dependency)
 import sys
 if 'test' in sys.argv or 'test_coverage' in sys.argv:
     CACHES = {
         'default': {
-            'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            'LOCATION': 'test-cache',
         }
     }
 

@@ -653,3 +653,30 @@ Learnings for future iterations:
 - All password reset tests validate both happy path and error cases (invalid token, expired token, weak password, invalid uid)
 - Total test count: 23 auth tests pass together (comprehensive coverage of entire auth system)
 ---
+
+## Iteration 32 - Create profile endpoint tests (US-035)
+- Created test_profile.py with 8 comprehensive profile endpoint tests
+- Test GET profile returns current user data (email, username, email_verified, id, created_at)
+- Test PATCH updates allowed fields (avatar_url, bio, institution)
+- Test PATCH rejects email changes (returns 400 with specific error message)
+- Test PATCH rejects password changes (returns 400 with specific error message)
+- Test unauthenticated requests return 401 for both GET and PATCH
+- Test bio field length validation (max 500 chars)
+- Test institution field length validation (max 200 chars)
+- Test partial updates only modify specified fields (other fields remain unchanged)
+- All 8 tests pass successfully
+
+Files changed:
+- backend/apps/users/tests/test_profile.py (created with 8 tests)
+- PRD1.md (marked US-035 complete)
+
+Learnings for future iterations:
+- ProfileView PATCH returns {'message': '...', 'user': {...}} not just user data
+- Must access response.data['user']['field'] for PATCH responses, not response.data['field']
+- GET profile returns serializer.data directly (no wrapper)
+- Error message is exact: "Email and password cannot be changed through this endpoint."
+- Tests must match actual view implementation response format
+- force_authenticate() on APIClient allows testing authenticated endpoints
+- partial=True in ProfileUpdateSerializer allows updating only specified fields
+- Test both positive cases (successful updates) and negative cases (validation errors, auth errors)
+---
