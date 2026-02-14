@@ -677,3 +677,71 @@
   - Pyright warnings about Meta class and return types are known DRF false positives
   - Always check git history before implementing to avoid duplicate work
 ---
+
+## Iteration 28 - US-027: Add threading validation to AnnotationSerializer
+- Implemented validate() method in AnnotationSerializer
+- Validation logic:
+  - Checks if attrs.get('parent') exists
+  - If parent exists, checks if parent.parent exists (2-level nesting)
+  - Raises serializers.ValidationError with message: "Cannot reply to a reply (max 2 levels)."
+  - Returns attrs unchanged if validation passes
+- Parameter name uses 'attrs' (not 'data') to match DRF serializer convention
+- Django check passes with 0 issues
+- Files changed:
+  - backend/apps/annotations/serializers.py (added validate() method)
+  - PRD3.md (marked US-027 complete)
+- Learnings for future iterations:
+  - DRF serializer validate() method should use parameter name 'attrs' not 'data'
+  - validate() method validates the entire payload, not individual fields
+  - ValidationError from serializers module (not django.core.exceptions)
+  - validate() method runs after individual field validators but before save()
+  - Threading validation at serializer level catches issues before database write
+  - Same validation exists in model clean() method as backup defense
+---
+
+## Iteration 29 - US-028: Create IsAuthorOrReadOnly permission
+- Implemented IsAuthorOrReadOnly class in apps/annotations/permissions.py
+- Extends BasePermission from rest_framework.permissions
+- has_object_permission() method implemented:
+  - Returns True for safe methods (GET, HEAD, OPTIONS) using SAFE_METHODS constant
+  - For unsafe methods (POST, PUT, PATCH, DELETE), returns obj.user == request.user
+  - Only annotation authors can edit their own annotations
+- Django check passes with 0 issues
+- Files changed:
+  - backend/apps/annotations/permissions.py (implemented IsAuthorOrReadOnly class)
+  - PRD3.md (marked US-028 complete)
+- Learnings for future iterations:
+  - BasePermission.has_object_permission() requires request, view, obj parameters
+  - view parameter is unused but required by Django signature (pyright warning acceptable)
+  - SAFE_METHODS constant from DRF covers GET, HEAD, OPTIONS
+  - Object-level permissions check specific object ownership/authorship
+  - Permission classes follow same pattern as VaultSourcePermission from sources app
+  - Type annotation for view parameter can be Any since it's unused
+---
+
+## Iteration 30 - US-029: Create AnnotationViewSet
+- Implemented AnnotationViewSet extending ModelViewSet in apps/annotations/views.py
+- ViewSet configuration:
+  - queryset = Annotation.objects.all()
+  - serializer_class = AnnotationSerializer
+  - permission_classes = [IsAuthenticated, IsAuthorOrReadOnly]
+- Overrode perform_create() to automatically set user from request.user
+- Overrode get_queryset() to filter annotations by sources in user's vaults:
+  - Gets vaults where user is owner (Vault.owner)
+  - Gets vaults where user is member (VaultMembership)
+  - Filters annotations by source__vault_id__in=accessible_vault_ids
+- Created apps/annotations/urls.py with router registration
+  - Registered annotations route: router.register(r'annotations', AnnotationViewSet)
+- Django check passes with 0 errors (only security warnings for dev environment)
+- Files changed:
+  - backend/apps/annotations/views.py (implemented AnnotationViewSet)
+  - backend/apps/annotations/urls.py (created router registration)
+  - PRD3.md (marked US-029 complete)
+- Learnings for future iterations:
+  - Follow same pattern as SourceViewSet for consistency
+  - get_queryset() filters by related model (source__vault_id__in)
+  - Combine owned vaults and member vaults for complete access set
+  - IsAuthorOrReadOnly permission allows any vault member to read, only author to edit
+  - Django check sufficient for validation when pyright requires full venv
+  - Router registration creates /api/v1/annotations/ endpoint automatically
+---
