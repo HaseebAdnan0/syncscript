@@ -5,8 +5,10 @@ import { useVault } from '@/hooks/useVaults';
 import { useSources } from '@/hooks/useSources';
 import { useVaultMembers } from '@/hooks/useVaultMembers';
 import { useVaultsStore } from '@/stores/vaultsStore';
+import { useAuthStore } from '@/stores/authStore';
 import { SourcesList } from '@/components/features/vaults/SourcesList';
 import { MembersList } from '@/components/features/vaults/MembersList';
+import { PresenceIndicator } from '@/components/features/notifications/PresenceIndicator';
 import * as Tabs from '@radix-ui/react-tabs';
 import { ArrowLeft } from 'lucide-react';
 
@@ -14,6 +16,7 @@ export default function VaultDetailPage() {
   const params = useParams();
   const router = useRouter();
   const vaultId = parseInt(params.id as string, 10);
+  const { user } = useAuthStore();
 
   // Fetch vault data
   const { data: vault, isLoading: vaultLoading, error: vaultError } = useVault(vaultId);
@@ -66,11 +69,22 @@ export default function VaultDetailPage() {
             <span>Back to vaults</span>
           </button>
 
-          {/* Vault name and description */}
-          <h1 className="text-4xl font-bold text-white mb-2">{vault.name}</h1>
-          {vault.description && (
-            <p className="text-[#94A3B8] text-lg">{vault.description}</p>
-          )}
+          {/* Vault name and description with presence indicator */}
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+            <div className="flex-1">
+              <h1 className="text-4xl font-bold text-white mb-2">{vault.name}</h1>
+              {vault.description && (
+                <p className="text-[#94A3B8] text-lg">{vault.description}</p>
+              )}
+            </div>
+            {/* Active collaborators */}
+            <div className="flex-shrink-0">
+              <PresenceIndicator
+                vaultId={vaultId.toString()}
+                currentUserId={user?.id}
+              />
+            </div>
+          </div>
         </div>
       </div>
 

@@ -214,17 +214,17 @@ SyncScript needs a complete frontend authentication system that enables users to
 **Description:** As a user, I want a reset password page so that I can set a new password using my reset token.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/app/(auth)/reset-password/page.tsx`
-- [ ] Read `token` from URL query params
-- [ ] Glass card with title "Set New Password"
-- [ ] New password field with strength indicator
-- [ ] Confirm password field
-- [ ] Validation: passwords match, min 8 chars
-- [ ] On submit, POST to `/auth/password-reset/confirm/` with token
-- [ ] On success, show toast and redirect to `/login`
-- [ ] On invalid/expired token, show error message with link to forgot-password
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Create `frontend/src/app/(auth)/reset-password/page.tsx`
+- [x] Read `token` from URL query params
+- [x] Glass card with title "Set New Password"
+- [x] New password field with strength indicator
+- [x] Confirm password field
+- [x] Validation: passwords match, min 8 chars
+- [x] On submit, POST to `/auth/password-reset/confirm/` with token
+- [x] On success, show toast and redirect to `/login`
+- [x] On invalid/expired token, show error message with link to forgot-password
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ---
 

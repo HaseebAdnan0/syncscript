@@ -361,3 +361,21 @@
   - Focus ring uses Bitcoin orange (#F7931A) with ring-offset for visibility
   - Typecheck passes without errors (TS6133 warnings about unused imports are false positives)
 ---
+
+## Iteration 16 - US-016: Integrate PresenceIndicator into vault detail page
+- Implemented presence indicator in vault detail page header
+- Files changed:
+  - Updated `frontend/src/app/(app)/vaults/[id]/page.tsx` (added PresenceIndicator, useAuthStore import)
+  - Updated `PRD10.md` (marked US-016 acceptance criteria complete except browser verification)
+- Learnings for future iterations:
+  - PresenceIndicator placed in flex container with vault name/description
+  - Responsive layout: flex-col on mobile (stacks vertically), md:flex-row on desktop (side-by-side)
+  - Vault info uses flex-1 to take available space, presence indicator uses flex-shrink-0 to prevent shrinking
+  - Gap-4 provides spacing between vault info and presence indicator
+  - vaultId converted to string for PresenceIndicator (expects string, page uses number)
+  - currentUserId passed from useAuthStore's user object (user?.id for optional chaining)
+  - PresenceIndicator internally handles mobile responsive (collapses to count-only on small screens)
+  - useAuthStore imported from @/stores/authStore for current user access
+  - Positioned near vault title in header area per requirements
+  - Typecheck passes without errors
+---

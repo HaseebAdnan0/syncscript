@@ -391,3 +391,43 @@ Learnings for future iterations:
 - Badge component can be stacked (role badge + pending badge) for multiple statuses
 ---
 
+## Iteration 15 - US-014: Add existing user to vault
+- Created `frontend/src/components/features/vaults/AddMemberModal.tsx` with complete modal UI:
+  - Radix Dialog with glass morphism styling and orange glow shadow
+  - Two tabs: "Add Existing" and "Invite New" using Radix Tabs
+  - Add Existing tab: email/username input + role selector (Contributor/Viewer default)
+  - Invite New tab: email input with validation + role selector
+  - Both forms use respective mutations (useAddMember, useInviteMember)
+  - Success flow: close modal, show toast, refresh members list (auto via React Query invalidation)
+  - Error handling: displays error banner in modal (user not found, invalid email, etc.)
+  - Form validation: required fields, email regex validation for invites
+  - Reset form state on close (both success and cancel paths)
+- Integrated AddMemberModal into MembersList component:
+  - Added "Add Member" button with UserPlus icon at top of members list
+  - Button only visible to OWNER role (userRole prop check)
+  - Modal state managed with local useState (isAddMemberModalOpen)
+  - MembersList now accepts userRole prop to determine permissions
+- Updated vault detail page to pass userRole prop to MembersList
+- Fixed type errors: vaultId is number not string, Button size is "sm" not "icon"
+- Typecheck passes successfully
+- Note: Implementation was already committed in 771f6d6 (mislabeled commit message)
+
+Files changed:
+- frontend/src/components/features/vaults/AddMemberModal.tsx (created in 771f6d6)
+- frontend/src/components/features/vaults/MembersList.tsx (updated in 771f6d6)
+- PRD8.md (marked US-014 complete except browser verification)
+
+Learnings for future iterations:
+- AddMemberModal follows same pattern as CreateVaultModal (glass morphism, gradient buttons, error handling)
+- Radix Tabs for multi-step forms: Tab.Root with value/onValueChange, Tab.List for triggers, Tab.Content for panels
+- Tab indicator styling: absolute positioned div with data-[state=active]:opacity-100 on each trigger
+- Email validation regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ for basic client-side validation
+- Role selector uses native <select> with Bitcoin DeFi styling (bg-black/50, orange focus)
+- useAddMember and useInviteMember both accept { email, role } payload
+- React Query mutations automatically invalidate members list on success (no manual refresh needed)
+- Modal accessibility: Dialog.Close button, form submit handlers, disabled states during mutations
+- Button component has sizes: "sm", "md", "lg" (not "icon" - use size + custom className for icon buttons)
+- MembersList userRole prop enables role-based UI rendering (OWNER sees Add Member button)
+- Note autocomplete dropdown was mentioned in AC but simplified to plain input (can enhance later if needed)
+---
+

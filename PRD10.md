@@ -205,11 +205,11 @@ Integrate SyncScript's frontend with the existing backend WebSocket system and n
 **Description:** As a user, I want to see active collaborators when viewing a vault.
 
 **Acceptance Criteria:**
-- [ ] Add PresenceIndicator component to vault detail page header area
-- [ ] Connect to usePresence hook with current vault ID
-- [ ] Position near vault title or in toolbar area
-- [ ] Responsive: collapses to count-only on mobile
-- [ ] Typecheck passes
+- [x] Add PresenceIndicator component to vault detail page header area
+- [x] Connect to usePresence hook with current vault ID
+- [x] Position near vault title or in toolbar area
+- [x] Responsive: collapses to count-only on mobile
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-017: Add notification preferences to user settings page
