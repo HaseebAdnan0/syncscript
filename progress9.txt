@@ -804,3 +804,33 @@ Learnings for future iterations:
 - AlertDialog properly handles disabled state during loading (disabled={isLoading} on both buttons)
 - Must install @radix-ui/react-alert-dialog separately from other Radix UI packages
 ---
+
+## Iteration 26 - US-027: Create useSourcesWebSocket hook
+- Created useSourcesWebSocket hook at frontend/src/hooks/useSourcesWebSocket.ts
+- Connects to vault WebSocket channel via existing useVaultSocket hook (reuses connection)
+- Listens for events: source.created, source.updated, source.deleted, and reconnected
+- Invalidates React Query cache on all events using queryClient.invalidateQueries()
+- Auto-reconnect with exponential backoff handled by underlying useVaultSocket hook
+- Cleanup handled automatically by useEffect dependency on status
+- Hook accepts vaultId as string or number, converts to string for useVaultSocket
+- Query invalidation converts vaultId back to number for queryKey matching
+- Invalidates entire sources query for vault (all filters) on any source change
+- Returns { status } for parent components to monitor connection state
+- Typecheck passes ✓
+
+Files changed:
+- frontend/src/hooks/useSourcesWebSocket.ts (new)
+- PRD9.md (marked US-027 complete)
+
+Learnings for future iterations:
+- WebSocket hooks should reuse existing vault connection via useVaultSocket (don't create duplicate connections)
+- useVaultSocket expects vaultId as string, but React Query uses number in queryKey
+- Type conversion: String(vaultId) for WebSocket, parseInt(vaultId, 10) for query invalidation
+- addEventListener returns cleanup function - store in const and call in useEffect cleanup
+- useEffect dependency array must include: status, vaultId, addEventListener, queryClient
+- Invalidating sources query without filter param invalidates ALL filter variations in cache
+- reconnected event is custom event emitted by useVaultSocket after successful reconnection
+- addEventListener pattern follows same callback-based approach as DOM addEventListener
+- Query invalidation pattern: queryClient.invalidateQueries({ queryKey: [...] })
+- Status returned from hook allows parent to show connection state indicators if needed
+---
