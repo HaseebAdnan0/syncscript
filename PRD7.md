@@ -339,14 +339,14 @@ SyncScript needs a complete frontend authentication system that enables users to
 **Description:** As a developer, I need to verify the complete auth flow works end-to-end.
 
 **Acceptance Criteria:**
-- [ ] Verify register → auto-login → dashboard redirect works
-- [ ] Verify login → returnUrl redirect works
-- [ ] Verify protected route redirects unauthenticated users
-- [ ] Verify logout clears state and redirects
-- [ ] Verify token refresh happens silently on 401
-- [ ] Verify forgot/reset password flow completes
-- [ ] Document any issues found in progress7.txt
-- [ ] Typecheck passes
+- [x] Verify register → auto-login → dashboard redirect works
+- [x] Verify login → returnUrl redirect works
+- [x] Verify protected route redirects unauthenticated users
+- [x] Verify logout clears state and redirects
+- [x] Verify token refresh happens silently on 401
+- [x] Verify forgot/reset password flow completes
+- [x] Document any issues found in progress7.txt
+- [x] Typecheck passes
 
 ## Non-Goals
 

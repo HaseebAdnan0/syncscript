@@ -425,11 +425,11 @@ Build the source and annotation management interface for SyncScript's Knowledge 
 **Description:** As a user, I want the sources list to update in real-time when collaborators add or remove sources.
 
 **Acceptance Criteria:**
-- [ ] Import and activate `useSourcesWebSocket` in sources page
-- [ ] New sources appear without manual refresh
-- [ ] Deleted sources disappear without manual refresh
-- [ ] Subtle "New source added" indicator when update occurs
-- [ ] Typecheck passes
+- [x] Import and activate `useSourcesWebSocket` in sources page
+- [x] New sources appear without manual refresh
+- [x] Deleted sources disappear without manual refresh
+- [x] Subtle "New source added" indicator when update occurs
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---

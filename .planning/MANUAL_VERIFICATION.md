@@ -487,3 +487,102 @@
    - NEXT_PUBLIC_PUSHER_KEY
    - NEXT_PUBLIC_PUSHER_CLUSTER
 
+
+## PRD7: Frontend Authentication & User Flows - US-022 Integration Test - 2026-02-14
+
+### Complete Auth Flow Testing
+- [ ] **Register → Auto-login → Dashboard redirect**
+  - Navigate to http://localhost:3000/register
+  - Fill in registration form with: name, email, password (min 8 chars), confirm password
+  - Verify password strength indicator shows (weak/medium/strong)
+  - Click "Create Account" button
+  - Verify loading state appears (button shows "Loading...")
+  - Verify auto-login on success (user logged in without manual login)
+  - Verify redirect to /dashboard (or /vaults if dashboard doesn't exist)
+  - Verify success toast appears
+
+- [ ] **Login → ReturnUrl redirect**
+  - Logout from current session
+  - Navigate to a protected route (e.g., /profile) without being authenticated
+  - Verify redirect to /login?returnUrl=/profile
+  - Fill in email and password
+  - Click "Sign In" button
+  - Verify successful login redirects to /profile (the returnUrl)
+  - If no returnUrl param, verify redirect goes to /dashboard (or /vaults)
+
+- [ ] **Protected route redirects unauthenticated users**
+  - Logout from current session (or use incognito window)
+  - Navigate directly to /profile (protected route)
+  - Verify immediate redirect to /login?returnUrl=/profile
+  - Verify ProtectedRoute shows loading spinner briefly before redirect
+  - Verify no flash of protected content
+
+- [ ] **Logout clears state and redirects**
+  - Login as a user
+  - Navigate to any authenticated page (/vaults, /profile, etc.)
+  - Click user avatar/name dropdown in app header (top-right)
+  - Click "Logout" option
+  - Verify loading state appears ("Logging out...")
+  - Verify success toast: "Logged out successfully"
+  - Verify redirect to /login page
+  - Verify user state cleared (no user data in auth store)
+  - Try navigating to /profile - verify redirect to /login (session cleared)
+
+- [ ] **Token refresh happens silently on 401**
+  - Login as a user
+  - Wait for access token to expire (default: 15 minutes, or modify backend to 1 minute for testing)
+  - Make an API call to protected endpoint (e.g., navigate to /profile, which calls /auth/me/)
+  - Verify axios interceptor catches 401 response
+  - Verify refresh token sent to /auth/refresh/ endpoint
+  - Verify new access token received
+  - Verify original API call retries automatically with new token
+  - Verify page loads successfully without manual re-login
+  - Note: If refresh token expires, user should be logged out and redirected to /login
+
+- [ ] **Forgot/Reset password flow completes**
+  - Navigate to /login
+  - Click "Forgot password?" link
+  - Verify redirect to /forgot-password
+  - Enter email address
+  - Click "Send Reset Link" button
+  - Verify success message: "Check your email for reset link"
+  - Open email (check backend console or email inbox)
+  - Copy reset token from email URL (e.g., http://localhost:3000/reset-password?token=abc123)
+  - Navigate to reset password URL with token
+  - Enter new password (min 8 chars, verify strength indicator shows)
+  - Enter confirm password (must match)
+  - Click "Reset Password" button
+  - Verify success toast appears
+  - Verify redirect to /login after 2 seconds
+  - Login with new password - verify success
+  - Try login with old password - verify failure
+
+### Expected Behavior
+- Registration flow auto-logs in user and redirects to dashboard/vaults
+- Login respects returnUrl query parameter for post-auth navigation
+- Protected routes redirect unauthenticated users to /login with returnUrl
+- Logout clears all auth state and redirects to /login with success toast
+- Token refresh handled transparently via axios interceptor on 401 errors
+- Forgot/reset password flow completes with email link and password update
+- All forms show inline validation errors for invalid input
+- All operations show loading states during API calls
+- Toast notifications appear for success/error states
+
+### Prerequisites
+1. Backend server running: `cd backend && python manage.py runserver`
+2. Frontend dev server running: `cd frontend && npm run dev`
+3. PostgreSQL and Redis running
+4. Email backend configured (console or SMTP)
+5. At least one test user account or ability to register new users
+6. Browser with DevTools for inspecting network requests and cookies
+
+### Testing Notes
+- Use browser DevTools Network tab to inspect API calls and cookie handling
+- Check Application tab > Cookies to verify httpOnly cookies are set
+- Test in incognito/private window to simulate unauthenticated user
+- To test token expiry faster, temporarily reduce ACCESS_TOKEN_LIFETIME in backend settings
+- Document any issues found below:
+
+### Issues Found
+(Append any bugs, edge cases, or unexpected behavior discovered during testing)
+

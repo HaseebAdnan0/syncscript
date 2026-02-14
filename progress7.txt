@@ -410,3 +410,29 @@ US-018 was already implemented in commit 873aeba but progress tracker wasn't upd
   - Build passes successfully with no TypeScript errors
   - Typecheck passes
 ---
+## Iteration 21 - US-020: Add logout functionality to app header
+- Added user dropdown menu to AppHeader component using Radix UI DropdownMenu
+- Displays user avatar (gradient circle with User icon) and name when authenticated
+- Implemented handleLogout function with loading state and toast notifications
+- On logout success, shows "Logged out successfully" toast and redirects to /login
+- Dropdown includes Profile link and Logout option with icons
+- Fixed pre-existing conditional React hook error in vaults/[id]/page.tsx
+  - Changed from `vault ? useVaultPermissions(vault.user_role) : null` to always calling hook
+  - Used VaultRole.VIEWER enum as fallback instead of string literal
+- Files changed:
+  - frontend/src/components/features/notifications/AppHeader.tsx (added user dropdown and logout)
+  - frontend/src/app/(app)/vaults/[id]/page.tsx (fixed conditional hook call)
+  - PRD7.md (marked US-020 complete)
+- Learnings for future iterations:
+  - React hooks must ALWAYS be called unconditionally - use default/fallback values instead
+  - Radix DropdownMenu uses Root, Trigger, Content, Item, Label, Separator components
+  - DropdownMenuTrigger needs asChild prop when wrapping custom button
+  - DropdownMenuItem can wrap Link component using asChild pattern
+  - User avatar uses gradient circle matching Bitcoin DeFi aesthetic
+  - User display name prioritizes first_name over email for better UX
+  - Logout loading state shows "Logging out..." text instead of "Logout"
+  - isLoggingOut state prevents duplicate logout calls during loading
+  - Build passes successfully with only warnings (no errors)
+  - Typecheck passes
+---
+
