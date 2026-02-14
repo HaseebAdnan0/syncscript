@@ -33,3 +33,21 @@ def log_vault_mutation(sender, instance, created, **kwargs):
         action=action,
         metadata=metadata
     )
+
+
+@receiver(post_save, sender=VaultMembership)
+def log_membership_added(sender, instance, created, **kwargs):
+    """
+    Log when a member is added to a vault.
+    """
+    if created:
+        metadata = {
+            'user_id': str(instance.user.id),
+            'role': instance.role
+        }
+        AuditLog.objects.create(
+            vault=instance.vault,
+            actor=instance.added_by,
+            action='membership.added',
+            metadata=metadata
+        )

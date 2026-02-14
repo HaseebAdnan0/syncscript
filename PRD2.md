@@ -271,11 +271,11 @@ Create a secure, collaborative Knowledge Vault system where researchers can crea
 **Description:** As a system, I need to log when members are added.
 
 **Acceptance Criteria:**
-- [ ] post_save signal on VaultMembership
-- [ ] On created=True, creates AuditLog with action='membership.added'
-- [ ] Metadata includes user_id and role
-- [ ] Actor set to added_by
-- [ ] Typecheck passes
+- [x] post_save signal on VaultMembership
+- [x] On created=True, creates AuditLog with action='membership.added'
+- [x] Metadata includes user_id and role
+- [x] Actor set to added_by
+- [x] Typecheck passes
 
 ### US-027: Create role change audit signal
 **Description:** As a system, I need to log role changes.

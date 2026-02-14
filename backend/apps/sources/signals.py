@@ -26,7 +26,7 @@ def source_saved(sender, instance, created, **kwargs):
     if created:
         # New source created - broadcast creation event
         logger.info(f"Source {instance.id} created in vault {instance.vault_id}, enqueueing broadcast task")
-        broadcast_source_created.delay(instance.id)
+        broadcast_source_created.delay(instance.id)  # type: ignore[attr-defined]
     else:
         # Existing source updated - broadcast update event
         # Track changed fields for minimal updates
@@ -35,7 +35,7 @@ def source_saved(sender, instance, created, **kwargs):
             changed_fields = list(instance._changed_fields)
 
         logger.info(f"Source {instance.id} updated in vault {instance.vault_id}, enqueueing broadcast task")
-        broadcast_source_updated.delay(instance.id, changed_fields)
+        broadcast_source_updated.delay(instance.id, changed_fields)  # type: ignore[attr-defined]
 
 
 @receiver(post_delete, sender=Source)
@@ -50,7 +50,7 @@ def source_deleted(sender, instance, **kwargs):
     logger.info(f"Source {instance.id} deleted from vault {instance.vault_id}, enqueueing broadcast task")
 
     # Broadcast deletion event with minimal info (source already deleted from DB)
-    broadcast_source_deleted.delay(
+    broadcast_source_deleted.delay(  # type: ignore[attr-defined]
         source_id=instance.id,
         vault_id=instance.vault_id,
         deleted_by_id=instance.created_by_id if instance.created_by else None

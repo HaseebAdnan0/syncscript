@@ -192,3 +192,22 @@ def process_uploaded_pdf(self, pdf_upload_id: str) -> dict[str, Any]:
                 'status': 'failed',
                 'error': str(exc),
             }
+
+
+# WebSocket broadcast tasks (implemented in US-013)
+@shared_task
+def broadcast_source_created(source_id: int) -> None:
+    """Broadcast source.created event to vault collaborators (stub for US-013)."""
+    pass
+
+
+@shared_task
+def broadcast_source_updated(source_id: int, changed_fields: list[str]) -> None:
+    """Broadcast source.updated event to vault collaborators (stub for US-013)."""
+    pass
+
+
+@shared_task
+def broadcast_source_deleted(source_id: int, vault_id: int, deleted_by_id: int | None) -> None:
+    """Broadcast source.deleted event to vault collaborators (stub for US-013)."""
+    pass

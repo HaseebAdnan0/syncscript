@@ -335,3 +335,17 @@
   - Pyright warnings on unused 'sender' and 'kwargs' are expected - Django requires these in signal signature
   - Signals will be connected in apps.py ready() method in upcoming US-029
 ---
+## Iteration 26 - US-025: Create vault mutation audit signal
+- Implemented post_save signal on Vault to log creation and updates
+- Files changed:
+  - backend/apps/vaults/signals.py (added log_vault_mutation signal handler, imported AuditLog)
+  - PRD2.md (marked US-025 as complete)
+- Django check passed with no issues
+- Learnings for future iterations:
+  - Multiple @receiver decorators can be registered for same model (Vault has both create_owner_membership and log_vault_mutation)
+  - Signal handlers can distinguish create vs update using 'created' parameter
+  - AuditLog.objects.create() requires vault, actor, action, and metadata fields
+  - Metadata is a dict containing relevant state: {'name': ..., 'is_archived': ...}
+  - Action naming convention: 'model.verb' pattern (e.g., 'vault.created', 'vault.updated')
+  - Actor set to vault.owner for all vault mutations (even if updated by system)
+---
