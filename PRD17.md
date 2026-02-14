@@ -171,16 +171,16 @@ Create a comprehensive user dashboard as the primary logged-in landing page for 
 **Description:** As a user, I want to see a breakdown of my source types so I understand my research composition.
 
 **Acceptance Criteria:**
-- [ ] Create `frontend/src/components/features/dashboard/charts/SourceTypesChart.tsx`
-- [ ] Donut/pie chart showing source type distribution
-- [ ] Colors: gradient from orange (#F7931A) to gold (#FFD600) for segments
-- [ ] Shows percentage labels
-- [ ] Custom tooltip with count and percentage
-- [ ] Legend below chart with type names
-- [ ] Responsive - resizes with container
-- [ ] Fetches from `/api/v1/dashboard/analytics/source-types/`
-- [ ] Empty state: onboarding prompt "Add your first source to see analytics"
-- [ ] Typecheck passes
+- [x] Create `frontend/src/components/features/dashboard/charts/SourceTypesChart.tsx`
+- [x] Donut/pie chart showing source type distribution
+- [x] Colors: gradient from orange (#F7931A) to gold (#FFD600) for segments
+- [x] Shows percentage labels
+- [x] Custom tooltip with count and percentage
+- [x] Legend below chart with type names
+- [x] Responsive - resizes with container
+- [x] Fetches from `/api/v1/dashboard/analytics/source-types/`
+- [x] Empty state: onboarding prompt "Add your first source to see analytics"
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-013: Create top collaborators section

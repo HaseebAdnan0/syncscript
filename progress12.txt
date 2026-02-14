@@ -425,3 +425,32 @@ Learnings for future iterations:
   - Keep consistency between login and register pages for better UX
 ---
 
+
+## Iteration 16 - US-016: Handle OAuth redirect loading state
+- Added full-page loading overlay to OAuthButtons component
+- Overlay appears when redirecting state is set (Google or GitHub)
+- Styled with Bitcoin DeFi aesthetic: dark card, orange spinner, backdrop blur
+- Displays dynamic message: "Redirecting to Google..." or "Redirecting to GitHub..."
+- Includes helper text: "You'll be redirected to sign in securely"
+- Spinner uses border-[#F7931A] (Bitcoin Orange) for brand consistency
+- Overlay is z-50 to appear above all other content
+- Used React Fragment (<></>) to wrap both overlay and buttons
+- Duplicate clicks prevented by existing `redirecting !== null` check
+- Local state (useState) tracks redirect status (no zustand needed for component-level state)
+- Frontend typecheck passes
+- Committed successfully
+
+Files changed:
+  - frontend/src/components/features/auth/OAuthButtons.tsx (added full-page overlay)
+  - PRD12.md (marked US-016 complete except browser verification)
+
+Learnings for future iterations:
+  - Full-page overlays use fixed inset-0 positioning to cover entire viewport
+  - z-50 ensures overlay appears above most content (z-index hierarchy)
+  - backdrop-blur-sm creates modern glass morphism effect on overlays
+  - Spinner styling: border-color/20 for track, solid border-t-color for animated segment
+  - React Fragment (<></>) wraps multiple root elements without extra DOM nodes
+  - Component-level loading state doesn't need global state management (zustand)
+  - Dynamic provider name in message improves UX clarity
+  - Bitcoin Orange (#F7931A) used for spinner to match project design system
+---

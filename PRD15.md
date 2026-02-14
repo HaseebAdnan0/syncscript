@@ -109,11 +109,11 @@ This feature uses Claude as the AI backbone with a simple chunking strategy (no 
 **Description:** As a developer, I need to invalidate vault insights cache when sources change so insights stay fresh.
 
 **Acceptance Criteria:**
-- [ ] Django signal on Source post_save and post_delete
-- [ ] If source's vault has `ai_insights_cache`, set `ai_insights_updated_at` to null
-- [ ] Signal handler in `apps/ai/signals.py`
-- [ ] Connect signals in `apps/ai/apps.py` ready()
-- [ ] Typecheck passes
+- [x] Django signal on Source post_save and post_delete
+- [x] If source's vault has `ai_insights_cache`, set `ai_insights_updated_at` to null
+- [x] Signal handler in `apps/ai/signals.py`
+- [x] Connect signals in `apps/ai/apps.py` ready()
+- [x] Typecheck passes
 
 ### US-009: Implement question answering endpoint
 **Description:** As a user, I want to ask questions about my vault contents and get cited answers.

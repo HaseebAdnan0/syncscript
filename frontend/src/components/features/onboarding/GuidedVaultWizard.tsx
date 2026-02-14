@@ -3,6 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import { useOnboarding } from '@/providers/OnboardingProvider';
 import GradientButton from '@/components/ui/GradientButton';
+import { createVault } from '@/lib/api/vaults';
+import { createSource } from '@/lib/api/sources';
+import { inviteVaultMember } from '@/lib/api/vaults';
+import { SourceType } from '@/lib/types/sources';
+import { VaultRole } from '@/lib/types/vault';
 
 const GuidedVaultWizard: React.FC = () => {
   const { step, data, updateOnboarding } = useOnboarding();
@@ -12,6 +17,7 @@ const GuidedVaultWizard: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [urlError, setUrlError] = useState<string | null>(null);
   const [emailError, setEmailError] = useState<string | null>(null);
+  const [creationError, setCreationError] = useState<string | null>(null);
 
   // Determine current step number from step string
   const currentStep = step === 'guided-1' ? 1 : step === 'guided-2' ? 2 : step === 'guided-3' ? 3 : 1;
@@ -154,17 +160,64 @@ const GuidedVaultWizard: React.FC = () => {
 
     setIsSubmitting(true);
     setEmailError(null);
+    setCreationError(null);
+
     try {
+      const finalVaultName = data?.vaultName || vaultName;
+      const finalSourceUrl = data?.sourceUrl || sourceUrl;
+      const finalCollaboratorEmail = emailToUse.trim();
+
+      // Step 1: Create the vault
+      const vault = await createVault({
+        name: finalVaultName,
+        description: `Created via guided onboarding`,
+      });
+
+      // Step 2: Add source if URL was provided
+      if (finalSourceUrl) {
+        try {
+          await createSource({
+            vault: vault.id,
+            type: SourceType.URL,
+            url: finalSourceUrl,
+            title: finalSourceUrl, // Will be updated by backend metadata extraction
+          });
+        } catch (sourceError) {
+          console.error('Failed to add source:', sourceError);
+          // Don't fail the whole flow if source creation fails
+        }
+      }
+
+      // Step 3: Invite collaborator if email was provided
+      if (finalCollaboratorEmail) {
+        try {
+          await inviteVaultMember(vault.id, {
+            email: finalCollaboratorEmail,
+            role: VaultRole.CONTRIBUTOR,
+          });
+        } catch (inviteError) {
+          console.error('Failed to invite collaborator:', inviteError);
+          // Don't fail the whole flow if invite fails
+        }
+      }
+
+      // Step 4: Update onboarding state to advance to tutorial
       await updateOnboarding({
         step: 'tutorial',
         data: {
-          vaultName: data?.vaultName || vaultName,
-          sourceUrl: data?.sourceUrl || sourceUrl,
-          collaboratorEmail: emailToUse.trim()
+          vaultName: finalVaultName,
+          sourceUrl: finalSourceUrl,
+          collaboratorEmail: finalCollaboratorEmail,
+          createdVaultId: vault.id,
         },
       });
     } catch (error) {
-      console.error('Failed to complete wizard:', error);
+      console.error('Failed to create vault:', error);
+      setCreationError(
+        error instanceof Error
+          ? error.message
+          : 'Failed to create vault. Please try again.'
+      );
     } finally {
       setIsSubmitting(false);
     }

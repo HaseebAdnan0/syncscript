@@ -1003,23 +1003,15 @@ class CitationEndpointTests(TestCase):
         self.assertIn('@', data['citation'])
         self.assertIn('Smith, John', data['citation'])
 
-    @patch.dict('os.environ', {'ANTHROPIC_API_KEY': 'test-key'})
-    @patch('apps.citations.services.ai_citation.Anthropic')
-    def test_generate_citation_ai(self, mock_anthropic):
-        """Test generating citation with incomplete metadata (AI)"""
+    @patch('apps.citations.tasks.generate_ai_citation_task.delay')
+    def test_generate_citation_ai(self, mock_task_delay):
+        """Test generating citation with incomplete metadata (AI) - now async"""
         from rest_framework.test import APIClient
 
-        # Mock Claude API response
-        mock_message = MagicMock()
-        mock_content = MagicMock()
-        mock_content.text = """Unknown. (n.d.). Web Article. Retrieved from https://example.com/web
----SPLIT---
-Unknown. (n.d.). <i>Web Article</i>. Retrieved from https://example.com/web"""
-        mock_message.content = [mock_content]
-
-        mock_client = MagicMock()
-        mock_client.messages.create.return_value = mock_message
-        mock_anthropic.return_value = mock_client
+        # Mock Celery task
+        mock_result = MagicMock()
+        mock_result.id = '12345678-1234-1234-1234-123456789abc'
+        mock_task_delay.return_value = mock_result
 
         client = APIClient()
         client.force_authenticate(user=self.user1)
@@ -1030,14 +1022,13 @@ Unknown. (n.d.). <i>Web Article</i>. Retrieved from https://example.com/web"""
             format='json'
         )
 
-        self.assertEqual(response.status_code, 200)
+        # Now returns 202 Accepted with task_id (async)
+        self.assertEqual(response.status_code, 202)
         data = response.json()
 
-        self.assertIn('citation', data)
-        self.assertIn('citation_html', data)
-        self.assertEqual(data['format'], 'apa7')
-        self.assertEqual(data['source'], 'ai')
-        self.assertEqual(data['cached'], False)
+        self.assertIn('task_id', data)
+        self.assertIn('status_url', data)
+        self.assertEqual(data['task_id'], '12345678-1234-1234-1234-123456789abc')
 
     def test_generate_citation_caching(self):
         """Test citation caching"""

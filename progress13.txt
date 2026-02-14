@@ -290,3 +290,31 @@ vaults/{vault_id}/thumbnails/{uuid}.jpg
   - Storage quota check is ready to be used in upload views (US-011)
 
 ---
+
+## Iteration 11 - Block uploads when storage quota exceeded (US-011)
+- Added storage quota check to PDFUploadViewSet upload endpoints
+- Implementation in backend/apps/sources/views.py:
+  - Imported check_storage_quota from apps.sources.services.storage_quota
+  - Added quota check in upload_url action (before generating presigned URL)
+  - Added quota check in multipart_upload_initiate action (before initiating S3 upload)
+  - Both checks call check_storage_quota(vault_id) and inspect exceeded flag
+  - If exceeded=True, return 413 HTTP_REQUEST_ENTITY_TOO_LARGE with:
+    - error message: "Storage quota exceeded"
+    - used_bytes, limit_bytes, percentage (rounded to 2 decimals)
+- Verified implementation:
+  - Function imports successfully in Django shell
+  - Quota check works correctly for both normal and exceeded cases
+  - Django system checks pass (only warnings, no errors)
+  - Views.py changes were automatically committed in HEAD
+- Files changed:
+  - backend/apps/sources/views.py
+  - PRD13.md
+  - progress13.txt
+- Learnings for future iterations:
+  - Storage quota check happens before creating PDFUpload record
+  - 413 status code is appropriate for quota exceeded errors
+  - Percentage is converted to 0-100 scale in response (multiply by 100)
+  - check_storage_quota returns TypedDict with all needed fields
+  - Both upload_url and multipart_upload_initiate need the check
+
+---
