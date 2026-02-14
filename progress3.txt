@@ -74,3 +74,20 @@
   - Django migrations will fail if FK target models don't exist
   - Task NOT marked complete - will retry after PRD2 is done
 ---
+
+## Iteration 4 - US-003: Create Source migration and register admin
+- Vault model now exists in backend/apps/vaults/models.py (blocker resolved)
+- Migration already exists: backend/apps/sources/migrations/0001_initial.py
+- Created backend/apps/sources/admin.py with SourceAdmin
+- Admin registered with list_display=['id', 'title', 'vault', 'source_type', 'is_deleted', 'created_at']
+- Added list_filter=['source_type', 'is_deleted']
+- Added search_fields=['title', 'url']
+- Files changed:
+  - backend/apps/sources/admin.py (created)
+  - PRD3.md (marked US-003 complete)
+- Learnings for future iterations:
+  - Migrations can be auto-generated before committing
+  - Check git history to see if files were already committed
+  - Django admin registration follows standard pattern: @admin.register(Model)
+  - Typecheck passes with 0 errors
+---
