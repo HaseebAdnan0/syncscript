@@ -168,11 +168,11 @@ This feature uses Claude as the AI backbone with a simple chunking strategy (no 
 **Description:** As a user, I want to see a loading state while AI processes my request.
 
 **Acceptance Criteria:**
-- [ ] Create `components/features/ai/AILoadingSkeleton.tsx`
-- [ ] Animated skeleton with "Analyzing..." text
-- [ ] Pulsing orange accent animation
-- [ ] Variants: `summary`, `insights`, `chat`
-- [ ] Typecheck passes
+- [x] Create `components/features/ai/AILoadingSkeleton.tsx`
+- [x] Animated skeleton with "Analyzing..." text
+- [x] Pulsing orange accent animation
+- [x] Variants: `summary`, `insights`, `chat`
+- [x] Typecheck passes
 
 ### US-014: Integrate AISummaryCard into source detail page
 **Description:** As a user, I want to see AI summaries on the source detail page.

@@ -450,3 +450,41 @@
 - Process was killed
 ---
 
+## Iteration 18 - US-018: Create Marketing Navbar
+- Verified Navbar.tsx component already exists and is complete (created in previous session)
+- Component implements all acceptance criteria:
+  - Sticky positioning using `sticky top-0 z-50` classes
+  - Backdrop blur on scroll: bg-transparent → bg-[#0F1115]/95 backdrop-blur-lg
+  - Logo with Space Grotesk font on left, links to home
+  - Three nav links (Features, How It Works, Pricing) using smooth scroll anchors (#features, #how-it-works, #pricing)
+  - Right side has "Sign In" text link and "Get Started" gradient button
+  - Mobile: hamburger menu (Menu/X icons from Lucide) with slide-out drawer
+  - Background becomes more opaque on scroll (border-white/10 → border-white/20)
+- Scroll behavior implementation:
+  - useEffect hook with window.addEventListener('scroll') tracks scroll position
+  - isScrolled state triggers when window.scrollY > 20
+  - scrollToSection function uses document.querySelector and scrollIntoView({ behavior: 'smooth' })
+- Mobile menu implementation:
+  - isMobileMenuOpen state controls drawer visibility
+  - Drawer shows below navbar with bg-[#0F1115] and border-top
+  - All nav links replicated in mobile menu
+  - Auth buttons separated by border-t in mobile view
+  - Clicking links closes mobile menu automatically
+- Component already integrated into marketing layout.tsx
+- Section IDs verified in components: FeaturesSection (#features), PricingSection (#pricing), HowItWorksSection (#how-it-works)
+- Typecheck passes successfully
+- Files changed:
+  - PRD16.md (marked US-018 complete)
+- Learnings for future iterations:
+  - Sticky positioning (top-0) works well for navbar that scrolls with page
+  - Conditional className with template literals enables dynamic styling based on state
+  - Smooth scroll with element.scrollIntoView({ behavior: 'smooth' }) provides native browser animation
+  - preventDefault on anchor clicks prevents page jump before smooth scroll
+  - Mobile menu drawer pattern: conditional render based on state, full-width dropdown below navbar
+  - aria-label on hamburger button improves accessibility
+  - Lucide Menu/X icons provide clear open/close affordance
+  - Using same scrollToSection function for both desktop and mobile reduces code duplication
+  - Setting isMobileMenuOpen to false in scrollToSection auto-closes drawer after navigation
+  - Border transition (border-white/10 to border-white/20) adds subtle depth on scroll
+---
+
