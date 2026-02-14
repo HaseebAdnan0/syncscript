@@ -292,3 +292,48 @@ Learnings for future iterations:
 - Citations should include excerpt (truncated to 200 chars) for context
 - get_object_or_404 for conversation ensures user owns the conversation being continued
 ---
+
+## Iteration 10 - US-010: Implement chat history persistence
+- Completed conversation persistence features (most were already in US-009)
+- Added 10-conversation limit enforcement in ask_question view:
+  - After creating new conversation, checks total count for vault
+  - Deletes oldest conversations if count > 10 (FIFO deletion)
+  - Uses order_by('-updated_at') to identify oldest conversations
+- Created GET /api/v1/vaults/{id}/conversations/ endpoint (list_conversations):
+  - Lists all conversations for vault + user
+  - Returns id, created_at, updated_at, message_count, preview
+  - Preview extracted from first user message (truncated to 100 chars)
+  - Ordered by updated_at DESC (most recent first)
+- Created GET /api/v1/vaults/{id}/conversations/{conv_id}/ endpoint (get_conversation):
+  - Returns full conversation with all messages
+  - Messages include role, content, sources_cited, created_at
+  - Validates conversation ownership (vault + user match)
+  - Messages ordered by created_at ASC (chronological)
+- Both endpoints enforce authentication and vault permission checks
+- Added URL routes to apps/ai/urls.py for both endpoints
+- Created 8 comprehensive tests in ChatHistoryPersistenceTestCase:
+  - List conversations with response structure
+  - Preview display validation
+  - Full history retrieval
+  - Ownership checks
+  - 10-conversation limit enforcement
+  - Authentication requirements
+  - Permission checks
+- All 72 AI app tests pass
+- Typecheck passes
+
+Files changed:
+- backend/apps/ai/views.py (added conversation limit + 2 endpoints)
+- backend/apps/ai/urls.py (added 2 routes)
+- backend/apps/ai/tests.py (added ChatHistoryPersistenceTestCase with 8 tests)
+- PRD15.md (marked US-010 complete)
+
+Learnings for future iterations:
+- Conversation limit best enforced at creation time, not on list/get
+- Preview generation: slice first user message from conversation's messages
+- FIFO deletion: order by -updated_at, then slice [10:] for overflow
+- Conversation ownership validation: check both vault and user in get_object_or_404
+- Message count can use .count() on related manager without extra query
+- List endpoint should show preview for UX, detail endpoint shows full messages
+- Conversations ordered DESC for list (newest first), messages ordered ASC for detail (chronological)
+---

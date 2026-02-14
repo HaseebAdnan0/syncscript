@@ -383,3 +383,39 @@ vaults/{vault_id}/thumbnails/{uuid}.jpg
 
 ---
 
+## Iteration 14 - Create FileUploadZone component (US-014)
+- Created `frontend/src/components/features/uploads/FileUploadZone.tsx` with drag-and-drop functionality
+- Component implementation:
+  - Accepts onFilesSelected callback prop with File[] parameter
+  - Accepts accept prop for MIME type filtering (defaults to "application/pdf,image/png,image/jpeg")
+  - Accepts maxFiles prop to limit number of uploads (default: 10)
+  - Drag and drop handlers: onDragEnter, onDragLeave, onDragOver, onDrop
+  - Visual drag-over state with Bitcoin orange (#F7931A) border highlight and scale animation
+  - Background changes to orange tint (#F7931A/10) when dragging
+  - Click handler to trigger hidden file input
+  - Client-side MIME type validation before calling onFilesSelected callback
+  - Upload icon from lucide-react with color transitions
+  - Drop hint text: "Drop files here or click to browse" (changes to "Drop files here" when dragging)
+  - Support text shows file types and max file count
+  - Disabled state with opacity and cursor-not-allowed
+- Styling follows Bitcoin DeFi aesthetic:
+  - Dashed border with white/20 opacity (orange/50 on hover, full orange when dragging)
+  - Rounded corners (rounded-2xl)
+  - Black/20 background with orange/5 on hover
+  - Smooth transitions on all states
+  - Scale animation on drag-over (scale-[1.02])
+- Files changed:
+  - frontend/src/components/features/uploads/FileUploadZone.tsx (new)
+  - PRD13.md
+  - progress13.txt
+- Learnings for future iterations:
+  - Lucide-react Upload icon works well for file upload UI
+  - DragEvent types from React for TypeScript drag-and-drop
+  - Hidden file input pattern with ref for click-to-browse functionality
+  - File input value reset (e.target.value = '') allows re-selecting same file
+  - MIME type validation with file.type matches accept attribute
+  - Next.js dev server started successfully on port 3002 (3000 and 3001 in use)
+  - Typecheck passes with zero errors
+
+---
+

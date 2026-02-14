@@ -257,13 +257,13 @@ Create a comprehensive user dashboard as the primary logged-in landing page for 
 **Description:** As a user, I want all dashboard sections assembled on the dashboard page in a cohesive layout.
 
 **Acceptance Criteria:**
-- [ ] Dashboard page imports and renders all sections
-- [ ] Order: WelcomeHeader, ContinueResearch, RecentActivity, AnalyticsSection
-- [ ] Responsive grid layout with proper spacing
-- [ ] QuickActionsFAB rendered (fixed position)
-- [ ] Page has proper loading states (skeleton loaders)
-- [ ] Page has error boundaries for failed API calls
-- [ ] Typecheck passes
+- [x] Dashboard page imports and renders all sections
+- [x] Order: WelcomeHeader, ContinueResearch, RecentActivity, AnalyticsSection
+- [x] Responsive grid layout with proper spacing
+- [x] QuickActionsFAB rendered (fixed position)
+- [x] Page has proper loading states (skeleton loaders)
+- [x] Page has error boundaries for failed API calls
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-019: Update post-login redirect to dashboard

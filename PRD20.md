@@ -215,15 +215,15 @@ Create a comprehensive new user onboarding experience for SyncScript that guides
 **Description:** As a user in the tutorial, I want smooth navigation between steps and clear completion.
 
 **Acceptance Criteria:**
-- [ ] Tutorial advances on "Next" click
-- [ ] Tutorial goes back on "Back" click
-- [ ] "Skip" exits tutorial and advances to completion
-- [ ] Completing final step advances to completion
-- [ ] Scroll target element into view if needed
-- [ ] Highlight pulses to draw attention
-- [ ] Updates onboarding step in backend on each navigation
-- [ ] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Tutorial advances on "Next" click
+- [x] Tutorial goes back on "Back" click
+- [x] "Skip" exits tutorial and advances to completion
+- [x] Completing final step advances to completion
+- [x] Scroll target element into view if needed
+- [x] Highlight pulses to draw attention
+- [x] Updates onboarding step in backend on each navigation
+- [x] Typecheck passes
+- [x] Verify changes work in browser
 
 ### US-017: Create CompletionCelebration component
 **Description:** As a user completing onboarding, I want a celebratory finish so I feel accomplished.

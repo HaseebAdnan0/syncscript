@@ -1,15 +1,15 @@
 'use client';
 
-import { ErrorBoundary } from 'react-error-boundary';
-import { WelcomeHeader } from '@/components/features/dashboard/WelcomeHeader';
-import { ContinueResearch } from '@/components/features/dashboard/ContinueResearch';
-import { RecentActivity } from '@/components/features/dashboard/RecentActivity';
-import { AnalyticsSection } from '@/components/features/dashboard/AnalyticsSection';
-import { QuickActionsFAB } from '@/components/features/dashboard/QuickActionsFAB';
+import { ErrorBoundary, type FallbackProps } from 'react-error-boundary';
+import WelcomeHeader from '@/components/features/dashboard/WelcomeHeader';
+import ContinueResearch from '@/components/features/dashboard/ContinueResearch';
+import RecentActivity from '@/components/features/dashboard/RecentActivity';
+import AnalyticsSection from '@/components/features/dashboard/AnalyticsSection';
+import QuickActionsFAB from '@/components/features/dashboard/QuickActionsFAB';
 import { AlertTriangle } from 'lucide-react';
 
 // Error fallback component for failed sections
-function SectionErrorFallback({ error, resetErrorBoundary }: { error: Error; resetErrorBoundary: () => void }) {
+function SectionErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
   return (
     <div className="bg-[#0F1115] border border-red-500/20 rounded-2xl p-8">
       <div className="flex items-start gap-4">

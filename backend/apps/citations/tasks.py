@@ -56,10 +56,17 @@ def generate_ai_citation_task(self, source_id: int, citation_format: str) -> dic
 
         # Generate AI citation
         logger.info(f"Generating AI citation for source {source_id} in format {citation_format}")
-        citation_text, citation_html = generate_ai_citation(metadata, format_enum)
+        citation_text, citation_html, usage_data = generate_ai_citation(metadata, format_enum)
 
         # Cache the generated citation
         _cache_citation(source, citation_format, citation_text, citation_html, 'ai')
+
+        # Log AI usage in audit log
+        # Note: In Celery task context, we need to get the user from the source's vault
+        # The user who triggered this task isn't directly available, so we use the vault owner
+        vault = source.vault
+        user = vault.owner  # Use vault owner as the actor for async tasks
+        log_ai_citation_usage(user, vault, source, citation_format, usage_data)
 
         logger.info(f"Successfully generated AI citation for source {source_id}")
 

@@ -60,7 +60,17 @@ export default function EmailPromptModal({
           router.push("/login?link_oauth=true");
           return;
         }
-        throw new Error(data.error || "Failed to complete registration");
+        // Map common error responses to user-friendly messages
+        const errorMessages: Record<string, string> = {
+          'email_exists': 'This email is already registered. Please login with your password.',
+          'invalid_token': 'OAuth session expired. Please try signing in again.',
+          'invalid_email': 'Please enter a valid email address.',
+          'invalid_request': 'Something went wrong. Please try again.',
+        };
+        const errorMessage = data.error && errorMessages[data.error]
+          ? errorMessages[data.error]
+          : (data.error || "Failed to complete registration");
+        throw new Error(errorMessage);
       }
 
       // Success - user created
