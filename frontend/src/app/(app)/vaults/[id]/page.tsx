@@ -18,6 +18,7 @@ import { ResearchInsightsPanel } from '@/components/features/ai/ResearchInsights
 import { AILoadingSkeleton } from '@/components/features/ai/AILoadingSkeleton';
 import ChatHistory from '@/components/features/ai/ChatHistory';
 import AskAIChat from '@/components/features/ai/AskAIChat';
+import { ExportCitationsButton } from '@/components/features/vaults/ExportCitationsButton';
 import { VaultRole, VaultInsights, Conversation, ChatMessage } from '@/lib/types/vault';
 import { getVaultInsights, getConversations, getConversation, askQuestion } from '@/lib/api/vaults';
 import { useToast } from '@/hooks/useToast';
@@ -242,11 +243,16 @@ export default function VaultDetailPage() {
                 <p className="text-[#94A3B8] text-lg">{vault.description}</p>
               )}
             </div>
-            {/* Active collaborators */}
-            <div className="flex-shrink-0">
+            {/* Active collaborators and export button */}
+            <div className="flex-shrink-0 flex items-center gap-4">
               <PresenceIndicator
                 vaultId={vaultId.toString()}
                 currentUserId={user?.id}
+              />
+              <ExportCitationsButton
+                vaultId={vaultId}
+                vaultName={vault.name}
+                sourceCount={sources.length}
               />
             </div>
           </div>

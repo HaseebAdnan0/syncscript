@@ -982,3 +982,42 @@ In Progress - US-004 complete
   - Add callback to useEffect dependencies to avoid stale closures
   - State tracking via events decouples components (no prop drilling)
 ---
+
+## Iteration 34 - US-035: Implement Notification Click Navigation
+- Implemented route mapping in NotificationPanel.tsx with getNotificationRoute() function
+- Maps 5 notification types to specific routes:
+  - vault_invite → /vaults/{vault_id}
+  - member_joined → /vaults/{vault_id}/members
+  - source_added → /vaults/{vault_id}/sources/{source_id}
+  - annotation_reply → /vaults/{vault_id}/sources/{source_id}#annotation-{annotation_id}
+  - mention → same as annotation_reply (with anchor link)
+- Updated backend signals to include vault_id in annotation_reply and mention notifications
+  - annotation_reply data now has: vault_id, source_id, annotation_id, parent_id, replier_name, preview
+  - mention data now has: vault_id, source_id, annotation_id, mentioner_name, preview
+- handleNotificationClick marks as read and navigates to route
+- Dropdown auto-closes after navigation (already implemented in existing code)
+- Fixed Notification type conflicts between @/lib/api/notifications and @/types/notifications
+  - Updated @/lib/api/notifications to re-export type from @/types/notifications
+  - Changed NotificationPanel import to use correct Notification type
+  - Updated API function markAsRead to accept string | number for ID compatibility
+  - Changed display from notification.message to notification.title
+- Ran backend tests: 6 annotation signal tests + 7 mention signal tests all pass
+- TypeScript typecheck passes with no errors
+- Commit c91e4be
+- Files changed:
+  - backend/apps/notifications/signals.py (added vault_id to annotation data)
+  - frontend/src/components/features/notifications/NotificationPanel.tsx (added navigation logic)
+  - frontend/src/lib/api/notifications.ts (fixed type imports and ID type)
+  - PRD19.md (marked US-035 complete except browser verification)
+  - progress19.txt (this entry)
+- Learnings for future iterations:
+  - Always check for type conflicts when multiple files define similar types
+  - Use single source of truth for types by re-exporting from canonical location
+  - Optional chaining (?.) and null checks essential for potentially undefined data fields
+  - Backend signal data structure must include all IDs needed for frontend routing
+  - Source.vault.id provides vault_id for annotation-related notifications
+  - Router.push() from next/navigation for client-side navigation
+  - Switch statement pattern clean for mapping enum values to routes
+  - Navigation happens after marking as read for better UX (no wait)
+  - Test backend changes with existing test suites before frontend integration
+---

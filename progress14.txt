@@ -826,3 +826,42 @@ Learnings for future iterations:
 - Success toast: include format name and truncated source title for context
 - Copy buttons: primary (HTML) and secondary (plain text) options for flexibility
 ---
+
+## Iteration 21 - US-019: Add batch export button to vault page
+- Created ExportCitationsButton component with dropdown format selector
+- Added exportVaultCitations() function to lib/api/citations.ts
+- Integrated button into vault detail page header
+- Features:
+  - Dropdown menu with all 6 citation formats (BibTeX, APA, MLA, Chicago, IEEE, Harvard)
+  - Gradient button with Bitcoin DeFi design system (orange accent, dark theme)
+  - Downloads file with format: {vault-name}-citations.{ext}
+  - Disabled state when vault has no sources (with tooltip)
+  - Loading state while exporting ("Exporting..." text)
+  - Success toast with source count and format
+  - Handles async exports (202 response) with notification toast
+  - Error handling with toast messages
+- File download implementation:
+  - Creates blob URL from API response
+  - Programmatically clicks download link
+  - Cleans up blob URL after download
+- Typecheck: Passes with 0 errors
+- Files changed:
+  - frontend/src/components/features/vaults/ExportCitationsButton.tsx (115 lines)
+  - frontend/src/lib/api/citations.ts (+16 lines)
+  - frontend/src/app/(app)/vaults/[id]/page.tsx (import and integration)
+  - PRD14.md: Marked US-019 complete (except browser verification)
+
+Learnings for future iterations:
+- Blob download pattern: window.URL.createObjectURL() + programmatic link click
+- Cleanup blob URLs with window.URL.revokeObjectURL() to prevent memory leaks
+- Radix DropdownMenu.Portal ensures dropdown renders above other content (z-index)
+- Button disabled state should disable both isExporting and sourceCount === 0
+- Toast for async exports (202): "Export started, you'll be notified when ready"
+- Toast for sync exports: Include source count and format for user feedback
+- Download attribute on <a> tag controls filename: `{vault-name}-citations.{ext}`
+- File extension varies: .bib for BibTeX, .txt for all other formats
+- Axios responseType: 'blob' to get binary response for file downloads
+- handleApiError() works with blob responses (throws original error)
+- Button placement: added to header next to PresenceIndicator in flex container
+- Tooltip via title attribute shows on disabled button hover
+---

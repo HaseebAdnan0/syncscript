@@ -243,14 +243,14 @@ SyncScript's AI-powered citation generation system enables researchers to genera
 **Description:** As a user, I want to export all citations from my vault so I can import them into my reference manager.
 
 **Acceptance Criteria:**
-- [ ] Add "Export All Citations" button to vault page header/toolbar
-- [ ] Button opens dropdown with format options
-- [ ] Clicking format triggers export API call
-- [ ] Small/medium vaults: direct file download
-- [ ] Large vaults: show toast "Export started, you'll be notified when ready"
-- [ ] Button disabled with tooltip if vault has no sources
-- [ ] Download filename: `{vault-name}-citations.{ext}`
-- [ ] Typecheck passes
+- [x] Add "Export All Citations" button to vault page header/toolbar
+- [x] Button opens dropdown with format options
+- [x] Clicking format triggers export API call
+- [x] Small/medium vaults: direct file download
+- [x] Large vaults: show toast "Export started, you'll be notified when ready"
+- [x] Button disabled with tooltip if vault has no sources
+- [x] Download filename: `{vault-name}-citations.{ext}`
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-020: Add citation format settings UI

@@ -86,3 +86,24 @@ export const pollCitationTask = async (
 
   throw new Error('Citation generation timed out');
 };
+
+/**
+ * Export all citations from a vault
+ * @param vaultId - Vault ID
+ * @param format - Citation format (apa7, mla9, chicago17, bibtex, ieee, harvard)
+ * @returns File blob for download
+ */
+export const exportVaultCitations = async (
+  vaultId: number,
+  format: string
+): Promise<Blob> => {
+  try {
+    const response = await api.get(`/citations/vaults/${vaultId}/export/`, {
+      params: { format },
+      responseType: 'blob',
+    });
+    return response.data;
+  } catch (error) {
+    throw handleApiError(error);
+  }
+};
