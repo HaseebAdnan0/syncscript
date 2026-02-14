@@ -504,3 +504,30 @@ Learnings for future iterations:
 - Exception handler applies globally to all DRF views
 ---
 
+
+## Iteration 26 - Create User model tests (US-028)
+- Created apps/users/tests/ directory structure with __init__.py
+- Created test_models.py with comprehensive User and EmailVerificationToken tests
+- Fixed migration conflicts by regenerating all app migrations from scratch
+- Fixed 3 failing tests to match actual model behavior:
+  - Related name is 'verification_tokens' not 'emailverificationtoken_set'
+  - EmailVerificationToken.__str__ returns "Token for {email}" format
+  - avatar_url defaults to '' (blank=True) not None
+- All 11 tests pass successfully
+- Django system check passes
+
+Files changed:
+- backend/apps/users/tests/__init__.py (created)
+- backend/apps/users/tests/test_models.py (created with 11 tests)
+- All migration files regenerated to fix UUID/BigInt conflicts
+- PRD1.md (marked US-028 complete)
+
+Learnings for future iterations:
+- Migration conflicts (UUID to BigInt) require dropping test database and regenerating ALL migrations
+- Related_name in ForeignKey determines the reverse accessor name (verification_tokens not emailverificationtoken_set)
+- CharField/URLField with blank=True but no null=True defaults to empty string, not None
+- Django test database creation can fail if previous test DB exists with incompatible schema
+- Use python -c with psycopg to drop test database programmatically when psql is not available
+- Test failures with good error messages make it easy to fix mismatches between test expectations and actual model behavior
+- Always run tests after creating them to verify they pass before committing
+---

@@ -343,10 +343,10 @@ Create a secure, collaborative Knowledge Vault system where researchers can crea
 **Description:** As a vault owner, I want to transfer ownership to another member.
 
 **Acceptance Criteria:**
-- [ ] When setting role=OWNER on a member, validate they are already a member
-- [ ] Previous owner's role automatically set to CONTRIBUTOR
-- [ ] Only one OWNER allowed (enforced before save)
-- [ ] Typecheck passes
+- [x] When setting role=OWNER on a member, validate they are already a member
+- [x] Previous owner's role automatically set to CONTRIBUTOR
+- [x] Only one OWNER allowed (enforced before save)
+- [x] Typecheck passes
 
 ### US-035: Write model unit tests
 **Description:** As a developer, I need tests to verify model behavior.

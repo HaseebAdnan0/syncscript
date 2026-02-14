@@ -206,11 +206,11 @@ Implement cloud file storage for SyncScript using Cloudflare R2 (S3-compatible).
 **Description:** As a system, I need to clean up abandoned multipart uploads to prevent storage waste.
 
 **Acceptance Criteria:**
-- [ ] Create `cleanup_orphaned_multipart_uploads` task in `backend/apps/sources/tasks.py`
-- [ ] List multipart uploads via boto3 `list_multipart_uploads`
-- [ ] Abort uploads initiated > 24 hours ago
-- [ ] Log each aborted upload
-- [ ] Typecheck passes
+- [x] Create `cleanup_orphaned_multipart_uploads` task in `backend/apps/sources/tasks.py`
+- [x] List multipart uploads via boto3 `list_multipart_uploads`
+- [x] Abort uploads initiated > 24 hours ago
+- [x] Log each aborted upload
+- [x] Typecheck passes
 
 ### US-019: Configure Celery Beat schedule for cleanup tasks
 **Description:** As a developer, I need cleanup tasks to run on schedule.
