@@ -419,3 +419,50 @@ vaults/{vault_id}/thumbnails/{uuid}.jpg
 
 ---
 
+
+## Iteration 15 - Create UploadProgressBar component (US-015)
+- Created frontend/src/components/features/uploads/UploadProgressBar.tsx
+- Component implementation:
+  - Accepts filename, progress (0-100), status props
+  - Status type: 'uploading' | 'processing' | 'complete' | 'error'
+  - Filename truncates to 30 chars with ellipsis for long names
+  - Animated progress bar with gradient background
+  - Progress bar width transitions smoothly (duration-300)
+  - Percentage text displayed with status text
+  - Status-specific colors:
+    - uploading: Orange gradient (EA580C → F7931A), orange tint background
+    - processing: Blue gradient (blue-500 → blue-400), blue tint background
+    - complete: Green gradient (green-500 → green-400), green tint background
+    - error: Red gradient (red-500 → red-400), red tint background
+  - Status icons using lucide-react:
+    - Loader2 with animate-spin for uploading/processing
+    - CheckCircle for complete
+    - XCircle for error
+  - Status text labels: "Uploading...", "Processing...", "Upload complete", "Upload failed"
+  - Percentage hidden for error status
+- Styling follows Bitcoin DeFi aesthetic:
+  - Border with white/10 opacity
+  - Rounded-lg card with padding
+  - Smooth transitions on all state changes
+  - Progress bar has black/50 background with gradient fill
+  - Rounded-full progress bar for pill shape
+- Fixed pre-existing dashboard import error:
+  - ContinueResearch uses default export, not named export
+  - Updated dashboard/page.tsx imports (already fixed by linter)
+  - Fixed error.message TypeScript error (error is of type unknown)
+- Files changed:
+  - frontend/src/components/features/uploads/UploadProgressBar.tsx (new)
+  - frontend/src/app/(app)/dashboard/page.tsx (fixed pre-existing errors)
+  - PRD13.md
+  - progress13.txt
+- Learnings for future iterations:
+  - Lucide-react icons: CheckCircle, XCircle, Loader2 work well for upload states
+  - Progress bar width should be clamped: Math.min(100, Math.max(0, progress))
+  - Gradient backgrounds for status colors match Bitcoin aesthetic
+  - Status text and percentage should be in separate flex items
+  - Next.js build generates .next/types files - these are needed for typecheck
+  - Pre-existing ESLint warnings about 'any' types are acceptable (not blocking)
+  - Build succeeded with zero errors, only warnings
+  
+---
+
