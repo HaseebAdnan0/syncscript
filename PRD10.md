@@ -181,12 +181,12 @@ Integrate SyncScript's frontend with the existing backend WebSocket system and n
 **Description:** As a user, I want to hear a sound when notifications arrive so I don't miss important updates.
 
 **Acceptance Criteria:**
-- [ ] Add notification sound file to `frontend/public/sounds/notification.mp3`
-- [ ] Create `frontend/src/lib/notificationSound.ts` utility
-- [ ] Play sound on toast notification if sound enabled in preferences
-- [ ] Respect user's sound toggle preference from localStorage
-- [ ] No sound when tab is not visible (avoid annoying background sounds)
-- [ ] Typecheck passes
+- [x] Add notification sound file to `frontend/public/sounds/notification.mp3`
+- [x] Create `frontend/src/lib/notificationSound.ts` utility
+- [x] Play sound on toast notification if sound enabled in preferences
+- [x] Respect user's sound toggle preference from localStorage
+- [x] No sound when tab is not visible (avoid annoying background sounds)
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-015: Integrate notification components into app header
