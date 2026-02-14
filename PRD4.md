@@ -244,7 +244,7 @@ Establish the Next.js 16 frontend foundation for SyncScript with a Bitcoin DeFi-
 **Description:** As a developer, I want an Axios client that automatically refreshes expired tokens so that API requests never fail due to auth expiry.
 
 **Acceptance Criteria:**
-- [ ] Create `src/lib/api.ts` with:
+- [x] Create `src/lib/api.ts` with:
   - Axios instance with `baseURL` from `process.env.NEXT_PUBLIC_API_URL`
   - Request interceptor: attach `Authorization: Bearer {accessToken}` from auth store
   - Response interceptor:
@@ -253,8 +253,8 @@ Establish the Next.js 16 frontend foundation for SyncScript with a Bitcoin DeFi-
     - On refresh failure, clear auth state and redirect to `/login`
   - Export `api` instance
   - Export `ApiError` type for error handling
-- [ ] Create `src/lib/types/api.ts` with common API response types
-- [ ] Typecheck passes
+- [x] Create `src/lib/types/api.ts` with common API response types
+- [x] Typecheck passes
 
 ---
 

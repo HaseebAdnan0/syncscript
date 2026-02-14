@@ -100,3 +100,24 @@
   - Upload URLs use 'put_object' operation, download URLs use 'get_object' operation
   - Content-Disposition header triggers browser download with original filename
 ---
+
+## Iteration 6 - US-006: Create upload URL endpoint
+- Task was already completed in a previous session (commit 440cc63)
+- Verified implementation exists:
+  - UploadURLRequestSerializer and UploadURLResponseSerializer in backend/apps/sources/serializers.py
+  - PDFUploadViewSet.upload_url() action in backend/apps/sources/views.py
+  - URL routing in backend/apps/sources/urls.py wired to config/urls.py
+  - Permission checking via _check_vault_permission() helper
+  - Django system check passes
+- Files verified:
+  - backend/apps/sources/serializers.py (serializers for request/response)
+  - backend/apps/sources/views.py (ViewSet with upload_url action)
+  - backend/apps/sources/urls.py (router configuration)
+  - backend/config/urls.py (includes sources URLs)
+  - PRD6.md (already marked complete)
+- Learnings for future iterations:
+  - Always check git history before re-implementing (git log -- <file>)
+  - Previous sessions may have completed tasks without updating progress file
+  - Django system check is sufficient to verify endpoint wiring
+  - US-006 endpoint: POST /api/v1/sources/pdfs/upload-url/
+---

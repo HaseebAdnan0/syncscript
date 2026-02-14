@@ -62,9 +62,9 @@ class MetadataExtractionTests(TestCase):
         result = extract_metadata(url)
 
         # Assertions
-        self.assertEqual(result['title'], url)
+        self.assertEqual(result.get('title'), url)
         self.assertIn('error', result)
-        self.assertIn("Invalid URL", result['error'])
+        self.assertIn("Invalid URL", result.get('error', ''))
 
     @patch('apps.sources.services.Article')
     def test_http_404_error(self, mock_article_class: MagicMock) -> None:
@@ -79,9 +79,9 @@ class MetadataExtractionTests(TestCase):
         result = extract_metadata(url)
 
         # Assertions
-        self.assertEqual(result['title'], url)
+        self.assertEqual(result.get('title'), url)
         self.assertIn('error', result)
-        self.assertIn("404", result['error'])
+        self.assertIn("404", result.get('error', ''))
 
     @patch('apps.sources.services.Article')
     def test_http_500_error(self, mock_article_class: MagicMock) -> None:
@@ -96,9 +96,9 @@ class MetadataExtractionTests(TestCase):
         result = extract_metadata(url)
 
         # Assertions
-        self.assertEqual(result['title'], url)
+        self.assertEqual(result.get('title'), url)
         self.assertIn('error', result)
-        self.assertIn("500", result['error'])
+        self.assertIn("500", result.get('error', ''))
 
     @patch('apps.sources.services.Article')
     def test_empty_title_uses_url_fallback(self, mock_article_class: MagicMock) -> None:
@@ -116,7 +116,7 @@ class MetadataExtractionTests(TestCase):
         result = extract_metadata(url)
 
         # Assertions
-        self.assertEqual(result['title'], url)
-        self.assertEqual(result['authors'], [])
-        self.assertIsNone(result['publication_date'])
-        self.assertEqual(result['abstract'], "Some content here")
+        self.assertEqual(result.get('title'), url)
+        self.assertEqual(result.get('authors'), [])
+        self.assertIsNone(result.get('publication_date'))
+        self.assertEqual(result.get('abstract'), "Some content here")

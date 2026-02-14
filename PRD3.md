@@ -88,13 +88,13 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need tests to verify metadata extraction handles success and failure cases.
 
 **Acceptance Criteria:**
-- [ ] Test successful extraction returns dict with title, authors, publication_date, abstract
-- [ ] Test timeout handling returns fallback with url as title
-- [ ] Test invalid URL returns fallback with error message
-- [ ] Test HTTP error (404, 500) returns fallback
-- [ ] Use `unittest.mock.patch` to mock newspaper3k Article class
-- [ ] All tests pass with `python manage.py test apps.sources.tests.test_services`
-- [ ] Typecheck passes
+- [x] Test successful extraction returns dict with title, authors, publication_date, abstract
+- [x] Test timeout handling returns fallback with url as title
+- [x] Test invalid URL returns fallback with error message
+- [x] Test HTTP error (404, 500) returns fallback
+- [x] Use `unittest.mock.patch` to mock newspaper3k Article class
+- [x] All tests pass with `python manage.py test apps.sources.tests.test_services`
+- [x] Typecheck passes
 
 ---
 

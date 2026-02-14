@@ -161,3 +161,43 @@ Learnings for future iterations:
 - Django system check is sufficient for typecheck - Pyright import warnings are false positives
 ---
 
+## Iteration 10 - Create email verification HTML template (US-012)
+- Verified backend/templates/emails/verify_email.html already exists (created in commit 440cc63)
+- Template includes user greeting ({{ user.username }})
+- Template includes verification link ({{ verification_url }})
+- Template includes 24-hour expiration notice
+- Template uses Bitcoin DeFi aesthetic (gradient background, orange colors)
+- US-012 already marked complete in PRD1.md
+- No changes needed - task was already done in previous work
+
+Files changed:
+- None (task already complete)
+
+Learnings for future iterations:
+- Always check git history before implementing - some tasks may already be done
+- Use `git ls-files` to check if files are tracked
+- Use `git show HEAD:file` to check committed state vs working directory
+- verify_email.html was created as part of US-006 in a different iteration
+- Email templates follow the Bitcoin DeFi design system (gradients, orange/gold colors, dark backgrounds)
+---
+
+## Iteration 11 - Create email helper functions (US-013)
+- Created apps/users/emails.py with send_verification_email function
+- Used Django's send_mail with html_message parameter
+- Used render_to_string to render verify_email.html template with user and verification_url context
+- Used strip_tags to generate plain text fallback from HTML
+- Verification URL built using settings.SITE_URL
+- Django system check passes
+
+Files changed:
+- backend/apps/users/emails.py (created)
+- PRD1.md (marked US-013 complete)
+
+Learnings for future iterations:
+- render_to_string from django.template.loader renders templates with context
+- strip_tags from django.utils.html removes HTML tags for plain text fallback
+- send_mail html_message parameter allows sending both plain and HTML emails
+- settings.SITE_URL used to build absolute URLs for emails
+- fail_silently=False ensures email errors are raised (good for debugging)
+---
+

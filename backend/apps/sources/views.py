@@ -2,6 +2,7 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import serializers as drf_serializers
 from django.shortcuts import get_object_or_404
 from .models import PDFUpload
 from .serializers import (
@@ -121,3 +122,49 @@ class PDFUploadViewSet(viewsets.ModelViewSet):
         response_serializer.is_valid(raise_exception=True)
 
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=['post'], url_path='complete')
+    def complete(self, request, pk=None):
+        """
+        POST /api/v1/sources/pdfs/{upload_id}/complete/
+
+        Mark upload as complete and trigger post-processing.
+        Called by client after successfully uploading file to S3.
+
+        Request body:
+        - file_key (str): S3 object key where file was uploaded
+
+        Response:
+        - pdf_id (UUID): PDFUpload record ID
+        - status (str): Processing status
+        - message (str): Success message
+        """
+        # Validate request
+        class CompletionRequestSerializer(drf_serializers.Serializer):
+            file_key = drf_serializers.CharField(required=True)
+
+        request_serializer = CompletionRequestSerializer(data=request.data)
+        request_serializer.is_valid(raise_exception=True)
+
+        file_key = request_serializer.validated_data['file_key']
+
+        # Get PDFUpload record
+        pdf_upload = get_object_or_404(PDFUpload, id=pk)
+
+        # Verify user has permission (must be uploader or vault owner/contributor)
+        self._check_vault_permission(pdf_upload.vault.id, request.user)
+
+        # Update status to 'processing'
+        pdf_upload.processing_status = 'processing'
+        pdf_upload.file = file_key  # Update with actual S3 key if different
+        pdf_upload.save()
+
+        # TODO: Trigger Celery task for post-processing
+        # from .tasks import process_uploaded_pdf
+        # process_uploaded_pdf.delay(str(pdf_upload.id))
+
+        return Response({
+            'pdf_id': pdf_upload.id,
+            'status': pdf_upload.processing_status,
+            'message': 'Upload marked as complete. Processing will begin shortly.'
+        }, status=status.HTTP_200_OK)

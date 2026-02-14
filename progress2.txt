@@ -141,3 +141,30 @@
   - Pyright warnings on Meta class are false positives from DRF type stubs - ignore them
 ---
 
+## Iteration 12 - US-011: Create AuditLogSerializer
+- Added AuditLogSerializer for immutable audit log API responses
+- Files changed:
+  - backend/apps/vaults/serializers.py (added AuditLogSerializer class)
+  - PRD2.md (marked US-011 as complete)
+- Django check passed with no issues
+- Learnings for future iterations:
+  - Audit logs are immutable - all fields in read_only_fields including id, vault, actor, action, metadata, created_at
+  - Simple ModelSerializer pattern without computed fields or source overrides
+  - AuditLog model was already imported from previous iterations
+  - Commit passed successfully with clean test verification
+---
+
+## Iteration 13 - US-012: Create IsVaultOwner permission
+- Implemented IsVaultOwner permission class for vault management actions
+- Files changed:
+  - backend/apps/vaults/permissions.py (created IsVaultOwner class)
+  - PRD2.md (marked US-012 as complete)
+- Django check passed with no issues
+- Learnings for future iterations:
+  - BasePermission requires has_object_permission method signature (request, view, obj)
+  - Use hasattr to detect Vault objects (have 'members' attr) vs objects with .vault attribute
+  - VaultMembership.objects.filter().exists() is efficient for boolean permission checks
+  - Import RoleChoices from models to reference OWNER constant
+  - Pyright warnings on unused 'view' param are expected - DRF requires this signature
+---
+

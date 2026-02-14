@@ -176,11 +176,11 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a developer, I need helper functions to send verification and password reset emails.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/users/emails.py`
-- [ ] Implement send_verification_email(user, token) using Django's send_mail
-- [ ] Render HTML template with context
-- [ ] Include plain text fallback
-- [ ] Typecheck passes
+- [x] Create `apps/users/emails.py`
+- [x] Implement send_verification_email(user, token) using Django's send_mail
+- [x] Render HTML template with context
+- [x] Include plain text fallback
+- [x] Typecheck passes
 
 ---
 
