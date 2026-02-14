@@ -268,15 +268,15 @@ Create the complete vault management interface for SyncScript, enabling research
 **Description:** As a vault owner, I want to permanently delete my vault with confirmation so I don't accidentally lose data.
 
 **Acceptance Criteria:**
-- [ ] "Delete Vault" button in Danger Zone (red styling)
-- [ ] Click opens modal with warning: "This action cannot be undone"
-- [ ] Modal requires typing vault name exactly to enable delete button
-- [ ] Input shows validation: green check when matches, red X when doesn't
-- [ ] Delete button disabled until name matches
-- [ ] Confirm triggers useDeleteVault mutation
-- [ ] On success: redirect to vaults list, show toast
-- [ ] Only visible to Owner role
-- [ ] Typecheck passes
+- [x] "Delete Vault" button in Danger Zone (red styling)
+- [x] Click opens modal with warning: "This action cannot be undone"
+- [x] Modal requires typing vault name exactly to enable delete button
+- [x] Input shows validation: green check when matches, red X when doesn't
+- [x] Delete button disabled until name matches
+- [x] Confirm triggers useDeleteVault mutation
+- [x] On success: redirect to vaults list, show toast
+- [x] Only visible to Owner role
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ### US-021: Role-based UI rendering

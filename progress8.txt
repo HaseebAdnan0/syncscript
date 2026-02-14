@@ -554,3 +554,39 @@ Learnings for future iterations:
 - Toast notifications provide user feedback for success/error states
 - Vault name/description updated in cache automatically via React Query invalidation
 ---
+
+## Iteration 20 - US-019: Settings tab - archive vault
+- Added "Danger Zone" section to VaultSettings component with archive vault functionality:
+  - Section uses border-2 border-[#EA580C]/30 for orange/red border (danger zone styling)
+  - AlertTriangle icon from Lucide with orange color for visual warning
+  - "Archive Vault" button with orange accent colors and hover effects
+  - Only visible to vault Owners (isOwner check)
+- Implemented archive confirmation dialog using Radix Dialog:
+  - Glass morphism modal: bg-[#0F1115] backdrop-blur-lg border border-white/10
+  - Dialog explains archive behavior with bullet points (hide, remove access, preserve data, restorable)
+  - Warning text in orange: "This action can be reversed, but members will need to be re-added"
+  - Cancel button and Archive button with loading state
+- Archive flow uses useArchiveVault(vault.id) hook:
+  - On success: shows toast with vault name, closes dialog, redirects to /vaults
+  - On error: displays error toast with failure message
+  - Loading state: disabled buttons, "Archiving..." text
+- useArchiveVault hook already existed from US-002 (Iteration 2)
+- Typecheck passes successfully
+- Committed changes with feat: commit message
+
+Files changed:
+- frontend/src/components/features/vaults/VaultSettings.tsx (added Danger Zone section, archive dialog, handler)
+- PRD8.md (marked US-019 complete except browser verification)
+
+Learnings for future iterations:
+- Danger Zone styling: border-2 with orange/red tint (border-[#EA580C]/30) for warning emphasis
+- AlertTriangle icon effective for danger zone sections (visual warning cue)
+- Archive button uses orange accent: bg-[#EA580C]/10 text-[#EA580C] border border-[#EA580C]/50
+- Confirmation dialogs should explain consequences with bullet points for clarity
+- Archive vs Delete: Archive is reversible but requires member re-addition (note in dialog)
+- After destructive actions, redirect to parent list page (router.push('/vaults'))
+- Toast should include specific context (vault name) for better user feedback
+- Dialog.Close should be disabled during mutations to prevent premature close
+- useArchiveVault takes vaultId in constructor, mutateAsync() called with no params
+- Archived vaults will be hidden from main list (backend filters by is_archived=false)
+---

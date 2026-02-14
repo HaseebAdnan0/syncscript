@@ -4,14 +4,27 @@ import { useAuthStore } from '@/stores/authStore';
 // Base URL from environment variable
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
 
-// Create axios instance with credentials support for httpOnly cookies
+// Create axios instance
 export const api = axios.create({
   baseURL: API_BASE_URL,
-  withCredentials: true, // Enable sending/receiving httpOnly cookies
   headers: {
     'Content-Type': 'application/json',
   },
 });
+
+// Request interceptor: Add Authorization header
+api.interceptors.request.use(
+  (config) => {
+    const { accessToken } = useAuthStore.getState();
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 // Flag to prevent multiple simultaneous refresh requests
 let isRefreshing = false;
@@ -35,7 +48,6 @@ const processQueue = (error: unknown) => {
 // Response interceptor: Handle 401 errors and token refresh
 api.interceptors.response.use(
   (response) => {
-    // Return successful responses as-is
     return response;
   },
   async (error: AxiosError) => {
@@ -43,8 +55,13 @@ api.interceptors.response.use(
 
     // If error is 401 and we haven't retried yet
     if (error.response?.status === 401 && !originalRequest._retry) {
+      // Skip refresh for login/register endpoints
+      if (originalRequest.url?.includes('/auth/login') ||
+          originalRequest.url?.includes('/auth/register')) {
+        return Promise.reject(error);
+      }
+
       if (isRefreshing) {
-        // If already refreshing, queue this request
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         })
@@ -60,12 +77,23 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        // Attempt to refresh the token via httpOnly cookie
-        await axios.post(
+        const { refreshToken, setTokens } = useAuthStore.getState();
+
+        if (!refreshToken) {
+          throw new Error('No refresh token');
+        }
+
+        // Attempt to refresh the token
+        const response = await axios.post(
           `${API_BASE_URL}/auth/refresh/`,
-          {},
-          { withCredentials: true }
+          { refresh: refreshToken }
         );
+
+        const { access, refresh } = response.data;
+        setTokens(access, refresh || refreshToken);
+
+        // Update the failed request's auth header
+        originalRequest.headers.Authorization = `Bearer ${access}`;
 
         // Process queued requests
         processQueue(null);
@@ -89,7 +117,6 @@ api.interceptors.response.use(
       }
     }
 
-    // For other errors, just reject
     return Promise.reject(error);
   }
 );
@@ -112,17 +139,18 @@ export const handleApiError = (error: unknown): ApiError => {
     const axiosError = error as AxiosError<{
       detail?: string;
       message?: string;
+      error?: string;
       [key: string]: unknown;
     }>;
 
     if (axiosError.response) {
       const { data, status } = axiosError.response;
-      const message = data?.detail || data?.message || 'An error occurred';
+      const message = data?.detail || data?.error || data?.message || 'An error occurred';
 
       // Extract field-specific errors if present
       const errors: Record<string, string[]> = {};
       Object.entries(data).forEach(([key, value]) => {
-        if (Array.isArray(value) && key !== 'detail' && key !== 'message') {
+        if (Array.isArray(value) && key !== 'detail' && key !== 'message' && key !== 'error') {
           errors[key] = value as string[];
         }
       });

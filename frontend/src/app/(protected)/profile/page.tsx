@@ -81,6 +81,76 @@ export default function ProfilePage() {
     }
   };
 
+  // Validate password change form
+  const validatePasswordForm = (): boolean => {
+    const errors: typeof passwordErrors = {};
+
+    if (!currentPassword.trim()) {
+      errors.currentPassword = 'Current password is required';
+    }
+
+    if (!newPassword.trim()) {
+      errors.newPassword = 'New password is required';
+    } else if (newPassword.length < 8) {
+      errors.newPassword = 'Password must be at least 8 characters';
+    }
+
+    if (!confirmNewPassword.trim()) {
+      errors.confirmNewPassword = 'Please confirm your new password';
+    } else if (newPassword !== confirmNewPassword) {
+      errors.confirmNewPassword = 'Passwords do not match';
+    }
+
+    setPasswordErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  // Handle password change form submission
+  const handlePasswordSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+
+    if (!validatePasswordForm()) {
+      return;
+    }
+
+    setIsPasswordLoading(true);
+
+    try {
+      await api.post('/auth/password-change/', {
+        old_password: currentPassword,
+        new_password: newPassword,
+      });
+
+      // Clear form on success
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmNewPassword('');
+      setPasswordErrors({});
+
+      toast({
+        title: 'Success',
+        description: 'Password updated successfully',
+      });
+    } catch (error: any) {
+      // Check if error is due to wrong current password
+      const errorMessage = error.response?.data?.old_password?.[0] ||
+                          error.response?.data?.message ||
+                          'Failed to update password';
+
+      if (errorMessage.toLowerCase().includes('incorrect') ||
+          errorMessage.toLowerCase().includes('wrong')) {
+        setPasswordErrors({ currentPassword: errorMessage });
+      } else {
+        toast({
+          title: 'Error',
+          description: errorMessage,
+        });
+      }
+    } finally {
+      setIsPasswordLoading(false);
+    }
+  };
+
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-[#030304] py-12">
@@ -185,9 +255,53 @@ export default function ProfilePage() {
                 <h2 className="text-2xl font-heading font-bold text-white mb-6">
                   Security Settings
                 </h2>
-                <p className="text-[#94A3B8]">
-                  Password change form will be implemented in US-019
-                </p>
+
+                <form onSubmit={handlePasswordSubmit} className="space-y-6">
+                  {/* Current Password */}
+                  <FormInput
+                    label="Current Password"
+                    type="password"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    error={passwordErrors.currentPassword}
+                    placeholder="Enter your current password"
+                  />
+
+                  {/* New Password */}
+                  <div>
+                    <FormInput
+                      label="New Password"
+                      type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      error={passwordErrors.newPassword}
+                      placeholder="Enter your new password (min 8 characters)"
+                    />
+                    {/* Password Strength Indicator */}
+                    <PasswordStrength password={newPassword} />
+                  </div>
+
+                  {/* Confirm New Password */}
+                  <FormInput
+                    label="Confirm New Password"
+                    type="password"
+                    value={confirmNewPassword}
+                    onChange={(e) => setConfirmNewPassword(e.target.value)}
+                    error={passwordErrors.confirmNewPassword}
+                    placeholder="Re-enter your new password"
+                  />
+
+                  {/* Submit Button */}
+                  <div className="pt-4">
+                    <GradientButton
+                      type="submit"
+                      isLoading={isPasswordLoading}
+                      className="w-full sm:w-auto"
+                    >
+                      Update Password
+                    </GradientButton>
+                  </div>
+                </form>
               </div>
             </Tabs.Content>
           </Tabs.Root>

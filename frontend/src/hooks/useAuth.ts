@@ -16,8 +16,14 @@ interface AuthResult {
   error?: string;
 }
 
+interface LoginResponse {
+  access: string;
+  refresh: string;
+  user: User;
+}
+
 export const useAuth = () => {
-  const { setUser, clearUser, setLoading } = useAuthStore();
+  const { setUser, setTokens, clearUser, setLoading } = useAuthStore();
 
   /**
    * Login user with email and password
@@ -27,12 +33,14 @@ export const useAuth = () => {
     async (email: string, password: string): Promise<AuthResult> => {
       try {
         setLoading(true);
-        const response = await api.post<{ user: User }>('/auth/login/', {
+        const response = await api.post<LoginResponse>('/auth/login/', {
           email,
           password,
         });
 
-        setUser(response.data.user);
+        const { access, refresh, user } = response.data;
+        setTokens(access, refresh);
+        setUser(user);
         return { success: true };
       } catch (error) {
         const apiError = handleApiError(error);
@@ -41,7 +49,7 @@ export const useAuth = () => {
         setLoading(false);
       }
     },
-    [setUser, setLoading]
+    [setUser, setTokens, setLoading]
   );
 
   /**
@@ -51,10 +59,13 @@ export const useAuth = () => {
     async (data: RegisterData): Promise<AuthResult> => {
       try {
         setLoading(true);
-        const response = await api.post<{ user: User }>('/auth/register/', data);
+        const response = await api.post<LoginResponse>('/auth/register/', data);
 
-        // Auto-login: backend should set httpOnly cookie on registration
-        setUser(response.data.user);
+        const { access, refresh, user } = response.data;
+        if (access && refresh) {
+          setTokens(access, refresh);
+        }
+        setUser(user);
         return { success: true };
       } catch (error) {
         const apiError = handleApiError(error);
@@ -63,18 +74,16 @@ export const useAuth = () => {
         setLoading(false);
       }
     },
-    [setUser, setLoading]
+    [setUser, setTokens, setLoading]
   );
 
   /**
    * Logout user and clear session
-   * Clears auth store and httpOnly cookies via backend
    */
   const logout = useCallback(async (): Promise<AuthResult> => {
     try {
       setLoading(true);
       await api.post('/auth/logout/');
-
       clearUser();
       return { success: true };
     } catch (error) {
@@ -95,7 +104,6 @@ export const useAuth = () => {
     try {
       setLoading(true);
       const response = await api.get<User>('/auth/me/');
-
       setUser(response.data);
       return { success: true };
     } catch (error) {
