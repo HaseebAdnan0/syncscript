@@ -521,12 +521,12 @@ SyncScript needs a complete notification system to keep researchers informed abo
 **Description:** As a user, I want to enable/disable push notifications.
 
 **Acceptance Criteria:**
-- [ ] Master toggle for "Enable push notifications"
-- [ ] Sub-toggles: "New sources", "Annotation activity"
-- [ ] Request browser permission when enabling
-- [ ] Show permission status (granted/denied/prompt)
-- [ ] Disable sub-toggles if master is off
-- [ ] Typecheck passes
+- [x] Master toggle for "Enable push notifications"
+- [x] Sub-toggles: "New sources", "Annotation activity"
+- [x] Request browser permission when enabling
+- [x] Show permission status (granted/denied/prompt)
+- [x] Disable sub-toggles if master is off
+- [x] Typecheck passes
 - [ ] Verify changes work in browser
 
 ---

@@ -1077,3 +1077,30 @@ In Progress - US-004 complete
   - Check icon from lucide-react for "Saved" confirmation
 ---
 
+## Iteration 37 - US-038: Add Email Frequency Selector to Preferences
+- Implemented radio group for email_digest_frequency with 4 options (immediate, daily, weekly, none)
+- Added handleFrequencyChange handler that calls updatePreferences mutation
+- Radio buttons styled with Bitcoin DeFi aesthetic (orange gradient for selected, dark for unselected)
+- Each option displays clear title and description explaining what it does
+- Selected state uses border-[#F7931A] with bg-[#F7931A]/5 background tint
+- Hover state on unselected options uses border-[#F7931A]/30
+- Disabled email toggles (vault_activity, mentions) when frequency is "none"
+- Reused existing updatePreferencesMutation for API updates with optimistic updates
+- Saved confirmation indicator already working from US-037
+- TypeScript typecheck passes
+- Commit c7f2a54
+- Files changed:
+  - frontend/src/app/(app)/settings/notifications/page.tsx (added frequency selector UI)
+  - PRD19.md (marked US-038 complete except browser verification)
+- Learnings for future iterations:
+  - Radio inputs require name attribute to group them together (same name = only one selectable)
+  - Use checked={value === current} pattern for controlled radio buttons
+  - onChange on radio calls handler with new value, not toggle pattern like checkboxes
+  - Conditional disable: disabled={!preferences || preferences.field === 'value'}
+  - Label wrapping input makes entire card clickable (better UX)
+  - Radio input styling: text-[#F7931A] for checked color, border-white/20 for border
+  - focus:ring-[#F7931A] focus:ring-offset-0 for focus state
+  - Descriptions explain when/how frequently emails are sent (helpful for users)
+  - pt-4 border-t border-white/10 separates frequency selector from toggles visually
+---
+

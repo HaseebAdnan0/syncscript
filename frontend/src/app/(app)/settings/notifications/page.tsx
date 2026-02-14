@@ -1,15 +1,17 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Bell, Mail, VolumeX, ChevronLeft, Check } from 'lucide-react';
+import { Bell, Mail, VolumeX, ChevronLeft, Check, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { getMutedVaults, getPreferences, updatePreferences } from '@/lib/api';
 import type { MutedVault, NotificationPreferences } from '@/types/notifications';
+import { requestNotificationPermission } from '@/lib/pusher';
 
 export default function NotificationPreferencesPage() {
   const queryClient = useQueryClient();
   const [showSaved, setShowSaved] = useState(false);
+  const [permissionStatus, setPermissionStatus] = useState<'granted' | 'denied' | 'default'>('default');
 
   // Fetch muted vaults
   const { data: mutedVaults, isLoading: isLoadingVaults } = useQuery<MutedVault[]>({
@@ -67,6 +69,32 @@ export default function NotificationPreferencesPage() {
   const handleFrequencyChange = (frequency: 'immediate' | 'daily' | 'weekly' | 'none') => {
     updatePreferencesMutation.mutate({ email_digest_frequency: frequency });
   };
+
+  const handlePushToggle = async (field: keyof NotificationPreferences, value: boolean) => {
+    // If enabling push_enabled, request browser permission first
+    if (field === 'push_enabled' && value) {
+      const granted = await requestNotificationPermission();
+      if (!granted) {
+        // Permission denied, don't enable push
+        return;
+      }
+    }
+    updatePreferencesMutation.mutate({ [field]: value });
+  };
+
+  // Check notification permission status on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      setPermissionStatus(Notification.permission);
+    }
+  }, []);
+
+  // Update permission status when push_enabled changes
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      setPermissionStatus(Notification.permission);
+    }
+  }, [preferences?.push_enabled]);
 
   const isLoading = isLoadingVaults || isLoadingPreferences;
 
@@ -302,8 +330,108 @@ export default function NotificationPreferencesPage() {
                   <p className="text-[#94A3B8] text-sm">Configure browser push notification settings</p>
                 </div>
               </div>
-              <div className="space-y-4">
-                <p className="text-[#94A3B8]">Push notification controls will be added in US-039</p>
+              <div className="space-y-6">
+                {/* Permission Status Banner */}
+                {permissionStatus === 'denied' && (
+                  <div className="flex items-start gap-3 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
+                    <AlertCircle className="h-5 w-5 text-red-400 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <div className="text-red-300 font-medium">Browser notifications blocked</div>
+                      <div className="text-red-300/80 text-sm mt-1">
+                        You&apos;ve blocked notifications for this site. To enable them, update your browser settings.
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {permissionStatus === 'default' && preferences?.push_enabled && (
+                  <div className="flex items-start gap-3 p-4 bg-[#F7931A]/10 border border-[#F7931A]/20 rounded-lg">
+                    <AlertCircle className="h-5 w-5 text-[#F7931A] flex-shrink-0 mt-0.5" />
+                    <div>
+                      <div className="text-[#F7931A] font-medium">Permission required</div>
+                      <div className="text-[#F7931A]/80 text-sm mt-1">
+                        Enable the master toggle below to grant browser notification permission.
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Master Toggle */}
+                <div className="flex items-center justify-between p-4 bg-black/30 rounded-lg border border-white/5 hover:border-[#F7931A]/20 transition-colors">
+                  <div className="flex-1">
+                    <h3 className="text-white font-medium mb-1">Enable push notifications</h3>
+                    <p className="text-[#94A3B8] text-sm">
+                      Receive real-time browser notifications when activity happens in your vaults
+                    </p>
+                    {permissionStatus === 'granted' && preferences?.push_enabled && (
+                      <p className="text-green-400 text-xs mt-2">✓ Browser permission granted</p>
+                    )}
+                  </div>
+                  <button
+                    onClick={() => handlePushToggle('push_enabled', !preferences?.push_enabled)}
+                    className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${
+                      preferences?.push_enabled
+                        ? 'bg-gradient-to-r from-[#EA580C] to-[#F7931A]'
+                        : 'bg-[#1E293B]'
+                    }`}
+                    disabled={!preferences}
+                  >
+                    <span
+                      className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${
+                        preferences?.push_enabled ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                </div>
+
+                {/* New Sources Sub-toggle */}
+                <div className="flex items-center justify-between p-4 bg-black/30 rounded-lg border border-white/5 hover:border-[#F7931A]/20 transition-colors">
+                  <div className="flex-1">
+                    <h3 className="text-white font-medium mb-1">New sources</h3>
+                    <p className="text-[#94A3B8] text-sm">
+                      Get notified when new sources are added to your vaults
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => handlePushToggle('push_sources', !preferences?.push_sources)}
+                    className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${
+                      preferences?.push_sources
+                        ? 'bg-gradient-to-r from-[#EA580C] to-[#F7931A]'
+                        : 'bg-[#1E293B]'
+                    }`}
+                    disabled={!preferences || !preferences.push_enabled}
+                  >
+                    <span
+                      className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${
+                        preferences?.push_sources ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                </div>
+
+                {/* Annotation Activity Sub-toggle */}
+                <div className="flex items-center justify-between p-4 bg-black/30 rounded-lg border border-white/5 hover:border-[#F7931A]/20 transition-colors">
+                  <div className="flex-1">
+                    <h3 className="text-white font-medium mb-1">Annotation activity</h3>
+                    <p className="text-[#94A3B8] text-sm">
+                      Get notified when someone replies to your annotations or mentions you
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => handlePushToggle('push_annotations', !preferences?.push_annotations)}
+                    className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${
+                      preferences?.push_annotations
+                        ? 'bg-gradient-to-r from-[#EA580C] to-[#F7931A]'
+                        : 'bg-[#1E293B]'
+                    }`}
+                    disabled={!preferences || !preferences.push_enabled}
+                  >
+                    <span
+                      className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${
+                        preferences?.push_annotations ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                </div>
               </div>
             </section>
 
