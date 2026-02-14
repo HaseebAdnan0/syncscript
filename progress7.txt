@@ -363,3 +363,24 @@
   - All validation errors stored in profileErrors object with field-specific keys
   - Typecheck and build pass successfully with no errors
 ---
+
+## Summary: US-018 Verification Complete
+
+US-018 was already implemented in commit 873aeba but progress tracker wasn't updated.
+
+**What was verified:**
+- Profile form with first_name, last_name, email (read-only), bio fields
+- Form pre-populates from auth store user data
+- Validation: first name required, min 2 chars
+- PUT to /auth/me/ on submit
+- Loading state during save
+- Success toast and store update on success
+- Error toast on failure
+- Typecheck passes
+
+**Files involved:**
+- frontend/src/app/(protected)/profile/page.tsx (already committed)
+- PRD7.md (already marked complete)
+- progress7.txt (updated to reflect completion)
+
+**Next task:** US-019 - Build security tab with password change
