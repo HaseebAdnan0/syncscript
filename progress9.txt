@@ -111,3 +111,30 @@ Learnings for future iterations:
 - Optional callbacks (onEdit, onDelete) allow parent to control functionality
 ---
 
+## Iteration 5 - US-005 & US-006: SourcesListHeader and view preference hook
+- Created SourcesListHeader component at frontend/src/components/features/sources/SourcesListHeader.tsx
+- Created useSourcesViewPreference hook at frontend/src/hooks/useSourcesViewPreference.ts
+- Header displays "Sources" title with count badge (orange Bitcoin theme)
+- View toggle buttons (Grid/List icons) with active state using orange gradient
+- Active button has gradient bg: from-[#EA580C] to-[#F7931A] with orange shadow
+- Inactive buttons show muted color (#94A3B8) with hover to white
+- Add Source button uses primary gradient style with rounded-full shape
+- Hook manages localStorage persistence with key 'syncscript:sources-view'
+- Default view mode is 'grid', persists immediately on change
+- Typecheck passes ✓
+
+Files changed:
+- frontend/src/components/features/sources/SourcesListHeader.tsx (new)
+- frontend/src/hooks/useSourcesViewPreference.ts (new)
+- PRD9.md (marked US-005 and US-006 complete except browser verification)
+
+Learnings for future iterations:
+- View toggle uses button elements (not Button component) for tight control over styling
+- Active state uses same gradient as primary buttons for consistency
+- localStorage requires useEffect for SSR-safe initialization in Next.js
+- Badge count uses Bitcoin orange theme: bg-[#F7931A]/20 text-[#F7931A] border-[#F7931A]/30
+- Toggle buttons grouped in glass morphism container: bg-[#0F1115] border border-white/10 rounded-lg
+- Icons from lucide-react: Grid and List for view modes, Plus for add button
+- Files were committed in commit 610352e alongside empty vaults state
+---
+
