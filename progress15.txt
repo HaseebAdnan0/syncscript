@@ -64,3 +64,27 @@ Learnings for future iterations:
 - Settings can be read with getattr(settings, 'KEY', default) for graceful fallback
 - Test users need username because User.REQUIRED_FIELDS = ['username']
 ---
+
+## Iteration 3 - US-003: Create rate limiting decorator for AI endpoints
+- Discovered US-003 was already completed in commit 6b8b31b (previous work session)
+- Verified implementation is correct:
+  - apps/ai/decorators.py exists with @ai_rate_limit decorator
+  - Decorator properly checks get_remaining_requests(user) before allowing request
+  - Returns 429 with correct JSON response format when limit exceeded
+  - Fully typed with type annotations (Callable, Any, Request, Response)
+  - Comprehensive test suite with 4 tests in RateLimitDecoratorTestCase
+- All tests pass successfully (verified with python manage.py test)
+- PRD15.md already marked US-003 complete
+
+Files verified:
+- backend/apps/ai/decorators.py (already exists, properly typed)
+- backend/apps/ai/tests.py (RateLimitDecoratorTestCase already exists)
+- PRD15.md (US-003 already marked [x])
+
+Learnings for future iterations:
+- Always check git history before implementing - may already be done
+- Use `git log --oneline -- <file>` to check file history
+- REST framework tests need force_authenticate() for authenticated requests
+- DRF decorators should use Request type hint, not HttpRequest
+- Timezone-aware datetimes: use timezone.now() and .replace() for midnight calculation
+---
