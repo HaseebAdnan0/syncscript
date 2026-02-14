@@ -46,3 +46,4 @@ def extract_metadata(url: str) -> MetadataDict:
         return {
             'title': url,
             'error': str(e),
+        }

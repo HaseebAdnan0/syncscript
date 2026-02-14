@@ -42,3 +42,21 @@
   - Missing type stubs for channels is expected - don't need to install types-channels
   - Can verify ASGI application by importing and checking application_mapping.keys()
 ---
+## Iteration 4 - US-004: Create WebSocket URL routing
+- Created apps/vaults/routing.py with websocket_urlpatterns list
+  - Route pattern: ws/vault/<int:vault_id>/ -> VaultConsumer
+  - Used re_path from django.urls (standard Channels pattern)
+- Updated config/asgi.py to import and use websocket_urlpatterns in URLRouter
+- Created minimal VaultConsumer stub in apps/vaults/consumers.py
+  - Placeholder implementation to satisfy routing import
+  - Full implementation will be in US-006
+- Files changed: backend/apps/vaults/routing.py, backend/apps/vaults/consumers.py, backend/config/asgi.py
+- Verified routing loads successfully and ASGI application has both http and websocket protocols
+- Typecheck passes with type: ignore comment for pyright/Channels compatibility
+- Learnings for future iterations:
+  - Channels URLRouter accepts standard Django URL patterns (re_path, path)
+  - Pyright may flag ASGI consumer as invalid arg-type for re_path - use type: ignore[arg-type]
+  - Creating minimal stubs for forward references is acceptable when dependencies are implemented in later tasks
+  - Verify routing with: from apps.vaults.routing import websocket_urlpatterns
+  - AsyncWebsocketConsumer.disconnect parameter must be named 'code' not 'close_code'
+---

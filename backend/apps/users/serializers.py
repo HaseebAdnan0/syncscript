@@ -127,6 +127,40 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'email', 'email_verified', 'created_at']
 
 
+class ProfileUpdateSerializer(serializers.ModelSerializer):
+    """
+    Serializer for updating user profile fields (US-009).
+    Validates avatar_url, bio, and institution fields.
+    """
+    class Meta:
+        model = User
+        fields = ['avatar_url', 'bio', 'institution']
+        extra_kwargs = {
+            'avatar_url': {'required': False},
+            'bio': {'required': False},
+            'institution': {'required': False},
+        }
+
+    def validate_avatar_url(self, value):
+        """Validate avatar_url is a valid URL format."""
+        if value and not value.strip():
+            raise serializers.ValidationError("Avatar URL cannot be empty.")
+        # URLField already validates URL format, but we can add extra checks
+        return value
+
+    def validate_bio(self, value):
+        """Enforce 500 character limit for bio."""
+        if value and len(value) > 500:
+            raise serializers.ValidationError("Bio cannot exceed 500 characters.")
+        return value
+
+    def validate_institution(self, value):
+        """Enforce 200 character limit for institution."""
+        if value and len(value) > 200:
+            raise serializers.ValidationError("Institution cannot exceed 200 characters.")
+        return value
+
+
 class EmailVerificationSerializer(serializers.Serializer):
     """
     Serializer for email verification.

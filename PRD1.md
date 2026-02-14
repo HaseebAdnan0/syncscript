@@ -126,12 +126,12 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a developer, I need a serializer for updating user profile fields.
 
 **Acceptance Criteria:**
-- [ ] Add ProfileUpdateSerializer to `apps/users/serializers.py`
-- [ ] Fields: avatar_url, bio, institution (all optional)
-- [ ] Add validate_avatar_url to ensure valid URL format
-- [ ] Add validate_bio to enforce 500 char limit
-- [ ] Add validate_institution to enforce 200 char limit
-- [ ] Typecheck passes
+- [x] Add ProfileUpdateSerializer to `apps/users/serializers.py`
+- [x] Fields: avatar_url, bio, institution (all optional)
+- [x] Add validate_avatar_url to ensure valid URL format
+- [x] Add validate_bio to enforce 500 char limit
+- [x] Add validate_institution to enforce 200 char limit
+- [x] Typecheck passes
 
 ---
 

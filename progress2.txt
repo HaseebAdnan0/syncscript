@@ -89,3 +89,16 @@
   - US-007 acceptance criteria requires database to exist first - this is a user setup dependency
   - PRD2.md assumes database is already set up from USER_SETUP.md
 ---
+## Iteration 8 - US-007 BLOCKED, moving to US-008
+- Attempted to complete US-007 but database "syncscript" does not exist
+- PostgreSQL psql command not available in current environment
+- Per Ralph rules: "If tests FAIL: Do NOT mark the task complete"
+- Cannot verify migration success without database connection
+- US-007 remains incomplete [ ] - requires user to create database per USER_SETUP.md
+- Moving to US-008: Register models in Django admin (does not require database)
+- Learnings for future iterations:
+  - Some tasks have hard dependencies on user environment setup
+  - Skip blocked tasks and continue with non-blocked work
+  - Document blockers clearly for user follow-up
+---
+

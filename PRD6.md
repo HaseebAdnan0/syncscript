@@ -63,12 +63,12 @@ Implement cloud file storage for SyncScript using Cloudflare R2 (S3-compatible).
 **Description:** As a developer, I need utility functions to generate presigned S3 URLs.
 
 **Acceptance Criteria:**
-- [ ] Create `backend/apps/sources/storage.py`
-- [ ] Implement `generate_presigned_upload_url(vault_id, filename, content_type)` returning (url, file_key)
-- [ ] Implement `generate_presigned_download_url(file_key, original_filename)` with content-disposition header
-- [ ] Upload URLs expire in 1 hour, download URLs expire in 15 minutes
-- [ ] Use SigV4 signature version
-- [ ] Typecheck passes
+- [x] Create `backend/apps/sources/storage.py`
+- [x] Implement `generate_presigned_upload_url(vault_id, filename, content_type)` returning (url, file_key)
+- [x] Implement `generate_presigned_download_url(file_key, original_filename)` with content-disposition header
+- [x] Upload URLs expire in 1 hour, download URLs expire in 15 minutes
+- [x] Use SigV4 signature version
+- [x] Typecheck passes
 
 ### US-006: Create upload URL endpoint
 **Description:** As a vault contributor, I want to request a presigned upload URL so I can upload PDFs directly to storage.
