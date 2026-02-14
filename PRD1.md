@@ -314,12 +314,12 @@ Implement a secure, production-ready authentication system for SyncScript's coll
 **Description:** As a developer, I need URL routing for all auth and user endpoints.
 
 **Acceptance Criteria:**
-- [ ] Create `apps/users/urls.py`
-- [ ] Add auth URLs: register, verify-email, login, logout, refresh
-- [ ] Add password reset URLs: password-reset, password-reset-confirm
-- [ ] Add profile URL: users/profile
-- [ ] Use proper URL naming convention
-- [ ] Typecheck passes
+- [x] Create `apps/users/urls.py`
+- [x] Add auth URLs: register, verify-email, login, logout, refresh
+- [x] Add password reset URLs: password-reset, password-reset-confirm
+- [x] Add profile URL: users/profile
+- [x] Use proper URL naming convention
+- [x] Typecheck passes
 
 ---
 
