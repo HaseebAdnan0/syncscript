@@ -102,13 +102,13 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need a serializer for Source CRUD operations with auto metadata extraction.
 
 **Acceptance Criteria:**
-- [ ] Create `SourceSerializer` in `serializers.py` extending `ModelSerializer`
-- [ ] Fields: id, vault, url, title, description, source_type, metadata, created_by, created_at, updated_at
-- [ ] Read-only fields: created_by, created_at, updated_at
-- [ ] `created_by` uses `StringRelatedField`
-- [ ] Override `create()` to call `extract_metadata(url)` if title not provided
-- [ ] Merge extracted metadata into `validated_data['metadata']`
-- [ ] Typecheck passes
+- [x] Create `SourceSerializer` in `serializers.py` extending `ModelSerializer`
+- [x] Fields: id, vault, url, title, description, source_type, metadata, created_by, created_at, updated_at
+- [x] Read-only fields: created_by, created_at, updated_at
+- [x] `created_by` uses `StringRelatedField`
+- [x] Override `create()` to call `extract_metadata(url)` if title not provided
+- [x] Merge extracted metadata into `validated_data['metadata']`
+- [x] Typecheck passes
 
 ---
 

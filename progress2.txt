@@ -168,3 +168,17 @@
   - Pyright warnings on unused 'view' param are expected - DRF requires this signature
 ---
 
+## Iteration 14 - US-013: Create IsVaultContributor permission
+- Implemented IsVaultContributor permission class for write operations
+- Files changed:
+  - backend/apps/vaults/permissions.py (added IsVaultContributor class with role weight check)
+  - PRD2.md (marked US-013 as complete)
+- Django check passed with no issues
+- Learnings for future iterations:
+  - Use try/except VaultMembership.DoesNotExist pattern when checking single membership
+  - ROLE_WEIGHTS dict comparison: >= ROLE_WEIGHTS[RoleChoices.CONTRIBUTOR] allows OWNER(3) and CONTRIBUTOR(2), blocks VIEWER(1)
+  - Must import ROLE_WEIGHTS from models in addition to RoleChoices
+  - Git hook/formatter may auto-remove code during commit - verify and re-add if necessary
+  - Use .get() method to retrieve single object when expecting exactly 0 or 1 result
+---
+

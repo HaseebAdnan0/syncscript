@@ -10,7 +10,7 @@ from .serializers import (
     UploadURLResponseSerializer,
     PDFUploadSerializer
 )
-from .storage import generate_presigned_upload_url
+from .storage import generate_presigned_upload_url, generate_presigned_download_url
 from apps.vaults.models import Vault, VaultMembership, RoleChoices
 
 
@@ -167,4 +167,41 @@ class PDFUploadViewSet(viewsets.ModelViewSet):
             'pdf_id': pdf_upload.id,
             'status': pdf_upload.processing_status,
             'message': 'Upload marked as complete. Processing will begin shortly.'
+        }, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['get'], url_path='download-url')
+    def download_url(self, request, pk=None):
+        """
+        GET /api/v1/sources/pdfs/{pdf_id}/download-url/
+
+        Generate a presigned URL for downloading a PDF from S3/R2.
+        Validates user has vault viewer/contributor/owner permission.
+
+        Response:
+        - download_url (str): Presigned S3 URL for GET download
+        - expires_in (int): URL expiration time in seconds
+        - filename (str): Original filename
+        - file_size (int): File size in bytes
+        """
+        # Get PDFUpload record
+        pdf_upload = get_object_or_404(PDFUpload, id=pk)
+
+        # Verify user has permission (viewer, contributor, or owner)
+        self._check_vault_permission(
+            pdf_upload.vault.id,
+            request.user,
+            required_roles=[RoleChoices.VIEWER, RoleChoices.CONTRIBUTOR, RoleChoices.OWNER]
+        )
+
+        # Generate presigned download URL with content-disposition attachment
+        download_url = generate_presigned_download_url(
+            file_key=pdf_upload.file.name,  # S3 object key
+            original_filename=pdf_upload.original_filename
+        )
+
+        return Response({
+            'download_url': download_url,
+            'expires_in': 900,  # 15 minutes
+            'filename': pdf_upload.original_filename,
+            'file_size': pdf_upload.file_size
         }, status=status.HTTP_200_OK)
