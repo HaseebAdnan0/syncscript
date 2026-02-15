@@ -47,8 +47,8 @@ export interface Source {
 // Request types
 export interface CreateSourceRequest {
   vault: string;
-  type: SourceType;
-  url: string;
+  source_type: SourceType;
+  url?: string;
   title: string;
   metadata?: SourceMetadata;
 }

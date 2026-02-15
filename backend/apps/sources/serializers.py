@@ -182,12 +182,10 @@ class SourceSerializer(serializers.ModelSerializer):
         # For PDF sources, generate a placeholder URL if not provided
         if source_type == 'PDF':
             metadata = validated_data.get('metadata', {})
-            file_key = metadata.get('fileKey', '')
-            if not url and file_key:
-                # Use a placeholder URL for PDF sources (file key stored in metadata)
-                validated_data['url'] = f"file://{file_key}"
-            elif not url:
-                validated_data['url'] = 'file://pdf-upload'
+            pdf_upload_id = metadata.get('pdfUploadId', '')
+            if not url:
+                # Use a placeholder URL for PDF sources (actual file info stored in metadata)
+                validated_data['url'] = f"https://pdf.internal/{pdf_upload_id or 'upload'}"
         elif not validated_data.get('title') and url:
             # For URL sources, extract metadata if title not provided
             extracted = extract_metadata(url)

@@ -89,7 +89,7 @@ export function AddSourceModal({ open, onOpenChange, vaultId }: AddSourceModalPr
         vault: vaultId,
         url: preview.url,
         title: preview.title,
-        type: SourceType.URL,
+        source_type: SourceType.URL,
         metadata: {
           author: preview.authors?.join(', '),
           description: preview.abstract,
@@ -137,9 +137,8 @@ export function AddSourceModal({ open, onOpenChange, vaultId }: AddSourceModalPr
       // The upload hook already called the complete endpoint
       await addSourceMutation.mutateAsync({
         vault: vaultId,
-        url: `pdf://${uploadState.fileKey}`, // Use a pseudo-URL for PDF sources
         title: uploadState.file.name.replace('.pdf', ''),
-        type: SourceType.PDF,
+        source_type: SourceType.PDF,
         metadata: {
           filename: uploadState.file.name,
           fileSize: uploadState.file.size,

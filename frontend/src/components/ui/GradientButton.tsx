@@ -33,7 +33,7 @@ const GradientButton = React.forwardRef<HTMLButtonElement, GradientButtonProps>(
             <span>Loading...</span>
           </div>
         ) : (
-          children
+          <span className="flex items-center justify-center">{children}</span>
         )}
       </button>
     );
