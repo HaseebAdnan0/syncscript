@@ -48,7 +48,10 @@ export default function SourcesPage() {
     }
 
     if (contributorParam && contributorParam !== 'all') {
-      result.contributor = contributorParam;
+      const contributorId = parseInt(contributorParam, 10);
+      if (!isNaN(contributorId)) {
+        result.contributor = contributorId;
+      }
     }
 
     if (searchParam) {
