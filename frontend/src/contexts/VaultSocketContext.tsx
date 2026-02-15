@@ -5,6 +5,11 @@ import { useAuthStore } from '@/stores/authStore';
 
 type ConnectionStatus = 'connecting' | 'connected' | 'disconnected' | 'reconnecting';
 
+interface WebSocketMessage {
+  type: string;
+  data: any;
+}
+
 interface VaultSocketContextValue {
   status: ConnectionStatus;
   send: (eventType: string, data: any) => void;
