@@ -1,28 +1,68 @@
 """
-Claude API client for AI research assistant features.
+AI client using OpenRouter for model access.
 Handles summarization, vault insights, and question answering.
 """
+import json
+import re
 from typing import Any, Dict, List
 from django.conf import settings
-import anthropic
-from apps.ai.prompts import (
-    format_source_summary_prompt,
-    format_vault_insights_prompt,
-    format_question_answer_prompt,
-)
+import requests
 
 
 class ClaudeClient:
     """
-    Wrapper for Claude API calls with consistent error handling and token counting.
+    Wrapper for OpenRouter API calls with consistent error handling and token counting.
+    Uses OpenRouter to access various AI models (Claude, Gemini, etc.)
     """
 
     def __init__(self) -> None:
-        api_key = getattr(settings, 'ANTHROPIC_API_KEY', None)
-        if not api_key:
-            raise ValueError("ANTHROPIC_API_KEY not configured in settings")
-        self.client = anthropic.Anthropic(api_key=api_key)
-        self.model = "claude-3-5-sonnet-20241022"  # Latest Sonnet model
+        self.api_key = getattr(settings, 'OPENROUTER_API_KEY', None)
+        if not self.api_key:
+            raise ValueError("OPENROUTER_API_KEY not configured in settings")
+
+        self.model = getattr(settings, 'OPENROUTER_MODEL', 'google/gemini-2.5-pro-preview')
+        self.site_url = getattr(settings, 'OPENROUTER_SITE_URL', 'http://localhost:3000')
+        self.site_name = getattr(settings, 'OPENROUTER_SITE_NAME', 'SyncScript')
+        self.api_url = "https://openrouter.ai/api/v1/chat/completions"
+
+    def _make_request(self, messages: List[Dict[str, str]], max_tokens: int = 2000) -> Dict[str, Any]:
+        """Make a request to OpenRouter API."""
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+            "HTTP-Referer": self.site_url,
+            "X-Title": self.site_name,
+        }
+
+        payload = {
+            "model": self.model,
+            "messages": messages,
+            "max_tokens": max_tokens,
+        }
+
+        response = requests.post(self.api_url, headers=headers, json=payload, timeout=120)
+        response.raise_for_status()
+        return response.json()
+
+    def _parse_json_response(self, response_text: str) -> Dict[str, Any]:
+        """Parse JSON from response, handling markdown code blocks."""
+        try:
+            return json.loads(response_text)
+        except json.JSONDecodeError:
+            # Try to extract JSON from markdown code blocks
+            json_match = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', response_text, re.DOTALL)
+            if json_match:
+                return json.loads(json_match.group(1))
+
+            # Try to find raw JSON object
+            json_match = re.search(r'\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}', response_text, re.DOTALL)
+            if json_match:
+                try:
+                    return json.loads(json_match.group(0))
+                except json.JSONDecodeError:
+                    pass
+
+            raise ValueError("Could not parse JSON from response")
 
     def summarize(self, text: str, source_type: str) -> Dict[str, Any]:
         """
@@ -38,46 +78,32 @@ class ClaudeClient:
             On error: {"error": "error message", "tokens_used": 0}
         """
         try:
+            from apps.ai.prompts import format_source_summary_prompt
             prompt = format_source_summary_prompt(text, source_type)
 
-            message = self.client.messages.create(
-                model=self.model,
-                max_tokens=2000,
-                messages=[{"role": "user", "content": prompt}]
+            response = self._make_request(
+                messages=[{"role": "user", "content": prompt}],
+                max_tokens=2000
             )
 
-            # Extract JSON from response
-            content_block = message.content[0]
-            if not hasattr(content_block, 'text'):
-                return {"error": "Invalid response format", "tokens_used": 0}
-            response_text = content_block.text
-            tokens_used = message.usage.input_tokens + message.usage.output_tokens
+            # Extract response
+            response_text = response['choices'][0]['message']['content']
+            tokens_used = response.get('usage', {}).get('total_tokens', 0)
 
-            # Try to parse JSON from response
-            import json
             try:
-                result = json.loads(response_text)
+                result = self._parse_json_response(response_text)
                 result['tokens_used'] = tokens_used
                 return result
-            except json.JSONDecodeError:
-                # If response isn't pure JSON, try to extract it
-                # Look for JSON object in markdown code blocks
-                import re
-                json_match = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', response_text, re.DOTALL)
-                if json_match:
-                    result = json.loads(json_match.group(1))
-                    result['tokens_used'] = tokens_used
-                    return result
-                else:
-                    # Return structured error
-                    return {
-                        "error": "Failed to parse JSON response",
-                        "tokens_used": tokens_used
-                    }
+            except (json.JSONDecodeError, ValueError):
+                return {
+                    "error": "Failed to parse JSON response",
+                    "raw_response": response_text[:500],
+                    "tokens_used": tokens_used
+                }
 
-        except anthropic.APIError as e:
+        except requests.exceptions.RequestException as e:
             return {
-                "error": f"Claude API error: {str(e)}",
+                "error": f"API request error: {str(e)}",
                 "tokens_used": 0
             }
         except Exception as e:
@@ -98,6 +124,8 @@ class ClaudeClient:
             On error: {"error": "error message", "tokens_used": 0}
         """
         try:
+            from apps.ai.prompts import format_vault_insights_prompt
+
             # Build context from sources
             sources_text = "\n\n".join([
                 f"Title: {s.get('title', 'Untitled')}\n"
@@ -109,40 +137,27 @@ class ClaudeClient:
 
             prompt = format_vault_insights_prompt(sources_text)
 
-            message = self.client.messages.create(
-                model=self.model,
-                max_tokens=3000,
-                messages=[{"role": "user", "content": prompt}]
+            response = self._make_request(
+                messages=[{"role": "user", "content": prompt}],
+                max_tokens=3000
             )
 
-            content_block = message.content[0]
-            if not hasattr(content_block, 'text'):
-                return {"error": "Invalid response format", "tokens_used": 0}
-            response_text = content_block.text
-            tokens_used = message.usage.input_tokens + message.usage.output_tokens
+            response_text = response['choices'][0]['message']['content']
+            tokens_used = response.get('usage', {}).get('total_tokens', 0)
 
-            # Parse JSON
-            import json
-            import re
             try:
-                result = json.loads(response_text)
+                result = self._parse_json_response(response_text)
                 result['tokens_used'] = tokens_used
                 return result
-            except json.JSONDecodeError:
-                json_match = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', response_text, re.DOTALL)
-                if json_match:
-                    result = json.loads(json_match.group(1))
-                    result['tokens_used'] = tokens_used
-                    return result
-                else:
-                    return {
-                        "error": "Failed to parse JSON response",
-                        "tokens_used": tokens_used
-                    }
+            except (json.JSONDecodeError, ValueError):
+                return {
+                    "error": "Failed to parse JSON response",
+                    "tokens_used": tokens_used
+                }
 
-        except anthropic.APIError as e:
+        except requests.exceptions.RequestException as e:
             return {
-                "error": f"Claude API error: {str(e)}",
+                "error": f"API request error: {str(e)}",
                 "tokens_used": 0
             }
         except Exception as e:
@@ -164,6 +179,8 @@ class ClaudeClient:
             On error: {"error": "error message", "tokens_used": 0}
         """
         try:
+            from apps.ai.prompts import format_question_answer_prompt
+
             # Build context with chunk indices
             context_text = "\n\n".join([
                 f"[Chunk {i}]\n{chunk}"
@@ -172,40 +189,27 @@ class ClaudeClient:
 
             prompt = format_question_answer_prompt(question, context_text)
 
-            message = self.client.messages.create(
-                model=self.model,
-                max_tokens=2000,
-                messages=[{"role": "user", "content": prompt}]
+            response = self._make_request(
+                messages=[{"role": "user", "content": prompt}],
+                max_tokens=2000
             )
 
-            content_block = message.content[0]
-            if not hasattr(content_block, 'text'):
-                return {"error": "Invalid response format", "tokens_used": 0}
-            response_text = content_block.text
-            tokens_used = message.usage.input_tokens + message.usage.output_tokens
+            response_text = response['choices'][0]['message']['content']
+            tokens_used = response.get('usage', {}).get('total_tokens', 0)
 
-            # Parse JSON
-            import json
-            import re
             try:
-                result = json.loads(response_text)
+                result = self._parse_json_response(response_text)
                 result['tokens_used'] = tokens_used
                 return result
-            except json.JSONDecodeError:
-                json_match = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', response_text, re.DOTALL)
-                if json_match:
-                    result = json.loads(json_match.group(1))
-                    result['tokens_used'] = tokens_used
-                    return result
-                else:
-                    return {
-                        "error": "Failed to parse JSON response",
-                        "tokens_used": tokens_used
-                    }
+            except (json.JSONDecodeError, ValueError):
+                return {
+                    "error": "Failed to parse JSON response",
+                    "tokens_used": tokens_used
+                }
 
-        except anthropic.APIError as e:
+        except requests.exceptions.RequestException as e:
             return {
-                "error": f"Claude API error: {str(e)}",
+                "error": f"API request error: {str(e)}",
                 "tokens_used": 0
             }
         except Exception as e:

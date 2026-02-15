@@ -105,7 +105,8 @@ class AnnotationAuditLogSignalTest(TestCase):
             self.assertIn('annotation_id', log.metadata)
             self.assertIn('source_id', log.metadata)
             self.assertIn('parent_id', log.metadata)
-            self.assertEqual(log.metadata.get('parent_id'), str(top_level.id))
+            # ID stored as integer, not string
+            self.assertEqual(log.metadata.get('parent_id'), top_level.id)
 
     def test_annotation_update_generates_annotation_updated_log(self):
         """Test Annotation update generates annotation.updated log."""
@@ -130,9 +131,9 @@ class AnnotationAuditLogSignalTest(TestCase):
         if log:
             self.assertEqual(log.actor, self.owner)
             self.assertIn('annotation_id', log.metadata)
-            # Check changes contain dirty fields
-            changes = log.metadata.get('changes', {})
-            self.assertIn('content', changes)
+            # Check changed_fields list contains updated fields
+            changed_fields = log.metadata.get('changed_fields', [])
+            self.assertIn('content', changed_fields)
 
     def test_annotation_delete_generates_annotation_deleted_log(self):
         """Test Annotation delete generates annotation.deleted log."""
@@ -159,4 +160,5 @@ class AnnotationAuditLogSignalTest(TestCase):
             self.assertEqual(log.actor, self.owner)
             self.assertIn('annotation_id', log.metadata)
             self.assertIn('source_id', log.metadata)
-            self.assertEqual(log.metadata.get('annotation_id'), str(annotation_id))
+            # ID stored as integer, not string
+            self.assertEqual(log.metadata.get('annotation_id'), annotation_id)

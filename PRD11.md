@@ -368,13 +368,13 @@ Replace stub email implementation with production-ready email system using Hosti
 **Description:** As a developer, I need tests to verify password reset works correctly.
 
 **Acceptance Criteria:**
-- [ ] Create/update `apps/users/tests/test_password_reset.py`
-- [ ] Test reset request sends email (mock Celery task)
-- [ ] Test reset confirm with valid token updates password
-- [ ] Test reset confirm with expired token returns error
-- [ ] Test reset confirm with invalid uid returns error
-- [ ] Test user can login with new password after reset
-- [ ] All tests pass
+- [x] Create/update `apps/users/tests/test_password_reset.py`
+- [x] Test reset request sends email (mock Celery task)
+- [x] Test reset confirm with valid token updates password
+- [x] Test reset confirm with expired token returns error
+- [x] Test reset confirm with invalid uid returns error
+- [x] Test user can login with new password after reset
+- [x] All tests pass
 
 ---
 

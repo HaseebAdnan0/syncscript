@@ -128,8 +128,8 @@ class SourceAuditLogSignalTest(TestCase):
         # Clear existing logs
         AuditLog.objects.filter(vault=self.vault).delete()
 
-        # Restore via API (POST to restore endpoint)
-        response = client.post(f'/api/v1/sources/{source.id}/restore/')
+        # Restore via API (POST to restore endpoint via nested route)
+        response = client.post(f'/api/v1/vaults/{self.vault.id}/sources/{source.id}/restore/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Check for source.restored audit log

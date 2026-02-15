@@ -691,9 +691,9 @@ class SourceViewSet(viewsets.ModelViewSet):
         # Create audit log for soft delete (US-038)
         AuditLog.objects.create(
             vault=instance.vault,
-            user=request.user,
+            actor=request.user,
             action='source.soft_deleted',
-            changes={
+            metadata={
                 'source_id': str(instance.id),
                 'vault_id': str(instance.vault_id),
             }
@@ -753,9 +753,9 @@ class SourceViewSet(viewsets.ModelViewSet):
         # Create audit log for restore (US-038)
         AuditLog.objects.create(
             vault=instance.vault,
-            user=request.user,
+            actor=request.user,
             action='source.restored',
-            changes={
+            metadata={
                 'source_id': str(instance.id),
                 'vault_id': str(instance.vault_id),
             }

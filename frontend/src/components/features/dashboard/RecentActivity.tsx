@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Activity, User, FileText, Folder, MessageSquare } from "lucide-react";
 import Link from "next/link";
+import { useActivityFeed } from "@/hooks/useDashboard";
 
 interface ActivityItem {
   id: number;
@@ -13,6 +13,7 @@ interface ActivityItem {
     first_name: string;
     last_name: string;
     email: string;
+    name?: string;
   } | null;
   vault_id: number;
   vault_name: string;
@@ -22,40 +23,8 @@ interface ActivityItem {
 }
 
 export default function RecentActivity() {
-  const [activity, setActivity] = useState<ActivityItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchActivity = async () => {
-      try {
-        const token = localStorage.getItem("access_token");
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/dashboard/activity/?limit=10`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (!response.ok) {
-          // Don't throw - just leave activity empty for new users
-          setActivity([]);
-          return;
-        }
-
-        const data = await response.json();
-        setActivity(data.results || data || []);
-      } catch {
-        // Silently fail - show empty state for new users or when API unavailable
-        setActivity([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchActivity();
-  }, []);
+  const { data, isLoading } = useActivityFeed(10);
+  const activity: ActivityItem[] = (data || []) as ActivityItem[];
 
   // Format relative time
   const formatRelativeTime = (timestamp: string): string => {

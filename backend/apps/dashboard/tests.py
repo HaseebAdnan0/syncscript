@@ -802,7 +802,7 @@ class AnalyticsTests(TestCase):
         # Verify collaborator data
         self.assertEqual(collaborator['user_id'], self.other_user.id)
         self.assertEqual(collaborator['name'], 'Collab User')
-        self.assertEqual(collaborator['contributions_count'], 4)  # 2 sources + 1 annotation + 1 audit
+        self.assertEqual(collaborator['contributions_count'], 6)  # 2 sources + 1 annotation + 3 audit (2 source signals + 1 explicit)
 
     def test_top_collaborators_excludes_current_user(self):
         """Test that current user is excluded from collaborators list."""

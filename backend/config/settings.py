@@ -348,7 +348,15 @@ SOCIALACCOUNT_PROVIDERS = {
 
 # AI Settings
 AI_DAILY_LIMIT = int(os.getenv('AI_DAILY_LIMIT', '20'))  # Maximum AI requests per user per day
-ANTHROPIC_API_KEY = os.getenv('ANTHROPIC_API_KEY', '')  # Claude API key for AI features
+
+# OpenRouter API (for Claude, Gemini, and other models via unified API)
+OPENROUTER_API_KEY = os.getenv('OPENROUTER_API_KEY', '')
+OPENROUTER_MODEL = os.getenv('OPENROUTER_MODEL', 'google/gemini-2.5-pro-preview')
+OPENROUTER_SITE_URL = os.getenv('OPENROUTER_SITE_URL', 'http://localhost:3000')
+OPENROUTER_SITE_NAME = os.getenv('OPENROUTER_SITE_NAME', 'SyncScript')
+
+# Legacy: Direct Anthropic API key (not used if OpenRouter is configured)
+ANTHROPIC_API_KEY = os.getenv('ANTHROPIC_API_KEY', '')
 
 # Virus Scanning Settings (ClamAV)
 CLAMAV_ENABLED = os.getenv('CLAMAV_ENABLED', 'False') == 'True'
