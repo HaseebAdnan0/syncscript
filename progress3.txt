@@ -1051,3 +1051,28 @@
   - Clear existing logs in setUp() or before specific tests to avoid interference
   - Tests pass with Django test runner: python manage.py test --keepdb
 ---
+
+## Iteration 42 - US-041: Add bulk import audit logging
+- Added audit logging to SourceViewSet.bulk_import() action
+- Implementation details:
+  - Creates single AuditLog entry after all sources are created (not one per source)
+  - Action: 'source.bulk_imported'
+  - Metadata includes:
+    - count: number of successfully created sources
+    - urls: list of URLs that were created
+    - vault_id: vault identifier (as string)
+  - Only creates audit log if at least one source was created (len(created) > 0)
+  - Error handling: wraps audit log creation in try-except to prevent failures from blocking response
+  - Uses logger.warning() to log audit log failures
+- Django check passes with 0 issues
+- Files changed:
+  - backend/apps/sources/views.py (added audit log creation in bulk_import)
+  - PRD3.md (marked US-041 complete)
+- Learnings for future iterations:
+  - Bulk operations should have single audit log entry, not one per item
+  - Audit log creation happens after transaction completes successfully
+  - Extract URLs from created sources using list comprehension: [item['url'] for item in created]
+  - Only log if actual work was done (len(created) > 0 check)
+  - Error handling prevents audit log failures from disrupting main business logic
+  - Follow same pattern as soft delete/restore audit logging from US-038
+---

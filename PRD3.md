@@ -563,13 +563,13 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need all new endpoints registered in the main URL configuration.
 
 **Acceptance Criteria:**
-- [ ] Include `apps.sources.urls` at `/api/v1/` prefix
-- [ ] Include `apps.annotations.urls` at `/api/v1/` prefix
-- [ ] Verify `/api/v1/sources/` endpoint accessible
-- [ ] Verify `/api/v1/annotations/` endpoint accessible
-- [ ] Verify nested routes work: `/api/v1/vaults/{id}/sources/`
-- [ ] Verify nested routes work: `/api/v1/sources/{id}/annotations/`
-- [ ] Typecheck passes
+- [x] Include `apps.sources.urls` at `/api/v1/` prefix
+- [x] Include `apps.annotations.urls` at `/api/v1/` prefix
+- [x] Verify `/api/v1/sources/` endpoint accessible
+- [x] Verify `/api/v1/annotations/` endpoint accessible
+- [x] Verify nested routes work: `/api/v1/vaults/{id}/sources/`
+- [x] Verify nested routes work: `/api/v1/sources/{id}/annotations/`
+- [x] Typecheck passes
 
 ---
 
