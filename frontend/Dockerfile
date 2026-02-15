@@ -13,7 +13,8 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 
 # Install all dependencies (including devDependencies for build)
-RUN npm ci
+# Using --legacy-peer-deps for React 19 compatibility with older packages
+RUN npm ci --legacy-peer-deps
 
 # =============================================================================
 # STAGE 2: Builder - Build the Next.js application
