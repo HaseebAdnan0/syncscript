@@ -736,3 +736,23 @@
   - All tables (Vault, VaultMembership, AuditLog) created without errors
   - Django system check passes with no issues
 ---
+## Iteration 50 - US-036, US-037, US-038: Complete vault API and audit log tests
+- Fixed email_verified requirement for all test users (IsVaultMember permission requires verified email)
+- Files changed:
+  - backend/apps/vaults/tests/test_views.py (added email_verified=True to setUp for all test users)
+  - backend/apps/vaults/tests/test_audit_logs.py (added email_verified=True to setUp for all test users)
+  - PRD2.md (marked US-036, US-037, US-038 as complete)
+- Tests passed:
+  - US-036: 19/19 tests in test_views.py (vault API tests)
+  - US-037: Included in test_views.py (membership API tests)
+  - US-038: 8/8 tests in test_audit_logs.py (audit log tests)
+- All acceptance criteria met:
+  - US-036: Vault creation, filtering, permissions, archive/restore actions verified
+  - US-037: Member add, role update, member removal, last owner protection verified
+  - US-038: All audit log signals verified (vault.created, membership.added, membership.role_changed, membership.removed)
+- Learnings for future iterations:
+  - IsVaultMember permission includes _check_email_verified() which raises PermissionDenied if user.email_verified=False
+  - Test users must have email_verified=True to access vault resources in tests
+  - All vaults app tests now pass: test_models (12), test_views (19), test_audit_logs (8) = 39 total tests passing
+  - PRD2.md is now 100% complete: all 38 user stories completed with 183 acceptance criteria met
+---
