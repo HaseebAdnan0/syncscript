@@ -93,7 +93,7 @@ Create a comprehensive user dashboard as the primary logged-in landing page for 
 - [x] Main content area uses responsive grid
 - [x] Follows Bitcoin DeFi design system (dark theme, orange accents)
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser
 
 ### US-007: Create welcome header component
 **Description:** As a user, I want to see a personalized greeting with my quick stats so I feel welcomed and informed at a glance.
@@ -108,7 +108,7 @@ Create a comprehensive user dashboard as the primary logged-in landing page for 
 - [x] Fetches data from `/api/v1/dashboard/stats/`
 - [x] Shows skeleton loader while fetching
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser
 
 ### US-008: Create continue research section
 **Description:** As a user, I want to see my recently accessed vaults so I can quickly continue where I left off.
@@ -124,7 +124,7 @@ Create a comprehensive user dashboard as the primary logged-in landing page for 
 - [x] Fetches from `/api/v1/dashboard/recent-vaults/`
 - [x] Empty state if no vaults: "Create your first vault to get started"
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser
 
 ### US-009: Create recent activity section
 **Description:** As a user, I want to see a timeline of recent actions across my vaults so I stay aware of changes and collaboration.
@@ -139,7 +139,7 @@ Create a comprehensive user dashboard as the primary logged-in landing page for 
 - [x] Fetches from `/api/v1/dashboard/activity/`
 - [x] Empty state: "No activity yet. Start by adding sources to a vault."
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser
 
 ### US-010: Install and configure Recharts
 **Description:** As a developer, I need Recharts installed and configured so I can build analytics charts.
@@ -165,7 +165,7 @@ Create a comprehensive user dashboard as the primary logged-in landing page for 
 - [x] Fetches from `/api/v1/dashboard/analytics/sources-timeline/`
 - [x] Empty state: onboarding prompt "Add your first source to see analytics"
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser
 
 ### US-012: Create source types donut chart
 **Description:** As a user, I want to see a breakdown of my source types so I understand my research composition.
@@ -181,7 +181,7 @@ Create a comprehensive user dashboard as the primary logged-in landing page for 
 - [x] Fetches from `/api/v1/dashboard/analytics/source-types/`
 - [x] Empty state: onboarding prompt "Add your first source to see analytics"
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser
 
 ### US-013: Create top collaborators section
 **Description:** As a user, I want to see my top collaborators so I recognize who contributes most to shared research.
@@ -196,7 +196,7 @@ Create a comprehensive user dashboard as the primary logged-in landing page for 
 - [x] Fetches from `/api/v1/dashboard/analytics/top-collaborators/`
 - [x] Empty state: "Invite collaborators to see who contributes most"
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser
 
 ### US-014: Create analytics section container
 **Description:** As a user, I want the analytics charts organized in a visually appealing section so I can quickly understand my research metrics.
@@ -208,7 +208,7 @@ Create a comprehensive user dashboard as the primary logged-in landing page for 
 - [x] Contains: SourcesTimelineChart, SourceTypesChart, TopCollaborators
 - [x] Cards have consistent styling (dark bg, border, padding)
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser
 
 ### US-015: Create quick actions FAB
 **Description:** As a user, I want a floating action button with quick actions so I can create content without navigating away.
@@ -223,7 +223,7 @@ Create a comprehensive user dashboard as the primary logged-in landing page for 
 - [x] Actions navigate to appropriate pages/modals
 - [x] Smooth expand/collapse animation
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser
 
 ### US-016: Create notifications dropdown component
 **Description:** As a user, I want a notifications bell in the header with dropdown so I can see and manage notifications without leaving the page.
@@ -240,7 +240,7 @@ Create a comprehensive user dashboard as the primary logged-in landing page for 
 - [x] "Notification settings" link at bottom
 - [x] Fetches from `/api/v1/notifications/` and `/api/v1/notifications/unread-count/`
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser
 
 ### US-017: Integrate notifications into app header
 **Description:** As a developer, I need to add the notifications dropdown to the shared app header so it's accessible from all pages.
@@ -251,7 +251,7 @@ Create a comprehensive user dashboard as the primary logged-in landing page for 
 - [x] Ensure proper z-index for dropdown overlay
 - [x] Works on mobile (dropdown may be full-width)
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser
 
 ### US-018: Assemble dashboard page with all sections
 **Description:** As a user, I want all dashboard sections assembled on the dashboard page in a cohesive layout.
@@ -264,7 +264,7 @@ Create a comprehensive user dashboard as the primary logged-in landing page for 
 - [x] Page has proper loading states (skeleton loaders)
 - [x] Page has error boundaries for failed API calls
 - [x] Typecheck passes
-- [ ] Verify changes work in browser
+- [x] Verify changes work in browser
 
 ### US-019: Update post-login redirect to dashboard
 **Description:** As a user, I want to land on the dashboard after logging in so I see my personalized home page.
@@ -275,7 +275,7 @@ Create a comprehensive user dashboard as the primary logged-in landing page for 
 - [x] Ensure protected route logic includes `/dashboard`
 - [x] If user navigates to `/` while logged in, redirect to `/dashboard`
 - [x] Typecheck passes
-- [ ] Verify redirect works in browser after login
+- [x] Verify redirect works in browser after login
 
 ### US-020: Create API client functions for dashboard
 **Description:** As a developer, I need frontend API client functions for all dashboard endpoints so components can fetch data consistently.

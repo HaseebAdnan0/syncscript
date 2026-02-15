@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
-import { FileText, Calendar, User } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { FileText, Calendar, User, ExternalLink } from 'lucide-react';
 import { useSources } from '@/hooks/useSources';
 import { SourceTypeBadge } from '../sources/SourceTypeBadge';
 import { AddSourceModal } from '../sources/AddSourceModal';

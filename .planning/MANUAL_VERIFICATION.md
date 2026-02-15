@@ -1819,3 +1819,278 @@
 
 ### Issues Found
 (Document any bugs, edge cases, or unexpected behavior discovered during manual testing)
+
+
+---
+
+## PRD17: User Dashboard & Analytics - 2026-02-15
+
+### US-006: Dashboard page layout and sidebar
+- [ ] Start backend server: `cd backend && python manage.py runserver`
+- [ ] Start frontend dev server: `cd frontend && npm run dev`
+- [ ] Login with valid user account
+- [ ] Verify redirect to /dashboard (default post-login destination)
+- [ ] Verify sidebar appears on left with navigation items
+- [ ] Verify sidebar items: Dashboard, My Vaults, Shared With Me, Recent, Settings
+- [ ] Verify each item has lucide-react icon and label
+- [ ] Verify active item (Dashboard) highlighted with Bitcoin orange accent (#F7931A)
+- [ ] Verify main content area uses responsive grid layout
+- [ ] **Mobile (< 768px):**
+  - [ ] Verify hamburger menu icon appears in header
+  - [ ] Click hamburger menu - verify sidebar slides in from left as overlay
+  - [ ] Click outside sidebar - verify it closes
+  - [ ] Verify sidebar backdrop blur effect
+- [ ] **Desktop (≥ 768px):**
+  - [ ] Verify sidebar visible inline by default (256px width)
+  - [ ] Click collapse button (chevron icon) - verify sidebar shrinks to icon-only mode (64px)
+  - [ ] Verify navigation icons remain visible in collapsed state
+  - [ ] Click expand button - verify sidebar expands back to full width
+  - [ ] Verify smooth transition animation
+- [ ] Verify sidebar follows Bitcoin DeFi design system (dark backgrounds, orange accents, glassmorphism)
+
+### US-007: Welcome header component
+- [ ] On dashboard page, verify WelcomeHeader component renders at top
+- [ ] Verify time-based greeting displays:
+  - [ ] Morning (5am-12pm): "Good morning, {firstName}"
+  - [ ] Afternoon (12pm-5pm): "Good afternoon, {firstName}"
+  - [ ] Evening (5pm-5am): "Good evening, {firstName}"
+- [ ] Verify greeting uses gradient text (orange #F7931A to gold #FFD600)
+- [ ] Verify quick stats row displays 3 cards:
+  - [ ] Vaults count with LayoutDashboard icon
+  - [ ] Sources count with FileText icon
+  - [ ] Annotations this week with MessageSquare icon
+- [ ] Verify stats fetched from /api/v1/dashboard/stats/ endpoint
+- [ ] Verify skeleton loader appears while fetching (3 pulsing cards)
+- [ ] Verify responsive grid: 1 column mobile, 3 columns desktop
+- [ ] Verify cards have hover effect (lift with -translate-y-1)
+- [ ] Verify Bitcoin DeFi styling (dark cards, orange accents, white/10 borders)
+
+### US-008: Continue research section
+- [ ] Verify ContinueResearch section renders below WelcomeHeader
+- [ ] Verify section title: "Continue Research"
+- [ ] Verify 3 most recently accessed vault cards display
+- [ ] Each vault card should show:
+  - [ ] Vault name
+  - [ ] Last accessed time (relative: "Just now", "5m ago", "2h ago", "3d ago")
+  - [ ] Source count
+  - [ ] Role badge (OWNER/CONTRIBUTOR/VIEWER) in top-right
+  - [ ] Quick action buttons: "Open" (gradient) and "Add Source" (border style)
+- [ ] Click "Open" button - verify redirect to /vaults/{vault_id}
+- [ ] Click "Add Source" button - verify redirect to /vaults/{vault_id}?action=add-source
+- [ ] Verify "View all vaults" link at bottom with gradient text hover effect
+- [ ] Click link - verify redirect to /vaults page
+- [ ] Verify empty state if no vaults: "Create your first vault to get started" with CTA button
+- [ ] Verify cards follow design system (dark bg #0F1115, border, hover lift)
+- [ ] Verify responsive grid: 1 column mobile, 3 columns desktop
+
+### US-009: Recent activity section
+- [ ] Verify RecentActivity section renders below ContinueResearch
+- [ ] Verify section title: "Recent Activity"
+- [ ] Verify timeline displays last 10 activity items
+- [ ] Each activity item should show:
+  - [ ] User avatar with gradient background (or initials if no avatar)
+  - [ ] Action icon (Folder, FileText, MessageSquare, User, or Activity fallback)
+  - [ ] Actor name
+  - [ ] Action description (e.g., "added source 'Research Paper'")
+  - [ ] Vault name
+  - [ ] Relative time (same format as Continue Research)
+- [ ] Click activity item - verify navigation to relevant resource:
+  - [ ] Vault action → /vaults/{vault_id}
+  - [ ] Source action → /vaults/{vault_id}/sources/{source_id}
+  - [ ] Annotation action → /vaults/{vault_id}#annotation-{annotation_id}
+- [ ] Verify items are clickable with hover effect (lift, border color change, actor name turns orange)
+- [ ] Verify "View all activity" link at bottom with gradient text
+- [ ] Verify empty state: "No activity yet. Start by adding sources to a vault."
+- [ ] Verify loading state: 5 skeleton cards with animate-pulse
+- [ ] Verify Bitcoin DeFi styling (dark backgrounds, orange accents, glassmorphism)
+
+### US-011: Sources timeline chart
+- [ ] Verify SourcesTimelineChart component renders in AnalyticsSection
+- [ ] Verify chart shows line graph of sources added per day (last 30 days)
+- [ ] Verify X-axis shows dates in MM/DD format
+- [ ] Verify Y-axis shows source count (no decimal values)
+- [ ] Verify line color is Bitcoin orange (#F7931A)
+- [ ] Hover over data points - verify custom tooltip appears:
+  - [ ] Dark background matching design system
+  - [ ] Orange accent border
+  - [ ] Formatted date label
+  - [ ] "Sources" value label
+- [ ] Verify chart is responsive (resizes with container)
+- [ ] Verify empty state if no data: gradient circle icon with "Add your first source to see analytics" message
+- [ ] Verify loading state: centered pulse animation with text
+- [ ] Verify error state: red text with error message
+- [ ] Verify data fetched from /api/v1/dashboard/analytics/sources-timeline/
+
+### US-012: Source types donut chart
+- [ ] Verify SourceTypesChart component renders in AnalyticsSection
+- [ ] Verify donut chart shows source type distribution
+- [ ] Verify chart has hollow center (donut style, not full pie)
+- [ ] Verify segments colored with gradient from orange (#F7931A) to gold (#FFD600)
+- [ ] Verify percentage labels displayed on each segment
+- [ ] Hover over segments - verify custom tooltip appears:
+  - [ ] Dark background with orange accent
+  - [ ] Source type name
+  - [ ] Count and percentage
+- [ ] Verify legend displayed below chart with type names and colored circles
+- [ ] Verify chart is responsive (resizes with container)
+- [ ] Verify empty state: gradient circle icon with "Add your first source to see analytics" message
+- [ ] Verify loading state: centered pulse animation
+- [ ] Verify data fetched from /api/v1/dashboard/analytics/source-types/
+
+### US-013: Top collaborators section
+- [ ] Verify TopCollaborators component renders in AnalyticsSection
+- [ ] Verify section title: "Top Collaborators"
+- [ ] Verify avatar list with top 5 collaborators displayed
+- [ ] Each collaborator should show:
+  - [ ] Avatar (or gradient circle with initials if no avatar_url)
+  - [ ] Name
+  - [ ] Contribution count badge (gradient background with orange border)
+- [ ] Verify contribution count pluralization: "1 contribution" vs "X contributions"
+- [ ] Verify hover effect on collaborator items (bg-white/5)
+- [ ] Verify empty state: "Invite collaborators to see who contributes most"
+- [ ] Verify loading state: skeleton cards with animate-pulse
+- [ ] Verify data fetched from /api/v1/dashboard/analytics/top-collaborators/
+- [ ] Verify Bitcoin DeFi styling (dark bg, orange-gold gradient accents)
+
+### US-014: Analytics section container
+- [ ] Verify AnalyticsSection component renders on dashboard page
+- [ ] Verify section title: "Analytics" with gradient text (orange to gold)
+- [ ] Verify responsive grid layout: 2 columns desktop, 1 column mobile
+- [ ] Verify SourcesTimelineChart in first column
+- [ ] Verify SourceTypesChart in second column
+- [ ] Verify TopCollaborators spans full width below charts (lg:col-span-2)
+- [ ] Verify consistent card styling across all charts (dark bg, border, padding)
+- [ ] Verify vertical spacing between header and grid (space-y-6)
+
+### US-015: Quick actions FAB
+- [ ] Verify QuickActionsFAB button appears in bottom-right corner (fixed position)
+- [ ] Verify Plus icon visible in closed state
+- [ ] Verify Bitcoin orange gradient background with shadow glow
+- [ ] Hover over FAB - verify scale-110 animation
+- [ ] Click FAB - verify menu expands upward
+- [ ] Verify Plus icon rotates 45deg to become X
+- [ ] Verify 3 action buttons appear with staggered animation (cascade effect):
+  - [ ] New Vault (Folder icon)
+  - [ ] Add Source (Plus icon)
+  - [ ] Invite Collaborator (UserPlus icon)
+- [ ] Each action shows label on left, icon on right
+- [ ] Click action button - verify navigation to /vaults with query param:
+  - [ ] New Vault → /vaults?action=create
+  - [ ] Add Source → /vaults?action=add-source
+  - [ ] Invite → /vaults?action=invite
+- [ ] Click outside menu - verify it closes
+- [ ] Verify smooth open/close transitions (opacity, translateY, pointer-events)
+- [ ] Verify Bitcoin DeFi styling (dark bg, orange-gold gradient, glassmorphism)
+
+### US-016: Notifications dropdown component
+- [ ] Verify bell icon appears in app header (top-right area)
+- [ ] Verify unread badge displays on bell icon (red dot with number)
+- [ ] Badge should show:
+  - [ ] Exact count if ≤ 9
+  - [ ] "9+" if > 9
+  - [ ] Hidden if count is 0
+- [ ] Click bell icon - verify NotificationPanel dropdown opens below icon
+- [ ] Dropdown should show:
+  - [ ] List of recent notifications (last 20)
+  - [ ] Each notification: icon, message, relative time
+  - [ ] Unread items visually distinguished (left orange accent border, brighter)
+  - [ ] "Mark as read" button per notification
+  - [ ] "Mark all as read" button at top
+  - [ ] "Notification settings" link at bottom
+- [ ] Click "Mark as read" on single notification - verify:
+  - [ ] Notification marked read immediately
+  - [ ] Visual style updates (border removed, dimmed)
+  - [ ] Unread badge count decreases
+- [ ] Click "Mark all as read" - verify:
+  - [ ] All notifications marked read
+  - [ ] Unread badge disappears (count = 0)
+- [ ] Click "Notification settings" link - verify redirect to /settings/notifications
+- [ ] Click outside dropdown - verify it closes
+- [ ] Press Escape key - verify it closes
+- [ ] Verify responsive width: full-width mobile (<640px), 384px desktop (≥640px)
+- [ ] Verify z-index stacking (panel z-50, header z-40)
+- [ ] Verify Bitcoin DeFi styling (glass morphism, dark bg, orange accents)
+
+### US-017: Integrate notifications into app header
+- [ ] Verify NotificationPanel integrated in app header (top-right)
+- [ ] Verify bell icon positioned next to user menu in header
+- [ ] Verify proper flex layout (flex gap-6 between bell and user menu)
+- [ ] Verify dropdown positioning: absolute right-0 top-full mt-2 (below bell icon)
+- [ ] Verify z-index ensures dropdown overlays other content
+- [ ] Navigate to different pages (/vaults, /settings, /dashboard) - verify header persists with notification bell
+- [ ] Verify click-outside detection works across all pages
+- [ ] Test on mobile (< 640px) - verify dropdown becomes full-width
+- [ ] Verify all components follow Bitcoin DeFi design system
+
+### US-018: Assemble dashboard page with all sections
+- [ ] Verify dashboard page renders with all sections in correct order:
+  1. [ ] WelcomeHeader (top)
+  2. [ ] ContinueResearch
+  3. [ ] RecentActivity
+  4. [ ] AnalyticsSection
+  5. [ ] QuickActionsFAB (fixed bottom-right, renders last but visible above content)
+- [ ] Verify responsive grid layout with proper spacing (space-y-8 = 32px between sections)
+- [ ] Verify max-w-7xl mx-auto centers content and constrains width
+- [ ] Verify responsive padding: p-6 (24px mobile), lg:p-8 (32px desktop)
+- [ ] Verify each section wrapped in separate ErrorBoundary
+- [ ] Simulate API error (disconnect backend) - verify:
+  - [ ] Section error fallback appears (red border card with error icon)
+  - [ ] Error message displayed: "Something went wrong"
+  - [ ] Retry button available
+  - [ ] Other sections continue to load (isolated error handling)
+- [ ] Click retry button - verify section reloads
+- [ ] Verify loading states: each component has skeleton loaders while fetching
+- [ ] Verify no page-level loading (components handle their own loading states)
+- [ ] Verify Bitcoin DeFi design system throughout (dark backgrounds, orange gradients, white/10 borders)
+
+### US-019: Update post-login redirect to dashboard
+- [ ] Logout from app (return to unauthenticated state)
+- [ ] Navigate to /login page
+- [ ] Login with valid credentials
+- [ ] Verify redirect to /dashboard (NOT /vaults)
+- [ ] Verify dashboard page loads successfully
+- [ ] Logout and navigate to / (marketing page)
+- [ ] Login via OAuth (Google or GitHub)
+- [ ] On OAuth callback success - verify redirect to /dashboard
+- [ ] Logout and navigate to /vaults (protected route) while unauthenticated
+- [ ] Verify redirect to /login?returnUrl=/vaults
+- [ ] Login successfully
+- [ ] Verify redirect to /vaults (returnUrl preserved)
+- [ ] While logged in, navigate to / (marketing page)
+- [ ] Verify automatic redirect to /dashboard
+- [ ] Verify (app) layout redirects unauthenticated users to /login
+- [ ] Test protected routes: /vaults, /settings, /profile
+- [ ] Verify all redirect to /login if not authenticated
+- [ ] Verify loading spinner during auth check (prevents flash of content)
+
+### Expected Behavior Summary
+- Dashboard is the central post-login hub showing personalized insights
+- Sidebar provides consistent navigation across app (collapsible on desktop, overlay on mobile)
+- WelcomeHeader greets user with time-based message and quick stats
+- ContinueResearch shows 3 recently accessed vaults for quick access
+- RecentActivity displays timeline of last 10 actions across all vaults
+- AnalyticsSection visualizes research metrics with Recharts components
+- QuickActionsFAB enables fast content creation without navigating away
+- NotificationPanel manages notifications with mark-read functionality
+- Dashboard is default post-login destination (replaces /vaults redirect)
+- All components follow Bitcoin DeFi design system (dark theme, orange-gold gradients, glassmorphism)
+- Responsive design works on mobile (< 768px) and desktop (≥ 768px)
+- Error boundaries provide graceful degradation per section
+- Loading states prevent empty content flashes
+
+### Prerequisites
+1. Backend server running: `cd backend && python manage.py runserver`
+2. Frontend dev server running: `cd frontend && npm run dev`
+3. PostgreSQL database with dashboard migrations applied
+4. Redis running (for caching)
+5. Test user account with:
+   - At least 2 vaults with different last_accessed_at timestamps
+   - Multiple sources across vaults
+   - Annotations created in last 7 days
+   - Activity logs (vault/source/annotation actions)
+   - Collaborators for top-collaborators analytics
+6. Browser DevTools for inspecting network requests and state
+7. Mobile device or responsive design mode for mobile testing
+
+### Issues Found
+(Document any bugs, edge cases, or unexpected behavior discovered during manual testing)

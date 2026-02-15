@@ -1076,3 +1076,24 @@
   - Error handling prevents audit log failures from disrupting main business logic
   - Follow same pattern as soft delete/restore audit logging from US-038
 ---
+
+## Iteration 43 - US-042: Register URL routes in project urls.py
+- Added apps.annotations.urls to config/urls.py at /api/v1/ prefix
+- Verified all required endpoints are accessible:
+  - /api/v1/sources/ (direct source list) - reverse('source-list') works
+  - /api/v1/annotations/ (direct annotation list) - reverse('annotation-list') works
+  - /api/v1/vaults/{id}/sources/ (nested vault sources) - reverse('vault-sources-list') works
+  - /api/v1/sources/{id}/annotations/ (nested source annotations) - reverse('source-annotations-list') works
+- Files changed:
+  - backend/config/urls.py (added annotations.urls include)
+  - PRD3.md (marked US-042 complete)
+- Learnings for future iterations:
+  - apps.sources.urls was already included at /api/v1/sources/ prefix (line 19)
+  - apps.vaults.urls includes nested routes for /api/v1/vaults/{id}/sources/ via vaults_router
+  - apps.sources.urls includes nested routes for /api/v1/sources/{id}/annotations/ via sources_router
+  - apps.annotations.urls provides direct /api/v1/annotations/ endpoint for annotation list
+  - Django URL reverse() function useful for testing route registration without database
+  - Django check passes with 0 issues
+  - Typecheck passes with 0 errors
+  - All 4 endpoints mentioned in acceptance criteria are accessible and working
+---
