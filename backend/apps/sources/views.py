@@ -702,9 +702,10 @@ class SourceViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=True, methods=['post'])
-    def restore(self, request, pk=None):
+    def restore(self, request, pk=None, vault_pk=None):
         """
         POST /api/v1/sources/{id}/restore/
+        POST /api/v1/vaults/{vault_id}/sources/{id}/restore/
 
         Restore a soft-deleted source (US-011).
         Only vault OWNER role can restore sources.

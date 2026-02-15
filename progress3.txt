@@ -1016,3 +1016,38 @@
   - Django check passes with 0 errors
   - Signal import validation via Django shell confirms functionality
 ---
+
+## Iteration 41 - US-040: Write audit log signal tests
+- Implemented comprehensive audit log signal tests for Source and Annotation models
+- Test files created:
+  - backend/apps/sources/tests/test_audit_logs.py
+  - backend/apps/annotations/tests/test_audit_logs.py
+- Source tests (4 test methods in SourceAuditLogSignalTest):
+  1. test_source_create_generates_source_created_log - verifies source.created audit log
+  2. test_source_update_generates_source_updated_log - verifies source.updated with changed_fields
+  3. test_source_soft_delete_generates_source_soft_deleted_log - verifies source.soft_deleted via API
+  4. test_source_restore_generates_source_restored_log - verifies source.restored via API
+- Annotation tests (4 test methods in AnnotationAuditLogSignalTest):
+  1. test_annotation_create_generates_annotation_created_log - verifies annotation.created
+  2. test_annotation_reply_generates_annotation_replied_log - verifies annotation.replied
+  3. test_annotation_update_generates_annotation_updated_log - verifies annotation.updated
+  4. test_annotation_delete_generates_annotation_deleted_log - verifies annotation.deleted
+- Fixed bugs discovered during testing:
+  - Fixed AuditLog field names in SourceViewSet.destroy() and restore() (user → actor, changes → metadata)
+  - Fixed SourceViewSet.restore() method signature to accept vault_pk parameter for nested routes
+- All 8 tests pass successfully
+- Files changed:
+  - backend/apps/sources/tests/test_audit_logs.py (created)
+  - backend/apps/annotations/tests/test_audit_logs.py (created)
+  - backend/apps/sources/views.py (fixed audit log field names and restore signature)
+  - PRD3.md (marked US-040 complete)
+- Learnings for future iterations:
+  - Audit log signals use 'actor' and 'metadata' fields, not 'user' and 'changes'
+  - Signals store changed_fields as a list, not changes as a dict
+  - IDs in metadata are stored as integers for Annotation, not strings
+  - Nested route actions must accept vault_pk parameter even if not used
+  - Test soft delete and restore via nested route URLs (/api/v1/vaults/{id}/sources/{id}/)
+  - Use APIClient.force_authenticate() for authenticated test requests
+  - Clear existing logs in setUp() or before specific tests to avoid interference
+  - Tests pass with Django test runner: python manage.py test --keepdb
+---

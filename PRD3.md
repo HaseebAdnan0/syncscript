@@ -534,16 +534,16 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need tests verifying audit logs are created correctly.
 
 **Acceptance Criteria:**
-- [ ] Test Source create generates `source.created` log
-- [ ] Test Source update generates `source.updated` log with changes
-- [ ] Test Source soft delete generates `source.soft_deleted` log
-- [ ] Test Source restore generates `source.restored` log
-- [ ] Test Annotation create generates `annotation.created` log
-- [ ] Test Annotation reply generates `annotation.replied` log
-- [ ] Test Annotation update generates `annotation.updated` log
-- [ ] Test Annotation delete generates `annotation.deleted` log
-- [ ] All tests pass
-- [ ] Typecheck passes
+- [x] Test Source create generates `source.created` log
+- [x] Test Source update generates `source.updated` log with changes
+- [x] Test Source soft delete generates `source.soft_deleted` log
+- [x] Test Source restore generates `source.restored` log
+- [x] Test Annotation create generates `annotation.created` log
+- [x] Test Annotation reply generates `annotation.replied` log
+- [x] Test Annotation update generates `annotation.updated` log
+- [x] Test Annotation delete generates `annotation.deleted` log
+- [x] All tests pass
+- [x] Typecheck passes
 
 ---
 
