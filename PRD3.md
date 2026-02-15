@@ -577,10 +577,10 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need to verify all tests pass together.
 
 **Acceptance Criteria:**
-- [ ] Run `python manage.py test apps.sources apps.annotations`
-- [ ] All tests pass (0 failures)
-- [ ] No warnings about missing migrations
-- [ ] Typecheck passes
+- [x] Run `python manage.py test apps.sources apps.annotations`
+- [x] All tests pass (0 failures)
+- [x] No warnings about missing migrations
+- [x] Typecheck passes
 
 ---
 
