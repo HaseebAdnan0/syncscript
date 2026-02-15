@@ -903,6 +903,26 @@ class SourceViewSet(viewsets.ModelViewSet):
                         'error': str(e)
                     })
 
+        # Create single audit log entry for bulk import (US-041)
+        if created:
+            try:
+                AuditLog.objects.create(
+                    vault=vault,
+                    actor=request.user,
+                    action='source.bulk_imported',
+                    metadata={
+                        'count': len(created),
+                        'urls': [item['url'] for item in created],
+                        'vault_id': str(vault.id)
+                    }
+                )
+            except Exception as audit_exc:
+                # Log but don't fail the request if audit logging fails
+                logger.warning(
+                    f"Failed to create audit log for bulk import: {audit_exc}",
+                    exc_info=True,
+                )
+
         return Response({
             'created': created,
             'skipped': skipped,

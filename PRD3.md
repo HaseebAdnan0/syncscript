@@ -551,11 +551,11 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need a single audit log entry for bulk imports.
 
 **Acceptance Criteria:**
-- [ ] In `bulk_import` action, create single audit log after all sources created
-- [ ] Action: `source.bulk_imported`
-- [ ] Changes JSON: `{"count": N, "urls": [...]}`
-- [ ] Include vault_id in changes
-- [ ] Typecheck passes
+- [x] In `bulk_import` action, create single audit log after all sources created
+- [x] Action: `source.bulk_imported`
+- [x] Changes JSON: `{"count": N, "urls": [...]}`
+- [x] Include vault_id in changes
+- [x] Typecheck passes
 
 ---
 
