@@ -368,18 +368,26 @@ class VaultConsumer(AsyncWebsocketConsumer):
         # Get current presence list
         presence_list = await self._get_presence_list(self.vault_id)
 
-        # Broadcast to all room members
+        # Build message in same format as broadcast_to_vault
+        message = {
+            'type': 'presence.update',
+            'seq': 0,  # Presence updates don't need sequence tracking
+            'event': 'presence.update',
+            'payload': {
+                'active_users': presence_list
+            },
+            'metadata': {
+                'timestamp': int(time.time()),
+                'vault_id': self.vault_id
+            }
+        }
+
+        # Broadcast to all room members (format expected by vault_event handler)
         await self.channel_layer.group_send(  # type: ignore[union-attr]
             self.room_group_name,
             {
                 'type': 'vault_event',
-                'event_type': 'presence.update',
-                'payload': {
-                    'active_users': presence_list
-                },
-                'metadata': {
-                    'timestamp': int(time.time())
-                }
+                'message': json.dumps(message)
             }
         )
 

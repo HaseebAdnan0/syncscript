@@ -1,6 +1,6 @@
 'use client';
 
-import { Source } from '@/lib/types/sources';
+import { Source, SourceType } from '@/lib/types/sources';
 import { SourceCard } from './SourceCard';
 import { SourceTableRow } from './SourceTableRow';
 import { FileQuestion } from 'lucide-react';
@@ -8,8 +8,9 @@ import { Button } from '@/components/ui/button';
 import { FileUploadZone } from '@/components/features/uploads/FileUploadZone';
 import { UploadProgressBar } from '@/components/features/uploads/UploadProgressBar';
 import { UploadErrorState } from '@/components/features/uploads/UploadErrorState';
-import { useFileUpload } from '@/hooks/useFileUpload';
-import { useState, useEffect, useCallback } from 'react';
+import { useFileUpload, type UploadState } from '@/hooks/useFileUpload';
+import { useAddSourceMutation } from '@/hooks/useAddSourceMutation';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 interface SourcesListProps {
   sources: Source[];
@@ -94,18 +95,15 @@ export function SourcesList({
   onAddSource,
   onEdit,
   onDelete,
-  onRefresh,
+  // onRefresh is no longer needed - mutation hook handles cache invalidation
 }: SourcesListProps) {
   // File upload management
   const { uploads, uploadFile, retryUpload, cancelUpload } = useFileUpload();
   const [uploadingFiles, setUploadingFiles] = useState<boolean>(false);
+  const addSourceMutation = useAddSourceMutation();
 
-  // Handle upload completion - refresh sources list
-  const handleUploadComplete = useCallback(() => {
-    if (onRefresh) {
-      onRefresh();
-    }
-  }, [onRefresh]);
+  // Track which uploads we've already created sources for
+  const createdSourcesRef = useRef<Set<string>>(new Set());
 
   // Handle file selection from upload zone
   const handleFilesSelected = async (files: File[]) => {
@@ -120,16 +118,60 @@ export function SourcesList({
     }
   };
 
-  // Monitor uploads for completion
-  useEffect(() => {
-    const allUploads = Array.from(uploads.values());
-    const hasCompletedUploads = allUploads.some(u => u.status === 'complete');
+  // Create Source record after upload completes
+  const createSourceFromUpload = useCallback(async (uploadId: string, uploadState: UploadState) => {
+    // Skip if we already created a source for this upload
+    if (createdSourcesRef.current.has(uploadId)) {
+      return;
+    }
 
+    if (!uploadState.fileKey) {
+      console.error('Upload incomplete - missing file key');
+      return;
+    }
+
+    // Mark as processing to prevent duplicate creation
+    createdSourcesRef.current.add(uploadId);
+
+    try {
+      // Create a Source record with type PDF
+      // URL is optional for PDF sources - backend generates a placeholder
+      await addSourceMutation.mutateAsync({
+        vault: vaultId,
+        title: uploadState.file.name.replace(/\.(pdf|png|jpg|jpeg)$/i, ''),
+        source_type: uploadState.file.type === 'application/pdf' ? SourceType.PDF : SourceType.URL,
+        metadata: {
+          filename: uploadState.file.name,
+          fileSize: uploadState.file.size,
+          fileKey: uploadState.fileKey,
+          pdfUploadId: uploadState.uploadId,
+        },
+      });
+
+      console.log('Source created for upload:', uploadId);
+    } catch (error) {
+      console.error('Failed to create source from upload:', error);
+      // Remove from set so it can be retried
+      createdSourcesRef.current.delete(uploadId);
+    }
+  }, [addSourceMutation, vaultId]);
+
+  // Monitor uploads for completion and create sources
+  useEffect(() => {
+    const allUploads = Array.from(uploads.entries());
+
+    for (const [uploadId, uploadState] of allUploads) {
+      if (uploadState.status === 'complete' && !createdSourcesRef.current.has(uploadId)) {
+        createSourceFromUpload(uploadId, uploadState);
+      }
+    }
+
+    // Reset uploadingFiles flag when all uploads complete
+    const hasCompletedUploads = allUploads.some(u => u[1].status === 'complete');
     if (hasCompletedUploads && uploadingFiles) {
-      handleUploadComplete();
       setUploadingFiles(false);
     }
-  }, [uploads, uploadingFiles, handleUploadComplete]);
+  }, [uploads, uploadingFiles, createSourceFromUpload]);
   // Get active uploads as array
   const activeUploads = Array.from(uploads.values());
 

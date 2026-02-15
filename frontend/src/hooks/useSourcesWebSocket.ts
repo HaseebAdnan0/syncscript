@@ -36,12 +36,16 @@ export function useSourcesWebSocket({ vaultId }: UseSourcesWebSocketOptions) {
       queryClient.invalidateQueries({
         predicate: (query) => {
           const queryKey = query.queryKey;
-          // Match ['sources', vaultId] or ['sources', vaultId, filters]
-          // vaultId can be string or number
+          // Match ['sources', 'list', vaultId, filters] format from sourceKeys.list()
+          // Also match ['sources', vaultId] format from useAddSourceMutation
           if (queryKey[0] !== 'sources') return false;
-          const queryVaultId = queryKey[1];
           const vaultIdStr = String(vaultId);
-          return String(queryVaultId) === vaultIdStr;
+          // Check position 2 for sourceKeys.list format: ['sources', 'list', vaultId, ...]
+          if (queryKey[1] === 'list' && queryKey[2] !== undefined) {
+            return String(queryKey[2]) === vaultIdStr;
+          }
+          // Check position 1 for direct format: ['sources', vaultId, ...]
+          return String(queryKey[1]) === vaultIdStr;
         },
       });
     };

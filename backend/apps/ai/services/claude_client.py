@@ -168,7 +168,7 @@ class AIClient:
 
             response = self._make_request(
                 messages=[{"role": "user", "content": prompt}],
-                max_tokens=4000  # Increased for complex JSON responses
+                max_tokens=8000  # Increased further for complex JSON responses
             )
 
             response_text = response['choices'][0]['message']['content']

@@ -85,18 +85,19 @@ export default function VaultDetailPage() {
     }
   }, [vaultId]);
 
-  // Silently fetch cached insights when switching to insights tab
+  // Silently fetch cached insights when switching to insights tab (no AI generation)
   useEffect(() => {
     const fetchCachedInsights = async () => {
       // Only fetch if we don't have insights yet and not already loading
       if (insights || isLoadingInsights) return;
 
       try {
-        const data = await getVaultInsights(vaultId);
+        // Use cachedOnly=true to avoid triggering AI generation
+        const data = await getVaultInsights(vaultId, true);
         setInsights(data);
-        // Don't mark as cached - this is just normal loading of persisted data
+        setIsCachedInsights(true);
       } catch {
-        // Silently fail - user can click Generate to try again
+        // Silently fail - user can click Generate to create insights
         console.log('No cached insights available');
       }
     };

@@ -12,6 +12,7 @@ import type {
   UpdateSourceRequest,
   SourcesFilterParams,
 } from '@/lib/types/sources';
+import { vaultKeys } from './useVaults';
 
 // Query keys
 export const sourceKeys = {
@@ -53,9 +54,14 @@ export function useCreateSource() {
 
   return useMutation<Source, Error, CreateSourceRequest>({
     mutationFn: createSource,
-    onSuccess: () => {
+    onSuccess: (newSource) => {
       // Invalidate all source lists for this vault to refetch with new source
       queryClient.invalidateQueries({ queryKey: sourceKeys.lists() });
+
+      // Invalidate vault query to update storage_usage
+      queryClient.invalidateQueries({
+        queryKey: vaultKeys.detail(newSource.vault),
+      });
     },
   });
 }
@@ -77,19 +83,28 @@ export function useUpdateSource(id: number) {
   });
 }
 
+interface DeleteSourceParams {
+  sourceId: number;
+  vaultId: string;
+}
+
 /**
  * Delete a source
  */
 export function useDeleteSource() {
   const queryClient = useQueryClient();
 
-  return useMutation<void, Error, number>({
-    mutationFn: deleteSource,
-    onSuccess: (_, deletedId) => {
+  return useMutation<void, Error, DeleteSourceParams>({
+    mutationFn: ({ sourceId }) => deleteSource(sourceId),
+    onSuccess: (_, { sourceId, vaultId }) => {
       // Remove from cache
-      queryClient.removeQueries({ queryKey: sourceKeys.detail(deletedId) });
+      queryClient.removeQueries({ queryKey: sourceKeys.detail(sourceId) });
       // Invalidate lists to reflect deletion
       queryClient.invalidateQueries({ queryKey: sourceKeys.lists() });
+      // Invalidate vault query to update storage_usage
+      queryClient.invalidateQueries({
+        queryKey: vaultKeys.detail(vaultId),
+      });
     },
   });
 }

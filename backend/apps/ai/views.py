@@ -156,12 +156,16 @@ def summarize_source(request, source_id):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-@ai_rate_limit
 def vault_insights(request, vault_id):
     """
     GET /api/v1/vaults/{id}/insights/
+    GET /api/v1/vaults/{id}/insights/?cached_only=true
 
     Generate AI insights about a vault's research themes, gaps, and cross-references.
+
+    Query params:
+    - cached_only (bool): If true, only return cached insights without generating new ones.
+                          Returns 404 if no cached insights exist.
 
     Returns cached insights if ai_insights_updated_at < 24 hours old.
 
@@ -172,6 +176,9 @@ def vault_insights(request, vault_id):
     - suggested_searches (list): Search terms to explore
     - generated_at (datetime): When insights were generated
     """
+    # Check if this is a cached-only request (no AI generation)
+    cached_only = request.query_params.get('cached_only', '').lower() == 'true'
+
     # Get vault and verify permissions
     vault = get_object_or_404(Vault, id=vault_id, is_archived=False)
 
@@ -199,6 +206,29 @@ def vault_insights(request, vault_id):
         if cache_age < timedelta(hours=24):
             logger.info(f"Returning cached insights for vault {vault_id}")
             return Response(vault.ai_insights_cache, status=status.HTTP_200_OK)
+
+    # If cached_only=true and no valid cache, return 404
+    if cached_only:
+        return Response(
+            {"error": "No cached insights available. Click Generate to create insights."},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    # Apply rate limiting only when we're about to call AI
+    from apps.ai.services.usage import get_remaining_requests
+    remaining = get_remaining_requests(request.user)
+    if remaining <= 0:
+        # Calculate reset time (next midnight UTC)
+        now = timezone.now()
+        reset_time = (now + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+        return Response(
+            {
+                "error": "AI request limit reached",
+                "resets_at": reset_time.isoformat(),
+                "remaining": 0
+            },
+            status=status.HTTP_429_TOO_MANY_REQUESTS
+        )
 
     # Gather all source summaries or metadata
     sources = Source.objects.filter(vault=vault, is_deleted=False).select_related('vault')

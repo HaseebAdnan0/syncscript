@@ -23,7 +23,7 @@ interface LoginResponse {
 }
 
 export const useAuth = () => {
-  const { setUser, setTokens, clearUser, setLoading } = useAuthStore();
+  const { setUser, setTokens, clearUser, setLoading, refreshToken } = useAuthStore();
 
   /**
    * Login user with email and password
@@ -83,7 +83,10 @@ export const useAuth = () => {
   const logout = useCallback(async (): Promise<AuthResult> => {
     try {
       setLoading(true);
-      await api.post('/auth/logout/');
+      // Send refresh token to backend to blacklist it
+      if (refreshToken) {
+        await api.post('/auth/logout/', { refresh: refreshToken });
+      }
       clearUser();
       return { success: true };
     } catch (error) {
@@ -94,7 +97,7 @@ export const useAuth = () => {
     } finally {
       setLoading(false);
     }
-  }, [clearUser, setLoading]);
+  }, [clearUser, setLoading, refreshToken]);
 
   /**
    * Refresh user data from backend

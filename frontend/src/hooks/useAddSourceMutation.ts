@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createSource } from '@/lib/api/sources';
 import { toast } from '@/hooks/useToast';
 import type { Source, CreateSourceRequest } from '@/lib/types/sources';
+import { vaultKeys } from './useVaults';
 
 /**
  * Hook to create a new source with optimistic updates
@@ -22,6 +23,11 @@ export function useAddSourceMutation() {
       // Invalidate sources query for this vault to refetch with new source
       queryClient.invalidateQueries({
         queryKey: ['sources', newSource.vault],
+      });
+
+      // Invalidate vault query to update storage_usage
+      queryClient.invalidateQueries({
+        queryKey: vaultKeys.detail(newSource.vault),
       });
 
       // Show success toast

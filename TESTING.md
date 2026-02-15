@@ -78,10 +78,10 @@ npm run dev
 3. Both open same vault: "AI Research Papers 2025"
 
 **Demo:**
-- [ ] Alice adds a new source → Bob sees it appear instantly (no refresh)
-- [ ] Bob adds annotation → Alice sees it appear instantly
+- [x] Alice adds a new source → Bob sees it appear instantly (no refresh)
+- [x] Bob adds annotation → Alice sees it appear instantly
 - [ ] Show presence indicators (who's online in vault)
-- [ ] Show connection status indicator (green dot)
+- [x] Show connection status indicator (green dot)
 
 **If WebSocket not working:** Start Daphne server (see Quick Start)
 
@@ -89,8 +89,8 @@ npm run dev
 1. Open any vault
 2. Click "Add Source" → "Upload PDF"
 3. Upload a PDF file (< 10MB)
-- [ ] Verify upload progress bar
-- [ ] Verify file stored in cloud (not local)
+- [x] Verify upload progress bar
+- [x] Verify file stored in cloud (not local)
 - [ ] Verify presigned URL download works
 - [ ] Verify thumbnail generation
 

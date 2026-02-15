@@ -121,9 +121,12 @@ export const removeMember = async (vaultId: string, memberId: string): Promise<v
 
 /**
  * Get AI-generated insights for a vault
+ * @param vaultId - The vault ID
+ * @param cachedOnly - If true, only return cached insights without triggering AI generation
  */
-export const getVaultInsights = async (vaultId: string): Promise<VaultInsights> => {
-  const response = await api.get<VaultInsights>(`/vaults/${vaultId}/insights/`);
+export const getVaultInsights = async (vaultId: string, cachedOnly: boolean = false): Promise<VaultInsights> => {
+  const params = cachedOnly ? { cached_only: 'true' } : {};
+  const response = await api.get<VaultInsights>(`/vaults/${vaultId}/insights/`, { params });
   return response.data;
 };
 

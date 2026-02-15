@@ -26,8 +26,10 @@ def broadcast_annotation_created(annotation_id: int) -> None:
         payload: dict[str, Any] = {
             'id': annotation.id,  # type: ignore[attr-defined]
             'source_id': annotation.source.id,  # type: ignore[attr-defined]
-            'text': annotation.text,  # type: ignore[attr-defined]
+            'content': annotation.content,  # type: ignore[attr-defined]
             'page_number': annotation.page_number,  # type: ignore[attr-defined]
+            'position': annotation.position,  # type: ignore[attr-defined]
+            'parent_id': annotation.parent_id,  # type: ignore[attr-defined]
             'created_by': {
                 'id': annotation.user.id,  # type: ignore[attr-defined]
                 'username': annotation.user.username,  # type: ignore[attr-defined]

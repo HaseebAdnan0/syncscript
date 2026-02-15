@@ -127,7 +127,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
         <Suspense fallback={<div className="hidden lg:block lg:w-64" />}>
           <Sidebar />
         </Suspense>
-        <main className="flex-1 min-h-[calc(100vh-72px)]">{children}</main>
+        <main className="flex-1 min-h-[calc(100vh-72px)] overflow-x-hidden">{children}</main>
       </div>
       <OnboardingFlow />
       <GlobalSearch isOpen={isOpen} onClose={close} />

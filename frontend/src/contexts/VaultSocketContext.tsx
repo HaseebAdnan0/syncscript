@@ -5,11 +5,6 @@ import { useAuthStore } from '@/stores/authStore';
 
 type ConnectionStatus = 'connecting' | 'connected' | 'disconnected' | 'reconnecting';
 
-interface WebSocketMessage {
-  type: string;
-  data: any;
-}
-
 interface VaultSocketContextValue {
   status: ConnectionStatus;
   send: (eventType: string, data: any) => void;
@@ -101,13 +96,15 @@ export function VaultSocketProvider({ vaultId, children }: VaultSocketProviderPr
         if (isUnmountedRef.current) return;
 
         try {
-          const message: WebSocketMessage = JSON.parse(event.data);
+          const message = JSON.parse(event.data);
           const handlers = eventHandlersRef.current.get(message.type);
 
           if (handlers) {
+            // Backend sends payload, not data
+            const eventData = message.payload ?? message.data;
             handlers.forEach((handler) => {
               try {
-                handler(message.data);
+                handler(eventData);
               } catch (error) {
                 console.error(`Error in event handler for ${message.type}:`, error);
               }

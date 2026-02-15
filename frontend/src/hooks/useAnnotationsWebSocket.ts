@@ -25,10 +25,11 @@ export function useAnnotationsWebSocket({ vaultId, sourceId }: UseAnnotationsWeb
       queryClient.invalidateQueries({ queryKey: ['annotations', sourceId] });
 
       // Show subtle toast when another user adds annotation
-      if (data.annotation?.author?.username) {
+      // Backend sends payload directly with author field (not wrapped in annotation key)
+      if (data?.author?.username) {
         toast({
           title: 'New annotation',
-          description: `${data.annotation.author.username} added an annotation`,
+          description: `${data.author.username} added an annotation`,
         });
       }
     });
@@ -43,10 +44,11 @@ export function useAnnotationsWebSocket({ vaultId, sourceId }: UseAnnotationsWeb
       queryClient.invalidateQueries({ queryKey: ['annotations', sourceId] });
 
       // Show subtle toast when another user adds reply
-      if (data.reply?.author?.username) {
+      // Backend sends payload directly with author field (not wrapped in reply key)
+      if (data?.author?.username) {
         toast({
           title: 'New reply',
-          description: `${data.reply.author.username} replied to an annotation`,
+          description: `${data.author.username} replied to an annotation`,
         });
       }
     });

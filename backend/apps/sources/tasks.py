@@ -249,34 +249,69 @@ def process_uploaded_pdf(self, pdf_upload_id: str) -> dict[str, Any]:
             f"title={pdf_upload.pdf_title}, pages={page_count}"
         )
 
-        # Create a Source record for the PDF so it appears in the sources list (US-008)
-        # Generate the file URL for the Source record
-        # Use the presigned URL pattern or construct a public URL
-        file_url = f"pdf://{pdf_upload.id}"  # Internal reference to the PDF
-        if hasattr(settings, 'AWS_S3_CUSTOM_DOMAIN') and settings.AWS_S3_CUSTOM_DOMAIN:
-            file_url = f"https://{settings.AWS_S3_CUSTOM_DOMAIN}/{file_key}"
+        # Create or update Source record for the PDF (US-008)
+        # Check if Source was already created by frontend (via pdfUploadId in metadata)
+        existing_source = None
 
-        # Create Source record linked to this PDFUpload
-        source = Source.objects.create(
-            vault=pdf_upload.vault,
-            url=file_url,
-            title=pdf_upload.pdf_title or pdf_upload.original_filename,
-            description=f"PDF document with {page_count} pages" if page_count else "PDF document",
-            source_type=SourceType.PDF,
-            metadata={
-                'pdf_upload_id': str(pdf_upload.id),
-                'original_filename': pdf_upload.original_filename,
-                'file_size': pdf_upload.file_size,
-                'page_count': page_count,
-                'author': pdf_upload.pdf_author,
-                'thumbnail_url': thumbnail_url,
-            },
-            created_by=pdf_upload.uploaded_by,
-        )
+        # First check if PDFUpload already has a linked source
+        if pdf_upload.source:
+            existing_source = pdf_upload.source
+        else:
+            # Look for Source with matching pdfUploadId in metadata
+            existing_source = Source.objects.filter(
+                vault=pdf_upload.vault,
+                is_deleted=False,
+                metadata__pdfUploadId=str(pdf_upload.id)
+            ).first()
 
-        # Link the PDFUpload to the Source
-        pdf_upload.source = source
-        pdf_upload.save(update_fields=['source'])
+            # Also check for https://pdf.internal/ URL pattern
+            if not existing_source:
+                existing_source = Source.objects.filter(
+                    vault=pdf_upload.vault,
+                    is_deleted=False,
+                    url=f"https://pdf.internal/{pdf_upload.id}"
+                ).first()
+
+        # Prepare metadata
+        source_metadata = {
+            'pdf_upload_id': str(pdf_upload.id),
+            'pdfUploadId': str(pdf_upload.id),  # Keep both formats for compatibility
+            'original_filename': pdf_upload.original_filename,
+            'file_size': pdf_upload.file_size,
+            'page_count': page_count,
+            'author': pdf_upload.pdf_author,
+            'thumbnail_url': thumbnail_url,
+        }
+
+        if existing_source:
+            # Update existing Source with extracted metadata
+            existing_source.title = pdf_upload.pdf_title or pdf_upload.original_filename
+            existing_source.description = f"PDF document with {page_count} pages" if page_count else "PDF document"
+            existing_source.metadata = {**existing_source.metadata, **source_metadata}
+            existing_source.save(update_fields=['title', 'description', 'metadata'])
+            source = existing_source
+            logger.info(f"Updated existing Source {source.id} for PDF {pdf_upload_id}")
+        else:
+            # Create new Source record
+            file_url = f"https://pdf.internal/{pdf_upload.id}"
+            if hasattr(settings, 'AWS_S3_CUSTOM_DOMAIN') and settings.AWS_S3_CUSTOM_DOMAIN:
+                file_url = f"https://{settings.AWS_S3_CUSTOM_DOMAIN}/{file_key}"
+
+            source = Source.objects.create(
+                vault=pdf_upload.vault,
+                url=file_url,
+                title=pdf_upload.pdf_title or pdf_upload.original_filename,
+                description=f"PDF document with {page_count} pages" if page_count else "PDF document",
+                source_type=SourceType.PDF,
+                metadata=source_metadata,
+                created_by=pdf_upload.uploaded_by,
+            )
+            logger.info(f"Created new Source {source.id} for PDF {pdf_upload_id}")
+
+        # Link the PDFUpload to the Source (if not already linked)
+        if pdf_upload.source != source:
+            pdf_upload.source = source
+            pdf_upload.save(update_fields=['source'])
 
         logger.info(
             f"Created Source {source.id} for PDF {pdf_upload_id}"
