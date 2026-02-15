@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useState, useEffect, useMemo } from 'react';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useVault } from '@/hooks/useVaults';
 import { useSourcesQuery } from '@/hooks/useSourcesQuery';
 import { useSourcesViewPreference } from '@/hooks/useSourcesViewPreference';
@@ -13,18 +13,58 @@ import { AddSourceModal } from '@/components/features/sources/AddSourceModal';
 import { BulkImportModal } from '@/components/features/sources/BulkImportModal';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ArrowLeft, Wifi, WifiOff, Keyboard } from 'lucide-react';
+import { SourceType, SourcesFilterParams } from '@/lib/types/sources';
 
 export default function SourcesPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const vaultId = params.id as string;
+
+  // Parse filter params from URL
+  const filters: SourcesFilterParams = useMemo(() => {
+    const typeParam = searchParams.get('type');
+    const dateParam = searchParams.get('date');
+    const contributorParam = searchParams.get('contributor');
+    const searchParam = searchParams.get('search');
+
+    const result: SourcesFilterParams = {};
+
+    if (typeParam && typeParam !== 'all') {
+      result.type = typeParam as SourceType;
+    }
+
+    if (dateParam && dateParam !== 'any') {
+      const now = new Date();
+      if (dateParam === 'today') {
+        result.dateFrom = new Date(now.setHours(0, 0, 0, 0)).toISOString();
+      } else if (dateParam === 'week') {
+        const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        result.dateFrom = weekAgo.toISOString();
+      } else if (dateParam === 'month') {
+        const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        result.dateFrom = monthAgo.toISOString();
+      }
+    }
+
+    if (contributorParam && contributorParam !== 'all') {
+      result.contributor = contributorParam;
+    }
+
+    if (searchParam) {
+      result.search = searchParam;
+    }
+
+    return result;
+  }, [searchParams]);
 
   // Fetch vault data
   const { data: vault, isLoading: vaultLoading, error: vaultError } = useVault(vaultId);
 
-  // Fetch sources
+  // Fetch sources with filters
   const { data: sources = [], isLoading: sourcesLoading } = useSourcesQuery({
     vaultId,
+    filters: Object.keys(filters).length > 0 ? filters : undefined,
   });
 
   // View preference hook

@@ -58,14 +58,15 @@ class AnnotationCRUDTest(TestCase):
         self.client.force_authenticate(user=self.owner)
         url = f'/api/v1/sources/{self.source.id}/annotations/'
         data = {
-            'content': 'This is a top-level annotation',
-            'page_number': 1,
+            'source': self.source.id,
+            'text': 'This is a top-level annotation',
+            'pageNumber': 1,
             'position': {'x': 100, 'y': 200}
         }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data['content'], 'This is a top-level annotation')
-        self.assertEqual(response.data['page_number'], 1)
+        self.assertEqual(response.data['text'], 'This is a top-level annotation')
+        self.assertEqual(response.data['pageNumber'], 1)
         self.assertEqual(response.data['position'], {'x': 100, 'y': 200})
         self.assertIsNone(response.data['parent'])
         self.assertEqual(Annotation.objects.count(), 1)
@@ -83,12 +84,13 @@ class AnnotationCRUDTest(TestCase):
         self.client.force_authenticate(user=self.member)
         url = f'/api/v1/sources/{self.source.id}/annotations/'
         data = {
-            'content': 'This is a reply',
+            'source': self.source.id,
+            'text': 'This is a reply',
             'parent': top_level.id
         }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data['content'], 'This is a reply')
+        self.assertEqual(response.data['text'], 'This is a reply')
         self.assertEqual(response.data['parent'], top_level.id)
         self.assertEqual(Annotation.objects.count(), 2)
         self.assertEqual(top_level.replies.count(), 1)
@@ -115,7 +117,8 @@ class AnnotationCRUDTest(TestCase):
         self.client.force_authenticate(user=self.owner)
         url = f'/api/v1/sources/{self.source.id}/annotations/'
         data = {
-            'content': 'This should fail (reply to reply)',
+            'source': self.source.id,
+            'text': 'This should fail (reply to reply)',
             'parent': reply.id
         }
         response = self.client.post(url, data, format='json')
@@ -153,9 +156,9 @@ class AnnotationCRUDTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data['results']), 1)  # Only top-level annotations
         annotation = response.data['results'][0]
-        self.assertEqual(annotation['content'], 'Top level annotation')
+        self.assertEqual(annotation['text'], 'Top level annotation')
         self.assertEqual(len(annotation['replies']), 2)  # Nested replies included
-        reply_contents = [r['content'] for r in annotation['replies']]
+        reply_contents = [r['text'] for r in annotation['replies']]
         self.assertIn('First reply', reply_contents)
         self.assertIn('Second reply', reply_contents)
 
@@ -171,10 +174,10 @@ class AnnotationCRUDTest(TestCase):
 
         self.client.force_authenticate(user=self.owner)
         url = f'/api/v1/annotations/{annotation.id}/'
-        data = {'content': 'Updated content'}
+        data = {'text': 'Updated content'}
         response = self.client.patch(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['content'], 'Updated content')
+        self.assertEqual(response.data['text'], 'Updated content')
         annotation.refresh_from_db()
         self.assertEqual(annotation.content, 'Updated content')
 
@@ -212,7 +215,7 @@ class AnnotationCRUDTest(TestCase):
         # Try to change position
         original_position = annotation.position.copy()
         data = {
-            'content': 'Same content',
+            'text': 'Same content',
             'position': {'x': 999, 'y': 888}
         }
         response = self.client.patch(url, data, format='json')
@@ -326,7 +329,7 @@ class AnnotationPermissionTest(TestCase):
         # Try to list as non-member (should get 403 or empty list based on filtering)
         self.client.force_authenticate(user=self.non_member)
         url = f'/api/v1/sources/{self.source.id}/annotations/'
-        response = self.client.post(url, {'content': 'Should fail'}, format='json')
+        response = self.client.post(url, {'source': self.source.id, 'text': 'Should fail'}, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_any_vault_member_can_create_annotation(self):
@@ -334,12 +337,13 @@ class AnnotationPermissionTest(TestCase):
         self.client.force_authenticate(user=self.member)  # member is VIEWER role
         url = f'/api/v1/sources/{self.source.id}/annotations/'
         data = {
-            'content': 'Viewer annotation',
-            'page_number': 1
+            'source': self.source.id,
+            'text': 'Viewer annotation',
+            'pageNumber': 1
         }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data['content'], 'Viewer annotation')
+        self.assertEqual(response.data['text'], 'Viewer annotation')
         self.assertEqual(Annotation.objects.count(), 1)
 
     def test_author_can_update_own_annotation(self):
@@ -353,10 +357,10 @@ class AnnotationPermissionTest(TestCase):
 
         self.client.force_authenticate(user=self.member)
         url = f'/api/v1/annotations/{annotation.id}/'
-        data = {'content': 'Updated content'}
+        data = {'text': 'Updated content'}
         response = self.client.patch(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['content'], 'Updated content')
+        self.assertEqual(response.data['text'], 'Updated content')
         annotation.refresh_from_db()
         self.assertEqual(annotation.content, 'Updated content')
 
@@ -372,7 +376,7 @@ class AnnotationPermissionTest(TestCase):
         # Try to update as member (not author)
         self.client.force_authenticate(user=self.member)
         url = f'/api/v1/annotations/{annotation.id}/'
-        data = {'content': 'Trying to update'}
+        data = {'text': 'Trying to update'}
         response = self.client.patch(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         annotation.refresh_from_db()

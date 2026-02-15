@@ -91,7 +91,7 @@ class WebSocketConnectionAuthTests(TransactionTestCase):
 
     async def test_connection_rejected_with_invalid_jwt(self) -> None:
         """
-        Test: Connection rejected with invalid JWT (error + close 1008).
+        Test: Connection rejected with invalid JWT (error + close 4008).
         """
         # Create WebSocket communicator with invalid token
         invalid_token = 'invalid.jwt.token'
@@ -122,7 +122,7 @@ class WebSocketConnectionAuthTests(TransactionTestCase):
 
     async def test_connection_rejected_without_vault_membership(self) -> None:
         """
-        Test: Connection rejected without vault membership (error + close 1008).
+        Test: Connection rejected without vault membership (error + close 4008).
         """
         # Create JWT for user without vault membership
         token_no_access = str(AccessToken.for_user(self.user_no_access))
@@ -154,7 +154,7 @@ class WebSocketConnectionAuthTests(TransactionTestCase):
 
     async def test_connection_rejected_with_missing_jwt(self) -> None:
         """
-        Test: Connection rejected with missing JWT token (error + close 1008).
+        Test: Connection rejected with missing JWT token (error + close 4008).
         """
         # Create WebSocket communicator without token
         communicator = WebsocketCommunicator(

@@ -46,7 +46,8 @@ function getRoleBadgeStyles(role: VaultRole) {
 }
 
 // Get user initials from name
-function getInitials(name: string): string {
+function getInitials(name: string | undefined | null): string {
+  if (!name) return '??';
   const parts = name.trim().split(/\s+/);
   if (parts.length >= 2) {
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
@@ -61,7 +62,9 @@ function sortMembers(members: any[]) {
     if (a.role === VaultRole.OWNER && b.role !== VaultRole.OWNER) return -1;
     if (a.role !== VaultRole.OWNER && b.role === VaultRole.OWNER) return 1;
     // Then alphabetically by name
-    return a.user_name.localeCompare(b.user_name);
+    const nameA = a.username || a.email || '';
+    const nameB = b.username || b.email || '';
+    return nameA.localeCompare(nameB);
   });
 }
 
@@ -175,7 +178,7 @@ export function MembersList({ vaultId, userRole, currentUserId }: MembersListPro
 
       <div className="space-y-4">
         {sortedMembers.map((member) => {
-          const isCurrentUser = currentUserId === member.user_id;
+          const isCurrentUser = currentUserId === member.user;
           const isMemberOwner = member.role === VaultRole.OWNER;
           const canChangeRole = isOwner && !isMemberOwner && !isCurrentUser;
           const canRemove = isOwner && !isMemberOwner && !isCurrentUser;
@@ -190,17 +193,17 @@ export function MembersList({ vaultId, userRole, currentUserId }: MembersListPro
                 {/* Avatar with initials */}
                 <div className="w-12 h-12 bg-gradient-to-br from-[#F7931A] to-[#EA580C] rounded-full flex items-center justify-center shrink-0">
                   <span className="text-white font-bold text-lg">
-                    {getInitials(member.user_name)}
+                    {getInitials(member.username || member.email)}
                   </span>
                 </div>
 
                 {/* Member info */}
                 <div className="flex-1 min-w-0">
                   <h3 className="text-white font-semibold text-lg truncate">
-                    {member.user_name}
+                    {member.username || member.email || 'Unknown User'}
                   </h3>
                   <p className="text-[#94A3B8] text-sm truncate">
-                    {member.user_email}
+                    {member.email || ''}
                   </p>
                 </div>
 
@@ -255,9 +258,9 @@ export function MembersList({ vaultId, userRole, currentUserId }: MembersListPro
                 {/* Remove button (only for owners, not for other owners or self) */}
                 {canRemove && (
                   <button
-                    onClick={() => setRemovingMember({ id: member.id, name: member.user_name })}
+                    onClick={() => setRemovingMember({ id: member.id, name: member.username || member.email || 'this member' })}
                     className="p-2 rounded-lg text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors"
-                    aria-label={`Remove ${member.user_name}`}
+                    aria-label={`Remove ${member.username || member.email}`}
                   >
                     <Trash2 className="w-5 h-5" />
                   </button>

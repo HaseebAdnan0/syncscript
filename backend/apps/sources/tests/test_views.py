@@ -146,8 +146,8 @@ class SourceCRUDTest(TestCase):
 
         # Verify only active sources returned
         returned_ids = [item['id'] for item in response.data['results']]
-        self.assertIn(str(source1.id), returned_ids)
-        self.assertIn(str(source2.id), returned_ids)
+        self.assertIn(source1.id, returned_ids)
+        self.assertIn(source2.id, returned_ids)
         self.assertNotIn(str(source_deleted.id), returned_ids)
         self.assertNotIn(str(source_other_vault.id), returned_ids)
 
@@ -168,7 +168,7 @@ class SourceCRUDTest(TestCase):
         response = self.client.get(f'/api/v1/sources/{source.id}/')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['id'], str(source.id))
+        self.assertEqual(response.data['id'], source.id)
         self.assertEqual(response.data['title'], 'Detail Test Source')
         self.assertEqual(response.data['description'], 'This is a detailed description')
         self.assertEqual(response.data['url'], 'https://example.com/detail-test')
@@ -293,7 +293,7 @@ class SourceCRUDTest(TestCase):
         response = self.client.post(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['id'], str(source.id))
+        self.assertEqual(response.data['id'], source.id)
 
         # Verify source is restored
         source.refresh_from_db()
@@ -303,7 +303,7 @@ class SourceCRUDTest(TestCase):
         response = self.client.get('/api/v1/sources/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         returned_ids = [item['id'] for item in response.data['results']]
-        self.assertIn(str(source.id), returned_ids)
+        self.assertIn(source.id, returned_ids)
 
 
 class SourcePermissionTest(TestCase):
@@ -393,7 +393,7 @@ class SourcePermissionTest(TestCase):
         # Viewer can retrieve source detail
         response = self.client.get(f'/api/v1/sources/{self.source.id}/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['id'], str(self.source.id))
+        self.assertEqual(response.data['id'], self.source.id)
 
         # Viewer CANNOT create source
         url = f'/api/v1/vaults/{self.vault.id}/sources/'
@@ -563,8 +563,8 @@ class SourceFilterTest(TestCase):
         self.assertEqual(len(response.data['results']), 2)
 
         returned_ids = [item['id'] for item in response.data['results']]
-        self.assertIn(str(self.source1.id), returned_ids)
-        self.assertIn(str(self.source2.id), returned_ids)
+        self.assertIn(self.source1.id, returned_ids)
+        self.assertIn(self.source2.id, returned_ids)
         self.assertNotIn(str(self.source3.id), returned_ids)
         self.assertNotIn(str(self.source4.id), returned_ids)
 
@@ -577,8 +577,8 @@ class SourceFilterTest(TestCase):
         returned_ids = [item['id'] for item in response.data['results']]
         self.assertNotIn(str(self.source1.id), returned_ids)
         self.assertNotIn(str(self.source2.id), returned_ids)
-        self.assertIn(str(self.source3.id), returned_ids)
-        self.assertIn(str(self.source4.id), returned_ids)
+        self.assertIn(self.source3.id, returned_ids)
+        self.assertIn(self.source4.id, returned_ids)
 
     def test_filter_by_source_type_returns_matching_types(self):
         """Test filter by source_type returns matching types."""
@@ -589,22 +589,22 @@ class SourceFilterTest(TestCase):
         self.assertEqual(len(response.data['results']), 2)
 
         returned_ids = [item['id'] for item in response.data['results']]
-        self.assertIn(str(self.source1.id), returned_ids)
-        self.assertIn(str(self.source4.id), returned_ids)
+        self.assertIn(self.source1.id, returned_ids)
+        self.assertIn(self.source4.id, returned_ids)
 
         # Filter by PDF type
         response = self.client.get(f'/api/v1/sources/?source_type={SourceType.PDF}')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data['results']), 1)
-        self.assertEqual(response.data['results'][0]['id'], str(self.source2.id))
+        self.assertEqual(response.data['results'][0]['id'], self.source2.id)
 
         # Filter by JOURNAL type
         response = self.client.get(f'/api/v1/sources/?source_type={SourceType.JOURNAL}')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data['results']), 1)
-        self.assertEqual(response.data['results'][0]['id'], str(self.source3.id))
+        self.assertEqual(response.data['results'][0]['id'], self.source3.id)
 
     def test_filter_by_date_from_date_to_returns_date_range(self):
         """Test filter by date_from/date_to returns date range."""
@@ -620,9 +620,9 @@ class SourceFilterTest(TestCase):
 
         returned_ids = [item['id'] for item in response.data['results']]
         self.assertNotIn(str(self.source1.id), returned_ids)  # 10 days ago
-        self.assertIn(str(self.source2.id), returned_ids)
-        self.assertIn(str(self.source3.id), returned_ids)
-        self.assertIn(str(self.source4.id), returned_ids)
+        self.assertIn(self.source2.id, returned_ids)
+        self.assertIn(self.source3.id, returned_ids)
+        self.assertIn(self.source4.id, returned_ids)
 
         # Filter sources up to 4 days ago
         date_to = (date.today() - timedelta(days=4)).isoformat()
@@ -633,8 +633,8 @@ class SourceFilterTest(TestCase):
         self.assertEqual(len(response.data['results']), 2)
 
         returned_ids = [item['id'] for item in response.data['results']]
-        self.assertIn(str(self.source1.id), returned_ids)
-        self.assertIn(str(self.source2.id), returned_ids)
+        self.assertIn(self.source1.id, returned_ids)
+        self.assertIn(self.source2.id, returned_ids)
 
         # Filter sources in specific range (6 days ago to 2 days ago)
         date_from = (date.today() - timedelta(days=6)).isoformat()
@@ -646,8 +646,8 @@ class SourceFilterTest(TestCase):
         self.assertEqual(len(response.data['results']), 2)
 
         returned_ids = [item['id'] for item in response.data['results']]
-        self.assertIn(str(self.source2.id), returned_ids)
-        self.assertIn(str(self.source3.id), returned_ids)
+        self.assertIn(self.source2.id, returned_ids)
+        self.assertIn(self.source3.id, returned_ids)
 
     def test_filter_by_tags_with_comma_separated_values(self):
         """Test filter by tags with comma-separated values."""
@@ -658,8 +658,8 @@ class SourceFilterTest(TestCase):
         self.assertEqual(len(response.data['results']), 2)
 
         returned_ids = [item['id'] for item in response.data['results']]
-        self.assertIn(str(self.source1.id), returned_ids)  # has 'ml' tag
-        self.assertIn(str(self.source3.id), returned_ids)  # has 'ml' tag
+        self.assertIn(self.source1.id, returned_ids)  # has 'ml' tag
+        self.assertIn(self.source3.id, returned_ids)  # has 'ml' tag
 
         # Filter by multiple tags 'ml,nlp' (OR logic - sources with either tag)
         response = self.client.get('/api/v1/sources/?tags=ml,nlp')
@@ -668,16 +668,16 @@ class SourceFilterTest(TestCase):
         self.assertEqual(len(response.data['results']), 3)
 
         returned_ids = [item['id'] for item in response.data['results']]
-        self.assertIn(str(self.source1.id), returned_ids)  # has 'ml'
-        self.assertIn(str(self.source2.id), returned_ids)  # has 'nlp'
-        self.assertIn(str(self.source3.id), returned_ids)  # has 'ml'
+        self.assertIn(self.source1.id, returned_ids)  # has 'ml'
+        self.assertIn(self.source2.id, returned_ids)  # has 'nlp'
+        self.assertIn(self.source3.id, returned_ids)  # has 'ml'
 
         # Filter by tag that only one source has
         response = self.client.get('/api/v1/sources/?tags=ethics')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data['results']), 1)
-        self.assertEqual(response.data['results'][0]['id'], str(self.source3.id))
+        self.assertEqual(response.data['results'][0]['id'], self.source3.id)
 
     def test_search_filter_searches_title_and_description(self):
         """Test search filter searches title and description."""
@@ -688,29 +688,29 @@ class SourceFilterTest(TestCase):
         self.assertEqual(len(response.data['results']), 2)
 
         returned_ids = [item['id'] for item in response.data['results']]
-        self.assertIn(str(self.source1.id), returned_ids)  # "Machine Learning" in title
-        self.assertIn(str(self.source2.id), returned_ids)  # "Deep Learning" in title
+        self.assertIn(self.source1.id, returned_ids)  # "Machine Learning" in title
+        self.assertIn(self.source2.id, returned_ids)  # "Deep Learning" in title
 
         # Search in description
         response = self.client.get('/api/v1/sources/?search=neural')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data['results']), 1)
-        self.assertEqual(response.data['results'][0]['id'], str(self.source2.id))  # "Neural networks" in description
+        self.assertEqual(response.data['results'][0]['id'], self.source2.id)  # "Neural networks" in description
 
         # Search term appears in both title and description
         response = self.client.get('/api/v1/sources/?search=database')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data['results']), 1)
-        self.assertEqual(response.data['results'][0]['id'], str(self.source4.id))
+        self.assertEqual(response.data['results'][0]['id'], self.source4.id)
 
         # Case-insensitive search
         response = self.client.get('/api/v1/sources/?search=MACHINE')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data['results']), 1)
-        self.assertEqual(response.data['results'][0]['id'], str(self.source1.id))
+        self.assertEqual(response.data['results'][0]['id'], self.source1.id)
 
     def test_combined_filters_work_together(self):
         """Test combined filters work together."""
@@ -719,14 +719,14 @@ class SourceFilterTest(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data['results']), 1)
-        self.assertEqual(response.data['results'][0]['id'], str(self.source1.id))
+        self.assertEqual(response.data['results'][0]['id'], self.source1.id)
 
         # Combine tags filter + search filter
         response = self.client.get('/api/v1/sources/?tags=ml&search=introduction')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data['results']), 1)
-        self.assertEqual(response.data['results'][0]['id'], str(self.source1.id))
+        self.assertEqual(response.data['results'][0]['id'], self.source1.id)
 
         # Combine date filter + source_type filter
         from datetime import date, timedelta
@@ -735,7 +735,7 @@ class SourceFilterTest(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data['results']), 1)
-        self.assertEqual(response.data['results'][0]['id'], str(self.source3.id))
+        self.assertEqual(response.data['results'][0]['id'], self.source3.id)
 
 
 class PDFUploadFlowTest(TestCase):

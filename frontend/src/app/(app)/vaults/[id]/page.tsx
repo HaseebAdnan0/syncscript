@@ -85,6 +85,27 @@ export default function VaultDetailPage() {
     }
   }, [vaultId]);
 
+  // Silently fetch cached insights when switching to insights tab
+  useEffect(() => {
+    const fetchCachedInsights = async () => {
+      // Only fetch if we don't have insights yet and not already loading
+      if (insights || isLoadingInsights) return;
+
+      try {
+        const data = await getVaultInsights(vaultId);
+        setInsights(data);
+        // Don't mark as cached - this is just normal loading of persisted data
+      } catch {
+        // Silently fail - user can click Generate to try again
+        console.log('No cached insights available');
+      }
+    };
+
+    if (activeTab === 'insights' && vaultId) {
+      fetchCachedInsights();
+    }
+  }, [activeTab, vaultId, insights, isLoadingInsights]);
+
   // Load conversation messages when active conversation changes
   useEffect(() => {
     const loadConversation = async () => {

@@ -19,8 +19,9 @@ export const getSources = async (
   try {
     const params = new URLSearchParams();
 
+    // Map frontend param names to backend param names
     if (filters?.type) {
-      params.append('type', filters.type);
+      params.append('source_type', filters.type); // Backend uses 'source_type'
     }
     if (filters?.dateFrom) {
       params.append('date_from', filters.dateFrom);
@@ -29,7 +30,7 @@ export const getSources = async (
       params.append('date_to', filters.dateTo);
     }
     if (filters?.contributor) {
-      params.append('contributor', filters.contributor.toString());
+      params.append('created_by', filters.contributor.toString()); // Backend uses 'created_by'
     }
     if (filters?.search) {
       params.append('search', filters.search);

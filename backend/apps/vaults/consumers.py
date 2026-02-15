@@ -35,7 +35,7 @@ class VaultConsumer(AsyncWebsocketConsumer):
         3. Verify user has vault membership (any role)
         4. Enforce connection limit per user (Layer 1)
         5. On success: accept connection and join room
-        6. On failure: send error JSON and close with code 1008
+        6. On failure: send error JSON and close with code 4008
         """
         # Extract vault_id from URL kwargs (UUID string)
         url_route = self.scope.get('url_route', {})  # type: ignore[typeddict-item]
@@ -208,7 +208,7 @@ class VaultConsumer(AsyncWebsocketConsumer):
 
     async def _send_error_and_close(self, code: str, message: str, details: dict | None = None) -> None:
         """
-        Send error message and close connection with code 1008 (policy violation).
+        Send error message and close connection with code 4008 (policy violation).
 
         Supported error codes:
         - AUTH_FAILED: Authentication failed or missing
@@ -243,7 +243,7 @@ class VaultConsumer(AsyncWebsocketConsumer):
         # Wait 2 seconds before closing to ensure client receives error
         await asyncio.sleep(2)
 
-        await self.close(code=1008)  # Policy violation
+        await self.close(code=4008)  # Policy violation (4000-4999 range required by autobahn)
         logger.warning(f"Connection rejected: {code} - {message} {f'(details: {details})' if details else ''}")
 
     async def vault_event(self, event: dict) -> None:
@@ -468,7 +468,7 @@ class VaultConsumer(AsyncWebsocketConsumer):
                 oldest_channel,
                 {
                     'type': 'close_connection',
-                    'code': 1008  # Policy violation
+                    'code': 4008  # Policy violation (4000-4999 range required by autobahn)
                 }
             )
 
@@ -516,13 +516,20 @@ class VaultConsumer(AsyncWebsocketConsumer):
         Args:
             event: Event dictionary containing close code and optional reason
         """
-        code = event.get('code', 1008)
+        raw_code = event.get('code', 4008)
         reason = event.get('reason', 'Connection limit exceeded - closing oldest connection')
 
-        # Determine error code based on close code
-        if code == 1000:
+        # Validate close code: autobahn only allows 1000 or 3000-4999
+        # Convert any invalid codes (like 1008) to valid application-defined code
+        if raw_code == 1000:
+            code = 1000
             error_code = 'IDLE_TIMEOUT'
+        elif 3000 <= raw_code <= 4999:
+            code = raw_code
+            error_code = 'RATE_LIMIT_EXCEEDED'
         else:
+            # Invalid code (e.g., 1008 from old Redis messages) - use 4008
+            code = 4008
             error_code = 'RATE_LIMIT_EXCEEDED'
 
         # Send error message before closing

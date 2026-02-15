@@ -1,10 +1,11 @@
-// Source types
+// Source types (must match backend SourceType choices)
 
 export enum SourceType {
-  URL = 'url',
-  PDF = 'pdf',
-  CITATION = 'citation',
-  ARTICLE = 'article',
+  URL = 'URL',
+  PDF = 'PDF',
+  BOOK = 'BOOK',
+  JOURNAL = 'JOURNAL',
+  DATASET = 'DATASET',
 }
 
 export interface SourceMetadata {

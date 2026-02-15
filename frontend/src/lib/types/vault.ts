@@ -5,15 +5,15 @@ export enum VaultRole {
   VIEWER = 'VIEWER',
 }
 
-// Vault member type
+// Vault member type (matches backend VaultMembershipSerializer)
 export interface VaultMember {
   id: string;
-  vault_id: string;
-  user_id: number;
-  user_email: string;
-  user_name: string;
+  user: number;
+  username: string;
+  email: string;
   role: VaultRole;
-  joined_at: string;
+  added_at: string;
+  added_by: number | null;
   is_pending?: boolean; // For invited users who haven't joined yet
 }
 

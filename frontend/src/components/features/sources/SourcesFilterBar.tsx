@@ -77,8 +77,9 @@ export function SourcesFilterBar({ vaultMembers = [] }: SourcesFilterBarProps) {
     all: 'All Types',
     [SourceType.URL]: 'URL',
     [SourceType.PDF]: 'PDF',
-    [SourceType.CITATION]: 'Citation',
-    [SourceType.ARTICLE]: 'Article',
+    [SourceType.BOOK]: 'Book',
+    [SourceType.JOURNAL]: 'Journal',
+    [SourceType.DATASET]: 'Dataset',
   }
 
   const dateOptions = [
@@ -126,16 +127,22 @@ export function SourcesFilterBar({ vaultMembers = [] }: SourcesFilterBarProps) {
             PDF
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => handleTypeChange(SourceType.CITATION)}
+            onClick={() => handleTypeChange(SourceType.BOOK)}
             className="text-white hover:bg-white/10 cursor-pointer"
           >
-            Citation
+            Book
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => handleTypeChange(SourceType.ARTICLE)}
+            onClick={() => handleTypeChange(SourceType.JOURNAL)}
             className="text-white hover:bg-white/10 cursor-pointer"
           >
-            Article
+            Journal
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => handleTypeChange(SourceType.DATASET)}
+            className="text-white hover:bg-white/10 cursor-pointer"
+          >
+            Dataset
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

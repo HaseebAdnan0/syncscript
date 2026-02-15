@@ -45,24 +45,46 @@ class ClaudeClient:
         return response.json()
 
     def _parse_json_response(self, response_text: str) -> Dict[str, Any]:
-        """Parse JSON from response, handling markdown code blocks."""
-        try:
-            return json.loads(response_text)
-        except json.JSONDecodeError:
-            # Try to extract JSON from markdown code blocks
-            json_match = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', response_text, re.DOTALL)
-            if json_match:
-                return json.loads(json_match.group(1))
+        """Parse JSON from response, handling markdown code blocks and nested objects."""
+        # Clean up response text
+        text = response_text.strip()
 
-            # Try to find raw JSON object
-            json_match = re.search(r'\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}', response_text, re.DOTALL)
-            if json_match:
+        # Try direct JSON parsing first
+        try:
+            return json.loads(text)
+        except json.JSONDecodeError:
+            pass
+
+        # Try to extract JSON from markdown code blocks (greedy to get full block)
+        json_match = re.search(r'```(?:json)?\s*(\{[\s\S]*\})\s*```', text)
+        if json_match:
+            try:
+                return json.loads(json_match.group(1))
+            except json.JSONDecodeError:
+                pass
+
+        # Find balanced braces - start from first { and find matching }
+        start_idx = text.find('{')
+        if start_idx != -1:
+            brace_count = 0
+            end_idx = start_idx
+            for i, char in enumerate(text[start_idx:], start_idx):
+                if char == '{':
+                    brace_count += 1
+                elif char == '}':
+                    brace_count -= 1
+                    if brace_count == 0:
+                        end_idx = i
+                        break
+
+            if brace_count == 0:
+                json_str = text[start_idx:end_idx + 1]
                 try:
-                    return json.loads(json_match.group(0))
+                    return json.loads(json_str)
                 except json.JSONDecodeError:
                     pass
 
-            raise ValueError("Could not parse JSON from response")
+        raise ValueError("Could not parse JSON from response")
 
     def summarize(self, text: str, source_type: str) -> Dict[str, Any]:
         """

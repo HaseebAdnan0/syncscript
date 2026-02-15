@@ -131,8 +131,21 @@ export const getVaultInsights = async (vaultId: string): Promise<VaultInsights> 
  * Get all conversations for a vault
  */
 export const getConversations = async (vaultId: string): Promise<Conversation[]> => {
-  const response = await api.get<Conversation[]>(`/vaults/${vaultId}/conversations/`);
-  return response.data;
+  const response = await api.get(`/vaults/${vaultId}/conversations/`);
+  // Handle various response formats
+  const data = response.data;
+  if (Array.isArray(data)) {
+    return data;
+  }
+  // Backend returns { conversations: [...] }
+  if (data && Array.isArray(data.conversations)) {
+    return data.conversations;
+  }
+  // Also handle paginated response { results: [...] }
+  if (data && Array.isArray(data.results)) {
+    return data.results;
+  }
+  return [];
 };
 
 /**

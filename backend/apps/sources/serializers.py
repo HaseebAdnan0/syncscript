@@ -165,16 +165,31 @@ class SourceSerializer(serializers.ModelSerializer):
             'id', 'vault', 'url', 'title', 'description', 'source_type',
             'metadata', 'created_by', 'created_at', 'updated_at'
         ]
-        read_only_fields = ['created_by', 'created_at', 'updated_at']
+        read_only_fields = ['created_by', 'created_at', 'updated_at', 'vault']
+        extra_kwargs = {
+            'url': {'required': False, 'allow_blank': True},
+        }
 
     def create(self, validated_data):
         """
         Override create to auto-extract metadata from URL if title not provided.
         Merges extracted metadata into the metadata field.
+        For PDF sources, skips URL metadata extraction.
         """
-        # If title is not provided, extract metadata from URL
-        if not validated_data.get('title'):
-            url = validated_data['url']
+        source_type = validated_data.get('source_type', 'URL')
+        url = validated_data.get('url', '')
+
+        # For PDF sources, generate a placeholder URL if not provided
+        if source_type == 'PDF':
+            metadata = validated_data.get('metadata', {})
+            file_key = metadata.get('fileKey', '')
+            if not url and file_key:
+                # Use a placeholder URL for PDF sources (file key stored in metadata)
+                validated_data['url'] = f"file://{file_key}"
+            elif not url:
+                validated_data['url'] = 'file://pdf-upload'
+        elif not validated_data.get('title') and url:
+            # For URL sources, extract metadata if title not provided
             extracted = extract_metadata(url)
 
             # Use extracted title if available

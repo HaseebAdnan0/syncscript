@@ -134,23 +134,26 @@ export function ResearchInsightsPanel({
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
         </button>
-        {expandedSection === 'themes' && insights?.themes && (
+        {expandedSection === 'themes' && (
           <div className="mt-4 p-4 bg-black/20 rounded-xl">
-            {/* Tag cloud will be rendered here - for now show as list */}
-            <div className="flex flex-wrap gap-3">
-              {insights.themes.map((theme, idx) => (
-                <div
-                  key={idx}
-                  className="px-4 py-2 bg-gradient-to-r from-[#EA580C]/20 to-[#F7931A]/20 border border-[#F7931A]/30 rounded-full text-white text-sm font-medium"
-                  style={{
-                    fontSize: `${Math.max(0.875, Math.min(1.25, theme.weight / 2))}rem`,
-                  }}
-                >
-                  {theme.name}
-                  <span className="ml-2 text-[#94A3B8] text-xs">({theme.source_count})</span>
-                </div>
-              ))}
-            </div>
+            {insights?.themes && insights.themes.length > 0 ? (
+              <div className="flex flex-wrap gap-3">
+                {insights.themes.map((theme, idx) => (
+                  <div
+                    key={idx}
+                    className="px-4 py-2 bg-gradient-to-r from-[#EA580C]/20 to-[#F7931A]/20 border border-[#F7931A]/30 rounded-full text-white text-sm font-medium"
+                    style={{
+                      fontSize: `${Math.max(0.875, Math.min(1.25, theme.weight / 2))}rem`,
+                    }}
+                  >
+                    {theme.name}
+                    <span className="ml-2 text-[#94A3B8] text-xs">({theme.source_count})</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-[#94A3B8] text-sm">No themes identified yet.</p>
+            )}
           </div>
         )}
       </div>
@@ -178,16 +181,20 @@ export function ResearchInsightsPanel({
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
         </button>
-        {expandedSection === 'gaps' && insights?.research_gaps && (
+        {expandedSection === 'gaps' && (
           <div className="mt-4 p-4 bg-black/20 rounded-xl">
-            <ul className="space-y-3">
-              {insights.research_gaps.map((gap, idx) => (
-                <li key={idx} className="flex items-start gap-3">
-                  <div className="w-2 h-2 mt-2 rounded-full bg-[#F7931A] flex-shrink-0" />
-                  <p className="text-[#94A3B8] leading-relaxed">{gap}</p>
-                </li>
-              ))}
-            </ul>
+            {insights?.research_gaps && insights.research_gaps.length > 0 ? (
+              <ul className="space-y-3">
+                {insights.research_gaps.map((gap, idx) => (
+                  <li key={idx} className="flex items-start gap-3">
+                    <div className="w-2 h-2 mt-2 rounded-full bg-[#F7931A] flex-shrink-0" />
+                    <p className="text-[#94A3B8] leading-relaxed">{gap}</p>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-[#94A3B8] text-sm">No research gaps identified yet.</p>
+            )}
           </div>
         )}
       </div>
@@ -215,25 +222,29 @@ export function ResearchInsightsPanel({
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
         </button>
-        {expandedSection === 'cross-refs' && insights?.cross_references && (
+        {expandedSection === 'cross-refs' && (
           <div className="mt-4 p-4 bg-black/20 rounded-xl">
-            <ul className="space-y-4">
-              {insights.cross_references.map((ref, idx) => (
-                <li key={idx} className="border-l-2 border-[#F7931A]/50 pl-4">
-                  <p className="text-white font-medium mb-2">{ref.connection}</p>
-                  <div className="flex flex-wrap gap-2">
-                    {ref.sources.map((source, sIdx) => (
-                      <span
-                        key={sIdx}
-                        className="text-xs px-2 py-1 bg-[#F7931A]/20 text-[#F7931A] rounded-full"
-                      >
-                        {source}
-                      </span>
-                    ))}
-                  </div>
-                </li>
-              ))}
-            </ul>
+            {insights?.cross_references && insights.cross_references.length > 0 ? (
+              <ul className="space-y-4">
+                {insights.cross_references.map((ref, idx) => (
+                  <li key={idx} className="border-l-2 border-[#F7931A]/50 pl-4">
+                    <p className="text-white font-medium mb-2">{ref.connection}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {ref.sources.map((source, sIdx) => (
+                        <span
+                          key={sIdx}
+                          className="text-xs px-2 py-1 bg-[#F7931A]/20 text-[#F7931A] rounded-full"
+                        >
+                          {source}
+                        </span>
+                      ))}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-[#94A3B8] text-sm">No cross-references identified yet.</p>
+            )}
           </div>
         )}
       </div>
@@ -261,18 +272,22 @@ export function ResearchInsightsPanel({
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
         </button>
-        {expandedSection === 'searches' && insights?.suggested_searches && (
+        {expandedSection === 'searches' && (
           <div className="mt-4 p-4 bg-black/20 rounded-xl">
-            <ul className="space-y-2">
-              {insights.suggested_searches.map((search, idx) => (
-                <li
-                  key={idx}
-                  className="px-4 py-2 bg-black/30 border border-white/10 rounded-lg text-[#94A3B8] hover:border-[#F7931A]/50 hover:text-white transition-all cursor-pointer"
-                >
-                  {search}
-                </li>
-              ))}
-            </ul>
+            {insights?.suggested_searches && insights.suggested_searches.length > 0 ? (
+              <ul className="space-y-2">
+                {insights.suggested_searches.map((search, idx) => (
+                  <li
+                    key={idx}
+                    className="px-4 py-2 bg-black/30 border border-white/10 rounded-lg text-[#94A3B8] hover:border-[#F7931A]/50 hover:text-white transition-all cursor-pointer"
+                  >
+                    {search}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-[#94A3B8] text-sm">No search suggestions yet.</p>
+            )}
           </div>
         )}
       </div>

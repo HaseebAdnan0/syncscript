@@ -209,27 +209,40 @@ def vault_insights(request, vault_id):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # Build sources data for Claude
+    # Build sources data for Claude (format expected by analyze_sources)
     sources_data = []
     for source in sources:
         source_info = {
-            'id': source.id,
             'title': source.title,
-            'source_type': source.source_type,
+            'url': source.url or '',
         }
 
-        # Include AI summary if available
-        if source.ai_summary:
-            source_info['summary'] = source.ai_summary
+        # Extract authors from metadata
+        metadata = source.metadata or {}
+        authors = metadata.get('authors', [])
+        if isinstance(authors, list):
+            source_info['authors'] = ', '.join(authors) if authors else 'Unknown'
         else:
-            # Fallback to description or metadata
-            source_info['description'] = source.description or ''
-            if source.metadata:
-                source_info['metadata'] = {
-                    'authors': source.metadata.get('authors', []),
-                    'abstract': source.metadata.get('abstract', ''),
-                    'keywords': source.metadata.get('keywords', []),
-                }
+            source_info['authors'] = str(authors) if authors else 'Unknown'
+
+        # Include AI summary text if available (extract abstract and key findings)
+        if source.ai_summary:
+            summary_parts = []
+            if source.ai_summary.get('abstract'):
+                summary_parts.append(source.ai_summary['abstract'])
+            if source.ai_summary.get('key_findings'):
+                findings = source.ai_summary['key_findings']
+                if isinstance(findings, list):
+                    summary_parts.append('Key findings: ' + '; '.join(findings))
+            source_info['summary'] = ' '.join(summary_parts) if summary_parts else 'No summary available'
+        else:
+            # Fallback to description or metadata abstract
+            summary_parts = []
+            if source.description:
+                summary_parts.append(source.description)
+            if metadata.get('abstract'):
+                summary_parts.append(metadata['abstract'])
+            source_info['summary'] = ' '.join(summary_parts) if summary_parts else 'No summary available'
 
         sources_data.append(source_info)
 
@@ -479,7 +492,7 @@ def ask_question(request, vault_id):
         return Response({
             'answer': result.get('answer', ''),
             'citations': citations,
-            'conversation_id': str(conversation.id)
+            'conversation_id': conversation.id
         }, status=status.HTTP_200_OK)
 
     except Exception as e:
@@ -598,6 +611,7 @@ def get_conversation(request, vault_id, conversation_id):
     message_list = []
     for msg in messages:
         message_list.append({
+            'id': msg.id,
             'role': msg.role,
             'content': msg.content,
             'sources_cited': msg.sources_cited,

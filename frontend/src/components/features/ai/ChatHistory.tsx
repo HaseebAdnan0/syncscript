@@ -17,11 +17,13 @@ interface ChatHistoryProps {
 }
 
 export default function ChatHistory({
-  conversations,
+  conversations: conversationsProp,
   activeId,
   onSelect,
   onNewChat,
 }: ChatHistoryProps) {
+  // Ensure conversations is always an array
+  const conversations = Array.isArray(conversationsProp) ? conversationsProp : [];
   const getRelativeTime = (timestamp: string) => {
     const now = new Date();
     const then = new Date(timestamp);

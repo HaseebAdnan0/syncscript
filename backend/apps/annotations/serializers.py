@@ -61,11 +61,10 @@ class AnnotationSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Cannot reply to a reply (max 2 levels).")
         return attrs
 
-    def create(self, validated_data):
-        """Handle create with field mapping"""
-        # Map camelCase fields back to snake_case for model
-        if 'content' not in validated_data and 'text' in self.initial_data:
-            validated_data['content'] = self.initial_data['text']
-        if 'page_number' not in validated_data and 'pageNumber' in self.initial_data:
-            validated_data['page_number'] = self.initial_data['pageNumber']
-        return super().create(validated_data)
+    def update(self, instance, validated_data):
+        """Handle update with immutable field protection"""
+        # Remove immutable fields if present in validated_data
+        validated_data.pop('source', None)
+        validated_data.pop('position', None)
+        validated_data.pop('parent', None)
+        return super().update(instance, validated_data)

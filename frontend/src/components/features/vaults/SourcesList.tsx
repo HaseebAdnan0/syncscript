@@ -2,11 +2,13 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { FileText, Calendar, User, ExternalLink } from 'lucide-react';
+import Link from 'next/link';
+import { FileText, Calendar, User, ExternalLink, ArrowUpRight, Plus } from 'lucide-react';
 import { useSources } from '@/hooks/useSources';
 import { SourceTypeBadge } from '../sources/SourceTypeBadge';
 import { AddSourceModal } from '../sources/AddSourceModal';
 import EmptySourcesState from './EmptySourcesState';
+import GradientButton from '@/components/ui/GradientButton';
 import type { Source } from '@/lib/types/sources';
 import type { VaultRole } from '@/lib/types/vault';
 
@@ -49,9 +51,10 @@ export function SourcesList({ vaultId, userRole }: SourcesListProps) {
     );
   }
 
+  const canAddSource = userRole === 'OWNER' || userRole === 'CONTRIBUTOR';
+
   // Empty state
   if (sources.length === 0) {
-    const canAddSource = userRole === 'OWNER' || userRole === 'CONTRIBUTOR';
     return (
       <>
         <EmptySourcesState
@@ -69,6 +72,25 @@ export function SourcesList({ vaultId, userRole }: SourcesListProps) {
 
   return (
     <>
+      {/* Header with actions */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-4">
+          {canAddSource && (
+            <GradientButton onClick={() => setIsAddSourceModalOpen(true)}>
+              <Plus className="w-5 h-5 mr-2" />
+              Add Source
+            </GradientButton>
+          )}
+        </div>
+        <Link
+          href={`/vaults/${vaultId}/sources`}
+          className="flex items-center gap-2 text-[#F7931A] hover:text-[#FFD600] transition-colors text-sm font-medium"
+        >
+          View all with filters
+          <ArrowUpRight className="w-4 h-4" />
+        </Link>
+      </div>
+
       <div className="space-y-4">
         {sources.map((source) => (
           <SourceCard key={source.id} source={source} vaultId={vaultId} />

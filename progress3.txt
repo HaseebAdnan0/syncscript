@@ -1097,3 +1097,30 @@
   - Typecheck passes with 0 errors
   - All 4 endpoints mentioned in acceptance criteria are accessible and working
 ---
+
+## Iteration 44 - US-043: Run full integration test suite (FAILED)
+- Ran `python manage.py test apps.sources.tests apps.annotations.tests --keepdb`
+- Test execution: 102 tests ran in 435 seconds
+- Result: 21 FAILURES out of 102 tests
+- Key issues identified:
+  1. **ID type mismatch**: Tests expect string IDs but Source model returns integers (e.g., 214 != '214')
+  2. **Annotation serializer field mismatch**: Tests use 'content' but serializer uses 'text' (camelCase)
+  3. **Missing source field in annotation POST**: Tests don't include required 'source' field in request data
+  4. **Immutable field protection not working**: PATCH can change url, position, parent, source (should be read-only)
+  5. **Tag filtering returns 0 results**: PostgreSQL metadata__tags__overlap not working as expected
+  6. **Date range filtering off by one**: Returns 4 items instead of 3
+- Root causes:
+  - Actual serializers in codebase use different structure than PRD3 spec (camelCase, different field names)
+  - Tests were written for PRD3 spec, not actual implementation
+  - SourceSerializer and AnnotationSerializer don't mark immutable fields as read_only
+  - Tag filtering may require metadata tags to be stored as JSON array, not list
+- Task NOT complete - tests fail
+- Learnings for future iterations:
+  - Tests must match actual serializer implementation, not just PRD spec
+  - AnnotationSerializer uses: text (not content), pageNumber (not page_number), author (not user)
+  - SourceSerializer needs read_only_fields for url, vault to prevent updates
+  - AnnotationSerializer needs read_only_fields for source, position, parent
+  - Test failures prevent marking US-043 as complete
+  - Must fix serializers OR update tests to match actual implementation
+  - Production code was built differently than PRD3 specified
+---

@@ -19,7 +19,7 @@ export default function AnnotationReplyCard({
   const [isHovered, setIsHovered] = useState(false);
 
   // Generate gradient circle with first letter of username
-  const authorInitial = reply.author.username.charAt(0).toUpperCase();
+  const authorInitial = reply.author?.username?.charAt(0).toUpperCase() || '?';
 
   return (
     <div
@@ -37,7 +37,7 @@ export default function AnnotationReplyCard({
         {/* Author and Timestamp */}
         <div className="flex items-center gap-2 mb-1">
           <span className="text-xs font-medium text-white/80">
-            {reply.author.username}
+            {reply.author?.username || 'Unknown'}
           </span>
           <span className="text-xs text-[#94A3B8]">
             {format(new Date(reply.createdAt), 'MMM d, yyyy • h:mm a')}
