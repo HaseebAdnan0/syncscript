@@ -492,14 +492,14 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need signals to auto-create audit logs for Source changes.
 
 **Acceptance Criteria:**
-- [ ] Create `signals.py` in `apps/sources/`
-- [ ] Create `log_source_change` receiver for `post_save` signal
-- [ ] On create: log action `source.created` with empty changes
-- [ ] On update: log action `source.updated` with before/after from dirty fields
-- [ ] Create `log_source_delete` receiver for `pre_delete` signal (for hard delete)
-- [ ] Log action `source.deleted` with full object snapshot
-- [ ] Import signals in `apps.py` `ready()` method
-- [ ] Typecheck passes
+- [x] Create `signals.py` in `apps/sources/`
+- [x] Create `log_source_change` receiver for `post_save` signal
+- [x] On create: log action `source.created` with empty changes
+- [x] On update: log action `source.updated` with before/after from dirty fields
+- [x] Create `log_source_delete` receiver for `pre_delete` signal (for hard delete)
+- [x] Log action `source.deleted` with full object snapshot
+- [x] Import signals in `apps.py` `ready()` method
+- [x] Typecheck passes
 
 ---
 
