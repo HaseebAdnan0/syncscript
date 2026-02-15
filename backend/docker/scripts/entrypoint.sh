@@ -24,10 +24,10 @@ echo "Redis is ready!"
 echo "Running migrations..."
 python manage.py migrate --noinput
 
-# Collect static files (only in production)
-if [ "$DEBUG" != "True" ]; then
+# Collect static files (only in production, skip for celery workers)
+if [ "$DEBUG" != "True" ] && [[ "$1" != *"celery"* ]]; then
     echo "Collecting static files..."
-    python manage.py collectstatic --noinput --clear
+    python manage.py collectstatic --noinput --clear || echo "Warning: collectstatic failed, continuing..."
 fi
 
 # Create cache table if needed

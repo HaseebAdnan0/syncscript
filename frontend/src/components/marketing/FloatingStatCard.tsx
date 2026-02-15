@@ -16,18 +16,18 @@ export default function FloatingStatCard({
   position,
   delay = 0,
 }: FloatingStatCardProps) {
-  // Position classes based on prop - spread around the orb
+  // Position classes based on prop - spread around the orb without overlap
   const positionClasses = {
-    top: 'top-4 right-0 translate-x-8',
-    left: 'bottom-16 left-0 -translate-x-8',
-    right: 'bottom-16 right-0 translate-x-8',
+    top: 'top-0 right-0 translate-x-1/3 -translate-y-1/4',
+    left: 'bottom-24 -left-16',
+    right: 'bottom-24 -right-16',
   };
 
   // Mobile stacking classes (stack vertically below orb)
   const mobilePositionClasses = {
-    top: 'md:top-4 md:right-0 md:translate-x-8',
-    left: 'md:bottom-16 md:left-0 md:-translate-x-8',
-    right: 'md:bottom-16 md:right-0 md:translate-x-8',
+    top: 'md:top-0 md:right-0 md:translate-x-1/3 md:-translate-y-1/4',
+    left: 'md:bottom-24 md:-left-16',
+    right: 'md:bottom-24 md:-right-16',
   };
 
   return (
@@ -38,8 +38,8 @@ export default function FloatingStatCard({
         /* Mobile: stack below orb */
         static mb-6 translate-x-0 translate-y-0
         md:absolute
-        /* Glass morphism */
-        backdrop-blur-lg bg-white/5 border border-white/10
+        /* Solid dark background */
+        bg-[#0F1115] border border-white/20
         rounded-2xl p-4 md:p-5
         /* Staggered bounce animation */
         animate-bounce-slow

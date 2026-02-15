@@ -127,7 +127,7 @@ export default function ContinueResearch() {
             <div className="flex gap-3">
               <Link
                 href={`/vaults/${vault.id}`}
-                className="flex-1 text-center bg-gradient-to-r from-[#EA580C] to-[#F7931A] text-white font-bold uppercase tracking-wider text-sm rounded-full px-4 py-2 shadow-[0_0_20px_-5px_rgba(234,88,12,0.5)] hover:scale-105 transition-all"
+                className="flex-1 flex items-center justify-center bg-gradient-to-r from-[#EA580C] to-[#F7931A] text-white font-bold uppercase tracking-wider text-sm rounded-full px-4 py-2 shadow-[0_0_20px_-5px_rgba(234,88,12,0.5)] hover:scale-105 transition-all"
               >
                 Open
               </Link>

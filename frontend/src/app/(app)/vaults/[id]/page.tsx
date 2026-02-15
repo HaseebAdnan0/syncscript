@@ -243,7 +243,7 @@ export default function VaultDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#030304]">
+    <div className="min-h-screen bg-[#030304] overflow-x-hidden">
       {/* Header */}
       <div className="bg-[#0F1115] border-b border-white/10">
         <div className="max-w-7xl mx-auto px-6 py-8">
@@ -282,9 +282,9 @@ export default function VaultDetailPage() {
 
       {/* Main content with tabs and sidebar */}
       <div className={`mx-auto px-6 py-12 transition-all duration-300 ${isChatOpen ? 'max-w-[1600px]' : 'max-w-7xl'}`}>
-        <div className="flex gap-8">
+        <div className="flex flex-col lg:flex-row gap-8 min-w-0">
           {/* Main content area */}
-          <div className={`transition-all duration-300 ${isChatOpen ? 'w-1/2 flex-shrink-0' : 'flex-1'}`}>
+          <div className={`min-w-0 transition-all duration-300 ${isChatOpen ? 'lg:w-1/2 lg:flex-shrink-0' : 'flex-1'}`}>
             <Tabs.Root value={activeTab} onValueChange={setActiveTab}>
               {/* Tab list */}
               <Tabs.List className="flex gap-8 border-b border-white/10 mb-8">
@@ -374,7 +374,7 @@ export default function VaultDetailPage() {
           </div>
 
           {/* Sidebar with Ask AI chat */}
-          <div className={`flex-shrink-0 transition-all duration-300 ${isChatOpen ? 'w-1/2' : 'w-80'}`}>
+          <div className={`w-full lg:flex-shrink-0 transition-all duration-300 ${isChatOpen ? 'lg:w-1/2' : 'lg:w-80'}`}>
             <Collapsible.Root open={isChatOpen} onOpenChange={setIsChatOpen}>
               <div className="bg-[#0F1115] border border-white/10 rounded-2xl overflow-hidden h-full">
                 {/* Collapsible trigger */}
