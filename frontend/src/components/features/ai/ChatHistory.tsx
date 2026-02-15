@@ -42,13 +42,13 @@ export default function ChatHistory({
   return (
     <div className="flex flex-col h-full bg-[#0F1115] border-r border-white/10">
       {/* Header with New Chat button */}
-      <div className="p-3 border-b border-white/10">
+      <div className="p-2 border-b border-white/10">
         <button
           onClick={onNewChat}
-          className="w-full bg-gradient-to-r from-[#EA580C] to-[#F7931A] text-white font-semibold text-xs uppercase tracking-wider rounded-full px-3 py-2.5 shadow-[0_0_20px_-5px_rgba(234,88,12,0.5)] hover:scale-105 transition-all flex items-center justify-center gap-1.5"
+          className="w-full bg-gradient-to-r from-[#EA580C] to-[#F7931A] text-white font-semibold text-xs uppercase tracking-wider rounded-full px-3 py-2 shadow-[0_0_20px_-5px_rgba(234,88,12,0.5)] hover:scale-105 transition-all flex items-center justify-center gap-1"
         >
-          <Plus className="w-4 h-4" />
-          New
+          <Plus className="w-3.5 h-3.5" />
+          New Chat
         </button>
       </div>
 

@@ -16,18 +16,18 @@ export default function FloatingStatCard({
   position,
   delay = 0,
 }: FloatingStatCardProps) {
-  // Position classes based on prop
+  // Position classes based on prop - spread around the orb
   const positionClasses = {
-    top: 'top-0 left-1/2 -translate-x-1/2 -translate-y-1/2',
-    left: 'left-0 top-1/2 -translate-x-1/2 -translate-y-1/2',
-    right: 'right-0 top-1/2 translate-x-1/2 -translate-y-1/2',
+    top: 'top-4 right-0 translate-x-8',
+    left: 'bottom-16 left-0 -translate-x-8',
+    right: 'bottom-16 right-0 translate-x-8',
   };
 
   // Mobile stacking classes (stack vertically below orb)
   const mobilePositionClasses = {
-    top: 'md:top-0 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2',
-    left: 'md:left-0 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2',
-    right: 'md:right-0 md:top-1/2 md:translate-x-1/2 md:-translate-y-1/2',
+    top: 'md:top-4 md:right-0 md:translate-x-8',
+    left: 'md:bottom-16 md:left-0 md:-translate-x-8',
+    right: 'md:bottom-16 md:right-0 md:translate-x-8',
   };
 
   return (
@@ -40,28 +40,28 @@ export default function FloatingStatCard({
         md:absolute
         /* Glass morphism */
         backdrop-blur-lg bg-white/5 border border-white/10
-        rounded-2xl p-4 md:p-6
-        min-w-[160px] md:min-w-[200px]
+        rounded-2xl p-4 md:p-5
         /* Staggered bounce animation */
         animate-bounce-slow
         hover:scale-105 transition-transform duration-300
+        z-10
       `}
       style={{
         animationDelay: `${delay}s`,
       }}
     >
       {/* Icon with orange accent */}
-      <div className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-[#EA580C] to-[#F7931A] mb-3">
-        <Icon className="w-5 h-5 md:w-6 md:h-6 text-white" />
+      <div className="flex items-center justify-center w-10 h-10 md:w-11 md:h-11 rounded-full bg-gradient-to-r from-[#EA580C] to-[#F7931A] mb-2">
+        <Icon className="w-5 h-5 md:w-5 md:h-5 text-white" />
       </div>
 
       {/* Number (large) */}
-      <div className="text-2xl md:text-3xl font-bold text-white mb-1">
+      <div className="text-xl md:text-2xl font-bold text-white mb-0.5">
         {number}
       </div>
 
       {/* Label (muted) */}
-      <div className="text-sm md:text-base text-[#94A3B8]">
+      <div className="text-xs md:text-sm text-[#94A3B8] whitespace-nowrap">
         {label}
       </div>
     </div>

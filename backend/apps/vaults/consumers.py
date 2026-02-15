@@ -174,7 +174,7 @@ class VaultConsumer(AsyncWebsocketConsumer):
             data = json.loads(text_data)
             message_type = data.get('type')
 
-            if message_type == 'heartbeat':
+            if message_type == 'heartbeat' or message_type == 'presence.heartbeat':
                 # Update user's timestamp in presence tracking
                 await self._update_presence(self.user.id, self.vault_id)
             elif message_type == 'replay_request':

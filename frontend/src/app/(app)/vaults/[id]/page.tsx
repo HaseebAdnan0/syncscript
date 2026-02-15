@@ -281,10 +281,10 @@ export default function VaultDetailPage() {
       </div>
 
       {/* Main content with tabs and sidebar */}
-      <div className="max-w-7xl mx-auto px-6 py-12">
+      <div className={`mx-auto px-6 py-12 transition-all duration-300 ${isChatOpen ? 'max-w-[1600px]' : 'max-w-7xl'}`}>
         <div className="flex gap-8">
           {/* Main content area */}
-          <div className="flex-1">
+          <div className={`transition-all duration-300 ${isChatOpen ? 'w-1/2 flex-shrink-0' : 'flex-1'}`}>
             <Tabs.Root value={activeTab} onValueChange={setActiveTab}>
               {/* Tab list */}
               <Tabs.List className="flex gap-8 border-b border-white/10 mb-8">
@@ -374,9 +374,9 @@ export default function VaultDetailPage() {
           </div>
 
           {/* Sidebar with Ask AI chat */}
-          <div className="w-[420px] flex-shrink-0">
+          <div className={`flex-shrink-0 transition-all duration-300 ${isChatOpen ? 'w-1/2' : 'w-80'}`}>
             <Collapsible.Root open={isChatOpen} onOpenChange={setIsChatOpen}>
-              <div className="bg-[#0F1115] border border-white/10 rounded-2xl overflow-hidden">
+              <div className="bg-[#0F1115] border border-white/10 rounded-2xl overflow-hidden h-full">
                 {/* Collapsible trigger */}
                 <Collapsible.Trigger asChild>
                   <button className="w-full px-6 py-4 flex items-center justify-between text-white hover:bg-white/5 transition-colors">
@@ -399,7 +399,7 @@ export default function VaultDetailPage() {
                 <Collapsible.Content className="border-t border-white/10">
                   <div className="flex h-[600px]">
                     {/* Chat history sidebar */}
-                    <div className="w-36 border-r border-white/10 flex-shrink-0">
+                    <div className="w-44 border-r border-white/10 flex-shrink-0">
                       <ChatHistory
                         vaultId={vaultId.toString()}
                         conversations={conversations}
