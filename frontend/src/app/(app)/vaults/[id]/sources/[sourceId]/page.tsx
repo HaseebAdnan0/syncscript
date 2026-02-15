@@ -15,7 +15,7 @@ import { AnnotationSidebar } from '@/components/features/sources/AnnotationSideb
 import { AddAnnotationForm } from '@/components/features/sources/AddAnnotationForm';
 import AISummaryCard from '@/components/features/ai/AISummaryCard';
 import { AILoadingSkeleton } from '@/components/features/ai/AILoadingSkeleton';
-import { summarizeSource } from '@/lib/api/sources';
+import { summarizeSource, getPdfViewUrl } from '@/lib/api/sources';
 import { toast } from '@/hooks/useToast';
 import { SourceType } from '@/lib/types/sources';
 import type { AISummary } from '@/lib/types/sources';
@@ -45,6 +45,10 @@ export default function SourceDetailPage() {
   // Annotation form state
   const [showAddForm, setShowAddForm] = useState(false);
 
+  // PDF presigned URL state (for uploaded PDFs)
+  const [presignedPdfUrl, setPresignedPdfUrl] = useState<string | null>(null);
+  const [isPdfUrlLoading, setIsPdfUrlLoading] = useState(false);
+
   // Real-time annotation updates via WebSocket
   useAnnotationsWebSocket({ vaultId, sourceId });
 
@@ -70,6 +74,11 @@ export default function SourceDetailPage() {
       return url;
     }
 
+    // If source type is PDF but URL is a placeholder, return null (will use presigned URL)
+    if (isPdfSource && url.includes('pdf.internal')) {
+      return null;
+    }
+
     // If source type is PDF, assume the URL is a PDF
     if (isPdfSource) {
       return url;
@@ -78,7 +87,8 @@ export default function SourceDetailPage() {
     return null;
   };
 
-  const pdfUrl = source?.url ? getPdfUrl(source.url) : null;
+  // Use presigned URL for uploaded PDFs, otherwise use the source URL
+  const pdfUrl = presignedPdfUrl || (source?.url ? getPdfUrl(source.url) : null);
 
   // Update AI summary when source data changes
   useEffect(() => {
@@ -92,6 +102,40 @@ export default function SourceDetailPage() {
       document.title = `${source.title} - Sources | SyncScript`;
     }
   }, [vault, source]);
+
+  // Fetch presigned URL for uploaded PDFs
+  useEffect(() => {
+    const fetchPdfUrl = async () => {
+      if (!source) return;
+
+      // Only fetch for PDF sources with a pdfUploadId in metadata
+      const pdfUploadId = source.metadata?.pdfUploadId as string | undefined;
+      if (source.source_type !== SourceType.PDF || !pdfUploadId) {
+        return;
+      }
+
+      // Check if URL is the placeholder (pdf.internal)
+      if (!source.url?.includes('pdf.internal')) {
+        return; // URL is already valid, no need to fetch
+      }
+
+      setIsPdfUrlLoading(true);
+      try {
+        const response = await getPdfViewUrl(pdfUploadId);
+        setPresignedPdfUrl(response.view_url);
+      } catch (error) {
+        console.error('Failed to fetch PDF download URL:', error);
+        toast({
+          title: 'PDF Load Error',
+          description: 'Unable to load PDF. Please try again.',
+        });
+      } finally {
+        setIsPdfUrlLoading(false);
+      }
+    };
+
+    fetchPdfUrl();
+  }, [source]);
 
   const handleGenerateSummary = async (regenerate = false) => {
     if (!source) return;
@@ -208,7 +252,8 @@ export default function SourceDetailPage() {
                 </div>
                 {/* Metadata */}
                 <div className="flex items-center gap-4 text-sm text-[#94A3B8]">
-                  {source.url && (
+                  {/* Show URL for non-PDF sources, or presigned URL for uploaded PDFs */}
+                  {source.url && !source.url.includes('pdf.internal') && (
                     <a
                       href={source.url}
                       target="_blank"
@@ -218,6 +263,9 @@ export default function SourceDetailPage() {
                       {source.url}
                       <ExternalLink className="w-3 h-3" />
                     </a>
+                  )}
+                  {isPdfSource && typeof source.metadata?.pdfUploadId === 'string' && (
+                    <span className="text-[#F7931A]">Uploaded PDF</span>
                   )}
                   {citationText && (
                     <span className="font-mono text-xs">
@@ -256,7 +304,12 @@ export default function SourceDetailPage() {
 
             {/* Document Viewer */}
             <div className="bg-[#0F1115] border border-white/10 rounded-2xl p-4 min-h-[600px]">
-              {pdfUrl ? (
+              {isPdfUrlLoading ? (
+                <div className="flex flex-col items-center justify-center h-[600px] text-[#94A3B8] gap-4">
+                  <Loader2 className="w-8 h-8 animate-spin text-[#F7931A]" />
+                  <p>Loading PDF...</p>
+                </div>
+              ) : pdfUrl ? (
                 <PDFViewer url={pdfUrl} className="h-[700px]" />
               ) : (
                 // Fallback for non-PDF sources - show external link

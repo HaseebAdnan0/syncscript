@@ -140,3 +140,41 @@ export const previewUrl = async (url: string): Promise<UrlPreviewResponse> => {
     throw handleApiError(error);
   }
 };
+
+/**
+ * Get presigned download URL for a PDF upload (forces download)
+ */
+export interface PDFDownloadUrlResponse {
+  download_url: string;
+  expires_in: number;
+  filename: string;
+  file_size: number;
+}
+
+export const getPdfDownloadUrl = async (pdfUploadId: string): Promise<PDFDownloadUrlResponse> => {
+  try {
+    const response = await api.get<PDFDownloadUrlResponse>(`/sources/pdfs/${pdfUploadId}/download-url/`);
+    return response.data;
+  } catch (error) {
+    throw handleApiError(error);
+  }
+};
+
+/**
+ * Get presigned view URL for a PDF upload (inline viewing in browser)
+ */
+export interface PDFViewUrlResponse {
+  view_url: string;
+  expires_in: number;
+  filename: string;
+  file_size: number;
+}
+
+export const getPdfViewUrl = async (pdfUploadId: string): Promise<PDFViewUrlResponse> => {
+  try {
+    const response = await api.get<PDFViewUrlResponse>(`/sources/pdfs/${pdfUploadId}/view-url/`);
+    return response.data;
+  } catch (error) {
+    throw handleApiError(error);
+  }
+};

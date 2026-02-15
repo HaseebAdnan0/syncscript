@@ -309,6 +309,63 @@ class PDFUploadViewSet(viewsets.ModelViewSet):
             'file_size': pdf_upload.file_size
         }, status=status.HTTP_200_OK)
 
+    @action(detail=True, methods=['get'], url_path='view-url')
+    @method_decorator(ratelimit(key='user', rate='60/m', method='GET'))
+    def view_url(self, request, pk=None):
+        """
+        GET /api/v1/sources/pdfs/{pdf_id}/view-url/
+
+        Generate a presigned URL for viewing a PDF inline in the browser.
+        Uses Content-Disposition: inline to display PDF instead of downloading.
+        Validates user has vault viewer/contributor/owner permission.
+
+        Response:
+        - view_url (str): Presigned S3 URL for inline viewing
+        - expires_in (int): URL expiration time in seconds
+        - filename (str): Original filename
+        - file_size (int): File size in bytes
+        """
+        # Get PDFUpload record
+        pdf_upload = get_object_or_404(PDFUpload, id=pk)
+
+        # Verify user has permission (viewer, contributor, or owner)
+        self._check_vault_permission(
+            pdf_upload.vault.id,
+            request.user,
+            required_roles=[RoleChoices.VIEWER, RoleChoices.CONTRIBUTOR, RoleChoices.OWNER]
+        )
+
+        # Generate presigned URL with content-disposition inline for viewing
+        view_url = generate_presigned_download_url(
+            file_key=pdf_upload.file.name,  # S3 object key
+            original_filename=pdf_upload.original_filename,
+            inline=True  # Use inline disposition for browser viewing
+        )
+
+        # Log pdf.viewed event to audit log
+        try:
+            AuditLog.objects.create(
+                vault=pdf_upload.vault,
+                actor=request.user,
+                action='pdf.viewed',
+                metadata={
+                    'pdf_id': str(pdf_upload.id),
+                    'filename': pdf_upload.original_filename,
+                }
+            )
+        except Exception as audit_exc:
+            logger.warning(
+                f"Failed to create audit log for PDF view {pdf_upload.id}: {audit_exc}",
+                exc_info=True,
+            )
+
+        return Response({
+            'view_url': view_url,
+            'expires_in': 900,  # 15 minutes
+            'filename': pdf_upload.original_filename,
+            'file_size': pdf_upload.file_size
+        }, status=status.HTTP_200_OK)
+
     @action(detail=False, methods=['post'], url_path='multipart-upload/initiate')
     def multipart_upload_initiate(self, request):
         """

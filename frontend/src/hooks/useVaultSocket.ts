@@ -1,5 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
-import { useAuthStore } from '@/stores/authStore';
+import { useVaultSocketContextOptional, VaultSocketProvider } from '@/contexts/VaultSocketContext';
 
 type ConnectionStatus = 'connecting' | 'connected' | 'disconnected' | 'reconnecting';
 
@@ -13,188 +12,46 @@ interface VaultSocketReturn {
   addEventListener: (eventType: string, handler: (data: any) => void) => () => void;
 }
 
-interface WebSocketMessage {
-  type: string;
-  data: any;
-}
-
+/**
+ * Hook to access the vault WebSocket connection.
+ *
+ * IMPORTANT: This hook requires a VaultSocketProvider ancestor.
+ * The provider is automatically added by the vault layout at:
+ * /app/(app)/vaults/[id]/layout.tsx
+ *
+ * This ensures all components on vault detail pages share a single
+ * WebSocket connection instead of each creating their own.
+ */
 export function useVaultSocket({ vaultId }: VaultSocketOptions): VaultSocketReturn {
-  const [status, setStatus] = useState<ConnectionStatus>('connecting');
-  const wsRef = useRef<WebSocket | null>(null);
-  const eventHandlersRef = useRef<Map<string, Set<(data: any) => void>>>(new Map());
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const reconnectDelayRef = useRef<number>(1000);
-  const maxReconnectDelay = 30000;
-  const isUnmountedRef = useRef(false);
+  const context = useVaultSocketContextOptional();
 
-  const connect = useCallback(() => {
-    if (isUnmountedRef.current) return;
+  // If we have a context, use it
+  if (context) {
+    return context;
+  }
 
-    if (!vaultId) {
-      setStatus('disconnected');
-      return;
-    }
-
-    const wsUrl = process.env.NEXT_PUBLIC_WS_URL;
-    if (!wsUrl) {
-      console.error('NEXT_PUBLIC_WS_URL is not defined');
-      setStatus('disconnected');
-      return;
-    }
-
-    // Get access token for WebSocket authentication
-    const { accessToken } = useAuthStore.getState();
-    if (!accessToken) {
-      console.error('No access token available for WebSocket connection');
-      setStatus('disconnected');
-      return;
-    }
-
-    const url = `${wsUrl}/vault/${vaultId}/?token=${encodeURIComponent(accessToken)}`;
-
-    try {
-      setStatus(status === 'disconnected' ? 'connecting' : 'reconnecting');
-      const ws = new WebSocket(url);
-      wsRef.current = ws;
-
-      ws.onopen = () => {
-        if (isUnmountedRef.current) return;
-
-        // Check if this is a reconnection (was previously disconnected/reconnecting)
-        const wasReconnecting = status === 'reconnecting' || status === 'disconnected';
-
-        setStatus('connected');
-        reconnectDelayRef.current = 1000; // Reset reconnect delay on successful connection
-        console.log(`WebSocket connected to vault ${vaultId}`);
-
-        // Emit reconnected event if this was a reconnection
-        if (wasReconnecting) {
-          const handlers = eventHandlersRef.current.get('reconnected');
-          if (handlers) {
-            handlers.forEach((handler) => {
-              try {
-                handler({ vaultId });
-              } catch (error) {
-                console.error('Error in reconnected event handler:', error);
-              }
-            });
-          }
-        }
-      };
-
-      ws.onmessage = (event) => {
-        if (isUnmountedRef.current) return;
-
-        try {
-          const message: WebSocketMessage = JSON.parse(event.data);
-          const handlers = eventHandlersRef.current.get(message.type);
-
-          if (handlers) {
-            handlers.forEach((handler) => {
-              try {
-                handler(message.data);
-              } catch (error) {
-                console.error(`Error in event handler for ${message.type}:`, error);
-              }
-            });
-          }
-        } catch (error) {
-          console.error('Error parsing WebSocket message:', error);
-        }
-      };
-
-      ws.onerror = (error) => {
-        if (isUnmountedRef.current) return;
-        console.error('WebSocket error:', error);
-      };
-
-      ws.onclose = (event) => {
-        if (isUnmountedRef.current) return;
-
-        setStatus('disconnected');
-        wsRef.current = null;
-        console.log(`WebSocket disconnected from vault ${vaultId} (code: ${event.code})`);
-
-        // Don't reconnect on policy violations (rate limit, auth failure, etc.)
-        // Code 4008 = rate limit/policy violation, 4000-4999 = application-defined errors
-        if (event.code >= 4000 && event.code <= 4999) {
-          console.warn(`WebSocket closed with policy violation code ${event.code}, not reconnecting`);
-          return;
-        }
-
-        // Attempt reconnection with exponential backoff for normal disconnections
-        if (reconnectTimeoutRef.current) {
-          clearTimeout(reconnectTimeoutRef.current);
-        }
-
-        reconnectTimeoutRef.current = setTimeout(() => {
-          if (!isUnmountedRef.current) {
-            connect();
-          }
-        }, reconnectDelayRef.current);
-
-        // Increase delay for next reconnection attempt (exponential backoff)
-        reconnectDelayRef.current = Math.min(
-          reconnectDelayRef.current * 2,
-          maxReconnectDelay
-        );
-      };
-    } catch (error) {
-      console.error('Error creating WebSocket:', error);
-      setStatus('disconnected');
-    }
-  }, [vaultId]);
-
-  const send = useCallback((eventType: string, data: any) => {
-    if (wsRef.current?.readyState === WebSocket.OPEN) {
-      const message: WebSocketMessage = { type: eventType, data };
-      wsRef.current.send(JSON.stringify(message));
-    } else {
-      console.warn(`Cannot send message: WebSocket is not connected (status: ${status})`);
-    }
-  }, [status]);
-
-  const addEventListener = useCallback((eventType: string, handler: (data: any) => void) => {
-    if (!eventHandlersRef.current.has(eventType)) {
-      eventHandlersRef.current.set(eventType, new Set());
-    }
-
-    const handlers = eventHandlersRef.current.get(eventType)!;
-    handlers.add(handler);
-
-    // Return cleanup function
-    return () => {
-      handlers.delete(handler);
-      if (handlers.size === 0) {
-        eventHandlersRef.current.delete(eventType);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    isUnmountedRef.current = false;
-    connect();
-
-    return () => {
-      isUnmountedRef.current = true;
-
-      if (reconnectTimeoutRef.current) {
-        clearTimeout(reconnectTimeoutRef.current);
-        reconnectTimeoutRef.current = null;
-      }
-
-      if (wsRef.current) {
-        wsRef.current.close();
-        wsRef.current = null;
-      }
-
-      eventHandlersRef.current.clear();
-    };
-  }, [connect]);
+  // No provider - return a disconnected stub
+  // This handles cases where the hook is called outside the provider
+  // (e.g., during SSR or on pages without a vault context)
+  if (process.env.NODE_ENV === 'development' && vaultId) {
+    console.warn(
+      'useVaultSocket called outside VaultSocketProvider. ' +
+      'WebSocket functionality will not work. ' +
+      'Ensure vault pages have a VaultSocketProvider in their layout.'
+    );
+  }
 
   return {
-    status,
-    send,
-    addEventListener,
+    status: 'disconnected',
+    send: () => {
+      console.warn('Cannot send: useVaultSocket called outside VaultSocketProvider');
+    },
+    addEventListener: () => {
+      // Return a no-op cleanup function
+      return () => {};
+    },
   };
 }
+
+// Re-export the provider for manual usage if needed
+export { VaultSocketProvider };

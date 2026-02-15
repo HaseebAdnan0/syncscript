@@ -103,18 +103,21 @@ def generate_presigned_upload_url(
 
 def generate_presigned_download_url(
     file_key: str,
-    original_filename: str
+    original_filename: str,
+    inline: bool = False
 ) -> str:
     """
-    Generate a presigned URL for downloading a file from S3.
+    Generate a presigned URL for downloading or viewing a file from S3.
 
     Args:
         file_key: S3 object key (e.g., 'vaults/abc123/pdfs/file.pdf')
         original_filename: Original filename to use in Content-Disposition header
+        inline: If True, use 'inline' disposition (view in browser).
+                If False, use 'attachment' (force download).
 
     Returns:
         Presigned URL for GET download (expires in 15 minutes).
-        Includes Content-Disposition header to trigger browser download with original filename.
+        Includes Content-Disposition header based on inline parameter.
 
     Example:
         >>> url = generate_presigned_download_url(
@@ -126,15 +129,18 @@ def generate_presigned_download_url(
     """
     s3_client = get_s3_client()
 
-    # Generate presigned URL for GET operation (download)
+    # Content-Disposition: 'inline' displays in browser, 'attachment' triggers download
+    disposition = 'inline' if inline else 'attachment'
+
+    # Generate presigned URL for GET operation (download/view)
     # Expires in 15 minutes (900 seconds) as per acceptance criteria
-    # Content-Disposition=attachment triggers download instead of inline display
     presigned_url = s3_client.generate_presigned_url(
         'get_object',
         Params={
             'Bucket': settings.AWS_STORAGE_BUCKET_NAME,
             'Key': file_key,
-            'ResponseContentDisposition': f'attachment; filename="{original_filename}"',
+            'ResponseContentDisposition': f'{disposition}; filename="{original_filename}"',
+            'ResponseContentType': 'application/pdf',
         },
         ExpiresIn=900,  # 15 minutes expiration
     )
