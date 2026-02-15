@@ -88,11 +88,11 @@ Create a secure, collaborative Knowledge Vault system where researchers can crea
 **Description:** As a developer, I need database tables created for vaults app.
 
 **Acceptance Criteria:**
-- [ ] Run `python manage.py makemigrations vaults`
-- [ ] Migration file created in `migrations/0001_initial.py`
-- [ ] Run `python manage.py migrate`
-- [ ] All tables created without errors
-- [ ] Typecheck passes
+- [x] Run `python manage.py makemigrations vaults`
+- [x] Migration file created in `migrations/0001_initial.py`
+- [x] Run `python manage.py migrate`
+- [x] All tables created without errors
+- [x] Typecheck passes
 
 ### US-008: Register models in Django admin
 **Description:** As a developer, I need admin access to manage vaults during development.
