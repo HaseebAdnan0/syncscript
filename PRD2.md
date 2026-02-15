@@ -362,31 +362,31 @@ Create a secure, collaborative Knowledge Vault system where researchers can crea
 **Description:** As a developer, I need tests for vault CRUD operations.
 
 **Acceptance Criteria:**
-- [ ] Test vault creation assigns owner membership
-- [ ] Test vault list filtering by role and archived
-- [ ] Test permission denial for non-owners on update/delete
-- [ ] Test archive and restore actions
-- [ ] Tests pass with `python manage.py test apps.vaults.tests.test_views`
+- [x] Test vault creation assigns owner membership
+- [x] Test vault list filtering by role and archived
+- [x] Test permission denial for non-owners on update/delete
+- [x] Test archive and restore actions
+- [x] Tests pass with `python manage.py test apps.vaults.tests.test_views`
 
 ### US-037: Write membership API tests
 **Description:** As a developer, I need tests for member management.
 
 **Acceptance Criteria:**
-- [ ] Test add member creates membership
-- [ ] Test role update changes membership role
-- [ ] Test member removal deletes membership
-- [ ] Test last owner deletion returns 400
-- [ ] Tests pass
+- [x] Test add member creates membership
+- [x] Test role update changes membership role
+- [x] Test member removal deletes membership
+- [x] Test last owner deletion returns 400
+- [x] Tests pass
 
 ### US-038: Write audit log tests
 **Description:** As a developer, I need tests for audit logging.
 
 **Acceptance Criteria:**
-- [ ] Test vault.created log on creation
-- [ ] Test membership.added log on member add
-- [ ] Test membership.role_changed log on role update
-- [ ] Test membership.removed log on member delete
-- [ ] Tests pass with `python manage.py test apps.vaults.tests.test_audit_logs`
+- [x] Test vault.created log on creation
+- [x] Test membership.added log on member add
+- [x] Test membership.role_changed log on role update
+- [x] Test membership.removed log on member delete
+- [x] Tests pass with `python manage.py test apps.vaults.tests.test_audit_logs`
 
 ## Non-Goals
 
