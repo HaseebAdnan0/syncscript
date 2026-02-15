@@ -108,14 +108,21 @@ export function useVaultSocket({ vaultId }: VaultSocketOptions): VaultSocketRetu
         console.error('WebSocket error:', error);
       };
 
-      ws.onclose = () => {
+      ws.onclose = (event) => {
         if (isUnmountedRef.current) return;
 
         setStatus('disconnected');
         wsRef.current = null;
-        console.log(`WebSocket disconnected from vault ${vaultId}`);
+        console.log(`WebSocket disconnected from vault ${vaultId} (code: ${event.code})`);
 
-        // Attempt reconnection with exponential backoff
+        // Don't reconnect on policy violations (rate limit, auth failure, etc.)
+        // Code 4008 = rate limit/policy violation, 4000-4999 = application-defined errors
+        if (event.code >= 4000 && event.code <= 4999) {
+          console.warn(`WebSocket closed with policy violation code ${event.code}, not reconnecting`);
+          return;
+        }
+
+        // Attempt reconnection with exponential backoff for normal disconnections
         if (reconnectTimeoutRef.current) {
           clearTimeout(reconnectTimeoutRef.current);
         }

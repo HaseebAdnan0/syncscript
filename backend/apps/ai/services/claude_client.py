@@ -41,6 +41,7 @@ class AIClient:
             "model": self.model,
             "messages": messages,
             "max_tokens": max_tokens,
+            "stream": False,  # Explicitly disable streaming
         }
 
         response = requests.post(self.api_url, headers=headers, json=payload, timeout=120)
@@ -167,7 +168,7 @@ class AIClient:
 
             response = self._make_request(
                 messages=[{"role": "user", "content": prompt}],
-                max_tokens=3000
+                max_tokens=4000  # Increased for complex JSON responses
             )
 
             response_text = response['choices'][0]['message']['content']
