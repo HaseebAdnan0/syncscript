@@ -122,7 +122,7 @@ class UserSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = User
-        fields = ['id', 'email', 'username', 'avatar_url', 'bio', 'institution',
+        fields = ['id', 'email', 'username', 'first_name', 'last_name', 'avatar_url', 'bio', 'institution',
                   'email_verified', 'created_at', 'default_citation_format']
         read_only_fields = ['id', 'email', 'email_verified', 'created_at']
 
@@ -130,12 +130,14 @@ class UserSerializer(serializers.ModelSerializer):
 class ProfileUpdateSerializer(serializers.ModelSerializer):
     """
     Serializer for updating user profile fields (US-009).
-    Validates avatar_url, bio, institution, and default_citation_format fields.
+    Validates first_name, last_name, avatar_url, bio, institution, and default_citation_format fields.
     """
     class Meta:
         model = User
-        fields = ['avatar_url', 'bio', 'institution', 'default_citation_format']
+        fields = ['first_name', 'last_name', 'avatar_url', 'bio', 'institution', 'default_citation_format']
         extra_kwargs = {
+            'first_name': {'required': False},
+            'last_name': {'required': False},
             'avatar_url': {'required': False},
             'bio': {'required': False},
             'institution': {'required': False},
