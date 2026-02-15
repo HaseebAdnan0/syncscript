@@ -14,13 +14,13 @@ export function AnnotationCard({ annotation }: AnnotationCardProps) {
       <div className="flex items-start gap-3 mb-4">
         {/* Author avatar */}
         <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[#EA580C] to-[#F7931A] flex items-center justify-center text-sm font-bold text-white flex-shrink-0">
-          {annotation.author.username.charAt(0).toUpperCase()}
+          {annotation.author?.username?.charAt(0).toUpperCase() || '?'}
         </div>
 
         <div className="flex-1 min-w-0">
           <div className="flex items-baseline justify-between gap-2">
             <span className="font-semibold text-white">
-              {annotation.author.username}
+              {annotation.author?.username || 'Unknown'}
             </span>
             <span className="text-xs text-[#94A3B8]">
               {format(new Date(annotation.createdAt), 'MMM d, yyyy h:mm a')}
