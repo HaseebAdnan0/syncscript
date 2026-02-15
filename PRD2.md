@@ -352,11 +352,11 @@ Create a secure, collaborative Knowledge Vault system where researchers can crea
 **Description:** As a developer, I need tests to verify model behavior.
 
 **Acceptance Criteria:**
-- [ ] Test Vault creation with required fields
-- [ ] Test VaultMembership unique constraint (duplicate user)
-- [ ] Test role weight calculation
-- [ ] Test AuditLog creation
-- [ ] Tests pass with `python manage.py test apps.vaults.tests.test_models`
+- [x] Test Vault creation with required fields
+- [x] Test VaultMembership unique constraint (duplicate user)
+- [x] Test role weight calculation
+- [x] Test AuditLog creation
+- [x] Tests pass with `python manage.py test apps.vaults.tests.test_models`
 
 ### US-036: Write vault API tests
 **Description:** As a developer, I need tests for vault CRUD operations.
