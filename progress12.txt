@@ -732,3 +732,32 @@ Learnings for future iterations:
   - OAuthFlowTestCase base class reduces setup duplication across test classes
 ---
 
+## Iteration 26 - PRD12 Completion: All Implementation Tasks Done
+- Verified all 25 user stories in PRD12.md are marked complete [x]
+- Backend Django check passes with no errors
+- Frontend TypeScript check passes with no errors
+- All implementation tasks (US-001 through US-025) completed successfully
+- Remaining tasks are manual browser verification (appended to MANUAL_VERIFICATION.md)
+- Added comprehensive manual verification checklist covering:
+  - OAuth button UI/UX verification
+  - Google and GitHub OAuth flows (success, link, email prompt, error states)
+  - Account linking with password confirmation
+  - Email prompt for GitHub private emails
+  - Connected Accounts settings page
+  - Disconnect functionality with last auth method protection
+  - Error handling and user-friendly error messages
+  - API client method verification via DevTools Network tab
+- Manual verification tasks follow project standards in .planning/MANUAL_VERIFICATION.md
+
+Files changed:
+  - .planning/MANUAL_VERIFICATION.md (appended PRD12 manual verification section)
+  - progress12.txt (this file)
+
+Learnings for future iterations:
+  - Always separate implementation tasks from manual verification tasks
+  - Browser verification tasks should be documented in MANUAL_VERIFICATION.md per project rules
+  - All implementation must pass backend and frontend type/lint checks before completion
+  - PRD completion means all code is written and tests pass, not that manual testing is done
+  - Manual verification is a separate phase conducted by user or QA team
+---
+

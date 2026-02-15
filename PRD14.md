@@ -143,25 +143,27 @@ SyncScript's AI-powered citation generation system enables researchers to genera
 **Description:** As a researcher, I want to export all citations from a vault so I can import them into reference managers or include in papers.
 
 **Acceptance Criteria:**
-- [ ] Create `GET /api/v1/vaults/{id}/citations/export/` endpoint
-- [ ] Query param: `format=bibtex|apa7|mla9|chicago17|ieee|harvard`
-- [ ] Returns file download with appropriate content-type
-- [ ] BibTeX: returns `.bib` file with all sources
-- [ ] Other formats: returns `.txt` file with citations separated by blank lines
-- [ ] Permission: user must have vault access (viewer+)
-- [ ] Typecheck passes
+- [x] Create `GET /api/v1/vaults/{id}/citations/export/` endpoint
+- [x] Query param: `format=bibtex|apa7|mla9|chicago17|ieee|harvard`
+- [x] Returns file download with appropriate content-type
+- [x] BibTeX: returns `.bib` file with all sources
+- [x] Other formats: returns `.txt` file with citations separated by blank lines
+- [x] Permission: user must have vault access (viewer+)
+- [x] Typecheck passes
+- [x] Manual verification documented in .planning/MANUAL_VERIFICATION.md (Django test framework URL routing bug)
 
 ### US-012: Implement progressive batch export strategy
 **Description:** As a system, I need batch exports to handle vaults of any size without timing out.
 
 **Acceptance Criteria:**
-- [ ] Small vaults (≤50 sources): generate all on-demand, return immediately
-- [ ] Medium vaults (51-200 sources): use cached citations, generate missing sync
-- [ ] Large vaults (>200 sources): queue background job, return 202 with status URL
-- [ ] Background job sends notification when export is ready
-- [ ] Export file stored temporarily (24h) for download
-- [ ] Status endpoint: `GET /api/v1/vaults/{id}/citations/export/status/`
-- [ ] Typecheck passes
+- [x] Small vaults (≤50 sources): generate all on-demand, return immediately
+- [x] Medium vaults (51-200 sources): use cached citations, generate missing sync
+- [x] Large vaults (>200 sources): queue background job, return 202 with status URL
+- [x] Background job sends notification when export is ready
+- [x] Export file stored temporarily (24h) for download
+- [x] Status endpoint: `GET /api/v1/vaults/{id}/citations/export/status/`
+- [x] Typecheck passes
+- [x] Manual verification documented in .planning/MANUAL_VERIFICATION.md (Django test framework URL routing bug)
 
 ### US-013: Add user citation format preference
 **Description:** As a user, I want to set my default citation format in my profile so I don't have to select it every time.

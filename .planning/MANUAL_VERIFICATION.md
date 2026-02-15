@@ -1615,3 +1615,207 @@
 
 ### Issues Found:
 (Document any bugs, edge cases, or unexpected behavior discovered during manual testing)
+
+
+---
+
+## PRD12: OAuth Authentication (Google + GitHub) - 2026-02-15
+
+### Prerequisites
+- [ ] Backend server running: `cd backend && python manage.py runserver`
+- [ ] Frontend dev server running: `cd frontend && npm run dev`
+- [ ] Google OAuth credentials configured in backend/.env (GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET)
+- [ ] GitHub OAuth credentials configured in backend/.env (GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET)
+- [ ] OAuth apps configured in Google Cloud Console and GitHub Developer Settings
+- [ ] Test user accounts for various scenarios
+
+### US-013: OAuthButtons component
+- [ ] Navigate to /login page
+- [ ] Verify "Continue with Google" button appears with white background and Google logo
+- [ ] Verify "Continue with GitHub" button appears with dark background (#24292e) and GitHub logo
+- [ ] Verify both buttons are full-width with consistent 48px height
+- [ ] Hover over Google button - verify bg changes to gray-50 with shadow
+- [ ] Hover over GitHub button - verify bg changes to #2f363d with shadow
+- [ ] Verify buttons have rounded corners (rounded-lg)
+
+### US-014: OAuth buttons on login page
+- [ ] Navigate to /login page
+- [ ] Verify OAuth buttons appear ABOVE email/password form
+- [ ] Verify "or" divider displays between OAuth buttons and form
+- [ ] Verify divider has horizontal line with centered "or" text
+- [ ] Start entering email/password (form shows loading state)
+- [ ] Verify OAuth buttons become disabled while form is submitting
+- [ ] Test existing email/password login - verify it still works
+
+### US-015: OAuth buttons on registration page
+- [ ] Navigate to /register page
+- [ ] Verify OAuth buttons appear ABOVE registration form
+- [ ] Verify "or" divider displays (same styling as login page)
+- [ ] Start filling registration form (form shows loading state)
+- [ ] Verify OAuth buttons become disabled while form is submitting
+- [ ] Test existing registration flow - verify it still works
+
+### US-016: OAuth redirect loading state
+- [ ] Click "Continue with Google" button
+- [ ] Verify full-page loading overlay appears immediately
+- [ ] Verify overlay shows "Redirecting to Google..." message
+- [ ] Verify spinner animation with Bitcoin Orange color (#F7931A)
+- [ ] Verify helper text: "You'll be redirected to sign in securely"
+- [ ] Verify overlay has backdrop blur effect
+- [ ] Verify duplicate clicks are prevented (button disabled)
+- [ ] Repeat for "Continue with GitHub" button - verify "Redirecting to GitHub..." message
+
+### US-017: OAuth callback landing page
+- [ ] **Success flow (new user):**
+  - [ ] Click "Continue with Google" on /login
+  - [ ] Complete Google OAuth consent
+  - [ ] Verify redirect to /auth/callback?success=true
+  - [ ] Verify success message with green checkmark appears
+  - [ ] Verify redirect to /vaults after 1 second
+  - [ ] Verify user is logged in (httpOnly cookie set by backend)
+- [ ] **Link required flow (existing user):**
+  - [ ] Register user with email test@example.com
+  - [ ] Logout, then click "Continue with Google" using same email
+  - [ ] Verify redirect to /auth/callback?link_required=true&provider=google
+  - [ ] Verify redirect to /login after 500ms (or account linking modal)
+- [ ] **Email required flow (GitHub private email):**
+  - [ ] Click "Continue with GitHub" with private email setting
+  - [ ] Verify redirect to /auth/callback?email_required=true&provider=github&temp_token=...
+  - [ ] Verify redirect to email prompt modal/page
+- [ ] **Error flow:**
+  - [ ] Simulate OAuth error (cancel consent screen)
+  - [ ] Verify redirect to /auth/callback?error=access_denied
+  - [ ] Verify error message with red X icon
+  - [ ] Verify "Try Again" button appears
+  - [ ] Click "Try Again" - verify redirect to /login
+
+### US-018: Account linking confirmation modal
+- [ ] Trigger link_required flow (existing email with password, trying to link OAuth)
+- [ ] Verify modal displays: "An account with this email already exists"
+- [ ] Verify provider icon appears (Google multi-color or GitHub white)
+- [ ] Verify password input field with show/hide toggle
+- [ ] Enter wrong password and click "Link Account"
+- [ ] Verify error message: "Invalid password"
+- [ ] Enter correct password and click "Link Account"
+- [ ] Verify loading state: "Linking..." button text
+- [ ] Verify modal closes and redirect to /vaults
+- [ ] Verify success toast appears
+- [ ] Navigate to Settings > Connected Accounts
+- [ ] Verify the OAuth provider now appears as connected
+
+### US-019: Email prompt modal for GitHub users
+- [ ] Trigger email_required flow (GitHub private email)
+- [ ] Verify modal displays: "GitHub couldn't provide your email"
+- [ ] Verify GitHub icon appears with explanation
+- [ ] Enter invalid email format - verify inline validation error
+- [ ] Enter email that already exists in system
+- [ ] Click "Complete Registration"
+- [ ] Verify redirect to account linking flow
+- [ ] Retry with new email (not in system)
+- [ ] Click "Complete Registration"
+- [ ] Verify user created successfully
+- [ ] Verify redirect to /vaults
+- [ ] Verify success toast appears
+- [ ] Verify user is logged in
+
+### US-020: Connected Accounts settings section
+- [ ] Login as user with at least one OAuth provider connected
+- [ ] Navigate to /settings page
+- [ ] Scroll to "Connected Accounts" section
+- [ ] Verify section displays connected providers with:
+  - Provider icon (Google or GitHub)
+  - Provider name
+  - Connected email
+  - Connected date (formatted: "Jan 15, 2026")
+  - "Disconnect" button
+- [ ] Verify Google shows profile picture (if available)
+- [ ] Verify GitHub shows username and avatar
+- [ ] Verify providers NOT connected show "Connect" button
+- [ ] Click "Connect" button for unconnected provider
+- [ ] Verify redirect to OAuth flow with next=/settings parameter
+- [ ] Complete OAuth flow
+- [ ] Verify redirect back to /settings
+- [ ] Verify newly connected provider now appears in list
+
+### US-021: OAuth provider disconnect functionality
+- [ ] In Connected Accounts section, click "Disconnect" for a provider
+- [ ] Verify confirmation dialog appears: "Disconnect {Provider}?"
+- [ ] Click "Cancel" - verify dialog closes without action
+- [ ] Click "Disconnect {Provider}?" button again
+- [ ] Click "Disconnect" button in dialog
+- [ ] Verify loading state: button shows "Disconnecting..."
+- [ ] Verify success toast appears: "{Provider} disconnected"
+- [ ] Verify provider removed from connected list
+- [ ] Verify provider now shows "Connect" button
+- [ ] **Last auth method protection:**
+  - [ ] Create user with ONLY OAuth (no password set)
+  - [ ] Try to disconnect the only OAuth provider
+  - [ ] Verify error message: "You need at least one authentication method"
+  - [ ] Verify disconnect is blocked
+
+### US-022: Connected Accounts in settings page
+- [ ] Navigate to /settings page
+- [ ] Verify "Connected Accounts" section exists
+- [ ] Verify section has Link icon from lucide-react
+- [ ] Verify section heading: "Connected Accounts"
+- [ ] Verify description: "Manage your OAuth provider connections"
+- [ ] Verify section positioned after Privacy & Security section
+- [ ] Verify section uses glass morphism styling (bg-[#0F1115], border white/10)
+
+### US-023: OAuth error states in UI
+- [ ] **Cancel OAuth flow:**
+  - [ ] Click "Continue with Google"
+  - [ ] On Google consent screen, click "Cancel"
+  - [ ] Verify redirect to callback page with error
+  - [ ] Verify error message: "You cancelled the sign-in process"
+  - [ ] Click "Try Again" - verify redirect to /login
+- [ ] **Invalid credentials (backend):**
+  - [ ] Remove GOOGLE_CLIENT_ID from backend .env
+  - [ ] Restart backend server
+  - [ ] Click "Continue with Google"
+  - [ ] Verify error toast: "Could not connect to Google. Please try again"
+- [ ] **Email already exists:**
+  - [ ] Register user with email test@example.com
+  - [ ] In callback flow, simulate email_exists error
+  - [ ] Verify error message: "This email is already registered. Please login with your password"
+- [ ] **Account linking errors:**
+  - [ ] Trigger link flow
+  - [ ] Enter wrong password
+  - [ ] Verify error: "Invalid password. Please try again."
+- [ ] **Email prompt errors:**
+  - [ ] Trigger email prompt flow
+  - [ ] Enter existing email
+  - [ ] Verify error: "This email is already registered. Please link your account instead."
+
+### US-024: API client methods for OAuth endpoints
+- [ ] Open browser DevTools Network tab
+- [ ] Trigger account linking flow
+- [ ] Verify POST request to /api/v1/auth/oauth/link/ with password and provider
+- [ ] Verify response contains access_token and refresh_token
+- [ ] Trigger email prompt flow
+- [ ] Verify POST request to /api/v1/auth/oauth/complete-email/ with email and temp_token
+- [ ] Navigate to Connected Accounts settings
+- [ ] Verify GET request to /api/v1/auth/oauth/connected/
+- [ ] Verify response contains array of connected providers
+- [ ] Click disconnect for a provider
+- [ ] Verify DELETE request to /api/v1/auth/oauth/connected/{provider}/
+- [ ] Verify 204 No Content response
+
+### US-025: Backend tests for OAuth flows (Already Passing)
+- [ ] Backend tests already verified passing in Iteration 25
+- [ ] No browser verification needed (backend unit tests)
+
+### Expected Behavior Summary
+- OAuth buttons appear on login and registration pages with proper styling
+- Loading overlay appears during OAuth redirect
+- Callback page handles all flow states: success, link_required, email_required, error
+- Account linking requires password confirmation
+- Email prompt handles GitHub private email scenario
+- Connected Accounts section shows all linked providers with metadata
+- Disconnect requires confirmation and prevents removal of last auth method
+- Error messages are user-friendly and guide next steps
+- All components follow Bitcoin DeFi design system
+- Mobile responsive (test on <768px viewport)
+
+### Issues Found
+(Document any bugs, edge cases, or unexpected behavior discovered during manual testing)

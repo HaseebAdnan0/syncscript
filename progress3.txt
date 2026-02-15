@@ -989,3 +989,30 @@
   - Django check passes with 0 errors
   - Follow existing signal patterns from US-037 for audit logging placement
 ---
+
+## Iteration 40 - US-039: Create Annotation audit log signals
+- Created apps/annotations/signals.py with audit logging receivers
+- Signal receivers implemented:
+  - log_annotation_change: post_save receiver for create and update tracking
+    - On create with no parent: logs annotation.created
+    - On create with parent: logs annotation.replied
+    - On update: logs annotation.updated with dirty fields tracking
+  - log_annotation_delete: pre_delete receiver for deletion tracking
+    - Logs annotation.deleted with full metadata
+- All signals use vaults.AuditLog model (vault-scoped audit logging)
+- Signals imported in apps/annotations/apps.py ready() method
+- Implementation follows exact pattern from apps/sources/signals.py (US-037)
+- Files changed:
+  - backend/apps/annotations/signals.py (added audit log receivers)
+  - backend/apps/annotations/apps.py (added ready() method to import signals)
+  - PRD3.md (marked US-039 complete)
+- Learnings for future iterations:
+  - Annotation signals distinguish between top-level (annotation.created) and reply (annotation.replied)
+  - pre_delete signal used instead of post_delete to capture data before DB deletion
+  - AuditLog.objects.create() requires vault (from source.vault), actor (user), action, metadata
+  - metadata includes annotation_id, source_id, parent_id (if reply), content_preview (first 100 chars)
+  - DirtyFieldsMixin.get_dirty_fields() tracks changed fields for annotation.updated
+  - Exception handling prevents audit log failures from blocking save/delete operations
+  - Django check passes with 0 errors
+  - Signal import validation via Django shell confirms functionality
+---

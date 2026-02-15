@@ -21,11 +21,16 @@ class AuditLogSignalTest(TestCase):
             username='owner',
             password='testpass123'
         )
+        self.owner.email_verified = True
+        self.owner.save()
+
         self.member = User.objects.create_user(
             email='member@example.com',
             username='member',
             password='testpass123'
         )
+        self.member.email_verified = True
+        self.member.save()
 
     def test_vault_created_log_on_creation(self):
         """Test vault.created log is created when vault is created."""
@@ -112,11 +117,17 @@ class AuditLogViewSetTest(TestCase):
             username='owner',
             password='testpass123'
         )
+        self.owner.email_verified = True
+        self.owner.save()
+
         self.non_member = User.objects.create_user(
             email='nonmember@example.com',
             username='nonmember',
             password='testpass123'
         )
+        self.non_member.email_verified = True
+        self.non_member.save()
+
         self.vault = Vault.objects.create(name='Test Vault', owner=self.owner)
         # Owner membership is auto-created by signal
 

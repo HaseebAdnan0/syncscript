@@ -12,6 +12,8 @@ from apps.users.models import User, EmailVerificationToken
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
+from unittest.mock import patch, MagicMock
+from django.core.cache import cache
 
 
 class RegistrationFlowTests(TestCase):
@@ -180,6 +182,59 @@ class EmailVerificationFlowTests(TestCase):
         # User still verified
         self.user.refresh_from_db()
         self.assertTrue(self.user.email_verified)
+
+    @patch('apps.users.tasks.send_welcome_email_task.delay')
+    def test_welcome_email_queued_after_verification(self, mock_welcome_task):
+        """Test that welcome email task is queued after first-time verification."""
+        # Create verification token
+        token = EmailVerificationToken.objects.create(
+            user=self.user,
+            token='welcome-test-token',
+            expires_at=timezone.now() + timedelta(hours=24)
+        )
+
+        # User should not be verified yet
+        self.assertFalse(self.user.email_verified)
+
+        data = {'token': 'welcome-test-token'}
+        response = self.client.post(self.verify_url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Check user is now verified
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.email_verified)
+
+        # Check welcome email task was called with user ID
+        mock_welcome_task.assert_called_once_with(self.user.id)
+
+    @patch('apps.users.views.cache')
+    def test_resend_verification_rate_limiting(self, mock_cache):
+        """Test that resend verification endpoint has rate limiting (3/hour)."""
+        resend_url = reverse('users:resend-verification')
+
+        # Simulate cache showing 3 previous attempts (rate limit reached)
+        mock_cache.get.return_value = 3
+
+        data = {'email': self.user.email}
+        response = self.client.post(resend_url, data, format='json')
+
+        # Should return 429 Too Many Requests
+        self.assertEqual(response.status_code, status.HTTP_429_TOO_MANY_REQUESTS)
+        self.assertIn('error', response.data)
+
+        # Test successful resend when under rate limit
+        mock_cache.get.return_value = 1  # Only 1 previous attempt
+
+        with patch('apps.users.tasks.send_verification_email_task.delay') as mock_task:
+            response = self.client.post(resend_url, data, format='json')
+
+            # Should succeed
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertIn('message', response.data)
+
+            # Check verification email task was called
+            mock_task.assert_called_once()
 
 
 class LoginAndLogoutFlowTests(TestCase):
