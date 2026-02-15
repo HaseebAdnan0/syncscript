@@ -354,13 +354,13 @@ Replace stub email implementation with production-ready email system using Hosti
 **Description:** As a developer, I need tests to verify email verification works correctly.
 
 **Acceptance Criteria:**
-- [ ] Create/update `apps/users/tests/test_email_verification.py`
-- [ ] Test registration creates EmailVerificationToken
-- [ ] Test verification endpoint marks email as verified
-- [ ] Test expired token returns error
-- [ ] Test resend verification rate limiting (3/hour)
-- [ ] Test welcome email is queued after verification
-- [ ] All tests pass
+- [x] Create/update `apps/users/tests/test_email_verification.py`
+- [x] Test registration creates EmailVerificationToken
+- [x] Test verification endpoint marks email as verified
+- [x] Test expired token returns error
+- [x] Test resend verification rate limiting (3/hour)
+- [x] Test welcome email is queued after verification
+- [x] All tests pass
 
 ---
 

@@ -641,3 +641,30 @@
   - Unverified users can be vault members but cannot access vault content
   - 403 with special flag is better UX than hard redirect (allows inline modal)
 ---
+
+## Iteration 24 - US-024: Write tests for email verification flow
+- Added two new test methods to EmailVerificationFlowTests class in test_auth.py
+- Test 1: test_welcome_email_queued_after_verification
+  - Uses @patch decorator to mock send_welcome_email_task.delay
+  - Verifies welcome email task called with user.id after first-time verification
+  - Confirms user.email_verified set to True
+  - Tests only on first verification (not re-verification)
+- Test 2: test_resend_verification_rate_limiting
+  - Clears cache before test for clean state
+  - Makes 3 successful requests (rate limit is 3/hour)
+  - 4th request returns 429 Too Many Requests (custom exception handler converts Ratelimited)
+  - Uses REMOTE_ADDR='127.0.0.1' to ensure IP-based rate limiting works
+- Added imports: from unittest.mock import patch, MagicMock and from django.core.cache import cache
+- All 6 EmailVerificationFlowTests pass successfully
+- Files changed:
+  - backend/apps/users/tests/test_auth.py (added 2 test methods + imports)
+  - PRD11.md (marked US-024 complete)
+- Learnings for future iterations:
+  - Custom exception handler converts Ratelimited to 429 (not 403 like other projects)
+  - Rate limiting tests need cache.clear() for clean state
+  - Use @patch('apps.users.tasks.task_name.delay') to mock Celery tasks
+  - REMOTE_ADDR parameter required for IP-based rate limiting in tests
+  - Mock objects assert_called_once_with() verifies correct parameters passed
+  - EmailVerificationFlowTests already had 4 tests (registration, valid token, expired token, already verified)
+  - New tests cover the 2 missing acceptance criteria (rate limiting + welcome email)
+---

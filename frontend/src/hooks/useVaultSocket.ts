@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { useAuthStore } from '@/stores/authStore';
 
 type ConnectionStatus = 'connecting' | 'connected' | 'disconnected' | 'reconnecting';
 
@@ -41,7 +42,15 @@ export function useVaultSocket({ vaultId }: VaultSocketOptions): VaultSocketRetu
       return;
     }
 
-    const url = `${wsUrl}/vault/${vaultId}/`;
+    // Get access token for WebSocket authentication
+    const { accessToken } = useAuthStore.getState();
+    if (!accessToken) {
+      console.error('No access token available for WebSocket connection');
+      setStatus('disconnected');
+      return;
+    }
+
+    const url = `${wsUrl}/vault/${vaultId}/?token=${encodeURIComponent(accessToken)}`;
 
     try {
       setStatus(status === 'disconnected' ? 'connecting' : 'reconnecting');

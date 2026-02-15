@@ -23,21 +23,32 @@ class VaultViewSetTest(TestCase):
             username='owner',
             password='testpass123'
         )
+        self.owner.email_verified = True
+        self.owner.save()
+
         self.contributor = User.objects.create_user(
             email='contributor@example.com',
             username='contributor',
             password='testpass123'
         )
+        self.contributor.email_verified = True
+        self.contributor.save()
+
         self.viewer = User.objects.create_user(
             email='viewer@example.com',
             username='viewer',
             password='testpass123'
         )
+        self.viewer.email_verified = True
+        self.viewer.save()
+
         self.non_member = User.objects.create_user(
             email='nonmember@example.com',
             username='nonmember',
             password='testpass123'
         )
+        self.non_member.email_verified = True
+        self.non_member.save()
 
     def test_create_vault_assigns_owner_membership(self):
         """Test that creating a vault automatically assigns owner membership."""
@@ -237,16 +248,25 @@ class VaultMembershipViewSetTest(TestCase):
             username='owner',
             password='testpass123'
         )
+        self.owner.email_verified = True
+        self.owner.save()
+
         self.member = User.objects.create_user(
             email='member@example.com',
             username='member',
             password='testpass123'
         )
+        self.member.email_verified = True
+        self.member.save()
+
         self.new_user = User.objects.create_user(
             email='newuser@example.com',
             username='newuser',
             password='testpass123'
         )
+        self.new_user.email_verified = True
+        self.new_user.save()
+
         self.vault = Vault.objects.create(name='Test Vault', owner=self.owner)
         # Owner membership auto-created by signal - get it for reference
         self.owner_membership = VaultMembership.objects.get(

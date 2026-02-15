@@ -208,33 +208,24 @@ class EmailVerificationFlowTests(TestCase):
         # Check welcome email task was called with user ID
         mock_welcome_task.assert_called_once_with(self.user.id)
 
-    @patch('apps.users.views.cache')
-    def test_resend_verification_rate_limiting(self, mock_cache):
+    def test_resend_verification_rate_limiting(self):
         """Test that resend verification endpoint has rate limiting (3/hour)."""
+        # Clear cache to ensure clean state
+        cache.clear()
+
         resend_url = reverse('users:resend-verification')
-
-        # Simulate cache showing 3 previous attempts (rate limit reached)
-        mock_cache.get.return_value = 3
-
         data = {'email': self.user.email}
-        response = self.client.post(resend_url, data, format='json')
 
-        # Should return 429 Too Many Requests
-        self.assertEqual(response.status_code, status.HTTP_429_TOO_MANY_REQUESTS)
-        self.assertIn('error', response.data)
+        # Make 3 requests (should succeed - rate limit is 3/hour)
+        for i in range(3):
+            response = self.client.post(resend_url, data, format='json', REMOTE_ADDR='127.0.0.1')
+            # First 3 should not be rate limited
+            self.assertNotEqual(response.status_code, status.HTTP_429_TOO_MANY_REQUESTS, f"Request {i+1} should not be rate limited")
+            self.assertEqual(response.status_code, 200)
 
-        # Test successful resend when under rate limit
-        mock_cache.get.return_value = 1  # Only 1 previous attempt
-
-        with patch('apps.users.tasks.send_verification_email_task.delay') as mock_task:
-            response = self.client.post(resend_url, data, format='json')
-
-            # Should succeed
-            self.assertEqual(response.status_code, status.HTTP_200_OK)
-            self.assertIn('message', response.data)
-
-            # Check verification email task was called
-            mock_task.assert_called_once()
+        # 4th request should be rate limited (custom exception handler returns 429)
+        response = self.client.post(resend_url, data, format='json', REMOTE_ADDR='127.0.0.1')
+        self.assertEqual(response.status_code, status.HTTP_429_TOO_MANY_REQUESTS, "Request should be rate limited with 429 status")
 
 
 class LoginAndLogoutFlowTests(TestCase):

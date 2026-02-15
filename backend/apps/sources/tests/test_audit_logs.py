@@ -76,10 +76,10 @@ class SourceAuditLogSignalTest(TestCase):
         if log:
             self.assertEqual(log.actor, self.owner)
             self.assertIn('source_id', log.metadata)
-            # Check changes contain dirty fields
-            changes = log.metadata.get('changes', {})
-            self.assertIn('title', changes)
-            self.assertIn('description', changes)
+            # Check changed_fields list contains updated fields
+            changed_fields = log.metadata.get('changed_fields', [])
+            self.assertIn('title', changed_fields)
+            self.assertIn('description', changed_fields)
 
     def test_source_soft_delete_generates_source_soft_deleted_log(self):
         """Test Source soft delete generates source.soft_deleted log."""
@@ -98,8 +98,8 @@ class SourceAuditLogSignalTest(TestCase):
         # Clear existing logs
         AuditLog.objects.filter(vault=self.vault).delete()
 
-        # Soft delete via API (DELETE request)
-        response = client.delete(f'/api/v1/sources/{source.id}/')
+        # Soft delete via API (DELETE request via nested route)
+        response = client.delete(f'/api/v1/vaults/{self.vault.id}/sources/{source.id}/')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
         # Check for source.soft_deleted audit log
