@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, FormEvent } from 'react';
+import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { useAuthStore } from '@/stores/authStore';
 import { FormInput } from '@/components/ui/FormInput';
@@ -18,7 +20,7 @@ export default function ProfilePage() {
   // Profile form state
   const [firstName, setFirstName] = useState(user?.first_name || '');
   const [lastName, setLastName] = useState(user?.last_name || '');
-  const [bio, setBio] = useState('');
+  const [bio, setBio] = useState(user?.bio || '');
   const [isProfileLoading, setIsProfileLoading] = useState(false);
   const [profileErrors, setProfileErrors] = useState<{ firstName?: string; lastName?: string }>({});
 
@@ -155,6 +157,15 @@ export default function ProfilePage() {
     <ProtectedRoute>
       <div className="min-h-screen bg-[#030304] py-12">
         <div className="max-w-4xl mx-auto px-4">
+          {/* Back Navigation */}
+          <Link
+            href="/dashboard"
+            className="inline-flex items-center gap-2 text-[#94A3B8] hover:text-white transition-colors mb-6"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Dashboard
+          </Link>
+
           {/* Page Header */}
           <div className="mb-8">
             <h1 className="text-4xl font-heading font-bold bg-gradient-to-r from-[#F7931A] to-[#FFD600] bg-clip-text text-transparent mb-2">

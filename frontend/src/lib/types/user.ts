@@ -6,6 +6,9 @@ export interface User {
   username: string;
   first_name?: string;
   last_name?: string;
+  avatar_url?: string;
+  bio?: string;
+  institution?: string;
   email_verified: boolean;
   created_at: string;
   default_citation_format?: CitationFormat | null;
