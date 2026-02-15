@@ -117,7 +117,7 @@ class PDFUpload(models.Model):
     pdf_title = models.CharField(max_length=500, blank=True)
     pdf_author = models.CharField(max_length=255, blank=True)
     page_count = models.IntegerField(null=True, blank=True)
-    thumbnail_url = models.URLField(max_length=500, blank=True)
+    thumbnail_url = models.URLField(max_length=500, blank=True, null=True)
     extracted_text = models.TextField(blank=True, default='')
 
     # Soft delete
@@ -169,7 +169,7 @@ class FileUpload(models.Model):
     )
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
-    thumbnail_url = models.URLField(max_length=500, blank=True)
+    thumbnail_url = models.URLField(max_length=500, blank=True, null=True)
 
     # Soft delete
     deleted_at = models.DateTimeField(null=True, blank=True, db_index=True)

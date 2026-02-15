@@ -56,7 +56,7 @@ services:
       - AWS_S3_REGION_NAME=${AWS_S3_REGION_NAME:-auto}
       # AI (OpenRouter)
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
-      - OPENROUTER_MODEL=${OPENROUTER_MODEL:-google/gemini-2.5-pro-preview}
+      - OPENROUTER_MODEL=${OPENROUTER_MODEL:-deepseek/deepseek-v3.2}
       - AI_DAILY_LIMIT=${AI_DAILY_LIMIT:-20}
       # Pusher
       - PUSHER_APP_ID=${PUSHER_APP_ID:-}
@@ -125,7 +125,7 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
-      - OPENROUTER_MODEL=${OPENROUTER_MODEL:-google/gemini-2.5-pro-preview}
+      - OPENROUTER_MODEL=${OPENROUTER_MODEL:-deepseek/deepseek-v3.2}
     networks:
       - syncscript_network
     restart: unless-stopped

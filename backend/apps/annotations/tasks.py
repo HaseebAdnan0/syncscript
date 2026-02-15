@@ -20,7 +20,7 @@ def broadcast_annotation_created(annotation_id: int) -> None:
     from core.websocket_utils import broadcast_to_vault  # type: ignore[import-not-found]
 
     try:
-        annotation = Annotation.objects.select_related('source', 'created_by').get(id=annotation_id)
+        annotation = Annotation.objects.select_related('source', 'user', 'source__vault').get(id=annotation_id)
 
         # Build payload matching event catalog
         payload: dict[str, Any] = {
@@ -29,8 +29,8 @@ def broadcast_annotation_created(annotation_id: int) -> None:
             'text': annotation.text,  # type: ignore[attr-defined]
             'page_number': annotation.page_number,  # type: ignore[attr-defined]
             'created_by': {
-                'id': annotation.created_by.id,  # type: ignore[attr-defined]
-                'username': annotation.created_by.username,  # type: ignore[attr-defined]
+                'id': annotation.user.id,  # type: ignore[attr-defined]
+                'username': annotation.user.username,  # type: ignore[attr-defined]
             },
             'created_at': annotation.created_at.isoformat(),  # type: ignore[attr-defined]
         }
@@ -40,7 +40,7 @@ def broadcast_annotation_created(annotation_id: int) -> None:
             vault_id=annotation.source.vault.id,  # type: ignore[attr-defined]
             event_type='annotation.created',
             payload=payload,
-            user=annotation.created_by
+            user=annotation.user
         )
 
         logger.info(f"Broadcast annotation.created for annotation {annotation_id} to vault {annotation.source.vault.id}")  # type: ignore[attr-defined]

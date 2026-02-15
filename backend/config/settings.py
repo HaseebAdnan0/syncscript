@@ -351,7 +351,7 @@ AI_DAILY_LIMIT = int(os.getenv('AI_DAILY_LIMIT', '20'))  # Maximum AI requests p
 
 # OpenRouter API (for Claude, Gemini, and other models via unified API)
 OPENROUTER_API_KEY = os.getenv('OPENROUTER_API_KEY', '')
-OPENROUTER_MODEL = os.getenv('OPENROUTER_MODEL', 'google/gemini-2.5-pro-preview')
+OPENROUTER_MODEL = os.getenv('OPENROUTER_MODEL', 'deepseek/deepseek-v3.2')
 OPENROUTER_SITE_URL = os.getenv('OPENROUTER_SITE_URL', 'http://localhost:3000')
 OPENROUTER_SITE_NAME = os.getenv('OPENROUTER_SITE_NAME', 'SyncScript')
 

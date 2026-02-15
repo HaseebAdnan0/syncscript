@@ -18,7 +18,7 @@ from pdf2image import convert_from_bytes
 from PIL import Image
 from pypdf import PdfReader
 
-from apps.sources.models import PDFUpload, FileUpload
+from apps.sources.models import PDFUpload, FileUpload, Source, SourceType
 from apps.sources.services.virus_scanner import VirusScanner
 from apps.vaults.models import AuditLog
 from core.websocket_utils import broadcast_to_vault
@@ -237,7 +237,7 @@ def process_uploaded_pdf(self, pdf_upload_id: str) -> dict[str, Any]:
 
         # Update PDFUpload record
         pdf_upload.pdf_title = str(pdf_title) if pdf_title else pdf_upload.original_filename
-        pdf_upload.pdf_author = str(pdf_author) if pdf_author else None
+        pdf_upload.pdf_author = str(pdf_author) if pdf_author else ''
         pdf_upload.page_count = page_count
         pdf_upload.thumbnail_url = thumbnail_url
         pdf_upload.extracted_text = extracted_text
@@ -247,6 +247,39 @@ def process_uploaded_pdf(self, pdf_upload_id: str) -> dict[str, Any]:
         logger.info(
             f"Successfully processed PDF {pdf_upload_id}: "
             f"title={pdf_upload.pdf_title}, pages={page_count}"
+        )
+
+        # Create a Source record for the PDF so it appears in the sources list (US-008)
+        # Generate the file URL for the Source record
+        # Use the presigned URL pattern or construct a public URL
+        file_url = f"pdf://{pdf_upload.id}"  # Internal reference to the PDF
+        if hasattr(settings, 'AWS_S3_CUSTOM_DOMAIN') and settings.AWS_S3_CUSTOM_DOMAIN:
+            file_url = f"https://{settings.AWS_S3_CUSTOM_DOMAIN}/{file_key}"
+
+        # Create Source record linked to this PDFUpload
+        source = Source.objects.create(
+            vault=pdf_upload.vault,
+            url=file_url,
+            title=pdf_upload.pdf_title or pdf_upload.original_filename,
+            description=f"PDF document with {page_count} pages" if page_count else "PDF document",
+            source_type=SourceType.PDF,
+            metadata={
+                'pdf_upload_id': str(pdf_upload.id),
+                'original_filename': pdf_upload.original_filename,
+                'file_size': pdf_upload.file_size,
+                'page_count': page_count,
+                'author': pdf_upload.pdf_author,
+                'thumbnail_url': thumbnail_url,
+            },
+            created_by=pdf_upload.uploaded_by,
+        )
+
+        # Link the PDFUpload to the Source
+        pdf_upload.source = source
+        pdf_upload.save(update_fields=['source'])
+
+        logger.info(
+            f"Created Source {source.id} for PDF {pdf_upload_id}"
         )
 
         # Send WebSocket notification to vault (US-020)

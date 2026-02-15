@@ -118,10 +118,12 @@ export function VaultSocketProvider({ vaultId, children }: VaultSocketProviderPr
         }
       };
 
-      ws.onerror = (error) => {
+      ws.onerror = () => {
         connectingRef.current = false;
         if (isUnmountedRef.current) return;
-        console.error('WebSocket error:', error);
+        // Note: WebSocket error events don't contain useful information
+        // The actual error details come in the onclose event
+        console.warn('WebSocket connection error occurred');
       };
 
       ws.onclose = (event) => {

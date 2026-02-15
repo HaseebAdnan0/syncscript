@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { FileText, Calendar, User, ExternalLink, ArrowUpRight, Plus } from 'lucide-react';
 import { useSources } from '@/hooks/useSources';
+import { useSourcesWebSocket } from '@/hooks/useSourcesWebSocket';
 import { SourceTypeBadge } from '../sources/SourceTypeBadge';
 import { AddSourceModal } from '../sources/AddSourceModal';
 import EmptySourcesState from './EmptySourcesState';
@@ -20,6 +21,9 @@ interface SourcesListProps {
 export function SourcesList({ vaultId, userRole }: SourcesListProps) {
   const { data: sources = [], isLoading, error } = useSources(vaultId);
   const [isAddSourceModalOpen, setIsAddSourceModalOpen] = useState(false);
+
+  // Enable real-time source updates via WebSocket
+  useSourcesWebSocket({ vaultId });
 
   // Loading state
   if (isLoading) {

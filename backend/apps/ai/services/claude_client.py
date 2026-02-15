@@ -23,7 +23,7 @@ class AIClient:
         if not self.api_key:
             raise ValueError("OPENROUTER_API_KEY not configured in settings")
 
-        self.model = getattr(settings, 'OPENROUTER_MODEL', 'google/gemini-2.5-pro-preview')
+        self.model = getattr(settings, 'OPENROUTER_MODEL', 'deepseek/deepseek-v3.2')
         self.site_url = getattr(settings, 'OPENROUTER_SITE_URL', 'http://localhost:3000')
         self.site_name = getattr(settings, 'OPENROUTER_SITE_NAME', 'SyncScript')
         self.api_url = "https://openrouter.ai/api/v1/chat/completions"

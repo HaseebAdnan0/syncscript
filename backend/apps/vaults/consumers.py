@@ -251,10 +251,19 @@ class VaultConsumer(AsyncWebsocketConsumer):
         Receive messages from vault room group and forward to WebSocket client.
 
         Args:
-            event: Event dictionary from channel layer containing message data
+            event: Event dictionary from channel layer containing:
+                   - type: "vault_event" (method name, used by channel layer)
+                   - message: JSON string with actual event data
         """
-        # Forward the event to the WebSocket client
-        await self.send(text_data=json.dumps(event))
+        # Extract the actual message from the channel layer envelope
+        # The 'message' field contains the JSON-serialized event data
+        message = event.get('message')
+        if message:
+            # message is already a JSON string, send it directly
+            await self.send(text_data=message)
+        else:
+            # Fallback: send the event as-is (shouldn't happen)
+            await self.send(text_data=json.dumps(event))
 
     async def _add_to_presence(self, user_id: int, vault_id: int) -> None:
         """

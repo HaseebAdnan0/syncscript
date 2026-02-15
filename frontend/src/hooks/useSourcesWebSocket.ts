@@ -30,36 +30,50 @@ export function useSourcesWebSocket({ vaultId }: UseSourcesWebSocketOptions) {
   useEffect(() => {
     if (status !== 'connected') return;
 
+    // Helper to invalidate all sources queries for this vault
+    // Uses predicate matching to handle different query key formats
+    const invalidateSourcesQueries = () => {
+      queryClient.invalidateQueries({
+        predicate: (query) => {
+          const queryKey = query.queryKey;
+          // Match ['sources', vaultId] or ['sources', vaultId, filters]
+          // vaultId can be string or number
+          if (queryKey[0] !== 'sources') return false;
+          const queryVaultId = queryKey[1];
+          const vaultIdStr = String(vaultId);
+          return String(queryVaultId) === vaultIdStr;
+        },
+      });
+    };
+
     // Listen for source.created events
     const unsubscribeCreated = addEventListener('source.created', () => {
       // Invalidate sources query to fetch fresh data including new source
-      queryClient.invalidateQueries({
-        queryKey: ['sources', typeof vaultId === 'string' ? parseInt(vaultId, 10) : vaultId]
-      });
+      invalidateSourcesQueries();
     });
 
     // Listen for source.updated events
     const unsubscribeUpdated = addEventListener('source.updated', () => {
       // Invalidate sources query to refetch with updated source data
-      queryClient.invalidateQueries({
-        queryKey: ['sources', typeof vaultId === 'string' ? parseInt(vaultId, 10) : vaultId]
-      });
+      invalidateSourcesQueries();
     });
 
     // Listen for source.deleted events
     const unsubscribeDeleted = addEventListener('source.deleted', () => {
       // Invalidate sources query to remove deleted source from list
-      queryClient.invalidateQueries({
-        queryKey: ['sources', typeof vaultId === 'string' ? parseInt(vaultId, 10) : vaultId]
-      });
+      invalidateSourcesQueries();
+    });
+
+    // Listen for pdf.uploaded events (when PDF processing completes)
+    const unsubscribePdfUploaded = addEventListener('pdf.uploaded', () => {
+      // Invalidate sources query to show newly created source from PDF upload
+      invalidateSourcesQueries();
     });
 
     // Listen for reconnected events (refetch after reconnection)
     const unsubscribeReconnected = addEventListener('reconnected', () => {
       // Refetch sources after reconnecting to ensure fresh data
-      queryClient.invalidateQueries({
-        queryKey: ['sources', typeof vaultId === 'string' ? parseInt(vaultId, 10) : vaultId]
-      });
+      invalidateSourcesQueries();
     });
 
     // Cleanup all event listeners on unmount or status change
@@ -67,6 +81,7 @@ export function useSourcesWebSocket({ vaultId }: UseSourcesWebSocketOptions) {
       unsubscribeCreated();
       unsubscribeUpdated();
       unsubscribeDeleted();
+      unsubscribePdfUploaded();
       unsubscribeReconnected();
     };
   }, [status, vaultId, addEventListener, queryClient]);

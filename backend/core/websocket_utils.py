@@ -2,8 +2,17 @@
 WebSocket utility functions for broadcasting events to vault rooms.
 """
 import json
+import uuid
 from typing import Any, Optional
 from datetime import datetime, timezone
+
+
+class UUIDEncoder(json.JSONEncoder):
+    """JSON encoder that handles UUID objects."""
+    def default(self, o: Any) -> Any:
+        if isinstance(o, uuid.UUID):
+            return str(o)
+        return super().default(o)
 
 from django.core.cache import cache
 from channels.layers import get_channel_layer  # type: ignore[import-untyped]
@@ -62,14 +71,14 @@ def broadcast_to_vault(
     # The 'type' field maps to the consumer method name (vault_event)
     group_message = {
         "type": "vault_event",
-        "message": json.dumps(message),
+        "message": json.dumps(message, cls=UUIDEncoder),
     }
 
     async_to_sync(channel_layer.group_send)(group_name, group_message)  # type: ignore[union-attr]
 
     # Buffer event in Redis for replay
     events_key = f"vault_{vault_id}:events"
-    event_json = json.dumps(message)
+    event_json = json.dumps(message, cls=UUIDEncoder)
 
     # Add event to list (newest at head)
     redis_client.lpush(events_key, event_json)
