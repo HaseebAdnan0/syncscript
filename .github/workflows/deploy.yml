@@ -16,7 +16,7 @@ name: Deploy
 on:
   push:
     branches:
-      - main
+      - master
 
 env:
   REGISTRY: ghcr.io
@@ -272,7 +272,7 @@ jobs:
             cd /opt/apps/syncscript
 
             # Pull latest code (for compose files, configs)
-            git pull origin main
+            git pull origin master
 
             # Login to GHCR
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin

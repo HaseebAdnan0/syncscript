@@ -318,9 +318,9 @@ SOCIALACCOUNT_LOGIN_ON_GET = True  # Skip confirmation page, redirect directly t
 # Custom adapter for JWT-based OAuth authentication
 SOCIALACCOUNT_ADAPTER = 'apps.users.adapters.JWTSocialAccountAdapter'
 
-# Redirect URLs for authentication
-LOGIN_REDIRECT_URL = 'http://localhost:3000/callback?success=true'
-LOGOUT_REDIRECT_URL = 'http://localhost:3000/login'
+# Redirect URLs for authentication (use SITE_URL from env)
+LOGIN_REDIRECT_URL = f"{SITE_URL}/callback?success=true"
+LOGOUT_REDIRECT_URL = f"{SITE_URL}/login"
 
 # OAuth Provider Settings
 SOCIALACCOUNT_PROVIDERS = {
