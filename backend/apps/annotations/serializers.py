@@ -3,9 +3,20 @@ from rest_framework import serializers
 from apps.annotations.models import Annotation
 
 
+class AuthorSerializer(serializers.Serializer):
+    """Serializer for annotation author info"""
+    id = serializers.IntegerField()
+    username = serializers.CharField()
+    email = serializers.EmailField()
+
+
 class AnnotationSerializer(serializers.ModelSerializer):
     """Serializer for Annotation with nested replies"""
-    user = serializers.StringRelatedField(read_only=True)
+    author = serializers.SerializerMethodField(read_only=True)
+    text = serializers.CharField(source='content')
+    pageNumber = serializers.IntegerField(source='page_number', allow_null=True, required=False)
+    createdAt = serializers.DateTimeField(source='created_at', read_only=True)
+    updatedAt = serializers.DateTimeField(source='updated_at', read_only=True)
     replies = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
@@ -13,16 +24,26 @@ class AnnotationSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'source',
-            'user',
-            'content',
-            'page_number',
+            'author',
+            'text',
+            'pageNumber',
             'position',
             'parent',
             'replies',
-            'created_at',
-            'updated_at'
+            'createdAt',
+            'updatedAt'
         ]
-        read_only_fields = ['user', 'created_at', 'updated_at', 'replies']
+        read_only_fields = ['author', 'createdAt', 'updatedAt', 'replies']
+
+    def get_author(self, obj: Annotation) -> dict:
+        """Return author as an object with id, username, email"""
+        if obj.user:
+            return {
+                'id': obj.user.id,
+                'username': obj.user.username or obj.user.email.split('@')[0],
+                'email': obj.user.email,
+            }
+        return None
 
     def get_replies(self, obj: Annotation) -> list:
         """Return nested replies for top-level annotations only (parent=None)"""
@@ -39,3 +60,12 @@ class AnnotationSerializer(serializers.ModelSerializer):
         if parent and parent.parent:
             raise serializers.ValidationError("Cannot reply to a reply (max 2 levels).")
         return attrs
+
+    def create(self, validated_data):
+        """Handle create with field mapping"""
+        # Map camelCase fields back to snake_case for model
+        if 'content' not in validated_data and 'text' in self.initial_data:
+            validated_data['content'] = self.initial_data['text']
+        if 'page_number' not in validated_data and 'pageNumber' in self.initial_data:
+            validated_data['page_number'] = self.initial_data['pageNumber']
+        return super().create(validated_data)

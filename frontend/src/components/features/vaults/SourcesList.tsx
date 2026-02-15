@@ -89,13 +89,23 @@ interface SourceCardProps {
 }
 
 function SourceCard({ source, vaultId }: SourceCardProps) {
+  const router = useRouter();
   const formattedDate = formatDate(source.created_at);
   const truncatedUrl = truncateUrl(source.url, 60);
 
+  const handleCardClick = () => {
+    router.push(`/vaults/${vaultId}/sources/${source.id}`);
+  };
+
+  const handleUrlClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    window.open(source.url, '_blank', 'noopener,noreferrer');
+  };
+
   return (
-    <Link
-      href={`/vaults/${vaultId}/sources/${source.id}`}
-      className="block bg-[#0F1115] border border-white/10 rounded-2xl p-6 hover:-translate-y-1 hover:border-[#F7931A]/50 transition-all duration-300"
+    <div
+      onClick={handleCardClick}
+      className="block bg-[#0F1115] border border-white/10 rounded-2xl p-6 hover:-translate-y-1 hover:border-[#F7931A]/50 transition-all duration-300 cursor-pointer"
     >
       {/* Header with title and type badge */}
       <div className="flex items-start justify-between gap-4 mb-3">
@@ -108,15 +118,13 @@ function SourceCard({ source, vaultId }: SourceCardProps) {
 
       {/* URL */}
       <div className="mb-4">
-        <a
-          href={source.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={(e) => e.stopPropagation()}
-          className="text-sm text-[#94A3B8] hover:text-[#F7931A] transition-colors inline-flex items-center gap-1 break-all"
+        <button
+          onClick={handleUrlClick}
+          className="text-sm text-[#94A3B8] hover:text-[#F7931A] transition-colors inline-flex items-center gap-1 break-all text-left"
         >
           {truncatedUrl}
-        </a>
+          <ExternalLink className="w-3 h-3 flex-shrink-0" />
+        </button>
       </div>
 
       {/* Metadata: Date added and contributor */}
@@ -133,7 +141,7 @@ function SourceCard({ source, vaultId }: SourceCardProps) {
           <span>by {source.created_by}</span>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }
 

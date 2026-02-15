@@ -8,13 +8,30 @@ import type {
   UpdateAnnotationRequest,
 } from '@/lib/types/annotations';
 
+// Response type for paginated annotations
+interface PaginatedResponse<T> {
+  count?: number;
+  next?: string | null;
+  previous?: string | null;
+  results?: T[];
+}
+
 /**
  * Get all annotations for a source
  */
 export const getAnnotations = async (sourceId: number): Promise<Annotation[]> => {
   try {
-    const response = await api.get<Annotation[]>(`/sources/${sourceId}/annotations/`);
-    return response.data;
+    const response = await api.get<Annotation[] | PaginatedResponse<Annotation>>(`/sources/${sourceId}/annotations/`);
+    // Handle both array and paginated response formats
+    if (Array.isArray(response.data)) {
+      return response.data;
+    }
+    // If it's a paginated response, return the results array
+    if (response.data && 'results' in response.data && Array.isArray(response.data.results)) {
+      return response.data.results;
+    }
+    // Fallback to empty array
+    return [];
   } catch (error) {
     throw handleApiError(error);
   }

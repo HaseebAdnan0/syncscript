@@ -37,14 +37,14 @@ export function AnnotationCard({
         <div className="flex items-center gap-3">
           {/* Author avatar - gradient circle with first letter */}
           <div className="w-8 h-8 rounded-full bg-gradient-to-r from-[#EA580C] to-[#F7931A] flex items-center justify-center text-white text-sm font-bold">
-            {annotation.author.username.charAt(0).toUpperCase()}
+            {(annotation.author?.username || 'U').charAt(0).toUpperCase()}
           </div>
           <div>
             <div className="text-white font-medium text-sm">
-              {annotation.author.username}
+              {annotation.author?.username || 'Unknown User'}
             </div>
             <div className="text-[#94A3B8] text-xs">
-              {format(new Date(annotation.createdAt), 'MMM d, yyyy • h:mm a')}
+              {annotation.createdAt ? format(new Date(annotation.createdAt), 'MMM d, yyyy • h:mm a') : 'Unknown date'}
             </div>
           </div>
         </div>
@@ -132,13 +132,13 @@ export function AnnotationCard({
               <div className="flex items-center gap-2 mb-1">
                 {/* Reply author avatar - smaller */}
                 <div className="w-6 h-6 rounded-full bg-gradient-to-r from-[#EA580C]/70 to-[#F7931A]/70 flex items-center justify-center text-white text-xs font-bold">
-                  {reply.author.username.charAt(0).toUpperCase()}
+                  {(reply.author?.username || 'U').charAt(0).toUpperCase()}
                 </div>
                 <span className="text-white font-medium text-xs">
-                  {reply.author.username}
+                  {reply.author?.username || 'Unknown User'}
                 </span>
                 <span className="text-[#94A3B8] text-xs">
-                  {format(new Date(reply.createdAt), 'MMM d • h:mm a')}
+                  {reply.createdAt ? format(new Date(reply.createdAt), 'MMM d • h:mm a') : ''}
                 </span>
               </div>
               <div className="text-white/80 text-xs leading-relaxed pl-8">

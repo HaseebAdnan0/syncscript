@@ -1,13 +1,15 @@
 // Annotation types
 
+export interface Author {
+  id: number;
+  username: string;
+  email: string;
+}
+
 export interface AnnotationReply {
   id: number;
   annotation: number;
-  author: {
-    id: number;
-    username: string;
-    email: string;
-  };
+  author?: Author;
   text: string;
   createdAt: string;
   updatedAt: string;
@@ -16,11 +18,7 @@ export interface AnnotationReply {
 export interface Annotation {
   id: number;
   source: number;
-  author: {
-    id: number;
-    username: string;
-    email: string;
-  };
+  author?: Author;
   text: string;
   pageNumber?: number;
   replies: AnnotationReply[];

@@ -16,7 +16,7 @@ interface AnnotationSidebarProps {
 }
 
 export function AnnotationSidebar({
-  annotations,
+  annotations: rawAnnotations,
   isLoading = false,
   onAddAnnotation,
   onReply,
@@ -27,6 +27,11 @@ export function AnnotationSidebar({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [showScrollIndicator, setShowScrollIndicator] = useState(false);
   const previousAnnotationIdsRef = useRef<Set<number>>(new Set());
+
+  // Ensure annotations is always an array (handle paginated responses or errors)
+  const annotations = Array.isArray(rawAnnotations)
+    ? rawAnnotations
+    : (rawAnnotations as { results?: Annotation[] })?.results ?? [];
 
   // Detect when a new annotation is added below the fold
   useEffect(() => {
@@ -141,9 +146,9 @@ export function AnnotationSidebar({
                 key={annotation.id}
                 annotation={annotation}
                 onReply={onReply ? () => onReply(annotation.id) : undefined}
-                canEdit={currentUserId === annotation.author.id}
+                canEdit={currentUserId !== undefined && currentUserId === annotation.author?.id}
                 onEdit={onEdit ? () => onEdit(annotation.id) : undefined}
-                canDelete={currentUserId === annotation.author.id}
+                canDelete={currentUserId !== undefined && currentUserId === annotation.author?.id}
                 onDelete={onDelete ? () => onDelete(annotation.id) : undefined}
               />
             ))}
