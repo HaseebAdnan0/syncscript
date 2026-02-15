@@ -1,6 +1,6 @@
 'use client';
 
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import Joyride, { Step, Styles, CallBackProps, STATUS, ACTIONS, EVENTS } from 'react-joyride';
 
 interface TutorialProviderProps {

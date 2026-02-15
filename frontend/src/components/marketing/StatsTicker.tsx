@@ -11,6 +11,12 @@ interface StatItemProps {
   suffix?: string;
 }
 
+interface PlatformStats {
+  users_count: number;
+  sources_count: number;
+  citations_count: number;
+}
+
 function StatItem({ icon, value, label, suffix = '' }: StatItemProps) {
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
@@ -62,27 +68,51 @@ function StatItem({ icon, value, label, suffix = '' }: StatItemProps) {
 }
 
 export default function StatsTicker() {
+  const [stats, setStats] = useState<PlatformStats | null>(null);
+
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+        const response = await fetch(`${apiUrl}/dashboard/public-stats/`);
+        if (response.ok) {
+          const data = await response.json();
+          setStats(data);
+        }
+      } catch {
+        // Silently fail - will use default values
+      }
+    }
+
+    fetchStats();
+  }, []);
+
+  // Use real stats if available, otherwise show placeholder values
+  const usersCount = stats?.users_count || 0;
+  const sourcesCount = stats?.sources_count || 0;
+  const citationsCount = stats?.citations_count || 0;
+
   return (
     <section className="border-y border-white/10 bg-[#0F1115]/50 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto px-6 py-12 md:py-16">
         <div className="flex flex-col md:flex-row items-center justify-between gap-12 md:gap-8">
           <StatItem
             icon={<Users className="w-8 h-8" />}
-            value={10000}
+            value={usersCount}
             label="Researchers"
-            suffix="+"
+            suffix={usersCount > 0 ? '+' : ''}
           />
           <StatItem
             icon={<FileText className="w-8 h-8" />}
-            value={50000}
+            value={sourcesCount}
             label="Sources"
-            suffix="+"
+            suffix={sourcesCount > 0 ? '+' : ''}
           />
           <StatItem
             icon={<TrendingUp className="w-8 h-8" />}
-            value={1000000}
+            value={citationsCount}
             label="Citations"
-            suffix="+"
+            suffix={citationsCount > 0 ? '+' : ''}
           />
         </div>
       </div>

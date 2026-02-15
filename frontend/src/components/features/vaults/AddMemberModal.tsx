@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/useToast';
 
 interface AddMemberModalProps {
-  vaultId: number;
+  vaultId: string;
   isOpen: boolean;
   onClose: () => void;
 }

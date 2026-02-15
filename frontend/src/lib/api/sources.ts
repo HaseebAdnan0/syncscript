@@ -13,7 +13,7 @@ import type { PaginatedResponse } from '@/lib/types/api';
  * Get all sources for a vault with optional filters
  */
 export const getSources = async (
-  vaultId: number,
+  vaultId: string,
   filters?: SourcesFilterParams
 ): Promise<Source[]> => {
   try {
@@ -113,6 +113,27 @@ export const summarizeSource = async (
     const url = `/sources/${sourceId}/summarize/${queryString ? `?${queryString}` : ''}`;
 
     const response = await api.post<Source>(url);
+    return response.data;
+  } catch (error) {
+    throw handleApiError(error);
+  }
+};
+
+/**
+ * Preview URL metadata without creating a source
+ */
+export interface UrlPreviewResponse {
+  url: string;
+  title: string;
+  authors: string[];
+  abstract: string;
+  publication_date: string | null;
+  error: string | null;
+}
+
+export const previewUrl = async (url: string): Promise<UrlPreviewResponse> => {
+  try {
+    const response = await api.post<UrlPreviewResponse>('/sources/preview/', { url });
     return response.data;
   } catch (error) {
     throw handleApiError(error);

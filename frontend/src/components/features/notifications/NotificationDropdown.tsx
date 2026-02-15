@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import NotificationItem from './NotificationItem';
 import type { Notification } from '@/types/notifications';
 

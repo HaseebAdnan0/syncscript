@@ -8,6 +8,7 @@ interface FileUploadZoneProps {
   accept?: string; // e.g., "application/pdf,image/png,image/jpeg"
   maxFiles?: number;
   disabled?: boolean;
+  helpText?: string; // Custom help text (e.g., "PDF files only")
 }
 
 export function FileUploadZone({
@@ -15,6 +16,7 @@ export function FileUploadZone({
   accept = 'application/pdf,image/png,image/jpeg',
   maxFiles = 10,
   disabled = false,
+  helpText,
 }: FileUploadZoneProps) {
   const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -129,7 +131,7 @@ export function FileUploadZone({
               {isDragOver ? 'Drop files here' : 'Drop files here or click to browse'}
             </p>
             <p className="text-sm text-[#94A3B8]">
-              Supports PDF, PNG, and JPG files (max {maxFiles} files)
+              {helpText || `Supports PDF, PNG, and JPG files (max ${maxFiles} ${maxFiles === 1 ? 'file' : 'files'})`}
             </p>
           </div>
         </div>

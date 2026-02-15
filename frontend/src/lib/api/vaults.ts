@@ -16,20 +16,31 @@ import {
   AskQuestionResponse,
 } from '../types/vault';
 
+export interface GetVaultsParams {
+  search?: string;
+  ownership?: 'owned' | 'shared';
+}
+
 /**
  * Get all vaults for the current user
- * @param search Optional search query for server-side filtering
+ * @param params Optional search query and ownership filter for server-side filtering
  */
-export const getVaults = async (search?: string): Promise<VaultsListResponse> => {
-  const params = search ? { search } : {};
-  const response = await api.get<VaultsListResponse>('/vaults/', { params });
+export const getVaults = async (params?: GetVaultsParams): Promise<VaultsListResponse> => {
+  const queryParams: Record<string, string> = {};
+  if (params?.search) {
+    queryParams.search = params.search;
+  }
+  if (params?.ownership) {
+    queryParams.ownership = params.ownership;
+  }
+  const response = await api.get<VaultsListResponse>('/vaults/', { params: queryParams });
   return response.data;
 };
 
 /**
  * Get a single vault by ID
  */
-export const getVault = async (id: number): Promise<Vault> => {
+export const getVault = async (id: string): Promise<Vault> => {
   const response = await api.get<Vault>(`/vaults/${id}/`);
   return response.data;
 };
@@ -45,7 +56,7 @@ export const createVault = async (data: CreateVaultRequest): Promise<Vault> => {
 /**
  * Update an existing vault
  */
-export const updateVault = async (id: number, data: UpdateVaultRequest): Promise<Vault> => {
+export const updateVault = async (id: string, data: UpdateVaultRequest): Promise<Vault> => {
   const response = await api.patch<Vault>(`/vaults/${id}/`, data);
   return response.data;
 };
@@ -53,14 +64,14 @@ export const updateVault = async (id: number, data: UpdateVaultRequest): Promise
 /**
  * Delete a vault permanently
  */
-export const deleteVault = async (id: number): Promise<void> => {
+export const deleteVault = async (id: string): Promise<void> => {
   await api.delete(`/vaults/${id}/`);
 };
 
 /**
  * Archive a vault (soft delete)
  */
-export const archiveVault = async (id: number): Promise<Vault> => {
+export const archiveVault = async (id: string): Promise<Vault> => {
   const response = await api.patch<Vault>(`/vaults/${id}/`, { is_archived: true });
   return response.data;
 };
@@ -68,7 +79,7 @@ export const archiveVault = async (id: number): Promise<Vault> => {
 /**
  * Get all members of a vault
  */
-export const getVaultMembers = async (vaultId: number): Promise<VaultMembersListResponse> => {
+export const getVaultMembers = async (vaultId: string): Promise<VaultMembersListResponse> => {
   const response = await api.get<VaultMembersListResponse>(`/vaults/${vaultId}/members/`);
   return response.data;
 };
@@ -76,7 +87,7 @@ export const getVaultMembers = async (vaultId: number): Promise<VaultMembersList
 /**
  * Add an existing user to a vault by email/username
  */
-export const addVaultMember = async (vaultId: number, data: AddMemberRequest): Promise<VaultMember> => {
+export const addVaultMember = async (vaultId: string, data: AddMemberRequest): Promise<VaultMember> => {
   const response = await api.post<VaultMember>(`/vaults/${vaultId}/members/`, data);
   return response.data;
 };
@@ -84,7 +95,7 @@ export const addVaultMember = async (vaultId: number, data: AddMemberRequest): P
 /**
  * Invite a new user to a vault by email (sends invitation)
  */
-export const inviteVaultMember = async (vaultId: number, data: InviteMemberRequest): Promise<VaultMember> => {
+export const inviteVaultMember = async (vaultId: string, data: InviteMemberRequest): Promise<VaultMember> => {
   const response = await api.post<VaultMember>(`/vaults/${vaultId}/members/invite/`, data);
   return response.data;
 };
@@ -93,8 +104,8 @@ export const inviteVaultMember = async (vaultId: number, data: InviteMemberReque
  * Update a member's role in a vault
  */
 export const updateMemberRole = async (
-  vaultId: number,
-  memberId: number,
+  vaultId: string,
+  memberId: string,
   data: UpdateMemberRoleRequest
 ): Promise<VaultMember> => {
   const response = await api.patch<VaultMember>(`/vaults/${vaultId}/members/${memberId}/`, data);
@@ -104,14 +115,14 @@ export const updateMemberRole = async (
 /**
  * Remove a member from a vault
  */
-export const removeMember = async (vaultId: number, memberId: number): Promise<void> => {
+export const removeMember = async (vaultId: string, memberId: string): Promise<void> => {
   await api.delete(`/vaults/${vaultId}/members/${memberId}/`);
 };
 
 /**
  * Get AI-generated insights for a vault
  */
-export const getVaultInsights = async (vaultId: number): Promise<VaultInsights> => {
+export const getVaultInsights = async (vaultId: string): Promise<VaultInsights> => {
   const response = await api.get<VaultInsights>(`/vaults/${vaultId}/insights/`);
   return response.data;
 };
@@ -119,7 +130,7 @@ export const getVaultInsights = async (vaultId: number): Promise<VaultInsights> 
 /**
  * Get all conversations for a vault
  */
-export const getConversations = async (vaultId: number): Promise<Conversation[]> => {
+export const getConversations = async (vaultId: string): Promise<Conversation[]> => {
   const response = await api.get<Conversation[]>(`/vaults/${vaultId}/conversations/`);
   return response.data;
 };
@@ -127,7 +138,7 @@ export const getConversations = async (vaultId: number): Promise<Conversation[]>
 /**
  * Get a specific conversation with full message history
  */
-export const getConversation = async (vaultId: number, conversationId: number): Promise<ConversationDetail> => {
+export const getConversation = async (vaultId: string, conversationId: number): Promise<ConversationDetail> => {
   const response = await api.get<ConversationDetail>(`/vaults/${vaultId}/conversations/${conversationId}/`);
   return response.data;
 };
@@ -135,7 +146,7 @@ export const getConversation = async (vaultId: number, conversationId: number): 
 /**
  * Ask a question about vault contents
  */
-export const askQuestion = async (vaultId: number, data: AskQuestionRequest): Promise<AskQuestionResponse> => {
+export const askQuestion = async (vaultId: string, data: AskQuestionRequest): Promise<AskQuestionResponse> => {
   const response = await api.post<AskQuestionResponse>(`/vaults/${vaultId}/ask/`, data);
   return response.data;
 };

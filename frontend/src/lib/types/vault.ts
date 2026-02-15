@@ -7,8 +7,8 @@ export enum VaultRole {
 
 // Vault member type
 export interface VaultMember {
-  id: number;
-  vault_id: number;
+  id: string;
+  vault_id: string;
   user_id: number;
   user_email: string;
   user_name: string;
@@ -28,7 +28,7 @@ export interface StorageUsage {
 
 // Main vault type
 export interface Vault {
-  id: number;
+  id: string;
   name: string;
   description: string;
   owner_id: number;
@@ -121,7 +121,7 @@ export interface ChatMessage {
 
 export interface Conversation {
   id: number;
-  vault_id: number;
+  vault_id: string;
   user_id: number;
   created_at: string;
   updated_at: string;

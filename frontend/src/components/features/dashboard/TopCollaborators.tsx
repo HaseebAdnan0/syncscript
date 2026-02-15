@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { Users } from 'lucide-react'
+import { api } from '@/lib/api'
 
 interface Collaborator {
   user_id: number
@@ -18,21 +19,10 @@ export default function TopCollaborators() {
   useEffect(() => {
     async function fetchCollaborators() {
       try {
-        const token = localStorage.getItem('token')
-        const response = await fetch('http://localhost:8000/api/v1/dashboard/analytics/top-collaborators/', {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        })
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch top collaborators')
-        }
-
-        const data = await response.json()
-        setCollaborators(data)
+        const response = await api.get('/dashboard/analytics/top-collaborators/')
+        setCollaborators(response.data)
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Unknown error')
+        setError(err instanceof Error ? err.message : 'Failed to fetch top collaborators')
       } finally {
         setLoading(false)
       }

@@ -7,7 +7,6 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const testimonials = [
   {
-    avatar: '/avatars/testimonial-1.jpg',
     name: 'Dr. Sarah Chen',
     title: 'Associate Professor',
     institution: 'Stanford University',
@@ -15,7 +14,6 @@ const testimonials = [
       'SyncScript transformed our research workflow. Real-time collaboration and smart citations saved our team hundreds of hours on our meta-analysis project.',
   },
   {
-    avatar: '/avatars/testimonial-2.jpg',
     name: 'Marcus Rodriguez',
     title: 'PhD Candidate',
     institution: 'MIT',
@@ -23,7 +21,6 @@ const testimonials = [
       'The PDF annotation features are incredible. Being able to highlight, comment, and cross-reference sources with my research team has made literature reviews so much more efficient.',
   },
   {
-    avatar: '/avatars/testimonial-3.jpg',
     name: 'Dr. Emily Watson',
     title: 'Research Director',
     institution: 'Oxford University',
@@ -31,7 +28,6 @@ const testimonials = [
       'Knowledge Vaults are a game-changer for managing complex research projects. Our lab now has a single source of truth for all our citations and sources.',
   },
   {
-    avatar: '/avatars/testimonial-4.jpg',
     name: 'Prof. James Liu',
     title: 'Professor of Physics',
     institution: 'Caltech',

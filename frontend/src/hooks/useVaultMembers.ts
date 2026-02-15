@@ -20,13 +20,13 @@ import type {
 export const vaultMemberKeys = {
   all: ['vaultMembers'] as const,
   lists: () => [...vaultMemberKeys.all, 'list'] as const,
-  list: (vaultId: number) => [...vaultMemberKeys.lists(), vaultId] as const,
+  list: (vaultId: string) => [...vaultMemberKeys.lists(), vaultId] as const,
 };
 
 /**
  * Hook to fetch all members of a vault
  */
-export const useVaultMembers = (vaultId: number) => {
+export const useVaultMembers = (vaultId: string) => {
   return useQuery<VaultMembersListResponse>({
     queryKey: vaultMemberKeys.list(vaultId),
     queryFn: () => getVaultMembers(vaultId),
@@ -37,7 +37,7 @@ export const useVaultMembers = (vaultId: number) => {
 /**
  * Hook to add an existing user to a vault by email/username
  */
-export const useAddMember = (vaultId: number) => {
+export const useAddMember = (vaultId: string) => {
   const queryClient = useQueryClient();
 
   return useMutation<VaultMember, Error, AddMemberRequest>({
@@ -52,7 +52,7 @@ export const useAddMember = (vaultId: number) => {
 /**
  * Hook to invite a new user by email (sends email invitation)
  */
-export const useInviteMember = (vaultId: number) => {
+export const useInviteMember = (vaultId: string) => {
   const queryClient = useQueryClient();
 
   return useMutation<VaultMember, Error, InviteMemberRequest>({
@@ -67,10 +67,10 @@ export const useInviteMember = (vaultId: number) => {
 /**
  * Hook to update a member's role in a vault
  */
-export const useUpdateRole = (vaultId: number) => {
+export const useUpdateRole = (vaultId: string) => {
   const queryClient = useQueryClient();
 
-  return useMutation<VaultMember, Error, { memberId: number; data: UpdateMemberRoleRequest }>({
+  return useMutation<VaultMember, Error, { memberId: string; data: UpdateMemberRoleRequest }>({
     mutationFn: ({ memberId, data }) => updateMemberRole(vaultId, memberId, data),
     onSuccess: () => {
       // Invalidate members list to show updated role
@@ -82,10 +82,10 @@ export const useUpdateRole = (vaultId: number) => {
 /**
  * Hook to remove a member from a vault
  */
-export const useRemoveMember = (vaultId: number) => {
+export const useRemoveMember = (vaultId: string) => {
   const queryClient = useQueryClient();
 
-  return useMutation<void, Error, number>({
+  return useMutation<void, Error, string>({
     mutationFn: (memberId) => removeMember(vaultId, memberId),
     onSuccess: () => {
       // Invalidate members list to remove the member

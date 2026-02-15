@@ -1,35 +1,47 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { CheckCircle, XCircle, Mail } from 'lucide-react';
 import GlassCard from '@/components/ui/GlassCard';
 import GradientButton from '@/components/ui/GradientButton';
 import { verifyEmail } from '@/lib/api';
+import { useAuthStore } from '@/stores/authStore';
 
 export default function VerifyEmailPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const token = searchParams.get('token');
+  const { user, setUser } = useAuthStore();
 
-  // Retrieve stored redirect intent from localStorage
-  const [returnUrl, setReturnUrl] = useState('/login');
+  // Prevent duplicate requests (React Strict Mode runs effects twice in dev)
+  const hasVerified = useRef(false);
+
+  // Determine redirect URL - dashboard if logged in, login if not
+  const [returnUrl, setReturnUrl] = useState('/dashboard');
 
   useEffect(() => {
+    // Check localStorage for stored return URL
     const storedReturnUrl = localStorage.getItem('verificationReturnUrl');
     if (storedReturnUrl) {
       setReturnUrl(storedReturnUrl);
-      // Clear it after retrieving
       localStorage.removeItem('verificationReturnUrl');
+    } else if (!user) {
+      // Only redirect to login if not logged in
+      setReturnUrl('/login');
     }
-  }, []);
+  }, [user]);
 
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     const verify = async () => {
+      // Prevent duplicate requests
+      if (hasVerified.current) return;
+      hasVerified.current = true;
+
       if (!token) {
         setStatus('error');
         setErrorMessage('Verification token is missing.');
@@ -40,7 +52,12 @@ export default function VerifyEmailPage() {
         await verifyEmail(token);
         setStatus('success');
 
-        // Redirect to returnUrl (or login) after 3 seconds
+        // Update user's email_verified status in store if logged in
+        if (user) {
+          setUser({ ...user, email_verified: true });
+        }
+
+        // Redirect after 3 seconds
         setTimeout(() => {
           router.push(returnUrl);
         }, 3000);
@@ -55,7 +72,7 @@ export default function VerifyEmailPage() {
     };
 
     verify();
-  }, [token, router]);
+  }, [token, router, returnUrl, user, setUser]);
 
   // Loading state
   if (status === 'loading') {
@@ -103,14 +120,14 @@ export default function VerifyEmailPage() {
             Welcome to SyncScript! Your account is now active.
           </p>
           <p className="text-[#94A3B8] text-xs text-center">
-            Redirecting to login in 3 seconds...
+            Redirecting to {returnUrl === '/login' ? 'login' : 'dashboard'} in 3 seconds...
           </p>
         </div>
 
         {/* Continue Button */}
         <Link href={returnUrl}>
           <GradientButton className="w-full">
-            {returnUrl === '/login' ? 'Continue to Login' : 'Continue to App'}
+            {returnUrl === '/login' ? 'Continue to Login' : 'Continue to Dashboard'}
           </GradientButton>
         </Link>
       </GlassCard>

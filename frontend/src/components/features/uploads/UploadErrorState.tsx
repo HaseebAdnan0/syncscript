@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+
 import { XCircle, RefreshCw, X } from 'lucide-react';
 
 interface UploadErrorStateProps {

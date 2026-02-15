@@ -26,7 +26,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/useToast';
 
 interface MembersListProps {
-  vaultId: number;
+  vaultId: string;
   userRole?: VaultRole;
   currentUserId?: number;
 }
@@ -71,8 +71,8 @@ export function MembersList({ vaultId, userRole, currentUserId }: MembersListPro
   const removeMemberMutation = useRemoveMember(vaultId);
   const { toast } = useToast();
   const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
-  const [updatingMemberId, setUpdatingMemberId] = useState<number | null>(null);
-  const [removingMember, setRemovingMember] = useState<{ id: number; name: string } | null>(null);
+  const [updatingMemberId, setUpdatingMemberId] = useState<string | null>(null);
+  const [removingMember, setRemovingMember] = useState<{ id: string; name: string } | null>(null);
 
   // Extract members from paginated response
   const members = membersResponse?.results || [];
@@ -82,7 +82,7 @@ export function MembersList({ vaultId, userRole, currentUserId }: MembersListPro
   const isOwner = userRole === VaultRole.OWNER;
 
   // Handle role change
-  const handleRoleChange = async (memberId: number, newRole: VaultRole) => {
+  const handleRoleChange = async (memberId: string, newRole: VaultRole) => {
     setUpdatingMemberId(memberId);
     try {
       await updateRoleMutation.mutateAsync({

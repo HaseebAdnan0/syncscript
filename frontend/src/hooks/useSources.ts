@@ -17,7 +17,7 @@ import type {
 export const sourceKeys = {
   all: ['sources'] as const,
   lists: () => [...sourceKeys.all, 'list'] as const,
-  list: (vaultId: number, filters?: SourcesFilterParams) =>
+  list: (vaultId: string, filters?: SourcesFilterParams) =>
     [...sourceKeys.lists(), vaultId, filters] as const,
   details: () => [...sourceKeys.all, 'detail'] as const,
   detail: (id: number) => [...sourceKeys.details(), id] as const,
@@ -26,7 +26,7 @@ export const sourceKeys = {
 /**
  * Fetch all sources for a vault with optional filters
  */
-export function useSources(vaultId: number, filters?: SourcesFilterParams) {
+export function useSources(vaultId: string, filters?: SourcesFilterParams) {
   return useQuery<Source[], Error>({
     queryKey: sourceKeys.list(vaultId, filters),
     queryFn: () => getSources(vaultId, filters),

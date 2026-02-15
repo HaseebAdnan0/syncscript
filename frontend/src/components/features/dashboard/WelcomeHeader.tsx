@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { LayoutDashboard, FileText, MessageSquare } from 'lucide-react';
+import { api } from '@/lib/api';
+import { useAuthStore } from '@/stores/authStore';
 
 interface DashboardStats {
   vaults_count: number;
@@ -10,8 +12,8 @@ interface DashboardStats {
 }
 
 export function WelcomeHeader() {
+  const { user } = useAuthStore();
   const [greeting, setGreeting] = useState('');
-  const [firstName, setFirstName] = useState('');
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -28,9 +30,6 @@ export function WelcomeHeader() {
     }
     setGreeting(timeGreeting);
 
-    // TODO: Get user's first name from auth context
-    setFirstName('User');
-
     // Fetch dashboard stats
     fetchStats();
   }, []);
@@ -38,18 +37,8 @@ export function WelcomeHeader() {
   const fetchStats = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch('/api/v1/dashboard/stats/', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch stats');
-      }
-
-      const data = await response.json();
-      setStats(data);
+      const response = await api.get('/dashboard/stats/');
+      setStats(response.data);
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
     } finally {
@@ -57,12 +46,15 @@ export function WelcomeHeader() {
     }
   };
 
+  // Get first name from user
+  const firstName = user?.first_name || user?.username || 'User';
+
   return (
     <div className="mb-12">
       {/* Greeting */}
       <h1 className="text-4xl md:text-5xl font-bold mb-8">
         <span className="bg-gradient-to-r from-[#F7931A] to-[#FFD600] bg-clip-text text-transparent">
-          {greeting}, {firstName}
+          {greeting}, {firstName.split(' ')[0]}
         </span>
       </h1>
 

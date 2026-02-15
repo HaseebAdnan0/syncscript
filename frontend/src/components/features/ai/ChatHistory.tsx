@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { MessageSquare, Plus } from "lucide-react";
 
 interface ConversationPreview {

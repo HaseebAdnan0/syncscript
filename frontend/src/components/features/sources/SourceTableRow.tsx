@@ -25,7 +25,7 @@ export function SourceTableRow({ source, vaultId, onEdit, onDelete }: SourceTabl
     <tr className="hover:bg-white/5 transition-colors border-b border-white/5">
       {/* Type Badge */}
       <td className="px-4 py-3">
-        <SourceTypeBadge type={source.type} />
+        <SourceTypeBadge type={source.source_type} />
       </td>
 
       {/* Title (linked) */}
@@ -40,12 +40,12 @@ export function SourceTableRow({ source, vaultId, onEdit, onDelete }: SourceTabl
 
       {/* Contributor */}
       <td className="px-4 py-3 text-[#94A3B8] text-sm">
-        {source.contributor?.username || 'Unknown'}
+        {source.created_by || 'Unknown'}
       </td>
 
       {/* Date Added */}
       <td className="px-4 py-3 text-[#94A3B8] text-sm">
-        {format(new Date(source.createdAt), 'MMM d, yyyy')}
+        {format(new Date(source.created_at), 'MMM d, yyyy')}
       </td>
 
       {/* Actions Menu */}

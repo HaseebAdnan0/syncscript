@@ -197,6 +197,7 @@ class PDFUploadViewSet(viewsets.ModelViewSet):
         response_data = {
             'upload_id': pdf_upload.id,
             'upload_url': upload_url,
+            'file_key': file_key,
             'expires_in': 3600,  # 1 hour
             'callback_url': f'/api/v1/sources/pdfs/{pdf_upload.id}/complete/'
         }
@@ -681,10 +682,23 @@ class SourceViewSet(viewsets.ModelViewSet):
         """
         Override destroy to soft-delete sources instead of hard delete (US-010).
         Sets is_deleted=True rather than removing from database.
+        Creates audit log for source.soft_deleted action (US-038).
         """
         instance = self.get_object()
         instance.is_deleted = True
         instance.save()
+
+        # Create audit log for soft delete (US-038)
+        AuditLog.objects.create(
+            vault=instance.vault,
+            user=request.user,
+            action='source.soft_deleted',
+            changes={
+                'source_id': str(instance.id),
+                'vault_id': str(instance.vault_id),
+            }
+        )
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=True, methods=['post'])
@@ -736,9 +750,60 @@ class SourceViewSet(viewsets.ModelViewSet):
         instance.is_deleted = False
         instance.save()
 
+        # Create audit log for restore (US-038)
+        AuditLog.objects.create(
+            vault=instance.vault,
+            user=request.user,
+            action='source.restored',
+            changes={
+                'source_id': str(instance.id),
+                'vault_id': str(instance.vault_id),
+            }
+        )
+
         # Return serialized source
         serializer = self.get_serializer(instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['post'])
+    @method_decorator(ratelimit(key='user', rate='30/m', method='POST'))
+    def preview(self, request):
+        """
+        POST /api/v1/sources/preview/
+
+        Preview URL metadata without creating a source.
+        Returns extracted title, authors, abstract, and publication date.
+
+        Request body:
+        - url (str): URL to extract metadata from
+
+        Response:
+        - url (str): Original URL
+        - title (str): Extracted title
+        - authors (list): List of author names
+        - abstract (str): First 500 chars of content
+        - publication_date (str|null): ISO date if available
+        - error (str|null): Error message if extraction failed
+        """
+        url = request.data.get('url')
+
+        if not url:
+            return Response(
+                {'error': 'URL is required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Extract metadata using existing service
+        metadata = extract_metadata(url)
+
+        return Response({
+            'url': url,
+            'title': metadata.get('title', url),
+            'authors': metadata.get('authors', []),
+            'abstract': metadata.get('abstract', ''),
+            'publication_date': metadata.get('publication_date'),
+            'error': metadata.get('error'),
+        }, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['post'])
     def bulk_import(self, request):

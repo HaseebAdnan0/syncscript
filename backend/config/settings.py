@@ -10,8 +10,8 @@ from dotenv import load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Load environment variables
-load_dotenv(BASE_DIR.parent / '.env')
+# Load environment variables from backend/.env
+load_dotenv(BASE_DIR / '.env')
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-dev-key-change-in-production')
@@ -191,7 +191,7 @@ REST_FRAMEWORK = {
 
 # JWT Settings
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),  # Extended from 15min to reduce logout issues with background tabs
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
@@ -305,14 +305,19 @@ MIDDLEWARE.insert(_msg_middleware_idx, 'allauth.account.middleware.AccountMiddle
 # Add allauth authentication backend
 AUTHENTICATION_BACKENDS.append('allauth.account.auth_backends.AuthenticationBackend')
 
-# Allauth account settings
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
+# Allauth account settings (updated for django-allauth 0.60+)
+ACCOUNT_LOGIN_METHODS = {'email'}
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
 SOCIALACCOUNT_AUTO_SIGNUP = True
 SOCIALACCOUNT_EMAIL_AUTHENTICATION = False
+SOCIALACCOUNT_LOGIN_ON_GET = True  # Skip confirmation page, redirect directly to provider
 
 # Custom adapter for JWT-based OAuth authentication
 SOCIALACCOUNT_ADAPTER = 'apps.users.adapters.JWTSocialAccountAdapter'
+
+# Redirect URLs for authentication
+LOGIN_REDIRECT_URL = 'http://localhost:3000/callback?success=true'
+LOGOUT_REDIRECT_URL = 'http://localhost:3000/login'
 
 # OAuth Provider Settings
 SOCIALACCOUNT_PROVIDERS = {
@@ -345,8 +350,13 @@ SOCIALACCOUNT_PROVIDERS = {
 AI_DAILY_LIMIT = int(os.getenv('AI_DAILY_LIMIT', '20'))  # Maximum AI requests per user per day
 ANTHROPIC_API_KEY = os.getenv('ANTHROPIC_API_KEY', '')  # Claude API key for AI features
 
-# Virus Scanning Settings
-CLAMAV_ENABLED = False  # Set to True when ClamAV daemon is configured
+# Virus Scanning Settings (ClamAV)
+CLAMAV_ENABLED = os.getenv('CLAMAV_ENABLED', 'False') == 'True'
+CLAMAV_HOST = os.getenv('CLAMAV_HOST', 'localhost')
+CLAMAV_PORT = int(os.getenv('CLAMAV_PORT', '3310'))
+CLAMAV_SOCKET_PATH = os.getenv('CLAMAV_SOCKET_PATH', '/var/run/clamav/clamd.ctl')
+CLAMAV_USE_SOCKET = os.getenv('CLAMAV_USE_SOCKET', 'False') == 'True'
+CLAMAV_TIMEOUT = int(os.getenv('CLAMAV_TIMEOUT', '60'))
 
 # Storage Quota Settings
 VAULT_STORAGE_LIMIT = 1 * 1024 * 1024 * 1024  # 1GB per vault

@@ -2,14 +2,16 @@ from datetime import timedelta
 from django.utils import timezone
 from django.db.models import Q, F, Case, When, Count
 from django.db.models.functions import TruncDate
+from django.core.cache import cache
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 
 from apps.vaults.models import Vault, VaultMembership, AuditLog
 from apps.sources.models import Source
 from apps.annotations.models import Annotation
+from apps.users.models import User
 from .serializers import RecentVaultSerializer, ActivityFeedSerializer
 
 
@@ -331,3 +333,47 @@ def top_collaborators(request):
     top_5 = collaborator_stats[:5]
 
     return Response(top_5, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def public_platform_stats(request):
+    """
+    Returns public platform statistics for marketing pages.
+
+    GET /api/v1/dashboard/public-stats/
+
+    Returns:
+        {
+            "users_count": int,       # Total registered users
+            "sources_count": int,     # Total sources across platform
+            "citations_count": int    # Total citations generated (annotations)
+        }
+
+    Results are cached for 5 minutes to reduce database load.
+    """
+    cache_key = 'public_platform_stats'
+    cached_stats = cache.get(cache_key)
+
+    if cached_stats:
+        return Response(cached_stats, status=status.HTTP_200_OK)
+
+    # Count total users (verified emails only for accurate count)
+    users_count = User.objects.filter(email_verified=True).count()
+
+    # Count total sources (non-deleted)
+    sources_count = Source.objects.filter(is_deleted=False).count()
+
+    # Count total annotations (used as proxy for citations)
+    citations_count = Annotation.objects.count()
+
+    stats = {
+        'users_count': users_count,
+        'sources_count': sources_count,
+        'citations_count': citations_count,
+    }
+
+    # Cache for 5 minutes
+    cache.set(cache_key, stats, 60 * 5)
+
+    return Response(stats, status=status.HTTP_200_OK)

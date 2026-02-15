@@ -44,8 +44,13 @@ export async function markAllAsRead(): Promise<{ message: string; updated_count:
  * Get unread notification count for the current user
  */
 export async function getUnreadCount(): Promise<number> {
-  const response = await api.get<UnreadCountResponse>('/notifications/unread-count/');
-  return response.data.unread_count;
+  try {
+    const response = await api.get<UnreadCountResponse>('/notifications/unread-count/');
+    return response.data?.unread_count ?? 0;
+  } catch {
+    // Return 0 if API fails (e.g., user not authenticated yet)
+    return 0;
+  }
 }
 
 export interface NotificationPreferences {

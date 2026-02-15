@@ -64,19 +64,36 @@ export function useFileUpload() {
         // Determine if multipart upload is needed
         const isMultipart = file.size > MULTIPART_THRESHOLD;
 
+        let pdfUploadId: string | undefined;
+        let fileKey: string | undefined;
+
         if (isMultipart) {
-          await uploadMultipart(uploadId, file, vaultId);
+          const result = await uploadMultipart(uploadId, file, vaultId);
+          pdfUploadId = result.pdfUploadId;
+          fileKey = result.fileKey;
         } else {
-          await uploadSingleFile(uploadId, file, vaultId);
+          const result = await uploadSingleFile(uploadId, file, vaultId);
+          pdfUploadId = result.pdfUploadId;
+          fileKey = result.fileKey;
         }
 
-        // Mark as processing (backend will process the file)
-        updateUpload(uploadId, { status: 'processing', progress: 100 });
+        // Mark as processing
+        updateUpload(uploadId, { status: 'processing', progress: 100, fileKey });
 
-        // Complete after a short delay (simulating backend processing acknowledgment)
-        setTimeout(() => {
-          updateUpload(uploadId, { status: 'complete' });
-        }, 1000);
+        // Call the complete endpoint to trigger backend processing
+        if (pdfUploadId && fileKey) {
+          try {
+            await api.post(`/sources/pdfs/${pdfUploadId}/complete/`, {
+              file_key: fileKey,
+            });
+          } catch (completeError) {
+            // Log but don't fail - the file is uploaded, processing can be retried
+            console.warn('Failed to trigger PDF processing:', completeError);
+          }
+        }
+
+        // Mark as complete
+        updateUpload(uploadId, { status: 'complete' });
 
         return uploadId;
       } catch (error) {
@@ -90,8 +107,9 @@ export function useFileUpload() {
 
   /**
    * Upload file using single presigned URL (for files < 20MB)
+   * Returns the pdfUploadId and fileKey for completion
    */
-  const uploadSingleFile = async (uploadId: string, file: File, vaultId: string) => {
+  const uploadSingleFile = async (uploadId: string, file: File, vaultId: string): Promise<{ pdfUploadId: string; fileKey: string }> => {
     // Get presigned URL from backend
     const response = await api.post('/sources/pdfs/upload-url/', {
       vault_id: vaultId,
@@ -100,26 +118,30 @@ export function useFileUpload() {
       file_size: file.size,
     });
 
-    const { upload_url, file_key } = response.data;
-    updateUpload(uploadId, { fileKey: file_key });
+    const { upload_id: pdfUploadId, upload_url, file_key } = response.data;
+    updateUpload(uploadId, { fileKey: file_key, uploadId: pdfUploadId });
 
     // Upload file to S3 using XMLHttpRequest for progress tracking
     await uploadToS3(uploadId, file, upload_url);
+
+    return { pdfUploadId, fileKey: file_key };
   };
 
   /**
    * Upload file using multipart upload (for files > 20MB)
+   * Returns the pdfUploadId and fileKey for completion
    */
-  const uploadMultipart = async (uploadId: string, file: File, vaultId: string) => {
+  const uploadMultipart = async (uploadId: string, file: File, vaultId: string): Promise<{ pdfUploadId: string; fileKey: string }> => {
     // Initiate multipart upload
     const initiateResponse = await api.post('/sources/pdfs/multipart-upload/initiate/', {
       vault_id: vaultId,
       filename: file.name,
       content_type: file.type,
       file_size: file.size,
+      part_size: PART_SIZE,
     });
 
-    const { upload_id, file_key } = initiateResponse.data;
+    const { upload_id, pdf_upload_id: pdfUploadId, file_key } = initiateResponse.data;
     updateUpload(uploadId, { uploadId: upload_id, fileKey: file_key });
 
     // Upload parts
@@ -158,7 +180,10 @@ export function useFileUpload() {
       upload_id,
       file_key,
       parts,
+      pdf_upload_id: pdfUploadId,
     });
+
+    return { pdfUploadId, fileKey: file_key };
   };
 
   /**

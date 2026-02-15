@@ -1,7 +1,5 @@
 "use client";
 
-import React from "react";
-
 export default function AnimatedOrb() {
   return (
     <div className="relative flex items-center justify-center w-full h-full min-h-[400px] md:min-h-[500px]">

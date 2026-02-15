@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { FileText } from 'lucide-react';
 import ChartWrapper, { chartGradient, tooltipStyles } from './ChartWrapper';
+import { api } from '@/lib/api';
 
 interface SourceTypeData {
   type: string;
@@ -24,20 +25,8 @@ export default function SourceTypesChart() {
   useEffect(() => {
     async function fetchSourceTypes() {
       try {
-        const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:8000/api/v1/dashboard/analytics/source-types/', {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch source types: ${response.status}`);
-        }
-
-        const result = await response.json();
-        setData(result);
+        const response = await api.get('/dashboard/analytics/source-types/');
+        setData(response.data);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load source types');
       } finally {

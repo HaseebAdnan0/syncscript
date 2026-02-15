@@ -94,7 +94,7 @@ export const pollCitationTask = async (
  * @returns File blob for download
  */
 export const exportVaultCitations = async (
-  vaultId: number,
+  vaultId: string,
   format: string
 ): Promise<Blob> => {
   try {

@@ -55,6 +55,15 @@ class VaultViewSet(viewsets.ModelViewSet):
                 memberships__role=role
             ).distinct()
 
+        # Filter by ownership: 'owned' or 'shared'
+        ownership = self.request.query_params.get('ownership')
+        if ownership == 'owned':
+            # Vaults where the user is the owner
+            queryset = queryset.filter(owner=user)
+        elif ownership == 'shared':
+            # Vaults shared with the user (not owned by them)
+            queryset = queryset.exclude(owner=user)
+
         return queryset
 
     def perform_create(self, serializer):
@@ -111,6 +120,7 @@ class VaultMembershipViewSet(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         """
         Prevent deletion of the last owner (US-033).
+        Creates audit log with the actual user who performed the deletion.
         """
         # Check if this is the last owner being deleted
         if instance.role == RoleChoices.OWNER:
@@ -121,6 +131,25 @@ class VaultMembershipViewSet(viewsets.ModelViewSet):
 
             if owner_count <= 1:
                 raise ValidationError("Vault must have at least one owner")
+
+        # Create audit log BEFORE deletion with actual actor
+        # (The signal can't access the request user, so we log here)
+        try:
+            AuditLog.objects.create(
+                vault=instance.vault,
+                actor=self.request.user,
+                action='membership.removed',
+                metadata={
+                    'user_id': str(instance.user.id),
+                    'username': instance.user.username,
+                    'role': instance.role,
+                    'removed_by': self.request.user.username,
+                }
+            )
+        except Exception as e:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.warning(f"Failed to create audit log for membership removal: {e}")
 
         instance.delete()
 

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useOnboarding } from '@/providers/OnboardingProvider';
 import { useAuthStore } from '@/stores/authStore';
 import { useRouter } from 'next/navigation';
@@ -20,6 +20,7 @@ export default function OnboardingFlow() {
   const { user } = useAuthStore();
   const router = useRouter();
   const hasShownResumeToast = useRef(false);
+  const [needsWelcomeInit, setNeedsWelcomeInit] = useState(false);
 
   // Check if onboarding is enabled via feature flag
   const _onboardingEnabled = process.env.NEXT_PUBLIC_ONBOARDING_ENABLED !== 'false';
@@ -63,6 +64,14 @@ export default function OnboardingFlow() {
       });
     }
   }, [completed, step, isLoading, user]);
+
+  // Handle welcome step initialization in useEffect to avoid setState during render
+  useEffect(() => {
+    if (needsWelcomeInit) {
+      setNeedsWelcomeInit(false);
+      updateOnboarding({ step: 'welcome' }).catch(console.error);
+    }
+  }, [needsWelcomeInit, updateOnboarding]);
 
   // Don't render if feature flag is disabled
   if (!_onboardingEnabled) {
@@ -134,9 +143,9 @@ export default function OnboardingFlow() {
 
       default:
         // Default to welcome step if step is null or unrecognized
-        if (!step) {
-          // Initialize onboarding with welcome step
-          updateOnboarding({ step: 'welcome' }).catch(console.error);
+        if (!step && !needsWelcomeInit) {
+          // Schedule initialization in useEffect to avoid setState during render
+          setNeedsWelcomeInit(true);
         }
         return null;
     }
@@ -159,7 +168,7 @@ export default function OnboardingFlow() {
 
       // Navigate to demo vault
       if (vaultId) {
-        router.push(`/dashboard/vaults/${vaultId}`);
+        router.push(`/vaults/${vaultId}`);
       }
 
       // Transition to tutorial step

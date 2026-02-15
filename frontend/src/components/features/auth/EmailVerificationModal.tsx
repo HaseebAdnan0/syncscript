@@ -52,7 +52,7 @@ export default function EmailVerificationModal({ isOpen, onClose }: EmailVerific
 
   const handleGoToVerificationPage = () => {
     onClose();
-    router.push(`/auth/verify-email/pending?email=${user?.email}`);
+    router.push(`/verify-email/pending?email=${user?.email}`);
   };
 
   if (!isOpen) return null;

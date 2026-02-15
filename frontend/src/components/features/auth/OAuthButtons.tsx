@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 interface OAuthButtonsProps {
   disabled?: boolean;
@@ -12,14 +12,14 @@ export default function OAuthButtons({ disabled = false, loading = false }: OAut
 
   const handleGoogleClick = () => {
     setRedirecting('google');
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-    window.location.href = `${apiUrl}/api/v1/auth/google/`;
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+    window.location.href = `${apiUrl}/auth/google/`;
   };
 
   const handleGitHubClick = () => {
     setRedirecting('github');
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-    window.location.href = `${apiUrl}/api/v1/auth/github/`;
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+    window.location.href = `${apiUrl}/auth/github/`;
   };
 
   const isDisabled = disabled || loading || redirecting !== null;

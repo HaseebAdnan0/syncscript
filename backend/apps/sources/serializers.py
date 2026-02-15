@@ -27,6 +27,7 @@ class UploadURLResponseSerializer(serializers.Serializer):
     """
     upload_id = serializers.UUIDField()
     upload_url = serializers.URLField()
+    file_key = serializers.CharField()
     expires_in = serializers.IntegerField()
     callback_url = serializers.CharField()
 

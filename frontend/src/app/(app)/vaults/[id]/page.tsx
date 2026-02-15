@@ -29,15 +29,15 @@ import { ArrowLeft, ChevronDown, MessageSquare } from 'lucide-react';
 export default function VaultDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const vaultId = parseInt(params.id as string, 10);
+  const vaultId = params.id as string;
   const { user } = useAuthStore();
   const { toast } = useToast();
 
   // Handle WebSocket reconnection with state recovery
   useReconnectionHandler({
-    vaultId: vaultId.toString(),
+    vaultId: vaultId,
     currentUserId: user?.id,
-    enabled: !isNaN(vaultId),
+    enabled: !!vaultId,
   });
 
   // Fetch vault data

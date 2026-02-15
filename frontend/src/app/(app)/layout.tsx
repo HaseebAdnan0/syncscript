@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppHeader } from '@/components/features/notifications/AppHeader';
 import { Sidebar } from '@/components/features/dashboard/Sidebar';
@@ -79,7 +79,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
     } else if (!isLoading && user && !user.email_verified) {
       // Store redirect intent so user goes to original destination after verification
       const returnUrl = encodeURIComponent(window.location.pathname);
-      router.push(`/auth/verify-email/pending?email=${encodeURIComponent(user.email)}&returnUrl=${returnUrl}`);
+      router.push(`/verify-email/pending?email=${encodeURIComponent(user.email)}&returnUrl=${returnUrl}`);
     }
   }, [user, isLoading, router]);
 
@@ -124,7 +124,9 @@ export default function AppLayout({ children }: AppLayoutProps) {
     <div className="min-h-screen bg-[#030304]">
       <AppHeader onSearchClick={open} />
       <div className="flex">
-        <Sidebar />
+        <Suspense fallback={<div className="hidden lg:block lg:w-64" />}>
+          <Sidebar />
+        </Suspense>
         <main className="flex-1 min-h-[calc(100vh-72px)]">{children}</main>
       </div>
       <OnboardingFlow />

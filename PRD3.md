@@ -507,10 +507,10 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need audit logging when sources are soft-deleted or restored.
 
 **Acceptance Criteria:**
-- [ ] In SourceViewSet `destroy()`, create audit log with action `source.soft_deleted`
-- [ ] In SourceViewSet `restore()`, create audit log with action `source.restored`
-- [ ] Include source id and vault id in changes JSON
-- [ ] Typecheck passes
+- [x] In SourceViewSet `destroy()`, create audit log with action `source.soft_deleted`
+- [x] In SourceViewSet `restore()`, create audit log with action `source.restored`
+- [x] Include source id and vault id in changes JSON
+- [x] Typecheck passes
 
 ---
 

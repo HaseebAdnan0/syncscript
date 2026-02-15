@@ -1,4 +1,4 @@
-import React from 'react';
+
 import SearchResultItem from './SearchResultItem';
 import type { SearchResponse } from '@/lib/types/search';
 

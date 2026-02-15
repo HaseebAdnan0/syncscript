@@ -35,7 +35,7 @@ class JWTSocialAccountAdapter(DefaultSocialAccountAdapter):
         # Build frontend URL with error parameter
         frontend_url = settings.SITE_URL
         error_message = str(error) if error else 'authentication_failed'
-        redirect_url = f"{frontend_url}/auth/callback?error={error_message}&provider={provider_id}"
+        redirect_url = f"{frontend_url}/callback?error={error_message}&provider={provider_id}"
 
         return HttpResponseRedirect(redirect_url)
 
@@ -73,7 +73,7 @@ class JWTSocialAccountAdapter(DefaultSocialAccountAdapter):
             from allauth.exceptions import ImmediateHttpResponse
             frontend_url = settings.SITE_URL
             response = HttpResponseRedirect(
-                f"{frontend_url}/auth/callback?email_required=true&provider={sociallogin.account.provider}&temp_token={temp_token}"
+                f"{frontend_url}/callback?email_required=true&provider={sociallogin.account.provider}&temp_token={temp_token}"
             )
             raise ImmediateHttpResponse(response)
 
@@ -106,7 +106,7 @@ class JWTSocialAccountAdapter(DefaultSocialAccountAdapter):
                 from allauth.exceptions import ImmediateHttpResponse
                 frontend_url = settings.SITE_URL
                 response = HttpResponseRedirect(
-                    f"{frontend_url}/auth/callback?link_required=true&provider={sociallogin.account.provider}"
+                    f"{frontend_url}/callback?link_required=true&provider={sociallogin.account.provider}"
                 )
                 raise ImmediateHttpResponse(response)
 
@@ -119,7 +119,9 @@ class JWTSocialAccountAdapter(DefaultSocialAccountAdapter):
         Override to redirect to frontend after successful OAuth login.
 
         This is called after authentication is complete. We'll generate JWT tokens
-        and redirect to the frontend callback page.
+        and pass them via URL parameters to the frontend callback page.
+
+        Note: allauth expects a URL string, not a Response object.
         """
         frontend_url = settings.SITE_URL
 
@@ -131,32 +133,16 @@ class JWTSocialAccountAdapter(DefaultSocialAccountAdapter):
             refresh = RefreshToken.for_user(user)
             access = refresh.access_token
 
-            # Build redirect response to frontend
-            redirect_url = f"{frontend_url}/auth/callback?success=true"
-
-            # Create response with redirect
-            response = HttpResponseRedirect(redirect_url)
-
-            # Set tokens in httpOnly cookies (same pattern as regular login)
-            response.set_cookie(
-                key='access_token',
-                value=str(access),
-                httponly=True,
-                secure=not settings.DEBUG,  # HTTPS only in production
-                samesite='Lax',
-                max_age=60 * 15,  # 15 minutes (matches ACCESS_TOKEN_LIFETIME)
+            # Pass tokens via URL params - frontend will store them
+            # This is safe because it's a redirect (tokens won't be in browser history)
+            redirect_url = (
+                f"{frontend_url}/callback"
+                f"?success=true"
+                f"&access={str(access)}"
+                f"&refresh={str(refresh)}"
             )
 
-            response.set_cookie(
-                key='refresh_token',
-                value=str(refresh),
-                httponly=True,
-                secure=not settings.DEBUG,  # HTTPS only in production
-                samesite='Lax',
-                max_age=60 * 60 * 24 * 7,  # 7 days (matches REFRESH_TOKEN_LIFETIME)
-            )
-
-            return response
+            return redirect_url
 
         # Fallback: redirect to frontend with error if user not authenticated
-        return HttpResponseRedirect(f"{frontend_url}/auth/callback?error=authentication_failed")
+        return f"{frontend_url}/callback?error=authentication_failed"

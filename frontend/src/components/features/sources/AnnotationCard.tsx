@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Annotation } from '@/lib/types/annotations';
 import { format } from 'date-fns';
 import { MessageCircle, Edit2, Trash2 } from 'lucide-react';

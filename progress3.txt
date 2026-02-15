@@ -943,3 +943,28 @@
   - Django check passes even if pyright shows import warnings (module not in venv)
   - Verify functionality by checking hasattr(Model, 'get_dirty_fields') returns True
 ---
+
+## Iteration 38 - US-037: Create Source audit log signals
+- Verified implementation already exists in backend/apps/sources/signals.py
+- signals.py contains all required signal receivers:
+  - log_source_mutation: post_save receiver that logs source.created and source.updated
+  - log_source_deleted: post_delete receiver that logs source.deleted
+- Implementation details:
+  - source.created logged on creation with metadata (source_id, title, url, source_type)
+  - source.updated logged on update with dirty fields tracking (using get_dirty_fields())
+  - source.deleted logged on hard delete with full object snapshot
+  - Uses vaults.AuditLog model (vault-specific) instead of core.models.AuditLog
+  - Signals imported in apps/sources/apps.py ready() method
+- Django check passes with 0 issues
+- Files verified:
+  - backend/apps/sources/signals.py (implementation exists)
+  - backend/apps/sources/apps.py (signals imported in ready())
+  - PRD3.md (marked US-037 complete)
+- Learnings for future iterations:
+  - Signal receivers can have multiple receivers for same signal (source_saved + log_source_mutation)
+  - vaults.AuditLog has vault FK and uses UUIDs (different from core.models.AuditLog)
+  - Existing implementation is production-ready with Celery task broadcasting + audit logging
+  - DirtyFieldsMixin.get_dirty_fields() used to track changed fields for source.updated
+  - Always check existing implementation before assuming task is incomplete
+  - Django check sufficient for validation when implementation already exists
+---

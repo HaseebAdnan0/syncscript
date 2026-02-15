@@ -5,7 +5,7 @@ import { Send, Sparkles } from 'lucide-react';
 import { ChatMessage as ChatMessageType } from '@/lib/types/vault';
 
 interface AskAIChatProps {
-  vaultId: number;
+  vaultId: string;
   conversationId?: number;
   onNewConversation?: (conversationId: number) => void;
   messages: ChatMessageType[];

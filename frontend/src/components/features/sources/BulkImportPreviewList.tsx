@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Check, X, Trash2 } from 'lucide-react'
 import { ParsedUrl } from './BulkImportModal'
 

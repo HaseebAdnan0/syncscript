@@ -1,7 +1,5 @@
 "use client";
 
-import React from "react";
-
 interface TokenUsageDisplayProps {
   usage: {
     requests_today: number;

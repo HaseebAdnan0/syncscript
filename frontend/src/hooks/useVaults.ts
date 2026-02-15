@@ -6,6 +6,7 @@ import {
   updateVault,
   deleteVault,
   archiveVault,
+  type GetVaultsParams,
 } from '@/lib/api/vaults';
 import {
   Vault,
@@ -18,25 +19,25 @@ import {
 export const vaultKeys = {
   all: ['vaults'] as const,
   lists: () => [...vaultKeys.all, 'list'] as const,
-  list: (search?: string) => [...vaultKeys.lists(), { search }] as const,
+  list: (params?: GetVaultsParams) => [...vaultKeys.lists(), params] as const,
   details: () => [...vaultKeys.all, 'detail'] as const,
-  detail: (id: number) => [...vaultKeys.details(), id] as const,
+  detail: (id: string) => [...vaultKeys.details(), id] as const,
 };
 
 /**
- * Fetch all vaults with optional search filtering
+ * Fetch all vaults with optional search and ownership filtering
  */
-export function useVaults(search?: string) {
+export function useVaults(params?: GetVaultsParams) {
   return useQuery<VaultsListResponse, Error>({
-    queryKey: vaultKeys.list(search),
-    queryFn: () => getVaults(search),
+    queryKey: vaultKeys.list(params),
+    queryFn: () => getVaults(params),
   });
 }
 
 /**
- * Fetch a single vault by ID
+ * Fetch a single vault by ID (UUID string)
  */
-export function useVault(id: number) {
+export function useVault(id: string) {
   return useQuery<Vault, Error>({
     queryKey: vaultKeys.detail(id),
     queryFn: () => getVault(id),
@@ -62,7 +63,7 @@ export function useCreateVault() {
 /**
  * Update an existing vault
  */
-export function useUpdateVault(id: number) {
+export function useUpdateVault(id: string) {
   const queryClient = useQueryClient();
 
   return useMutation<Vault, Error, UpdateVaultRequest>({
@@ -82,7 +83,7 @@ export function useUpdateVault(id: number) {
 export function useDeleteVault() {
   const queryClient = useQueryClient();
 
-  return useMutation<void, Error, number>({
+  return useMutation<void, Error, string>({
     mutationFn: deleteVault,
     onSuccess: (_, deletedId) => {
       // Remove from cache
@@ -96,7 +97,7 @@ export function useDeleteVault() {
 /**
  * Archive a vault (soft delete)
  */
-export function useArchiveVault(id: number) {
+export function useArchiveVault(id: string) {
   const queryClient = useQueryClient();
 
   return useMutation<Vault, Error, void>({

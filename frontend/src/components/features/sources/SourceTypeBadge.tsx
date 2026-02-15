@@ -1,14 +1,14 @@
 import { Badge } from '@/components/ui/badge';
-import { Globe, FileText, Quote, Newspaper } from 'lucide-react';
+import { Globe, FileText, Quote, Newspaper, File } from 'lucide-react';
 import { SourceType } from '@/lib/types/sources';
 
 interface SourceTypeBadgeProps {
-  type: SourceType;
+  type: SourceType | string;
   className?: string;
 }
 
 const sourceTypeConfig: Record<
-  SourceType,
+  string,
   { icon: React.ComponentType<{ className?: string }>; label: string; color: string }
 > = {
   url: {
@@ -33,8 +33,15 @@ const sourceTypeConfig: Record<
   },
 };
 
+// Fallback for unknown types
+const defaultConfig = {
+  icon: File,
+  label: 'Source',
+  color: 'bg-gray-500/20 text-gray-400 border-gray-500/30',
+};
+
 export function SourceTypeBadge({ type, className }: SourceTypeBadgeProps) {
-  const config = sourceTypeConfig[type];
+  const config = sourceTypeConfig[type] || defaultConfig;
   const Icon = config.icon;
 
   return (

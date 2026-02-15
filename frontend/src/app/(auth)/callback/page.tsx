@@ -3,10 +3,13 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import GlassCard from '@/components/ui/GlassCard';
+import { useAuthStore } from '@/stores/authStore';
+import { api } from '@/lib/api';
 
 export default function OAuthCallbackPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { setTokens, setUser } = useAuthStore();
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [message, setMessage] = useState('Processing authentication...');
 
@@ -16,8 +19,36 @@ export default function OAuthCallbackPage() {
     const linkRequired = searchParams.get('link_required');
     const emailRequired = searchParams.get('email_required');
     const provider = searchParams.get('provider');
+    const accessToken = searchParams.get('access');
+    const refreshToken = searchParams.get('refresh');
 
-    // Handle success case
+    // Handle success case with tokens
+    if (success === 'true' && accessToken && refreshToken) {
+      // Store tokens in auth store
+      setTokens(accessToken, refreshToken);
+
+      // Fetch user data with the new token
+      api.get('/auth/me/', {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      }).then((response) => {
+        setUser(response.data);
+        setStatus('success');
+        setMessage('Successfully signed in! Redirecting to dashboard...');
+
+        // Clear tokens from URL for security (replace history entry)
+        window.history.replaceState({}, '', '/callback?success=true');
+
+        setTimeout(() => {
+          router.push('/dashboard');
+        }, 1000);
+      }).catch(() => {
+        setStatus('error');
+        setMessage('Failed to fetch user data. Please try again.');
+      });
+      return;
+    }
+
+    // Handle success without tokens (fallback - shouldn't happen)
     if (success === 'true') {
       setStatus('success');
       setMessage('Successfully signed in! Redirecting to dashboard...');

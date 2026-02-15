@@ -101,32 +101,52 @@ export default function SettingsPage() {
             <NotificationPreferences />
           </section>
 
-          {/* Profile Section (Placeholder) */}
-          <section className="bg-[#0F1115] border border-white/10 rounded-2xl p-8 opacity-50">
-            <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
-              <div className="h-10 w-10 rounded-full bg-gradient-to-r from-[#EA580C] to-[#F7931A] flex items-center justify-center">
-                <User className="h-5 w-5 text-white" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-heading font-bold text-white">Profile</h2>
-                <p className="text-[#94A3B8] text-sm">Update your personal information</p>
+          {/* Profile Section */}
+          <section className="bg-[#0F1115] border border-white/10 rounded-2xl p-8 hover:border-[#F7931A]/50 transition-all group">
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full bg-gradient-to-r from-[#EA580C] to-[#F7931A] flex items-center justify-center">
+                  <User className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-heading font-bold text-white">Profile</h2>
+                  <p className="text-[#94A3B8] text-sm">Update your personal information</p>
+                </div>
               </div>
             </div>
-            <p className="text-[#94A3B8]">Coming soon...</p>
+            <p className="text-[#94A3B8] mb-4">
+              Manage your name, bio, and other profile details.
+            </p>
+            <a
+              href="/profile"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-[#EA580C] to-[#F7931A] text-white font-bold uppercase tracking-wider text-sm rounded-full px-6 py-2.5 shadow-[0_0_20px_-5px_rgba(234,88,12,0.5)] hover:scale-105 transition-all"
+            >
+              Edit Profile
+            </a>
           </section>
 
-          {/* Privacy & Security Section (Placeholder) */}
-          <section className="bg-[#0F1115] border border-white/10 rounded-2xl p-8 opacity-50">
-            <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
-              <div className="h-10 w-10 rounded-full bg-gradient-to-r from-[#EA580C] to-[#F7931A] flex items-center justify-center">
-                <Shield className="h-5 w-5 text-white" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-heading font-bold text-white">Privacy & Security</h2>
-                <p className="text-[#94A3B8] text-sm">Manage your privacy and security settings</p>
+          {/* Privacy & Security Section */}
+          <section className="bg-[#0F1115] border border-white/10 rounded-2xl p-8 hover:border-[#F7931A]/50 transition-all group">
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full bg-gradient-to-r from-[#EA580C] to-[#F7931A] flex items-center justify-center">
+                  <Shield className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-heading font-bold text-white">Privacy & Security</h2>
+                  <p className="text-[#94A3B8] text-sm">Manage your privacy and security settings</p>
+                </div>
               </div>
             </div>
-            <p className="text-[#94A3B8]">Coming soon...</p>
+            <p className="text-[#94A3B8] mb-4">
+              Change your password and manage security settings.
+            </p>
+            <a
+              href="/profile#security"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-[#EA580C] to-[#F7931A] text-white font-bold uppercase tracking-wider text-sm rounded-full px-6 py-2.5 shadow-[0_0_20px_-5px_rgba(234,88,12,0.5)] hover:scale-105 transition-all"
+            >
+              Security Settings
+            </a>
           </section>
 
           {/* Onboarding Section */}
@@ -157,8 +177,8 @@ export default function SettingsPage() {
             <ConnectedAccounts />
           </section>
 
-          {/* Appearance Section (Placeholder) */}
-          <section className="bg-[#0F1115] border border-white/10 rounded-2xl p-8 opacity-50">
+          {/* Appearance Section */}
+          <section className="bg-[#0F1115] border border-white/10 rounded-2xl p-8">
             <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
               <div className="h-10 w-10 rounded-full bg-gradient-to-r from-[#EA580C] to-[#F7931A] flex items-center justify-center">
                 <Palette className="h-5 w-5 text-white" />
@@ -168,7 +188,17 @@ export default function SettingsPage() {
                 <p className="text-[#94A3B8] text-sm">Customize the look and feel of the app</p>
               </div>
             </div>
-            <p className="text-[#94A3B8]">Coming soon...</p>
+            <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="h-8 w-8 rounded-full bg-[#F7931A]/20 flex items-center justify-center">
+                  <Sparkles className="h-4 w-4 text-[#F7931A]" />
+                </div>
+                <span className="text-white font-medium">Theme customization in development</span>
+              </div>
+              <p className="text-[#94A3B8] text-sm">
+                Light mode, custom accent colors, and display density options will be available in a future update.
+              </p>
+            </div>
           </section>
         </div>
       </div>

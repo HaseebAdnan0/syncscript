@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import ChartWrapper, { chartColors, tooltipStyles } from './ChartWrapper';
 import { FileText } from 'lucide-react';
+import { api } from '@/lib/api';
 
 interface TimelineData {
   date: string;
@@ -18,28 +19,10 @@ export default function SourcesTimelineChart() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem('access_token');
-        if (!token) {
-          throw new Error('No authentication token found');
-        }
-
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/dashboard/analytics/sources-timeline/`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch timeline data');
-        }
-
-        const result = await response.json();
-        setData(result);
+        const response = await api.get('/dashboard/analytics/sources-timeline/');
+        setData(response.data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Unknown error');
+        setError(err instanceof Error ? err.message : 'Failed to fetch timeline data');
       } finally {
         setLoading(false);
       }

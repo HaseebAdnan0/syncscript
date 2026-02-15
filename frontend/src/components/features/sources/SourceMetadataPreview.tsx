@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Globe } from 'lucide-react';
 import { SourceTypeBadge } from './SourceTypeBadge';
 import type { SourceType } from '@/lib/types/sources';

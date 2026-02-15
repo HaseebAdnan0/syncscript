@@ -1,60 +1,84 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Loader2 } from 'lucide-react';
+import { ArrowLeft, Loader2, ExternalLink } from 'lucide-react';
 import { useVault } from '@/hooks/useVaults';
 import { useSourcesQuery } from '@/hooks/useSourcesQuery';
+import { useAnnotationsQuery } from '@/hooks/useAnnotationsQuery';
+import { useCreateAnnotation, useDeleteAnnotation } from '@/hooks/useAnnotationMutations';
 import { useAnnotationsWebSocket } from '@/hooks/useAnnotationsWebSocket';
-import { useVaultMembers } from '@/hooks/useVaultMembers';
+import { useAuthStore } from '@/stores/authStore';
 import { SourceTypeBadge } from '@/components/features/sources/SourceTypeBadge';
+import { PDFViewer } from '@/components/features/sources/PDFViewer';
+import { AnnotationSidebar } from '@/components/features/sources/AnnotationSidebar';
 import { AddAnnotationForm } from '@/components/features/sources/AddAnnotationForm';
-import { AddReplyForm } from '@/components/features/sources/AddReplyForm';
 import AISummaryCard from '@/components/features/ai/AISummaryCard';
 import { AILoadingSkeleton } from '@/components/features/ai/AILoadingSkeleton';
 import { summarizeSource } from '@/lib/api/sources';
 import { toast } from '@/hooks/useToast';
+import { SourceType } from '@/lib/types/sources';
 import type { AISummary } from '@/lib/types/sources';
 
 export default function SourceDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const vaultId = parseInt(params.id as string, 10);
+  const vaultId = params.id as string;
   const sourceId = parseInt(params.sourceId as string, 10);
 
+  const { user } = useAuthStore();
   const { data: vault, isLoading: vaultLoading } = useVault(vaultId);
   const { data: sourcesResponse, isLoading: sourcesLoading, refetch: refetchSources } = useSourcesQuery({ vaultId });
-  const { data: vaultMembersResponse } = useVaultMembers(vaultId);
 
   // Find the specific source from the sources list
   const source = sourcesResponse?.find((s) => s.id === sourceId);
+
+  // Annotations data
+  const { data: annotations = [], isLoading: annotationsLoading } = useAnnotationsQuery({ sourceId });
+  const createAnnotationMutation = useCreateAnnotation();
+  const deleteAnnotationMutation = useDeleteAnnotation();
 
   // AI Summary state
   const [aiSummary, setAiSummary] = useState<AISummary | null>(source?.ai_summary ?? null);
   const [isSummarizing, setIsSummarizing] = useState(false);
 
-  // Annotation form states
+  // Annotation form state
   const [showAddForm, setShowAddForm] = useState(false);
-  const [showReplyForm, setShowReplyForm] = useState(false);
-
-  // Get vault members for mention autocomplete (convert VaultMember to User type)
-  const vaultMembers = vaultMembersResponse?.results?.map((m) => ({
-    id: m.user_id,
-    email: m.user_email,
-    username: m.user_name,
-    first_name: '',
-    last_name: '',
-    email_verified: true,
-    created_at: m.joined_at,
-  })) || [];
 
   // Real-time annotation updates via WebSocket
-  // Toast notifications are handled automatically by the hook
   useAnnotationsWebSocket({ vaultId, sourceId });
 
   // Extract citation as string for type safety
   const citation = source?.metadata?.citation;
   const citationText = typeof citation === 'string' ? citation : null;
+
+  // Determine if the source is a PDF that can be rendered
+  const isPdfSource = source?.source_type === SourceType.PDF;
+
+  // For arxiv links, convert abstract URL to PDF URL
+  const getPdfUrl = (url: string): string | null => {
+    if (!url) return null;
+
+    // Handle arxiv URLs - convert abs to pdf
+    const arxivAbsMatch = url.match(/arxiv\.org\/abs\/(\d+\.\d+)/);
+    if (arxivAbsMatch) {
+      return `https://arxiv.org/pdf/${arxivAbsMatch[1]}.pdf`;
+    }
+
+    // If URL ends with .pdf, use it directly
+    if (url.toLowerCase().endsWith('.pdf')) {
+      return url;
+    }
+
+    // If source type is PDF, assume the URL is a PDF
+    if (isPdfSource) {
+      return url;
+    }
+
+    return null;
+  };
+
+  const pdfUrl = source?.url ? getPdfUrl(source.url) : null;
 
   // Update AI summary when source data changes
   useEffect(() => {
@@ -101,6 +125,22 @@ export default function SourceDetailPage() {
     } finally {
       setIsSummarizing(false);
     }
+  };
+
+  const handleAddAnnotation = async (text: string, pageNumber?: number) => {
+    await createAnnotationMutation.mutateAsync({
+      sourceId,
+      text,
+      pageNumber,
+    });
+    setShowAddForm(false);
+  };
+
+  const handleDeleteAnnotation = async (annotationId: number) => {
+    await deleteAnnotationMutation.mutateAsync({
+      annotationId,
+      sourceId,
+    });
   };
 
   if (vaultLoading || sourcesLoading) {
@@ -164,7 +204,7 @@ export default function SourceDetailPage() {
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
                   <h1 className="text-2xl font-bold font-heading">{source.title}</h1>
-                  <SourceTypeBadge type={source.type} />
+                  <SourceTypeBadge type={source.source_type} />
                 </div>
                 {/* Metadata */}
                 <div className="flex items-center gap-4 text-sm text-[#94A3B8]">
@@ -173,9 +213,10 @@ export default function SourceDetailPage() {
                       href={source.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="hover:text-[#F7931A] transition-colors truncate max-w-md"
+                      className="hover:text-[#F7931A] transition-colors truncate max-w-md flex items-center gap-1"
                     >
                       {source.url}
+                      <ExternalLink className="w-3 h-3" />
                     </a>
                   )}
                   {citationText && (
@@ -183,9 +224,9 @@ export default function SourceDetailPage() {
                       {citationText}
                     </span>
                   )}
-                  <span>Added by {source.contributor?.username || 'Unknown'}</span>
+                  <span>Added by {source.created_by || 'Unknown'}</span>
                   <span>
-                    {new Date(source.createdAt).toLocaleDateString('en-US', {
+                    {new Date(source.created_at).toLocaleDateString('en-US', {
                       month: 'short',
                       day: 'numeric',
                       year: 'numeric',
@@ -201,7 +242,7 @@ export default function SourceDetailPage() {
       {/* Two-Column Layout */}
       <div className="max-w-[1800px] mx-auto px-6 py-8">
         <div className="flex gap-8">
-          {/* PDF Viewer (70%) */}
+          {/* Document Viewer (70%) */}
           <div className="flex-[7] space-y-8">
             {/* AI Summary Card */}
             {isSummarizing ? (
@@ -213,85 +254,60 @@ export default function SourceDetailPage() {
               />
             )}
 
-            {/* PDF Viewer */}
-            <div className="bg-[#0F1115] border border-white/10 rounded-2xl p-8 min-h-[600px]">
-              <div className="flex items-center justify-center h-full text-[#94A3B8]">
-                <div className="text-center">
-                  <p className="mb-2">PDF Viewer</p>
-                  <p className="text-sm">PDF rendering will be implemented in US-017</p>
+            {/* Document Viewer */}
+            <div className="bg-[#0F1115] border border-white/10 rounded-2xl p-4 min-h-[600px]">
+              {pdfUrl ? (
+                <PDFViewer url={pdfUrl} className="h-[700px]" />
+              ) : (
+                // Fallback for non-PDF sources - show external link
+                <div className="flex flex-col items-center justify-center h-full text-[#94A3B8] gap-4">
+                  <div className="text-center">
+                    <p className="mb-4">This source cannot be previewed directly.</p>
+                    <a
+                      href={source.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 bg-gradient-to-r from-[#EA580C] to-[#F7931A] text-white font-bold uppercase tracking-wider rounded-full px-6 py-3 shadow-[0_0_20px_-5px_rgba(234,88,12,0.5)] hover:scale-105 transition-all"
+                    >
+                      <ExternalLink className="w-5 h-5" />
+                      Open in New Tab
+                    </a>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
 
           {/* Annotation Sidebar (30%) */}
           <div className="flex-[3]">
-            <div className="bg-[#0F1115] border border-white/10 rounded-2xl p-6 min-h-[600px]">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-heading font-bold">Annotations</h2>
-                <button
-                  onClick={() => setShowAddForm(!showAddForm)}
-                  className="bg-gradient-to-r from-[#EA580C] to-[#F7931A] text-white font-bold uppercase tracking-wider rounded-full px-4 py-2 text-sm shadow-[0_0_20px_-5px_rgba(234,88,12,0.5)] hover:scale-105 transition-all"
-                >
-                  {showAddForm ? 'Cancel' : 'Add Note'}
-                </button>
-              </div>
-
-              {showAddForm && (
-                <div className="mb-6">
+            <div className="bg-[#0F1115] border border-white/10 rounded-2xl min-h-[600px] sticky top-24">
+              {showAddForm ? (
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-xl font-heading font-bold">Add Annotation</h2>
+                    <button
+                      onClick={() => setShowAddForm(false)}
+                      className="text-[#94A3B8] hover:text-white transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </div>
                   <AddAnnotationForm
-                    vaultMembers={vaultMembers}
-                    onSubmit={(text, pageNumber) => {
-                      console.log('Annotation submitted:', { text, pageNumber });
-                      toast({
-                        title: 'Annotation Added',
-                        description: 'Your annotation has been saved (demo mode).',
-                      });
-                      setShowAddForm(false);
-                    }}
+                    vaultMembers={[]}
+                    onSubmit={handleAddAnnotation}
                     onCancel={() => setShowAddForm(false)}
+                    isLoading={createAnnotationMutation.isPending}
                   />
                 </div>
+              ) : (
+                <AnnotationSidebar
+                  annotations={annotations}
+                  isLoading={annotationsLoading}
+                  onAddAnnotation={() => setShowAddForm(true)}
+                  onDelete={handleDeleteAnnotation}
+                  currentUserId={user?.id}
+                />
               )}
-
-              <div className="mb-6 p-4 bg-[#F7931A]/10 border border-[#F7931A]/30 rounded-lg">
-                <p className="text-sm text-[#94A3B8]">
-                  <strong className="text-[#F7931A]">Try @mention:</strong> Type @ in the form above to see mention autocomplete in action.
-                  {vaultMembers.length > 0
-                    ? ` Available members: ${vaultMembers.slice(0, 3).map((m) => m.username).join(', ')}${vaultMembers.length > 3 ? '...' : ''}`
-                    : ' (No vault members found)'}
-                </p>
-              </div>
-
-              {showReplyForm && (
-                <div className="mb-6">
-                  <AddReplyForm
-                    vaultMembers={vaultMembers}
-                    onSubmit={(text) => {
-                      console.log('Reply submitted:', text);
-                      toast({
-                        title: 'Reply Added',
-                        description: 'Your reply has been saved (demo mode).',
-                      });
-                      setShowReplyForm(false);
-                    }}
-                    onCancel={() => setShowReplyForm(false)}
-                  />
-                </div>
-              )}
-
-              {!showReplyForm && !showAddForm && (
-                <button
-                  onClick={() => setShowReplyForm(!showReplyForm)}
-                  className="w-full text-left text-sm text-[#94A3B8] hover:text-white transition-colors mb-4"
-                >
-                  Click here to test reply form with @mentions
-                </button>
-              )}
-
-              <div className="text-center text-[#94A3B8] text-sm mt-8">
-                <p>Full annotation system coming in US-021</p>
-              </div>
             </div>
           </div>
         </div>

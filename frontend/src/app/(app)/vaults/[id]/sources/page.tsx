@@ -20,11 +20,11 @@ export default function SourcesPage() {
   const vaultId = params.id as string;
 
   // Fetch vault data
-  const { data: vault, isLoading: vaultLoading, error: vaultError } = useVault(parseInt(vaultId, 10));
+  const { data: vault, isLoading: vaultLoading, error: vaultError } = useVault(vaultId);
 
   // Fetch sources
   const { data: sources = [], isLoading: sourcesLoading } = useSourcesQuery({
-    vaultId: parseInt(vaultId, 10),
+    vaultId,
   });
 
   // View preference hook

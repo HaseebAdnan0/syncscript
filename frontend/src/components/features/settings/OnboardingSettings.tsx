@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { RotateCcw, Database } from 'lucide-react';
 import { useOnboarding } from '@/providers/OnboardingProvider';
 import { useRouter } from 'next/navigation';

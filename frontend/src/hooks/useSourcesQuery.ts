@@ -5,14 +5,14 @@ import { getSources } from '@/lib/api/sources';
 import type { SourcesFilterParams } from '@/lib/types/sources';
 
 interface UseSourcesQueryParams {
-  vaultId: number;
+  vaultId: string;
   filters?: SourcesFilterParams;
 }
 
 /**
  * Hook to fetch sources for a vault with optional filters
  *
- * @param vaultId - The ID of the vault to fetch sources for
+ * @param vaultId - The ID of the vault to fetch sources for (UUID string)
  * @param filters - Optional filter parameters (type, dateFrom, dateTo, contributor, search)
  * @returns React Query result with sources data, loading state, error, and refetch function
  */

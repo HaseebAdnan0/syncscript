@@ -2,12 +2,11 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import {
   LayoutDashboard,
   Folder,
   Users,
-  Clock,
   Settings,
   Menu,
   X,
@@ -42,11 +41,6 @@ const navItems: NavItem[] = [
     icon: Users,
   },
   {
-    label: 'Recent',
-    href: '/recent',
-    icon: Clock,
-  },
-  {
     label: 'Settings',
     href: '/settings',
     icon: Settings,
@@ -57,9 +51,25 @@ export function Sidebar({ className }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const toggleCollapse = () => setIsCollapsed(!isCollapsed);
   const toggleMobile = () => setIsMobileOpen(!isMobileOpen);
+
+  // Helper to check if a nav item is active
+  const isItemActive = (item: NavItem): boolean => {
+    // Handle "Shared With Me" link specifically
+    if (item.href === '/vaults?filter=shared') {
+      return pathname === '/vaults' && searchParams.get('filter') === 'shared';
+    }
+    // Handle "My Vaults" - should be active only when on /vaults without filter=shared
+    if (item.href === '/vaults') {
+      return pathname === '/vaults' && searchParams.get('filter') !== 'shared';
+    }
+    // Default: exact match or path prefix match
+    return pathname === item.href ||
+      (item.href !== '/dashboard' && pathname?.startsWith(item.href));
+  };
 
   return (
     <>
@@ -110,9 +120,7 @@ export function Sidebar({ className }: SidebarProps) {
         <nav className="p-4 space-y-2">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive =
-              pathname === item.href ||
-              (item.href !== '/dashboard' && pathname?.startsWith(item.href));
+            const isActive = isItemActive(item);
 
             return (
               <Link

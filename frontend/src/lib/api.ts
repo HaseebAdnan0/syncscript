@@ -67,7 +67,7 @@ api.interceptors.response.use(
 
     // If error is 401 and we haven't retried yet
     if (error.response?.status === 401 && !originalRequest._retry) {
-      // Skip refresh for login/register endpoints
+      // Skip refresh for auth endpoints that don't need tokens
       if (originalRequest.url?.includes('/auth/login') ||
           originalRequest.url?.includes('/auth/register')) {
         return Promise.reject(error);
@@ -119,8 +119,18 @@ api.interceptors.response.use(
         const { clearUser } = useAuthStore.getState();
         clearUser();
 
+        // Only redirect if not already on an auth page (prevents infinite loop)
         if (typeof window !== 'undefined') {
-          window.location.href = '/login';
+          const currentPath = window.location.pathname;
+          const isAuthPage = currentPath.startsWith('/login') ||
+                            currentPath.startsWith('/register') ||
+                            currentPath.startsWith('/callback') ||
+                            currentPath.startsWith('/forgot-password') ||
+                            currentPath.startsWith('/reset-password') ||
+                            currentPath === '/';
+          if (!isAuthPage) {
+            window.location.href = '/login';
+          }
         }
 
         return Promise.reject(refreshError);

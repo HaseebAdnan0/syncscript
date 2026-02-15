@@ -39,13 +39,16 @@ export default function RecentActivity() {
         );
 
         if (!response.ok) {
-          throw new Error("Failed to fetch activity");
+          // Don't throw - just leave activity empty for new users
+          setActivity([]);
+          return;
         }
 
         const data = await response.json();
-        setActivity(data.results || data);
-      } catch (error) {
-        console.error("Error fetching activity:", error);
+        setActivity(data.results || data || []);
+      } catch {
+        // Silently fail - show empty state for new users or when API unavailable
+        setActivity([]);
       } finally {
         setIsLoading(false);
       }

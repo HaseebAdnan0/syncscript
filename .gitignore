@@ -16,6 +16,8 @@ dist/
 .env.test.local
 .env.production.local
 *.local
+# Keep .env.production.example for deployment reference
+!.env.production.example
 
 # Python
 __pycache__/

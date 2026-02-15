@@ -140,11 +140,8 @@ def resend_verification(request):
             }, status=status.HTTP_200_OK)
 
         # Generate new token and send email
-        user.generate_verification_token()
-        user.email_verification_sent_at = timezone.now()
-        user.save(update_fields=['email_verification_token', 'email_verification_sent_at'])
-
-        send_verification_email(user)
+        token = generate_verification_token(user)
+        send_verification_email(user, token)
 
         return Response({
             'message': 'Verification email sent. Please check your inbox.'
@@ -533,6 +530,7 @@ class ProfileView(APIView):
 
     GET /api/v1/users/profile/ returns current user's profile.
     PATCH /api/v1/users/profile/ updates avatar_url, bio, institution.
+    PUT /api/v1/auth/me/ updates first_name, last_name, bio.
     Requires authentication.
     """
     permission_classes = [IsAuthenticated]
@@ -542,6 +540,17 @@ class ProfileView(APIView):
         user = request.user
         serializer = UserSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request):
+        """Update current user's profile fields (for /auth/me/ endpoint)."""
+        user = request.user
+        serializer = ProfileUpdateSerializer(user, data=request.data, partial=True)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer.save()
+        return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
 
     def patch(self, request):
         """Update current user's profile fields."""
@@ -562,6 +571,47 @@ class ProfileView(APIView):
         return Response({
             'message': 'Profile updated successfully.',
             'user': UserSerializer(user).data
+        }, status=status.HTTP_200_OK)
+
+
+class PasswordChangeView(APIView):
+    """
+    Change password for authenticated user.
+
+    POST /api/v1/auth/password-change/
+    Requires authentication and current password verification.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        """Change user password after validating current password."""
+        user = request.user
+        old_password = request.data.get('old_password')
+        new_password = request.data.get('new_password')
+
+        if not old_password or not new_password:
+            return Response({
+                'error': 'Both old_password and new_password are required.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Verify current password
+        if not user.check_password(old_password):
+            return Response({
+                'old_password': ['Current password is incorrect.']
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Validate new password length
+        if len(new_password) < 8:
+            return Response({
+                'new_password': ['Password must be at least 8 characters.']
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Set new password
+        user.set_password(new_password)
+        user.save(update_fields=['password'])
+
+        return Response({
+            'message': 'Password updated successfully.'
         }, status=status.HTTP_200_OK)
 
 
@@ -1293,3 +1343,107 @@ class EmailPreferenceUpdateView(APIView):
                 'marketing_emails': email_pref.marketing_emails,
             }
         }, status=status.HTTP_200_OK)
+
+
+class GoogleOAuthCallbackView(APIView):
+    """
+    Handle Google OAuth callback and redirect to frontend with JWT tokens.
+
+    GET /api/v1/auth/google/login/callback/
+    This overrides allauth's default callback to provide JWT-based auth.
+    """
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        """Process Google OAuth callback."""
+        from django.http import HttpResponseRedirect
+        from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+        from allauth.socialaccount.providers.oauth2.views import OAuth2CallbackView
+
+        frontend_url = settings.SITE_URL
+
+        try:
+            # Create the callback view with Google adapter
+            callback_view = OAuth2CallbackView.adapter_view(GoogleOAuth2Adapter)
+            response = callback_view(request)
+
+            # After allauth processes the callback, check if user is authenticated
+            if request.user and request.user.is_authenticated:
+                # Generate JWT tokens
+                refresh = RefreshToken.for_user(request.user)
+                access = refresh.access_token
+
+                # Redirect to frontend with tokens
+                redirect_url = (
+                    f"{frontend_url}/callback"
+                    f"?success=true"
+                    f"&access={str(access)}"
+                    f"&refresh={str(refresh)}"
+                )
+                return HttpResponseRedirect(redirect_url)
+
+            # If not authenticated, check if allauth returned a redirect (might be linking flow)
+            if response.status_code in [301, 302]:
+                # Intercept allauth's redirect and send to frontend
+                return response
+
+            # Return allauth's response as-is
+            return response
+
+        except Exception as e:
+            logger.error(f"Google OAuth callback error: {e}")
+            return HttpResponseRedirect(
+                f"{frontend_url}/callback?error=authentication_failed&provider=google"
+            )
+
+
+class GitHubOAuthCallbackView(APIView):
+    """
+    Handle GitHub OAuth callback and redirect to frontend with JWT tokens.
+
+    GET /api/v1/auth/github/login/callback/
+    This overrides allauth's default callback to provide JWT-based auth.
+    """
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        """Process GitHub OAuth callback."""
+        from django.http import HttpResponseRedirect
+        from allauth.socialaccount.providers.github.views import GitHubOAuth2Adapter
+        from allauth.socialaccount.providers.oauth2.views import OAuth2CallbackView
+
+        frontend_url = settings.SITE_URL
+
+        try:
+            # Create the callback view with GitHub adapter
+            callback_view = OAuth2CallbackView.adapter_view(GitHubOAuth2Adapter)
+            response = callback_view(request)
+
+            # After allauth processes the callback, check if user is authenticated
+            if request.user and request.user.is_authenticated:
+                # Generate JWT tokens
+                refresh = RefreshToken.for_user(request.user)
+                access = refresh.access_token
+
+                # Redirect to frontend with tokens
+                redirect_url = (
+                    f"{frontend_url}/callback"
+                    f"?success=true"
+                    f"&access={str(access)}"
+                    f"&refresh={str(refresh)}"
+                )
+                return HttpResponseRedirect(redirect_url)
+
+            # If not authenticated, check if allauth returned a redirect (might be linking flow)
+            if response.status_code in [301, 302]:
+                # Intercept allauth's redirect and send to frontend
+                return response
+
+            # Return allauth's response as-is
+            return response
+
+        except Exception as e:
+            logger.error(f"GitHub OAuth callback error: {e}")
+            return HttpResponseRedirect(
+                f"{frontend_url}/callback?error=authentication_failed&provider=github"
+            )

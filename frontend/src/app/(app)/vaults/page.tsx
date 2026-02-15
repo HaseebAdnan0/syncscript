@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useVaults } from '@/hooks/useVaults';
 import { VaultCard } from '@/components/features/vaults/VaultCard';
 import { VaultCardSkeleton } from '@/components/features/vaults/VaultCardSkeleton';
@@ -13,8 +14,13 @@ import { Search, X } from 'lucide-react';
 
 export default function VaultsPage() {
   const { openCreateModal } = useVaultsStore();
+  const searchParams = useSearchParams();
   const [searchInput, setSearchInput] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
+
+  // Get filter from URL params
+  const filter = searchParams.get('filter');
+  const ownership = filter === 'shared' ? 'shared' as const : undefined;
 
   // Debounce search input by 300ms
   useEffect(() => {
@@ -25,9 +31,15 @@ export default function VaultsPage() {
     return () => clearTimeout(timer);
   }, [searchInput]);
 
-  const { data, isLoading, error } = useVaults(debouncedSearch);
+  const { data, isLoading, error } = useVaults({
+    search: debouncedSearch || undefined,
+    ownership,
+  });
 
   const vaults: Vault[] = data?.results || [];
+
+  // Page title based on filter
+  const pageTitle = filter === 'shared' ? 'Shared With Me' : 'My Vaults';
 
   // Loading skeleton
   if (isLoading) {
@@ -70,11 +82,13 @@ export default function VaultsPage() {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-4xl font-bold bg-gradient-to-r from-[#F7931A] to-[#FFD600] bg-clip-text text-transparent">
-              My Vaults
+              {pageTitle}
             </h1>
-            <GradientButton onClick={openCreateModal}>
-              Create Vault
-            </GradientButton>
+            {!filter && (
+              <GradientButton onClick={openCreateModal}>
+                Create Vault
+              </GradientButton>
+            )}
           </div>
 
           {/* Search input */}
@@ -103,7 +117,10 @@ export default function VaultsPage() {
 
         {/* Vaults grid or empty state */}
         {vaults.length === 0 ? (
-          <EmptyVaultsState onCreateVault={openCreateModal} />
+          <EmptyVaultsState
+            onCreateVault={!filter ? openCreateModal : undefined}
+            variant={filter === 'shared' ? 'shared' : 'owned'}
+          />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {vaults.map((vault) => (

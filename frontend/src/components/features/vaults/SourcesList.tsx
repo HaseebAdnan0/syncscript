@@ -1,20 +1,23 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { FileText, Calendar, User } from 'lucide-react';
 import { useSources } from '@/hooks/useSources';
 import { SourceTypeBadge } from '../sources/SourceTypeBadge';
+import { AddSourceModal } from '../sources/AddSourceModal';
 import EmptySourcesState from './EmptySourcesState';
 import type { Source } from '@/lib/types/sources';
 import type { VaultRole } from '@/lib/types/vault';
 
 interface SourcesListProps {
-  vaultId: number;
+  vaultId: string;
   userRole: VaultRole;
 }
 
 export function SourcesList({ vaultId, userRole }: SourcesListProps) {
   const { data: sources = [], isLoading, error } = useSources(vaultId);
+  const [isAddSourceModalOpen, setIsAddSourceModalOpen] = useState(false);
 
   // Loading state
   if (isLoading) {
@@ -50,36 +53,48 @@ export function SourcesList({ vaultId, userRole }: SourcesListProps) {
   if (sources.length === 0) {
     const canAddSource = userRole === 'OWNER' || userRole === 'CONTRIBUTOR';
     return (
-      <EmptySourcesState
-        onAddSource={() => {
-          // TODO: Open AddSourceModal when implemented
-          console.log('Add source clicked');
-        }}
-        canAddSource={canAddSource}
-      />
+      <>
+        <EmptySourcesState
+          onAddSource={() => setIsAddSourceModalOpen(true)}
+          canAddSource={canAddSource}
+        />
+        <AddSourceModal
+          open={isAddSourceModalOpen}
+          onOpenChange={setIsAddSourceModalOpen}
+          vaultId={vaultId}
+        />
+      </>
     );
   }
 
   return (
-    <div className="space-y-4">
-      {sources.map((source) => (
-        <SourceCard key={source.id} source={source} />
-      ))}
-    </div>
+    <>
+      <div className="space-y-4">
+        {sources.map((source) => (
+          <SourceCard key={source.id} source={source} vaultId={vaultId} />
+        ))}
+      </div>
+      <AddSourceModal
+        open={isAddSourceModalOpen}
+        onOpenChange={setIsAddSourceModalOpen}
+        vaultId={vaultId}
+      />
+    </>
   );
 }
 
 interface SourceCardProps {
   source: Source;
+  vaultId: string;
 }
 
-function SourceCard({ source }: SourceCardProps) {
-  const formattedDate = formatDate(source.createdAt);
+function SourceCard({ source, vaultId }: SourceCardProps) {
+  const formattedDate = formatDate(source.created_at);
   const truncatedUrl = truncateUrl(source.url, 60);
 
   return (
     <Link
-      href={`/sources/${source.id}`}
+      href={`/vaults/${vaultId}/sources/${source.id}`}
       className="block bg-[#0F1115] border border-white/10 rounded-2xl p-6 hover:-translate-y-1 hover:border-[#F7931A]/50 transition-all duration-300"
     >
       {/* Header with title and type badge */}
@@ -88,7 +103,7 @@ function SourceCard({ source }: SourceCardProps) {
           <FileText className="w-5 h-5 text-[#F7931A] flex-shrink-0 mt-0.5" />
           <h3 className="text-lg font-semibold text-white truncate">{source.title}</h3>
         </div>
-        <SourceTypeBadge type={source.type} />
+        <SourceTypeBadge type={source.source_type} />
       </div>
 
       {/* URL */}
@@ -115,7 +130,7 @@ function SourceCard({ source }: SourceCardProps) {
         {/* Contributor */}
         <div className="flex items-center gap-1.5">
           <User className="w-4 h-4" />
-          <span>by {source.contributor.username}</span>
+          <span>by {source.created_by}</span>
         </div>
       </div>
     </Link>

@@ -31,24 +31,21 @@ export interface AISummary {
 
 export interface Source {
   id: number;
-  vault: number;
-  type: SourceType;
+  vault: string;
+  source_type: SourceType;
   url: string;
   title: string;
+  description?: string;
   metadata: SourceMetadata;
   ai_summary?: AISummary | null;
-  contributor: {
-    id: number;
-    username: string;
-    email: string;
-  };
-  createdAt: string;
-  updatedAt: string;
+  created_by: string;  // Username string from backend
+  created_at: string;
+  updated_at: string;
 }
 
 // Request types
 export interface CreateSourceRequest {
-  vault: number;
+  vault: string;
   type: SourceType;
   url: string;
   title: string;

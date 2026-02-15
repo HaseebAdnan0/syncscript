@@ -3,6 +3,9 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Folder, Plus, Clock } from 'lucide-react';
+import { api } from '@/lib/api';
+import { useVaultsStore } from '@/stores/vaultsStore';
+import { CreateVaultModal } from '@/components/features/vaults/CreateVaultModal';
 
 interface RecentVault {
   id: number;
@@ -16,19 +19,13 @@ interface RecentVault {
 export default function ContinueResearch() {
   const [vaults, setVaults] = useState<RecentVault[]>([]);
   const [loading, setLoading] = useState(true);
+  const { openCreateModal } = useVaultsStore();
 
   useEffect(() => {
     async function fetchRecentVaults() {
       try {
-        const response = await fetch('/api/v1/dashboard/recent-vaults/', {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-          },
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setVaults(data);
-        }
+        const response = await api.get('/dashboard/recent-vaults/');
+        setVaults(response.data);
       } catch (error) {
         console.error('Failed to fetch recent vaults:', error);
       } finally {
@@ -86,14 +83,15 @@ export default function ContinueResearch() {
         <div className="bg-[#0F1115] border border-white/10 rounded-2xl p-12 text-center">
           <Folder className="w-16 h-16 text-white/20 mx-auto mb-4" />
           <p className="text-white/60 text-lg mb-4">Create your first vault to get started</p>
-          <Link
-            href="/vaults/new"
+          <button
+            onClick={openCreateModal}
             className="inline-flex items-center gap-2 bg-gradient-to-r from-[#EA580C] to-[#F7931A] text-white font-bold uppercase tracking-wider rounded-full px-6 py-3 shadow-[0_0_20px_-5px_rgba(234,88,12,0.5)] hover:scale-105 transition-all"
           >
             <Plus className="w-5 h-5" />
             New Vault
-          </Link>
+          </button>
         </div>
+        <CreateVaultModal />
       </section>
     );
   }
@@ -134,7 +132,7 @@ export default function ContinueResearch() {
                 Open
               </Link>
               <Link
-                href={`/vaults/${vault.id}/sources/new`}
+                href={`/vaults/${vault.id}/sources`}
                 className="flex items-center justify-center gap-2 bg-white/5 border border-white/20 text-white font-bold uppercase tracking-wider text-sm rounded-full px-4 py-2 hover:bg-white/10 hover:border-[#F7931A]/50 transition-all"
               >
                 <Plus className="w-4 h-4" />

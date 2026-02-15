@@ -50,7 +50,7 @@ def send_verification_email(user, token):
         token: Verification token string
     """
     # Build verification URL
-    verification_url = f"{settings.SITE_URL}/auth/verify-email?token={token}"
+    verification_url = f"{settings.SITE_URL}/verify-email?token={token}"
 
     # Render HTML email template
     html_message = render_to_string(

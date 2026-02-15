@@ -25,10 +25,10 @@ export function SourceCard({ source, vaultId }: SourceCardProps) {
       {/* Header with type badge */}
       <div className="flex items-start justify-between mb-4">
         <Badge variant="default" className="capitalize">
-          {source.type}
+          {source.source_type}
         </Badge>
         <span className="text-xs text-[#94A3B8]">
-          {format(new Date(source.createdAt), 'MMM d, yyyy')}
+          {format(new Date(source.created_at), 'MMM d, yyyy')}
         </span>
       </div>
 
@@ -45,10 +45,10 @@ export function SourceCard({ source, vaultId }: SourceCardProps) {
       {/* Footer with contributor */}
       <div className="flex items-center gap-2">
         <div className="w-6 h-6 rounded-full bg-gradient-to-r from-[#EA580C] to-[#F7931A] flex items-center justify-center text-xs font-bold text-white">
-          {source.contributor?.username?.charAt(0).toUpperCase() || 'U'}
+          {source.created_by?.charAt(0).toUpperCase() || 'U'}
         </div>
         <span className="text-xs text-[#94A3B8]">
-          Added by {source.contributor?.username || 'Unknown'}
+          Added by {source.created_by || 'Unknown'}
         </span>
       </div>
     </Link>

@@ -7,7 +7,7 @@ import { useToast } from '@/hooks/useToast';
 import { exportVaultCitations } from '@/lib/api/citations';
 
 interface ExportCitationsButtonProps {
-  vaultId: number;
+  vaultId: string;
   vaultName: string;
   sourceCount: number;
   disabled?: boolean;
