@@ -8,7 +8,7 @@ from datetime import timedelta
 from apps.sources.models import Source, PDFUpload
 from apps.vaults.models import Vault, VaultMembership, RoleChoices
 from .decorators import ai_rate_limit
-from .services.claude_client import ClaudeClient
+from .services.claude_client import AIClient
 from .services.usage import log_usage, get_daily_usage
 from .services.chunking import chunk_text, get_relevant_chunks
 from .serializers import SummarizeRequestSerializer, AskQuestionSerializer
@@ -116,14 +116,14 @@ def summarize_source(request, source_id):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-    # Call Claude to generate summary
+    # Call AI to generate summary
     try:
-        claude_client = ClaudeClient()
-        result = claude_client.summarize(text_to_summarize, source_type)
+        ai_client = AIClient()
+        result = ai_client.summarize(text_to_summarize, source_type)
 
         # Check for errors
         if 'error' in result:
-            logger.error(f"Claude API error for source {source_id}: {result['error']}")
+            logger.error(f"AI API error for source {source_id}: {result['error']}")
             return Response(
                 {"error": f"AI summarization failed: {result['error']}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -209,7 +209,7 @@ def vault_insights(request, vault_id):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # Build sources data for Claude (format expected by analyze_sources)
+    # Build sources data for AI (format expected by analyze_sources)
     sources_data = []
     for source in sources:
         source_info = {
@@ -246,14 +246,14 @@ def vault_insights(request, vault_id):
 
         sources_data.append(source_info)
 
-    # Call Claude to analyze sources
+    # Call AI to analyze sources
     try:
-        claude_client = ClaudeClient()
-        result = claude_client.analyze_sources(sources_data)
+        ai_client = AIClient()
+        result = ai_client.analyze_sources(sources_data)
 
         # Check for errors
         if 'error' in result:
-            logger.error(f"Claude API error for vault {vault_id}: {result['error']}")
+            logger.error(f"AI API error for vault {vault_id}: {result['error']}")
             return Response(
                 {"error": f"AI analysis failed: {result['error']}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -417,7 +417,7 @@ def ask_question(request, vault_id):
     # Get relevant chunks for the question
     relevant_chunks = get_relevant_chunks(question, all_chunks, max_chunks=5)
 
-    # Build context for Claude
+    # Build context for AI
     context_chunks = []
     for chunk in relevant_chunks:
         chunk_info = source_map.get(chunk['chunk_id'], {})
@@ -427,14 +427,14 @@ def ask_question(request, vault_id):
             'source_title': chunk_info.get('source_title', 'Unknown'),
         })
 
-    # Call Claude to answer question
+    # Call AI to answer question
     try:
-        claude_client = ClaudeClient()
-        result = claude_client.answer_question(question, context_chunks)
+        ai_client = AIClient()
+        result = ai_client.answer_question(question, context_chunks)
 
         # Check for errors
         if 'error' in result:
-            logger.error(f"Claude API error for vault {vault_id} question: {result['error']}")
+            logger.error(f"AI API error for vault {vault_id} question: {result['error']}")
             return Response(
                 {"error": f"AI answer failed: {result['error']}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR

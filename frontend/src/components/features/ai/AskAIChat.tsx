@@ -120,8 +120,8 @@ export default function AskAIChat({
       </div>
 
       {/* Input Area */}
-      <div className="px-6 py-4 border-t border-white/10">
-        <div className="flex items-center gap-3">
+      <div className="px-4 py-4 border-t border-white/10">
+        <div className="flex items-center gap-2">
           <input
             type="text"
             value={inputValue}
@@ -129,15 +129,15 @@ export default function AskAIChat({
             onKeyDown={handleKeyDown}
             placeholder="Ask a question about your vault..."
             disabled={isLoading}
-            className="flex-1 bg-black/50 border-b-2 border-white/20 h-12 px-4 text-white placeholder:text-[#94A3B8] focus:border-[#F7931A] focus:outline-none transition-colors disabled:opacity-50"
+            className="flex-1 min-w-0 bg-black/50 border-b-2 border-white/20 h-10 px-3 text-sm text-white placeholder:text-[#94A3B8] focus:border-[#F7931A] focus:outline-none transition-colors disabled:opacity-50"
           />
           <button
             onClick={handleSendMessage}
             disabled={!inputValue.trim() || isLoading}
-            className="bg-gradient-to-r from-[#EA580C] to-[#F7931A] text-white p-3 rounded-full shadow-[0_0_20px_-5px_rgba(234,88,12,0.5)] hover:scale-105 transition-all disabled:opacity-50 disabled:hover:scale-100"
+            className="flex-shrink-0 bg-gradient-to-r from-[#EA580C] to-[#F7931A] text-white p-2.5 rounded-full shadow-[0_0_20px_-5px_rgba(234,88,12,0.5)] hover:scale-105 transition-all disabled:opacity-50 disabled:hover:scale-100"
             title="Send message"
           >
-            <Send className="w-5 h-5" />
+            <Send className="w-4 h-4" />
           </button>
         </div>
       </div>

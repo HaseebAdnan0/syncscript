@@ -178,7 +178,7 @@ const GuidedVaultWizard: React.FC = () => {
         try {
           await createSource({
             vault: vault.id,
-            type: SourceType.URL,
+            source_type: SourceType.URL,
             url: finalSourceUrl,
             title: finalSourceUrl, // Will be updated by backend metadata extraction
           });

@@ -374,7 +374,7 @@ export default function VaultDetailPage() {
           </div>
 
           {/* Sidebar with Ask AI chat */}
-          <div className="w-80 flex-shrink-0">
+          <div className="w-[420px] flex-shrink-0">
             <Collapsible.Root open={isChatOpen} onOpenChange={setIsChatOpen}>
               <div className="bg-[#0F1115] border border-white/10 rounded-2xl overflow-hidden">
                 {/* Collapsible trigger */}
@@ -384,11 +384,14 @@ export default function VaultDetailPage() {
                       <MessageSquare className="w-5 h-5 text-[#F7931A]" />
                       <span className="font-bold text-lg">Ask AI</span>
                     </div>
-                    <ChevronDown
-                      className={`w-5 h-5 text-[#94A3B8] transition-transform ${
-                        isChatOpen ? 'rotate-180' : ''
-                      }`}
-                    />
+                    <span className="text-xs text-[#94A3B8] flex items-center gap-1">
+                      {isChatOpen ? 'Collapse' : 'Expand'}
+                      <ChevronDown
+                        className={`w-4 h-4 transition-transform ${
+                          isChatOpen ? 'rotate-180' : ''
+                        }`}
+                      />
+                    </span>
                   </button>
                 </Collapsible.Trigger>
 
@@ -396,7 +399,7 @@ export default function VaultDetailPage() {
                 <Collapsible.Content className="border-t border-white/10">
                   <div className="flex h-[600px]">
                     {/* Chat history sidebar */}
-                    <div className="w-48 border-r border-white/10 flex-shrink-0">
+                    <div className="w-36 border-r border-white/10 flex-shrink-0">
                       <ChatHistory
                         vaultId={vaultId.toString()}
                         conversations={conversations}
@@ -407,7 +410,7 @@ export default function VaultDetailPage() {
                     </div>
 
                     {/* Chat area */}
-                    <div className="flex-1 flex flex-col">
+                    <div className="flex-1 flex flex-col min-w-0">
                       {isLoadingMessages ? (
                         <div className="p-4">
                           <AILoadingSkeleton variant="chat" />

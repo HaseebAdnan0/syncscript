@@ -3,13 +3,16 @@ AI client using OpenRouter for model access.
 Handles summarization, vault insights, and question answering.
 """
 import json
+import logging
 import re
 from typing import Any, Dict, List
 from django.conf import settings
 import requests
 
+logger = logging.getLogger(__name__)
 
-class ClaudeClient:
+
+class AIClient:
     """
     Wrapper for OpenRouter API calls with consistent error handling and token counting.
     Uses OpenRouter to access various AI models (Claude, Gemini, etc.)
@@ -116,7 +119,8 @@ class ClaudeClient:
                 result = self._parse_json_response(response_text)
                 result['tokens_used'] = tokens_used
                 return result
-            except (json.JSONDecodeError, ValueError):
+            except (json.JSONDecodeError, ValueError) as e:
+                logger.error(f"Failed to parse AI response: {e}\nRaw response: {response_text[:1000]}")
                 return {
                     "error": "Failed to parse JSON response",
                     "raw_response": response_text[:500],
@@ -124,11 +128,13 @@ class ClaudeClient:
                 }
 
         except requests.exceptions.RequestException as e:
+            logger.error(f"OpenRouter API request error: {e}")
             return {
                 "error": f"API request error: {str(e)}",
                 "tokens_used": 0
             }
         except Exception as e:
+            logger.error(f"Unexpected error in summarize: {e}", exc_info=True)
             return {
                 "error": f"Unexpected error: {str(e)}",
                 "tokens_used": 0
@@ -171,18 +177,22 @@ class ClaudeClient:
                 result = self._parse_json_response(response_text)
                 result['tokens_used'] = tokens_used
                 return result
-            except (json.JSONDecodeError, ValueError):
+            except (json.JSONDecodeError, ValueError) as e:
+                logger.error(f"Failed to parse AI response: {e}\nRaw response: {response_text[:1000]}")
                 return {
                     "error": "Failed to parse JSON response",
+                    "raw_response": response_text[:500],
                     "tokens_used": tokens_used
                 }
 
         except requests.exceptions.RequestException as e:
+            logger.error(f"OpenRouter API request error: {e}")
             return {
                 "error": f"API request error: {str(e)}",
                 "tokens_used": 0
             }
         except Exception as e:
+            logger.error(f"Unexpected error in analyze_sources: {e}", exc_info=True)
             return {
                 "error": f"Unexpected error: {str(e)}",
                 "tokens_used": 0
@@ -223,19 +233,27 @@ class ClaudeClient:
                 result = self._parse_json_response(response_text)
                 result['tokens_used'] = tokens_used
                 return result
-            except (json.JSONDecodeError, ValueError):
+            except (json.JSONDecodeError, ValueError) as e:
+                logger.error(f"Failed to parse AI response: {e}\nRaw response: {response_text[:1000]}")
                 return {
                     "error": "Failed to parse JSON response",
+                    "raw_response": response_text[:500],
                     "tokens_used": tokens_used
                 }
 
         except requests.exceptions.RequestException as e:
+            logger.error(f"OpenRouter API request error: {e}")
             return {
                 "error": f"API request error: {str(e)}",
                 "tokens_used": 0
             }
         except Exception as e:
+            logger.error(f"Unexpected error in answer_question: {e}", exc_info=True)
             return {
                 "error": f"Unexpected error: {str(e)}",
                 "tokens_used": 0
             }
+
+
+# Backwards compatibility alias
+ClaudeClient = AIClient

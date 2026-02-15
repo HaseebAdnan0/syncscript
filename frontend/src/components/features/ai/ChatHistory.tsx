@@ -42,42 +42,41 @@ export default function ChatHistory({
   return (
     <div className="flex flex-col h-full bg-[#0F1115] border-r border-white/10">
       {/* Header with New Chat button */}
-      <div className="p-4 border-b border-white/10">
+      <div className="p-3 border-b border-white/10">
         <button
           onClick={onNewChat}
-          className="w-full bg-gradient-to-r from-[#EA580C] to-[#F7931A] text-white font-bold uppercase tracking-wider rounded-full px-6 py-3 shadow-[0_0_20px_-5px_rgba(234,88,12,0.5)] hover:scale-105 transition-all flex items-center justify-center gap-2"
+          className="w-full bg-gradient-to-r from-[#EA580C] to-[#F7931A] text-white font-semibold text-xs uppercase tracking-wider rounded-full px-3 py-2.5 shadow-[0_0_20px_-5px_rgba(234,88,12,0.5)] hover:scale-105 transition-all flex items-center justify-center gap-1.5"
         >
-          <Plus className="w-5 h-5" />
-          New Chat
+          <Plus className="w-4 h-4" />
+          New
         </button>
       </div>
 
       {/* Conversation list */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-2">
+      <div className="flex-1 overflow-y-auto p-2 space-y-1.5">
         {conversations.length === 0 ? (
-          <div className="text-center text-[#94A3B8] py-8">
-            <MessageSquare className="w-12 h-12 mx-auto mb-3 opacity-50" />
-            <p className="text-sm">No conversations yet</p>
-            <p className="text-xs mt-1">Start a new chat to get started</p>
+          <div className="text-center text-[#94A3B8] py-6">
+            <MessageSquare className="w-8 h-8 mx-auto mb-2 opacity-50" />
+            <p className="text-xs">No chats yet</p>
           </div>
         ) : (
           conversations.map((conv) => (
             <button
               key={conv.id}
               onClick={() => onSelect(conv.id)}
-              className={`w-full text-left p-3 rounded-lg transition-all ${
+              className={`w-full text-left p-2 rounded-lg transition-all ${
                 activeId === conv.id
                   ? "bg-gradient-to-r from-[#EA580C]/20 to-[#F7931A]/20 border border-[#F7931A]/50"
                   : "bg-black/30 border border-white/10 hover:border-[#F7931A]/30 hover:bg-black/50"
               }`}
             >
               {/* Preview text */}
-              <div className="text-white text-sm mb-2 line-clamp-2">
+              <div className="text-white text-xs mb-1 line-clamp-2">
                 {conv.preview}
               </div>
 
               {/* Timestamp */}
-              <div className="text-[#94A3B8] text-xs">
+              <div className="text-[#94A3B8] text-[10px]">
                 {getRelativeTime(conv.created_at)}
               </div>
             </button>
