@@ -518,15 +518,15 @@ Build a robust source and annotation management system for SyncScript that enabl
 **Description:** As a developer, I need signals to auto-create audit logs for Annotation changes.
 
 **Acceptance Criteria:**
-- [ ] Create `signals.py` in `apps/annotations/`
-- [ ] Create `log_annotation_change` receiver for `post_save` signal
-- [ ] On create: log action `annotation.created`
-- [ ] On create with parent: log action `annotation.replied`
-- [ ] On update: log action `annotation.updated` with content diff
-- [ ] Create `log_annotation_delete` receiver for `pre_delete` signal
-- [ ] Log action `annotation.deleted`
-- [ ] Import signals in `apps.py` `ready()` method
-- [ ] Typecheck passes
+- [x] Create `signals.py` in `apps/annotations/`
+- [x] Create `log_annotation_change` receiver for `post_save` signal
+- [x] On create: log action `annotation.created`
+- [x] On create with parent: log action `annotation.replied`
+- [x] On update: log action `annotation.updated` with content diff
+- [x] Create `log_annotation_delete` receiver for `pre_delete` signal
+- [x] Log action `annotation.deleted`
+- [x] Import signals in `apps.py` `ready()` method
+- [x] Typecheck passes
 
 ---
 

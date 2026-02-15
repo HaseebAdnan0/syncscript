@@ -968,3 +968,24 @@
   - Always check existing implementation before assuming task is incomplete
   - Django check sufficient for validation when implementation already exists
 ---
+
+## Iteration 39 - US-038: Add soft delete audit logging for Source
+- Added audit logging to SourceViewSet.destroy() method
+- Added audit logging to SourceViewSet.restore() method
+- Implementation details:
+  - destroy() creates AuditLog with action='source.soft_deleted'
+  - restore() creates AuditLog with action='source.restored'
+  - Both logs include changes JSON with source_id and vault_id
+  - Used existing AuditLog model from apps.vaults.models (already imported)
+- Files changed:
+  - backend/apps/sources/views.py (added audit log creation in destroy and restore methods)
+  - PRD3.md (marked US-038 complete)
+- Learnings for future iterations:
+  - AuditLog model from vaults app has vault FK field (different from core.models.AuditLog)
+  - AuditLog.objects.create() requires vault, user, action, changes parameters
+  - changes field is JSONField that stores arbitrary metadata about the action
+  - Convert UUID fields to string for JSON serialization: str(instance.id)
+  - Audit logs should be created AFTER the main action completes successfully
+  - Django check passes with 0 errors
+  - Follow existing signal patterns from US-037 for audit logging placement
+---
