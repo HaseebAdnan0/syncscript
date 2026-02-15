@@ -12,8 +12,8 @@ WORKDIR /app
 # Copy package files
 COPY package.json package-lock.json ./
 
-# Install dependencies
-RUN npm ci --only=production=false
+# Install all dependencies (including devDependencies for build)
+RUN npm ci
 
 # =============================================================================
 # STAGE 2: Builder - Build the Next.js application

@@ -54,9 +54,15 @@ services:
       - AWS_STORAGE_BUCKET_NAME=${AWS_STORAGE_BUCKET_NAME:-}
       - AWS_S3_ENDPOINT_URL=${AWS_S3_ENDPOINT_URL:-}
       - AWS_S3_REGION_NAME=${AWS_S3_REGION_NAME:-auto}
-      # AI
-      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      # AI (OpenRouter)
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+      - OPENROUTER_MODEL=${OPENROUTER_MODEL:-google/gemini-2.5-pro-preview}
       - AI_DAILY_LIMIT=${AI_DAILY_LIMIT:-20}
+      # Pusher
+      - PUSHER_APP_ID=${PUSHER_APP_ID:-}
+      - PUSHER_KEY=${PUSHER_KEY:-}
+      - PUSHER_SECRET=${PUSHER_SECRET:-}
+      - PUSHER_CLUSTER=${PUSHER_CLUSTER:-}
     networks:
       - syncscript_network
       - proxy_network
@@ -118,7 +124,8 @@ services:
       - REDIS_URL=redis://redis:6379/0
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+      - OPENROUTER_MODEL=${OPENROUTER_MODEL:-google/gemini-2.5-pro-preview}
     networks:
       - syncscript_network
     restart: unless-stopped
